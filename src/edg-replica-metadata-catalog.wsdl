@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:edg-replica-metadata-catalog" xmlns:impl="urn:edg-replica-metadata-catalog" xmlns:intf="urn:edg-replica-metadata-catalog" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns2="http://rmc.data.edg.org" xmlns:tns1="http://attribute.util.data.edg.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/"><types><schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://attribute.util.data.edg.org"><import namespace="http://schemas.xmlsoap.org/soap/encoding/"/><complexType name="AttributeDefinition"><sequence><element name="name" nillable="true" type="xsd:string"/><element name="type" nillable="true" type="xsd:string"/></sequence></complexType><complexType name="Mapping"><sequence><element name="attributeNames" nillable="true" type="tns2:ArrayOf_soapenc_string"/><element name="attributes" nillable="true" type="tns2:ArrayOf_soapenc_string"/><element name="entry" nillable="true" type="xsd:string"/><element name="guid" nillable="true" type="xsd:string"/><element name="guidAttributeNames" nillable="true" type="tns2:ArrayOf_soapenc_string"/><element name="guidAttributes" nillable="true" type="tns2:ArrayOf_soapenc_string"/></sequence></complexType></schema><schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rmc.data.edg.org"><import namespace="http://schemas.xmlsoap.org/soap/encoding/"/><complexType name="ColumnSizes"><sequence><element name="aliasColumnSize" type="xsd:int"/><element name="attributeDefinitionNameColumnSize" type="xsd:int"/><element name="guidColumnSize" type="xsd:int"/><element name="stringAttributeValueColumnSize" type="xsd:int"/></sequence></complexType><complexType name="ArrayOf_soapenc_string"><complexContent><restriction base="soapenc:Array"><attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/></restriction></complexContent></complexType><complexType name="Metadata"><sequence><element name="columnSizes" nillable="true" type="tns2:ColumnSizes"/><element name="countAlias" type="xsd:int"/><element name="countGuid" type="xsd:int"/></sequence></complexType></schema><schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:edg-replica-metadata-catalog"><import namespace="http://schemas.xmlsoap.org/soap/encoding/"/><complexType name="ArrayOf_xsd_string"><complexContent><restriction base="soapenc:Array"><attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/></restriction></complexContent></complexType><complexType name="ArrayOf_tns1_AttributeDefinition"><complexContent><restriction base="soapenc:Array"><attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:AttributeDefinition[]"/></restriction></complexContent></complexType><complexType name="ArrayOf_tns1_Mapping"><complexContent><restriction base="soapenc:Array"><attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:Mapping[]"/></restriction></complexContent></complexType></schema></types>
+  <wsdl:message name="addAliasRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setDefaultResultLengthResponse">
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasAttributeResponse1">
+    <wsdl:part name="getMappingsByAliasAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getFloatAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="createAliasAttributeDefinitionResponse">
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidAttributeResponse2">
+    <wsdl:part name="getMappingsByGuidAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getColumnSizesRequest">
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="aliasExistsRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setGuidAttributeResponse">
+    <wsdl:part name="setGuidAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setStringAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAttributeRequest1">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasesResponse">
+    <wsdl:part name="getAliasesReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAttributeResponse2">
+    <wsdl:part name="getMappingsByAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidAttributeRequest1">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMetadataResponse">
+    <wsdl:part name="getMetadataReturn" type="tns2:Metadata"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasResponse2">
+    <wsdl:part name="getMappingsByAliasReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getVersionResponse">
+    <wsdl:part name="getVersionReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="removeGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidAttributeResponse">
+    <wsdl:part name="getMappingsByGuidAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="setStringGuidAttributeResponse">
+    <wsdl:part name="setStringGuidAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="removeGuidAttributeDefinitionResponse">
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasResponse1">
+    <wsdl:part name="getMappingsByAliasReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="createGuidAttributeDefinitionResponse">
+  </wsdl:message>
+  <wsdl:message name="getAliasAttributeDefinitionsResponse">
+    <wsdl:part name="getAliasAttributeDefinitionsReturn" type="impl:ArrayOf_tns1_AttributeDefinition"/>
+  </wsdl:message>
+  <wsdl:message name="getGuidAttributeDefinitionRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setIntAliasAttributeResponse">
+    <wsdl:part name="setIntAliasAttributeReturn" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="aliasAttributeDefinitionExistsResponse">
+    <wsdl:part name="aliasAttributeDefinitionExistsReturn" type="xsd:boolean"/>
+  </wsdl:message>
+  <wsdl:message name="removeAliasAttributeResponse">
+  </wsdl:message>
+  <wsdl:message name="setFloatAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:float"/>
+  </wsdl:message>
+  <wsdl:message name="createAliasAttributeDefinitionResponse1">
+  </wsdl:message>
+  <wsdl:message name="getStringGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidAttributeRequest2">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+    <wsdl:part name="in3" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidRequest1">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasAttributeResponse">
+    <wsdl:part name="getMappingsByAliasAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="setIntGuidAttributeResponse">
+    <wsdl:part name="setIntGuidAttributeReturn" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsWithAttributesResponse1">
+    <wsdl:part name="getMappingsWithAttributesReturn" type="impl:ArrayOf_tns1_Mapping"/>
+  </wsdl:message>
+  <wsdl:message name="setStringAliasAttributeResponse">
+    <wsdl:part name="setStringAliasAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setStringGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasAttributeResponse">
+    <wsdl:part name="getAliasAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setDefaultResultLengthRequest">
+    <wsdl:part name="in0" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasResponse">
+    <wsdl:part name="getMappingsByAliasReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasAttributeRequest1">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="setIntGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidResponse2">
+    <wsdl:part name="getMappingsByGuidReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getColumnSizesResponse">
+    <wsdl:part name="getColumnSizesReturn" type="tns2:ColumnSizes"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasAttributeResponse2">
+    <wsdl:part name="getMappingsByAliasAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="guidForAliasRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getFloatGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="removeGuidAttributeResponse">
+  </wsdl:message>
+  <wsdl:message name="pingResponse">
+    <wsdl:part name="pingReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getStringGuidAttributeResponse">
+    <wsdl:part name="getStringGuidAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getVersionRequest">
+  </wsdl:message>
+  <wsdl:message name="removeAliasResponse">
+  </wsdl:message>
+  <wsdl:message name="createGuidAttributeDefinitionResponse1">
+  </wsdl:message>
+  <wsdl:message name="getGuidAttributeDefinitionsResponse">
+    <wsdl:part name="getGuidAttributeDefinitionsReturn" type="impl:ArrayOf_tns1_AttributeDefinition"/>
+  </wsdl:message>
+  <wsdl:message name="getSchemaVersionResponse">
+    <wsdl:part name="getSchemaVersionReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="aliasAttributeDefinitionExistsRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="createAliasAttributeDefinitionRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidResponse">
+    <wsdl:part name="getMappingsByGuidReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasRequest1">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="setAliasAttributeResponse">
+    <wsdl:part name="setAliasAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAttributeResponse">
+    <wsdl:part name="getMappingsByAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="setFloatGuidAttributeResponse">
+    <wsdl:part name="setFloatGuidAttributeReturn" type="xsd:float"/>
+  </wsdl:message>
+  <wsdl:message name="getIntAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasRequest2">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="pingRequest">
+  </wsdl:message>
+  <wsdl:message name="getMappingsWithAttributesResponse">
+    <wsdl:part name="getMappingsWithAttributesReturn" type="impl:ArrayOf_tns1_Mapping"/>
+  </wsdl:message>
+  <wsdl:message name="getFloatGuidAttributeResponse">
+    <wsdl:part name="getFloatGuidAttributeReturn" type="xsd:float"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAttributeResponse1">
+    <wsdl:part name="getMappingsByAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getGuidAttributeDefinitionResponse">
+    <wsdl:part name="getGuidAttributeDefinitionReturn" type="tns1:AttributeDefinition"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasAttributeDefinitionRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getIntAliasAttributeResponse">
+    <wsdl:part name="getIntAliasAttributeReturn" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getInterfaceVersionRequest">
+  </wsdl:message>
+  <wsdl:message name="getIntGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setFloatGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:float"/>
+  </wsdl:message>
+  <wsdl:message name="setGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getSchemaVersionRequest">
+  </wsdl:message>
+  <wsdl:message name="removeGuidAttributeDefinitionRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidRequest2">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="aliasExistsResponse">
+    <wsdl:part name="aliasExistsReturn" type="xsd:boolean"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasAttributeRequest2">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+    <wsdl:part name="in3" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getGuidAttributeResponse">
+    <wsdl:part name="getGuidAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="guidAttributeDefinitionExistsRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasesRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="removeAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidResponse1">
+    <wsdl:part name="getMappingsByGuidReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getMetadataRequest">
+  </wsdl:message>
+  <wsdl:message name="getDefaultResultLengthResponse">
+    <wsdl:part name="getDefaultResultLengthReturn" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsWithAttributesRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getIntGuidAttributeResponse">
+    <wsdl:part name="getIntGuidAttributeReturn" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="setIntAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="createAliasAttributeDefinitionRequest1">
+    <wsdl:part name="in0" type="tns1:AttributeDefinition"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAttributeRequest2">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByGuidAttributeResponse1">
+    <wsdl:part name="getMappingsByGuidAttributeReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="getInterfaceVersionResponse">
+    <wsdl:part name="getInterfaceVersionReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="guidForAliasResponse">
+    <wsdl:part name="guidForAliasReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="addAliasResponse">
+  </wsdl:message>
+  <wsdl:message name="getGuidAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsWithAttributesRequest1">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:int"/>
+    <wsdl:part name="in2" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="getStringAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="createGuidAttributeDefinitionRequest1">
+    <wsdl:part name="in0" type="tns1:AttributeDefinition"/>
+  </wsdl:message>
+  <wsdl:message name="removeAliasAttributeDefinitionRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="guidExistsResponse">
+    <wsdl:part name="guidExistsReturn" type="xsd:boolean"/>
+  </wsdl:message>
+  <wsdl:message name="getStringAliasAttributeResponse">
+    <wsdl:part name="getStringAliasAttributeReturn" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="removeAliasRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="setAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+    <wsdl:part name="in2" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasAttributeDefinitionsRequest">
+  </wsdl:message>
+  <wsdl:message name="setFloatAliasAttributeResponse">
+    <wsdl:part name="setFloatAliasAttributeReturn" type="xsd:float"/>
+  </wsdl:message>
+  <wsdl:message name="getDefaultResultLengthRequest">
+  </wsdl:message>
+  <wsdl:message name="createGuidAttributeDefinitionRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getGuidAttributeDefinitionsRequest">
+  </wsdl:message>
+  <wsdl:message name="guidAttributeDefinitionExistsResponse">
+    <wsdl:part name="guidAttributeDefinitionExistsReturn" type="xsd:boolean"/>
+  </wsdl:message>
+  <wsdl:message name="getMappingsByAliasAttributeRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="getAliasAttributeDefinitionResponse">
+    <wsdl:part name="getAliasAttributeDefinitionReturn" type="tns1:AttributeDefinition"/>
+  </wsdl:message>
+  <wsdl:message name="removeAliasAttributeDefinitionResponse">
+  </wsdl:message>
+  <wsdl:message name="getFloatAliasAttributeResponse">
+    <wsdl:part name="getFloatAliasAttributeReturn" type="xsd:float"/>
+  </wsdl:message>
+  <wsdl:message name="guidExistsRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:portType name="EdgReplicaMetadataCatalog">
+    <wsdl:operation name="getVersion">
+      <wsdl:input name="getVersionRequest" message="impl:getVersionRequest"/>
+      <wsdl:output name="getVersionResponse" message="impl:getVersionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getSchemaVersion">
+      <wsdl:input name="getSchemaVersionRequest" message="impl:getSchemaVersionRequest"/>
+      <wsdl:output name="getSchemaVersionResponse" message="impl:getSchemaVersionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="addAlias" parameterOrder="in0 in1">
+      <wsdl:input name="addAliasRequest" message="impl:addAliasRequest"/>
+      <wsdl:output name="addAliasResponse" message="impl:addAliasResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="removeAlias" parameterOrder="in0 in1">
+      <wsdl:input name="removeAliasRequest" message="impl:removeAliasRequest"/>
+      <wsdl:output name="removeAliasResponse" message="impl:removeAliasResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="aliasExists" parameterOrder="in0">
+      <wsdl:input name="aliasExistsRequest" message="impl:aliasExistsRequest"/>
+      <wsdl:output name="aliasExistsResponse" message="impl:aliasExistsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="guidExists" parameterOrder="in0">
+      <wsdl:input name="guidExistsRequest" message="impl:guidExistsRequest"/>
+      <wsdl:output name="guidExistsResponse" message="impl:guidExistsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="guidForAlias" parameterOrder="in0">
+      <wsdl:input name="guidForAliasRequest" message="impl:guidForAliasRequest"/>
+      <wsdl:output name="guidForAliasResponse" message="impl:guidForAliasResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getAliases" parameterOrder="in0">
+      <wsdl:input name="getAliasesRequest" message="impl:getAliasesRequest"/>
+      <wsdl:output name="getAliasesResponse" message="impl:getAliasesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="createAliasAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="createAliasAttributeDefinitionRequest" message="impl:createAliasAttributeDefinitionRequest"/>
+      <wsdl:output name="createAliasAttributeDefinitionResponse" message="impl:createAliasAttributeDefinitionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="createAliasAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="createAliasAttributeDefinitionRequest1" message="impl:createAliasAttributeDefinitionRequest1"/>
+      <wsdl:output name="createAliasAttributeDefinitionResponse1" message="impl:createAliasAttributeDefinitionResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getAliasAttributeDefinitions">
+      <wsdl:input name="getAliasAttributeDefinitionsRequest" message="impl:getAliasAttributeDefinitionsRequest"/>
+      <wsdl:output name="getAliasAttributeDefinitionsResponse" message="impl:getAliasAttributeDefinitionsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getAliasAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="getAliasAttributeDefinitionRequest" message="impl:getAliasAttributeDefinitionRequest"/>
+      <wsdl:output name="getAliasAttributeDefinitionResponse" message="impl:getAliasAttributeDefinitionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="aliasAttributeDefinitionExists" parameterOrder="in0">
+      <wsdl:input name="aliasAttributeDefinitionExistsRequest" message="impl:aliasAttributeDefinitionExistsRequest"/>
+      <wsdl:output name="aliasAttributeDefinitionExistsResponse" message="impl:aliasAttributeDefinitionExistsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="removeAliasAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="removeAliasAttributeDefinitionRequest" message="impl:removeAliasAttributeDefinitionRequest"/>
+      <wsdl:output name="removeAliasAttributeDefinitionResponse" message="impl:removeAliasAttributeDefinitionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="createGuidAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="createGuidAttributeDefinitionRequest" message="impl:createGuidAttributeDefinitionRequest"/>
+      <wsdl:output name="createGuidAttributeDefinitionResponse" message="impl:createGuidAttributeDefinitionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="createGuidAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="createGuidAttributeDefinitionRequest1" message="impl:createGuidAttributeDefinitionRequest1"/>
+      <wsdl:output name="createGuidAttributeDefinitionResponse1" message="impl:createGuidAttributeDefinitionResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getGuidAttributeDefinitions">
+      <wsdl:input name="getGuidAttributeDefinitionsRequest" message="impl:getGuidAttributeDefinitionsRequest"/>
+      <wsdl:output name="getGuidAttributeDefinitionsResponse" message="impl:getGuidAttributeDefinitionsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getGuidAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="getGuidAttributeDefinitionRequest" message="impl:getGuidAttributeDefinitionRequest"/>
+      <wsdl:output name="getGuidAttributeDefinitionResponse" message="impl:getGuidAttributeDefinitionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="guidAttributeDefinitionExists" parameterOrder="in0">
+      <wsdl:input name="guidAttributeDefinitionExistsRequest" message="impl:guidAttributeDefinitionExistsRequest"/>
+      <wsdl:output name="guidAttributeDefinitionExistsResponse" message="impl:guidAttributeDefinitionExistsResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="removeGuidAttributeDefinition" parameterOrder="in0">
+      <wsdl:input name="removeGuidAttributeDefinitionRequest" message="impl:removeGuidAttributeDefinitionRequest"/>
+      <wsdl:output name="removeGuidAttributeDefinitionResponse" message="impl:removeGuidAttributeDefinitionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setGuidAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setGuidAttributeRequest" message="impl:setGuidAttributeRequest"/>
+      <wsdl:output name="setGuidAttributeResponse" message="impl:setGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setStringGuidAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setStringGuidAttributeRequest" message="impl:setStringGuidAttributeRequest"/>
+      <wsdl:output name="setStringGuidAttributeResponse" message="impl:setStringGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setIntGuidAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setIntGuidAttributeRequest" message="impl:setIntGuidAttributeRequest"/>
+      <wsdl:output name="setIntGuidAttributeResponse" message="impl:setIntGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setFloatGuidAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setFloatGuidAttributeRequest" message="impl:setFloatGuidAttributeRequest"/>
+      <wsdl:output name="setFloatGuidAttributeResponse" message="impl:setFloatGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getGuidAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getGuidAttributeRequest" message="impl:getGuidAttributeRequest"/>
+      <wsdl:output name="getGuidAttributeResponse" message="impl:getGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getStringGuidAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getStringGuidAttributeRequest" message="impl:getStringGuidAttributeRequest"/>
+      <wsdl:output name="getStringGuidAttributeResponse" message="impl:getStringGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getIntGuidAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getIntGuidAttributeRequest" message="impl:getIntGuidAttributeRequest"/>
+      <wsdl:output name="getIntGuidAttributeResponse" message="impl:getIntGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getFloatGuidAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getFloatGuidAttributeRequest" message="impl:getFloatGuidAttributeRequest"/>
+      <wsdl:output name="getFloatGuidAttributeResponse" message="impl:getFloatGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="removeGuidAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="removeGuidAttributeRequest" message="impl:removeGuidAttributeRequest"/>
+      <wsdl:output name="removeGuidAttributeResponse" message="impl:removeGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setAliasAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setAliasAttributeRequest" message="impl:setAliasAttributeRequest"/>
+      <wsdl:output name="setAliasAttributeResponse" message="impl:setAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setStringAliasAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setStringAliasAttributeRequest" message="impl:setStringAliasAttributeRequest"/>
+      <wsdl:output name="setStringAliasAttributeResponse" message="impl:setStringAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setIntAliasAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setIntAliasAttributeRequest" message="impl:setIntAliasAttributeRequest"/>
+      <wsdl:output name="setIntAliasAttributeResponse" message="impl:setIntAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setFloatAliasAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="setFloatAliasAttributeRequest" message="impl:setFloatAliasAttributeRequest"/>
+      <wsdl:output name="setFloatAliasAttributeResponse" message="impl:setFloatAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getAliasAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getAliasAttributeRequest" message="impl:getAliasAttributeRequest"/>
+      <wsdl:output name="getAliasAttributeResponse" message="impl:getAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getStringAliasAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getStringAliasAttributeRequest" message="impl:getStringAliasAttributeRequest"/>
+      <wsdl:output name="getStringAliasAttributeResponse" message="impl:getStringAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getIntAliasAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getIntAliasAttributeRequest" message="impl:getIntAliasAttributeRequest"/>
+      <wsdl:output name="getIntAliasAttributeResponse" message="impl:getIntAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getFloatAliasAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getFloatAliasAttributeRequest" message="impl:getFloatAliasAttributeRequest"/>
+      <wsdl:output name="getFloatAliasAttributeResponse" message="impl:getFloatAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="removeAliasAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="removeAliasAttributeRequest" message="impl:removeAliasAttributeRequest"/>
+      <wsdl:output name="removeAliasAttributeResponse" message="impl:removeAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="setDefaultResultLength" parameterOrder="in0">
+      <wsdl:input name="setDefaultResultLengthRequest" message="impl:setDefaultResultLengthRequest"/>
+      <wsdl:output name="setDefaultResultLengthResponse" message="impl:setDefaultResultLengthResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getDefaultResultLength">
+      <wsdl:input name="getDefaultResultLengthRequest" message="impl:getDefaultResultLengthRequest"/>
+      <wsdl:output name="getDefaultResultLengthResponse" message="impl:getDefaultResultLengthResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getColumnSizes">
+      <wsdl:input name="getColumnSizesRequest" message="impl:getColumnSizesRequest"/>
+      <wsdl:output name="getColumnSizesResponse" message="impl:getColumnSizesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuid" parameterOrder="in0">
+      <wsdl:input name="getMappingsByGuidRequest" message="impl:getMappingsByGuidRequest"/>
+      <wsdl:output name="getMappingsByGuidResponse" message="impl:getMappingsByGuidResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuid" parameterOrder="in0 in1">
+      <wsdl:input name="getMappingsByGuidRequest1" message="impl:getMappingsByGuidRequest1"/>
+      <wsdl:output name="getMappingsByGuidResponse1" message="impl:getMappingsByGuidResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuid" parameterOrder="in0 in1 in2">
+      <wsdl:input name="getMappingsByGuidRequest2" message="impl:getMappingsByGuidRequest2"/>
+      <wsdl:output name="getMappingsByGuidResponse2" message="impl:getMappingsByGuidResponse2"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAlias" parameterOrder="in0">
+      <wsdl:input name="getMappingsByAliasRequest" message="impl:getMappingsByAliasRequest"/>
+      <wsdl:output name="getMappingsByAliasResponse" message="impl:getMappingsByAliasResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAlias" parameterOrder="in0 in1">
+      <wsdl:input name="getMappingsByAliasRequest1" message="impl:getMappingsByAliasRequest1"/>
+      <wsdl:output name="getMappingsByAliasResponse1" message="impl:getMappingsByAliasResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAlias" parameterOrder="in0 in1 in2">
+      <wsdl:input name="getMappingsByAliasRequest2" message="impl:getMappingsByAliasRequest2"/>
+      <wsdl:output name="getMappingsByAliasResponse2" message="impl:getMappingsByAliasResponse2"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuidAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getMappingsByGuidAttributeRequest" message="impl:getMappingsByGuidAttributeRequest"/>
+      <wsdl:output name="getMappingsByGuidAttributeResponse" message="impl:getMappingsByGuidAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuidAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="getMappingsByGuidAttributeRequest1" message="impl:getMappingsByGuidAttributeRequest1"/>
+      <wsdl:output name="getMappingsByGuidAttributeResponse1" message="impl:getMappingsByGuidAttributeResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuidAttribute" parameterOrder="in0 in1 in2 in3">
+      <wsdl:input name="getMappingsByGuidAttributeRequest2" message="impl:getMappingsByGuidAttributeRequest2"/>
+      <wsdl:output name="getMappingsByGuidAttributeResponse2" message="impl:getMappingsByGuidAttributeResponse2"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAliasAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getMappingsByAliasAttributeRequest" message="impl:getMappingsByAliasAttributeRequest"/>
+      <wsdl:output name="getMappingsByAliasAttributeResponse" message="impl:getMappingsByAliasAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAliasAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="getMappingsByAliasAttributeRequest1" message="impl:getMappingsByAliasAttributeRequest1"/>
+      <wsdl:output name="getMappingsByAliasAttributeResponse1" message="impl:getMappingsByAliasAttributeResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAliasAttribute" parameterOrder="in0 in1 in2 in3">
+      <wsdl:input name="getMappingsByAliasAttributeRequest2" message="impl:getMappingsByAliasAttributeRequest2"/>
+      <wsdl:output name="getMappingsByAliasAttributeResponse2" message="impl:getMappingsByAliasAttributeResponse2"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAttribute" parameterOrder="in0">
+      <wsdl:input name="getMappingsByAttributeRequest" message="impl:getMappingsByAttributeRequest"/>
+      <wsdl:output name="getMappingsByAttributeResponse" message="impl:getMappingsByAttributeResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAttribute" parameterOrder="in0 in1">
+      <wsdl:input name="getMappingsByAttributeRequest1" message="impl:getMappingsByAttributeRequest1"/>
+      <wsdl:output name="getMappingsByAttributeResponse1" message="impl:getMappingsByAttributeResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAttribute" parameterOrder="in0 in1 in2">
+      <wsdl:input name="getMappingsByAttributeRequest2" message="impl:getMappingsByAttributeRequest2"/>
+      <wsdl:output name="getMappingsByAttributeResponse2" message="impl:getMappingsByAttributeResponse2"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsWithAttributes" parameterOrder="in0 in1">
+      <wsdl:input name="getMappingsWithAttributesRequest" message="impl:getMappingsWithAttributesRequest"/>
+      <wsdl:output name="getMappingsWithAttributesResponse" message="impl:getMappingsWithAttributesResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsWithAttributes" parameterOrder="in0 in1 in2">
+      <wsdl:input name="getMappingsWithAttributesRequest1" message="impl:getMappingsWithAttributesRequest1"/>
+      <wsdl:output name="getMappingsWithAttributesResponse1" message="impl:getMappingsWithAttributesResponse1"/>
+    </wsdl:operation>
+    <wsdl:operation name="getInterfaceVersion">
+      <wsdl:input name="getInterfaceVersionRequest" message="impl:getInterfaceVersionRequest"/>
+      <wsdl:output name="getInterfaceVersionResponse" message="impl:getInterfaceVersionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="getMetadata">
+      <wsdl:input name="getMetadataRequest" message="impl:getMetadataRequest"/>
+      <wsdl:output name="getMetadataResponse" message="impl:getMetadataResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="ping">
+      <wsdl:input name="pingRequest" message="impl:pingRequest"/>
+      <wsdl:output name="pingResponse" message="impl:pingResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="edg-replica-metadata-catalogSoapBinding" type="impl:EdgReplicaMetadataCatalog">
+    <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getVersionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getVersionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSchemaVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getSchemaVersionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getSchemaVersionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addAlias">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="addAliasRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="addAliasResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAlias">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeAliasRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="removeAliasResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="aliasExists">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="aliasExistsRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="aliasExistsResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="guidExists">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="guidExistsRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="guidExistsResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="guidForAlias">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="guidForAliasRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="guidForAliasResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAliases">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getAliasesRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getAliasesResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAliasAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="createAliasAttributeDefinitionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="createAliasAttributeDefinitionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createAliasAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="createAliasAttributeDefinitionRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="createAliasAttributeDefinitionResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAliasAttributeDefinitions">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getAliasAttributeDefinitionsRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getAliasAttributeDefinitionsResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAliasAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getAliasAttributeDefinitionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getAliasAttributeDefinitionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="aliasAttributeDefinitionExists">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="aliasAttributeDefinitionExistsRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="aliasAttributeDefinitionExistsResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAliasAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeAliasAttributeDefinitionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="removeAliasAttributeDefinitionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createGuidAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="createGuidAttributeDefinitionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="createGuidAttributeDefinitionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createGuidAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="createGuidAttributeDefinitionRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="createGuidAttributeDefinitionResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getGuidAttributeDefinitions">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getGuidAttributeDefinitionsRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getGuidAttributeDefinitionsResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getGuidAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getGuidAttributeDefinitionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getGuidAttributeDefinitionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="guidAttributeDefinitionExists">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="guidAttributeDefinitionExistsRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="guidAttributeDefinitionExistsResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeGuidAttributeDefinition">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeGuidAttributeDefinitionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="removeGuidAttributeDefinitionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setStringGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setStringGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setStringGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setIntGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setIntGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setIntGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setFloatGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setFloatGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setFloatGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStringGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getStringGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getStringGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIntGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getIntGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getIntGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getFloatGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getFloatGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getFloatGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="removeGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setStringAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setStringAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setStringAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setIntAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setIntAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setIntAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setFloatAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setFloatAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setFloatAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStringAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getStringAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getStringAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getIntAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getIntAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getIntAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getFloatAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getFloatAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getFloatAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="removeAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setDefaultResultLength">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="setDefaultResultLengthRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="setDefaultResultLengthResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDefaultResultLength">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getDefaultResultLengthRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getDefaultResultLengthResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getColumnSizes">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getColumnSizesRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getColumnSizesResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuid">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByGuidRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByGuidResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuid">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByGuidRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByGuidResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuid">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByGuidRequest2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByGuidResponse2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAlias">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAliasRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAliasResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAlias">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAliasRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAliasResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAlias">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAliasRequest2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAliasResponse2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByGuidAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByGuidAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByGuidAttributeRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByGuidAttributeResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByGuidAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByGuidAttributeRequest2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByGuidAttributeResponse2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAliasAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAliasAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAliasAttributeRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAliasAttributeResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAliasAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAliasAttributeRequest2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAliasAttributeResponse2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAttributeRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAttributeResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAttributeRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAttributeResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsByAttribute">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsByAttributeRequest2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsByAttributeResponse2">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsWithAttributes">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsWithAttributesRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsWithAttributesResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMappingsWithAttributes">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMappingsWithAttributesRequest1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMappingsWithAttributesResponse1">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getInterfaceVersion">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getInterfaceVersionRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getInterfaceVersionResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMetadata">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getMetadataRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="getMetadataResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ping">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="pingRequest">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:input>
+      <wsdl:output name="pingResponse">
+        <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-replica-metadata-catalog"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EdgReplicaMetadataCatalogService">
+    <wsdl:port name="edg-replica-metadata-catalog" binding="impl:edg-replica-metadata-catalogSoapBinding">
+      <wsdlsoap:address location="http://rlscert02.cern.ch:7777/dteam/v2.2/edg-replica-metadata-catalog/services/edg-replica-metadata-catalog"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

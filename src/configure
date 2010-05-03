@@ -1,0 +1,15 @@
+#!/bin/sh
+GLOBUS_LOCATION=/opt/globus
+sysname=`uname -s`
+case $sysname in
+	Linux)	if [ -d $GLOBUS_LOCATION/include/gcc64dbg ]; then
+			sed "s/gcc32dbg/gcc64dbg/" Makefile.Linux > Makefile
+		else
+			cp -p Makefile.Linux Makefile
+		fi
+		exit 0;;
+	SunOS)	cp -p Makefile.Solaris Makefile
+		exit 0;;
+	*)	echo "Platform not supported"
+		exit 1;;
+esac

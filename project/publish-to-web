@@ -1,0 +1,40 @@
+#!/bin/bash
+
+PUBDIR='/afs/cern.ch/project/gd/www/documentation/LFC_DPM/gfal'
+URL='http://grid-deployment.web.cern.ch/grid-deployment/documentation/LFC_DPM/gfal'
+
+TOPSRC=$(cd $(dirname $0)/..; echo $PWD)
+
+NEWDIR=$PUBDIR.new
+trap "rm -rf $NEWDIR" QUIT
+
+if [ ! -d "$NEWDIR" ]; then
+    mkdir -p $NEWDIR
+fi
+
+cp RELEASE-NOTES $NEWDIR/
+
+if [ ! -d "$NEWDIR/man3" ]; then
+    mkdir -p $NEWDIR/man3
+fi
+
+INDEX=$NEWDIR/index.html
+
+echo '<html><head><title>GFAL man pages</title></head><body><ul>' >$INDEX
+
+for man in $TOPSRC/src/*.man; do
+    name=${man##*/}
+    name=${name%.man}
+    html="man3/$name.3.html"
+    man2html -r -M man2html $man >$NEWDIR/$html
+    echo "<li><A href=\"$html\">$name</A></li>" >>$INDEX
+done
+
+echo '</ul></body></html>' >>$INDEX
+
+# committing the changes
+trap "" QUIT
+rm -rf $PUBDIR
+mv $NEWDIR $PUBDIR
+
+echo "See the result at: $URL"

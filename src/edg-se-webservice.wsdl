@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:edg-se-webservice" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:edg-se-webservice" xmlns:intf="urn:edg-se-webservice" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="http://storage.edg.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <wsdl:types>
+  <schema targetNamespace="urn:edg-se-webservice" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://storage.edg.org" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="StatusReturn">
+    <sequence>
+     <element name="status" type="xsd:int"/>
+     <element name="timeout" type="xsd:long"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="setACLResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="registerRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:string"/>
+
+      <wsdl:part name="in2" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTurlRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="commitRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="cacheResponse">
+
+      <wsdl:part name="cacheReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="commitResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="reserveResponse">
+
+      <wsdl:part name="reserveReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getMetadataRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="mkdirResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getTurlResponse">
+
+      <wsdl:part name="getTurlReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="reserveStatusResponse">
+
+      <wsdl:part name="reserveStatusReturn" type="tns1:StatusReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="cacheRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:string"/>
+
+      <wsdl:part name="in2" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="rmdirRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="cacheStatusResponse">
+
+      <wsdl:part name="cacheStatusReturn" type="tns1:StatusReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getSECostRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getACLResponse">
+
+      <wsdl:part name="getACLReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="cacheStatusRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getACLRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="lsdirRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getMetadataResponse">
+
+      <wsdl:part name="getMetadataReturn" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="copyRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:long"/>
+
+      <wsdl:part name="in2" type="xsd:string"/>
+
+      <wsdl:part name="in3" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="mkdirRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="createResponse">
+
+      <wsdl:part name="createReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="lsdirResponse">
+
+      <wsdl:part name="lsdirReturn" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="registerResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="createStatusRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="reserveRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:long"/>
+
+      <wsdl:part name="in2" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="abandonRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="copyResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="rmdirResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="createStatusResponse">
+
+      <wsdl:part name="createStatusReturn" type="tns1:StatusReturn"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="abandonResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="setACLRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="reserveStatusRequest">
+
+      <wsdl:part name="in0" type="xsd:string"/>
+
+      <wsdl:part name="in1" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getSECostResponse">
+
+      <wsdl:part name="getSECostReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="EdgSeWebservice">
+
+      <wsdl:operation name="register" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:registerRequest" name="registerRequest"/>
+
+         <wsdl:output message="impl:registerResponse" name="registerResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="copy" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:copyRequest" name="copyRequest"/>
+
+         <wsdl:output message="impl:copyResponse" name="copyResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="delete" parameterOrder="in0">
+
+         <wsdl:input message="impl:deleteRequest" name="deleteRequest"/>
+
+         <wsdl:output message="impl:deleteResponse" name="deleteResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="cache" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:cacheRequest" name="cacheRequest"/>
+
+         <wsdl:output message="impl:cacheResponse" name="cacheResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="create" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:createRequest" name="createRequest"/>
+
+         <wsdl:output message="impl:createResponse" name="createResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="mkdir" parameterOrder="in0">
+
+         <wsdl:input message="impl:mkdirRequest" name="mkdirRequest"/>
+
+         <wsdl:output message="impl:mkdirResponse" name="mkdirResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commit" parameterOrder="in0">
+
+         <wsdl:input message="impl:commitRequest" name="commitRequest"/>
+
+         <wsdl:output message="impl:commitResponse" name="commitResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="lsdir" parameterOrder="in0">
+
+         <wsdl:input message="impl:lsdirRequest" name="lsdirRequest"/>
+
+         <wsdl:output message="impl:lsdirResponse" name="lsdirResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="reserve" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:reserveRequest" name="reserveRequest"/>
+
+         <wsdl:output message="impl:reserveResponse" name="reserveResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="reserveStatus" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:reserveStatusRequest" name="reserveStatusRequest"/>
+
+         <wsdl:output message="impl:reserveStatusResponse" name="reserveStatusResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createStatus" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:createStatusRequest" name="createStatusRequest"/>
+
+         <wsdl:output message="impl:createStatusResponse" name="createStatusResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="cacheStatus" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:cacheStatusRequest" name="cacheStatusRequest"/>
+
+         <wsdl:output message="impl:cacheStatusResponse" name="cacheStatusResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTurl" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getTurlRequest" name="getTurlRequest"/>
+
+         <wsdl:output message="impl:getTurlResponse" name="getTurlResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="abandon" parameterOrder="in0">
+
+         <wsdl:input message="impl:abandonRequest" name="abandonRequest"/>
+
+         <wsdl:output message="impl:abandonResponse" name="abandonResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="rmdir" parameterOrder="in0">
+
+         <wsdl:input message="impl:rmdirRequest" name="rmdirRequest"/>
+
+         <wsdl:output message="impl:rmdirResponse" name="rmdirResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setACL" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:setACLRequest" name="setACLRequest"/>
+
+         <wsdl:output message="impl:setACLResponse" name="setACLResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getACL" parameterOrder="in0">
+
+         <wsdl:input message="impl:getACLRequest" name="getACLRequest"/>
+
+         <wsdl:output message="impl:getACLResponse" name="getACLResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getMetadata" parameterOrder="in0">
+
+         <wsdl:input message="impl:getMetadataRequest" name="getMetadataRequest"/>
+
+         <wsdl:output message="impl:getMetadataResponse" name="getMetadataResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getSECost" parameterOrder="in0">
+
+         <wsdl:input message="impl:getSECostRequest" name="getSECostRequest"/>
+
+         <wsdl:output message="impl:getSECostResponse" name="getSECostResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="edg-se-webserviceSoapBinding" type="impl:EdgSeWebservice">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="register">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="registerRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="registerResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="copy">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="copyRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="copyResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="delete">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deleteRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deleteResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="cache">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="cacheRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="cacheResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="create">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="mkdir">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="mkdirRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="mkdirResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commit">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="commitRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="commitResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="lsdir">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="lsdirRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="lsdirResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="reserve">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="reserveRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="reserveResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="reserveStatus">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="reserveStatusRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="reserveStatusResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="createStatus">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="createStatusRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="createStatusResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="cacheStatus">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="cacheStatusRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="cacheStatusResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTurl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getTurlRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getTurlResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="abandon">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="abandonRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="abandonResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="rmdir">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="rmdirRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="rmdirResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="setACL">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="setACLRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="setACLResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getACL">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getACLRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getACLResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getMetadata">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getMetadataRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getMetadataResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getSECost">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getSECostRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getSECostResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:edg-se-webservice" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="EdgSeWebserviceService">
+
+      <wsdl:port binding="impl:edg-se-webserviceSoapBinding" name="edg-se-webservice">
+
+         <wsdlsoap:address location="http://localhost:8080/edg-se-webservice/services/edg-se-webservice"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
+
