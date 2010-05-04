@@ -1,4 +1,4 @@
-#include <stdio.h>
+	#include <stdio.h>
 #include <check.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -17,6 +17,7 @@ int main(void) {
 	struct srm_rm_output* output_rm;
 	struct srm_rmdir_input input_rmdir;
 	struct srm_rmdir_output* output_rmdir;
+	struct srm_mkdir_input input_mkdir;
 	int i;
 	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1"};
 	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
@@ -25,7 +26,7 @@ int main(void) {
 							 "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba"};
 
 
-	char *test_surls_rmdir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/";
+	char *test_surl_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/";
 
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
@@ -42,7 +43,9 @@ int main(void) {
 	input_rm.surls = test_surls_rm;
 
 	input_rmdir.recursive = 1;
-	input_rmdir.surl = test_surls_rmdir;
+	input_rmdir.surl = test_surl_dir;
+
+	input_mkdir.dir_name = test_surl_dir;
 
     i = srm_ls(&context,&input_ls,&output_ls);
 
@@ -51,7 +54,17 @@ int main(void) {
 		PrintResult(output_ls);
 	}
 
-    system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
+    i = srm_mkdir(&context,&input_mkdir);
+    printf("Mkdir:%s %d",input_mkdir.dir_name,i);
+
+    i = srm_ls(&context,&input_ls,&output_ls);
+
+	if (!i)
+	{
+		PrintResult(output_ls);
+	}
+
+    /*system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
     system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");
 
     i = srm_ls(&context,&input_ls,&output_ls);
@@ -71,7 +84,7 @@ int main(void) {
     if (!i)
 	{
 		PrintResult(output_ls);
-	}
+	}*/
 
 	return EXIT_SUCCESS;
 }

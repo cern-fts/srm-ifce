@@ -138,12 +138,12 @@ bin_PROGRAMS = \
 
 # libraries
 lib_LIBRARIES = \
-	libgfal.a
+	libsrm.a
 
 # shared libraries
 lib_LTLIBRARIES = \
-	libgfal.la 
-#	libgfal_pthr.la 
+	libsrm.la 
+#	libsrm_pthr.la 
 
 # generated source files (to build before other programs and libraries)
 BUILT_SOURCES = 
@@ -166,7 +166,7 @@ BUILT_SOURCES =
 #_gfal_la_SOURCES = gfal.i lcg-typemaps.python.i gfal_wrap.c
 #_gfal_la_LDFLAGS = -module
 #_gfal_la_CFLAGS = $(PYTHON_CFLAGS)
-#_gfal_la_LIBADD = libgfal.la
+#_gfal_la_LIBADD = libsrm.la
 
 #gfal_wrap.c: gfal.i lcg-typemaps.python.i
 #	SWIG_LIB=$(SWIG_LIB_PATH) $(SWIG) -python -o $@ $<
@@ -174,7 +174,7 @@ BUILT_SOURCES =
 #_gfalthr_la_SOURCES = gfalthr.i gfal.i lcg-typemaps.python.i gfalthr_wrap.c
 #_gfalthr_la_LDFLAGS = -module
 #_gfalthr_la_CFLAGS = $(PYTHON_CFLAGS)
-#_gfalthr_la_LIBADD = libgfal_pthr.la
+#_gfalthr_la_LIBADD = libsrm_pthr.la
 
 #gfalthr_wrap.c: gfalthr.i lcg-typemaps.python.i
 #	SWIG_LIB=$(SWIG_LIB_PATH) $(SWIG) -python -o $@ $<
@@ -201,11 +201,11 @@ GFAL_FLAGS = \
 	-DVERSION=\"$(VERSION)-$(RELEASE)\" \
 	$(SOAPCPP2_FLAGS)
 
-# libgfal.a
+# libsrm.a
 #-------------------------------------------------------------------------------
-libgfal_a_SOURCES = $(GFAL_SOURCE_FILES)
+libsrm_a_SOURCES = $(GFAL_SOURCE_FILES)
 
-libgfal_a_CFLAGS = \
+libsrm_a_CFLAGS = \
 	$(GLOBUS_NOTHR_CFLAGS) \
 	$(GLITE_CFLAGS) \
 	$(GFAL_FLAGS) \
@@ -213,11 +213,11 @@ libgfal_a_CFLAGS = \
 	$(CGSI_GSOAP_CFLAGS) \
 	$(VOMS_CFLAGS)
 
-# libgfal.la
+# libsrm.la
 #-------------------------------------------------------------------------------
-libgfal_la_SOURCES = $(GFAL_SOURCE_FILES)
+libsrm_la_SOURCES = $(GFAL_SOURCE_FILES)
 
-libgfal_la_LIBADD = \
+libsrm_la_LIBADD = \
 	-luuid -lc -ldl \
 	$(CGSI_GSOAP_LIBS) \
 	$(GLOBUS_GSS_NOTHR_LIBS) \
@@ -225,7 +225,7 @@ libgfal_la_LIBADD = \
 	$(VOMS_NOTHR_LIBS) \
 	-lldap
 
-libgfal_la_CFLAGS = \
+libsrm_la_CFLAGS = \
 	$(GLOBUS_NOTHR_CFLAGS) \
 	$(GLITE_CFLAGS) \
 	$(GFAL_FLAGS) \
@@ -233,15 +233,15 @@ libgfal_la_CFLAGS = \
 	$(CGSI_GSOAP_CFLAGS) \
 	$(VOMS_CFLAGS)
 
-libgfal_la_LDFLAGS = \
+libsrm_la_LDFLAGS = \
 	$(GFAL_FLAGS) \
 	-version-info $(INTERFACE_LIBTOOL_CURRENT):$(INTERFACE_LIBTOOL_REVISION):$(INTERFACE_LIBTOOL_AGE)
 
-# libgfal_pthr.la
+# libsrm_pthr.la
 #-------------------------------------------------------------------------------
-#libgfal_pthr_la_SOURCES = $(GFAL_SOURCE_FILES)
+#libsrm_pthr_la_SOURCES = $(GFAL_SOURCE_FILES)
 
-#libgfal_pthr_la_LIBADD = \
+#libsrm_pthr_la_LIBADD = \
 #	-luuid -lc -ldl \
 #	$(CGSI_GSOAP_LIBS) \
 #	$(GLOBUS_GSS_THR_LIBS) \
@@ -249,7 +249,7 @@ libgfal_la_LDFLAGS = \
 #	$(VOMS_THR_LIBS) \
 #	-lldap
 #
-#libgfal_pthr_la_CFLAGS = \
+#libsrm_pthr_la_CFLAGS = \
 #	$(GLOBUS_THR_CFLAGS) \
 #	$(GLITE_CFLAGS) \
 #	$(GFAL_FLAGS) \
@@ -257,16 +257,16 @@ libgfal_la_LDFLAGS = \
 #	$(CGSI_GSOAP_CFLAGS) \
 #	$(VOMS_CFLAGS)
 #
-#libgfal_pthr_la_LDFLAGS = \
+#libsrm_pthr_la_LDFLAGS = \
 #	$(GFAL_FLAGS) \
 #	-version-info $(INTERFACE_LIBTOOL_CURRENT):$(INTERFACE_LIBTOOL_REVISION):$(INTERFACE_LIBTOOL_AGE)
 
 
 srm_unittest_SOURCES = srm_unittest.c
-srm_unittest_LDADD = libgfal.la  
+srm_unittest_LDADD = libsrm.la  
 srm_unittest_CFLAGS = $(GFAL_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
 
 srm_test_SOURCES = srm_test.c
-srm_test_LDADD = libgfal.la  
+srm_test_LDADD = libsrm.la  
 srm_test_CFLAGS = $(GFAL_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
 
