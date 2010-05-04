@@ -54,6 +54,13 @@ int main(void) {
     system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
     system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");
 
+    i = srm_ls(&context,&input_ls,&output_ls);
+
+	if (!i)
+	{
+		PrintResult(output_ls);
+	}
+
     i = srm_rm(&context,&input_rm,&output_rm);
     printf("Remove:%d\n",i);
     i = srm_rmdir(&context,&input_rmdir,&output_rmdir);

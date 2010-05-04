@@ -14,7 +14,7 @@
 
 
 const char test_string[] = "test_string";
-const char test_strings[3][20] = { "test_string1","test_string2","\0"};
+const char* test_strings[3]= { "test_string1","test_string2",NULL};
 void PrintResult(struct srm_ls_output* output);
 
 
@@ -681,7 +681,6 @@ void TestIt()
 	const char *srmfunc = "testfunc";
 	struct srm_context context;
 	struct srm2__TReturnStatus retstatus;
-	char **test_surls = {"test_srl1", "\0"};
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -691,7 +690,7 @@ void TestIt()
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
-	input.surls = test_surls;
+	input.surls = test_strings;
 	input.nbfiles = 1;
 
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
@@ -700,14 +699,16 @@ void TestIt()
 int main(void)
 {
 	int number_failed;
+	int i;
 
-	Suite *s = test_suite ();
+	/*Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
-	srunner_free (sr);
+	srunner_free (sr);*/
 
-	//TestIt();
+	TestIt();
+
 
 	//printf("TEST\n");
 	return EXIT_SUCCESS;
