@@ -21,8 +21,8 @@
 # Release: $Name:  $
 
 SOAPCPP2=$(GSOAP_LOCATION)/bin/soapcpp2
-SOAPCPP2FLAGS=-c -d/home/tmanev/tmp 
-#SOAPCPP2FLAGS=-c  
+#SOAPCPP2FLAGS=-c -d/home/tmanev/tmp 
+SOAPCPP2FLAGS=-c  
 #	-c = generate c code
 
 #WSDL2H=$(GSOAP_LOCATION)/bin/wsdl2h
