@@ -7,6 +7,7 @@
 int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output **output);
 int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_output **output);
 int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output **output);
+int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 
 // Local Functions
 /////////////////////////
@@ -643,19 +644,19 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 		sav_errno = statuscode2errno (repstatp->statusCode);
 
-	/*	if (sav_errno != 0) {
+		if (sav_errno != 0) {
 			if (repstatp->explanation && repstatp->explanation[0])
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: %s",
-						gfal_remote_type, srmfunc, statuscode2errmsg(repstatp->statusCode),
-						dest_file, repstatp->explanation);
+				srm_errmsg (context , "[SE][%s][%s] %s: %s",
+						srmfunc, statuscode2errmsg(repstatp->statusCode),
+						file, repstatp->explanation);
 			else
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: <none>",
-						gfal_remote_type, srmfunc, statuscode2errmsg(repstatp->statusCode), dest_file);
+				srm_errmsg (context,  "[SE][%s][%s] %s: <none>",
+						srmfunc, statuscode2errmsg(repstatp->statusCode), file);
 
 			srm_soap_deinit(&soap);
 			errno = sav_errno;
 			return (-1);
-		}*/
+		}
 
 		*p = '/';
 	}

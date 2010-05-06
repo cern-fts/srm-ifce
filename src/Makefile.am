@@ -189,8 +189,10 @@ GFAL_SOURCE_FILES = \
 	srm_util.c \
 	srmv2_directory_functions.c \
 	srmv2_data_transfer_functions.c \
+	srmv2_space_management_functions.c \
+	srm_space_management_functions.c \
     srm_data_transfer_functions.c \
-    srm_directory_functions.c
+    srm_directory_functions.c 
 
 GFAL_FLAGS = \
 	-I$(LFC_LOCATION)/include/lfc \

@@ -70,7 +70,7 @@ struct srm_rm_output {
 
 typedef struct srm_rmdir_input{
 	int recursive;
-	char *surl; // null terminated array of strings
+	char *surl;
 };
 
 struct srm_rmdir_output {
@@ -82,6 +82,33 @@ struct srm_rmdir_output {
 
 typedef struct srm_mkdir_input{
 	char 	*dir_name;
+};
+
+typedef struct srm_preparetoget_input{
+	int nbfiles;
+	char **surls;
+	int desiredpintime;
+	char *spacetokendesc;
+	char **protocols;
+	char **reqtoken;
+};
+
+struct srm_preparetoget_output {
+	char 	*surl;
+	char 	*turl;
+	int 	status;
+	char 	*explanation;
+	int 	pinlifetime;
+};
+
+typedef struct srm_getspacetokens_input
+{
+	char *spacetokendesc;
+};
+struct srm_getspacetokens_output
+{
+	int nbtokens;
+	char ***spacetokens;
 };
 
 #endif /* _SRM_TYPES_H */

@@ -26,8 +26,10 @@ int main(void) {
 							 "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba"};
 
 
-	char *test_surl_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/";
+	char *test_surl_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/3/4";
+	char *test_surl_rmdir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2";
 
+	context.verbose = 1;
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
@@ -43,7 +45,7 @@ int main(void) {
 	input_rm.surls = test_surls_rm;
 
 	input_rmdir.recursive = 1;
-	input_rmdir.surl = test_surl_dir;
+	input_rmdir.surl = test_surl_rmdir;
 
 	input_mkdir.dir_name = test_surl_dir;
 
@@ -55,7 +57,17 @@ int main(void) {
 	}
 
     i = srm_mkdir(&context,&input_mkdir);
-    printf("Mkdir:%s %d",input_mkdir.dir_name,i);
+    printf("Mkdir:%s %d \n",input_mkdir.dir_name,i);
+
+    i = srm_ls(&context,&input_ls,&output_ls);
+
+	if (!i)
+	{
+		PrintResult(output_ls);
+	}
+
+	i = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,i);
 
     i = srm_ls(&context,&input_ls,&output_ls);
 
