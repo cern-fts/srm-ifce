@@ -16,4 +16,6 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 		struct srm_internal_context *internal_context);
 int wait_for_new_attempt(struct srm_internal_context *internal_context);
 
+void srm_spacemd_free (int nbtokens, srm_spacemd *smd);
+
 #endif /* SRM_UTIL_H_ */

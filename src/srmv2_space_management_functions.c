@@ -3,12 +3,180 @@
 #include "srm_util.h"
 #include "srm_dependencies.h"
 
-/* returns space tokens associated to the space description */
-int srmv2_getspacetokens (
-		struct srm_context *context,struct srm_getspacetokens_input *input,struct srm_getspacetokens_output *output)
+int srmv2_getspacemd (struct srm_context *context,
+		struct srmv2_getspacemd_input *input, srm_spacemd **spaces)
+{
+	int flags;
+	int sav_errno = 0;
+	int i, ret;
+	struct soap soap;
+	struct srm2__srmGetSpaceMetaDataResponse_ tknrep;
+	struct srm2__srmGetSpaceMetaDataRequest tknreq;
+	struct srm2__TReturnStatus *tknrepstatp;
+	struct srm2__ArrayOfTMetaDataSpace *tknrepp;
+	const char srmfunc[] = "GetSpaceMetaData";
 
-//		const char *spacetokendesc spacetokendesc, const char *srm_endpoint, int *nbtokens, char ***spacetokens,
-	//	char *errbuf, int errbufsz, int timeout)
+	if (input->nbtokens < 1 || input->spacetokens == NULL || context->srm_endpoint == NULL || spaces == NULL)
+	{
+		srm_errmsg (context, "[SRM][srmv2_getspacemd][EINVAL] Invalid arguments");
+		errno = EINVAL;
+		return (-1);
+	}
+
+	if (input->spacetokens[input->nbtokens] != NULL)
+	{
+		srm_errmsg (context, "[SRM][srmv2_getspacemd][EINVAL] Invalid space token number");
+		errno = EINVAL;
+		return (-1);
+	}
+
+	srm_soap_init(&soap);
+
+	memset (&tknreq, 0, sizeof(tknreq));
+
+	if ((tknreq.arrayOfSpaceTokens =
+				soap_malloc (&soap, input->nbtokens * sizeof(struct srm2__ArrayOfString))) == NULL)
+	{
+		srm_errmsg (context, "[SRM][soap_malloc][] error");
+		errno = ENOMEM;
+		soap_end (&soap);
+		soap_done (&soap);
+		return (-1);
+	}
+
+	tknreq.arrayOfSpaceTokens->__sizestringArray = input->nbtokens;
+	tknreq.arrayOfSpaceTokens->stringArray = (char **) input->spacetokens;
+
+	if ((ret = call_function.call_srm2__srmGetSpaceMetaData(&soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep)))
+	{
+		errno = srm_soup_call_err(context,&soap,srmfunc);
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+
+	if (tknrep.srmGetSpaceMetaDataResponse == NULL ||
+			(tknrepstatp = tknrep.srmGetSpaceMetaDataResponse->returnStatus) == NULL) {
+		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
+				srmfunc, context->srm_endpoint);
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+
+	if (tknrepstatp->statusCode != SRM_USCORESUCCESS)
+	{
+		errno = srm_print_error_status(context,tknrepstatp,srmfunc);
+		soap_end (&soap);
+		soap_done (&soap);
+		return (-1);
+	}
+
+	tknrepp = tknrep.srmGetSpaceMetaDataResponse->arrayOfSpaceDetails;
+
+	if (! tknrepp)
+	{
+		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
+				 srmfunc, context->srm_endpoint);
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+	if (tknrepp->__sizespaceDataArray < 1 || !tknrepp->spaceDataArray) {
+		srm_errmsg (context, "[SE][%s][] %s: no valid space tokens",
+			srmfunc, context->srm_endpoint);
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = EINVAL;
+		return (-1);
+	}
+
+	if ((*spaces = (srm_spacemd *) calloc (input->nbtokens, sizeof (srm_spacemd))) == NULL) {
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < input->nbtokens; i++)
+	{
+		if (!tknrepp->spaceDataArray[i] || !tknrepp->spaceDataArray[i]->spaceToken)
+			continue;
+		if (tknrepp->spaceDataArray[i]->status &&
+				tknrepp->spaceDataArray[i]->status->statusCode != SRM_USCORESUCCESS) {
+			int sav_errno = statuscode2errno (tknrepp->spaceDataArray[i]->status->statusCode);
+			if (tknrepp->spaceDataArray[i]->status->explanation && tknrepp->spaceDataArray[i]->status->explanation[0])
+			{
+				srm_errmsg (context, "[SE][%s][%s] %s: %s",
+						srmfunc, statuscode2errmsg (tknrepp->spaceDataArray[i]->status->statusCode),
+						context->srm_endpoint, tknrepp->spaceDataArray[i]->status->explanation);
+			}else
+			{
+				srm_errmsg (context, "[%s][%s][%s] %s: <none>",
+						context->srm_endpoint, statuscode2errmsg (tknrepp->spaceDataArray[i]->status->statusCode));
+			}
+
+			soap_end (&soap);
+			soap_done (&soap);
+			errno = sav_errno;
+			return (-1);
+		}
+		(*spaces)[i].spacetoken = strdup (tknrepp->spaceDataArray[i]->spaceToken);
+		if (tknrepp->spaceDataArray[i]->owner)
+			(*spaces)[i].owner = strdup (tknrepp->spaceDataArray[i]->owner);
+		if (tknrepp->spaceDataArray[i]->totalSize)
+			(*spaces)[i].totalsize = (SRM_LONG64) *(tknrepp->spaceDataArray[i]->totalSize);
+		if (tknrepp->spaceDataArray[i]->guaranteedSize)
+			(*spaces)[i].guaranteedsize = (SRM_LONG64) *(tknrepp->spaceDataArray[i]->guaranteedSize);
+		if (tknrepp->spaceDataArray[i]->unusedSize)
+			(*spaces)[i].unusedsize = (SRM_LONG64) *(tknrepp->spaceDataArray[i]->unusedSize);
+		if (tknrepp->spaceDataArray[i]->lifetimeAssigned)
+			(*spaces)[i].lifetimeassigned = *(tknrepp->spaceDataArray[i]->lifetimeAssigned);
+		if (tknrepp->spaceDataArray[i]->lifetimeLeft)
+			(*spaces)[i].lifetimeleft = *(tknrepp->spaceDataArray[i]->lifetimeLeft);
+		if (tknrepp->spaceDataArray[i]->retentionPolicyInfo) {
+			switch (tknrepp->spaceDataArray[i]->retentionPolicyInfo->retentionPolicy) {
+				case REPLICA:
+					(*spaces)[i].retentionpolicy = SRM_POLICY_REPLICA;
+					break;
+				case OUTPUT:
+					(*spaces)[i].retentionpolicy = SRM_POLICY_OUTPUT;
+					break;
+				case CUSTODIAL:
+					(*spaces)[i].retentionpolicy = SRM_POLICY_CUSTODIAL;
+					break;
+				default:
+					(*spaces)[i].retentionpolicy = SRM_POLICY_UNKNOWN;
+			}
+
+			if (tknrepp->spaceDataArray[i]->retentionPolicyInfo->accessLatency)
+			{
+				switch (*(tknrepp->spaceDataArray[i]->retentionPolicyInfo->accessLatency)) {
+					case ONLINE:
+						(*spaces)[i].accesslatency = SRM_LATENCY_ONLINE;
+						break;
+					case NEARLINE:
+						(*spaces)[i].accesslatency = SRM_LATENCY_NEARLINE;
+						break;
+					default:
+						(*spaces)[i].accesslatency = SRM_LATENCY_UNKNOWN;
+				}
+			}
+		}
+	}
+
+	soap_end (&soap);
+	soap_done (&soap);
+    errno = 0;
+	return (0);
+}
+/* returns space tokens associated to the space description */
+int srmv2_getspacetokens (struct srm_context *context,
+		struct srm_getspacetokens_input *input,
+		struct srm_getspacetokens_output *output)
 {
 	int flags;
 	int sav_errno = 0;
@@ -93,6 +261,78 @@ int srmv2_getspacetokens (
     errno = 0;
 	return (0);
 }
+/* returns best space token */
+char* srmv2_getbestspacetoken (struct srm_context *context,
+		struct srm_getbestspacetokens_input *input)
+{
+	struct srm_getspacetokens_input getspacetoken_input;
+	struct srm_getspacetokens_output getspacetoken_output;
+	struct srmv2_getspacemd_input getspacemd_input;;
+	int sav_errno = 0;
+	int i, ret, numtoken = -1;
+	SRM_LONG64 unusedsize = -1;
+	char **spacetokens = NULL;
+	srm_spacemd *spacemd = NULL;
+	char *spacetoken = NULL;
+
+	getspacetoken_input.spacetokendesc = input->spacetokendesc;
+	ret = srmv2_getspacetokens(context,&getspacetoken_input,&getspacetoken_output);
+
+	if (ret < 0 || getspacetoken_output.spacetokens == NULL
+				|| getspacetoken_output.nbtokens < 1)
+	{
+		errno = ret == 0 ? ENOMEM : errno;
+		return (NULL);
+	}
+
+   if (getspacetoken_output.nbtokens == 1)
+   {
+        errno = 0;
+        spacetoken = getspacetoken_output.spacetokens[0];
+        free (getspacetoken_output.spacetokens);
+        return (spacetoken);
+    }
+
+    getspacemd_input.nbtokens = getspacetoken_output.nbtokens;
+    getspacemd_input.spacetokens = getspacetoken_output.spacetokens;
+	ret = srmv2_getspacemd (context,&getspacemd_input,&spacemd);
+	if (ret < 0 || spacemd == NULL) {
+		sav_errno = ret == 0 ? ENOMEM : errno;
+
+		for (i = 0; i < getspacetoken_output.nbtokens; ++i)
+			if (getspacetoken_output.spacetokens[i]) free (getspacetoken_output.spacetokens[i]);
+
+		free (getspacetoken_output.spacetokens);
+		errno = sav_errno;
+		return (NULL);
+	}
+
+	/* Get the spacetoken with the least free space, but a bit more than needed */
+	for (i = 0; i < getspacetoken_output.nbtokens; ++i) {
+		if (getspacetoken_output.spacetokens[i]) free (getspacetoken_output.spacetokens[i]);
+		if (spacemd[i].unusedsize < input->neededsize + SRM_SIZE_MARGIN)
+			continue;
+		if (numtoken < 0 || spacemd[i].unusedsize < unusedsize) {
+			numtoken = i;
+			unusedsize = spacemd[i].unusedsize;
+		}
+	}
+
+	if (numtoken < 0) {
+		/* no suitable space token */
+		srm_errmsg (context,"[SRM][srmv2_getbestspacetoken][EINVAL] %s: no associated space token with enough free space",
+				input->spacetokendesc);
+		errno = EINVAL;
+		return (NULL);
+	}
+
+	spacetoken = spacemd[numtoken].spacetoken;
+	spacemd[numtoken].spacetoken = NULL;  // prevent it to be freed
+	srm_spacemd_free (getspacetoken_output.nbtokens, spacemd);
+	free (spacetokens);
+    errno = 0;
+	return (spacetoken);
+}
 // Calls first srmv2_getspacetokens
 // and srmv2_getspacemd
 /*char * srmv2_getbestspacetoken (const char *spacetokendesc,
@@ -103,7 +343,7 @@ int srmv2_getspacetokens (
 	int i, ret, nbtokens = -1, numtoken = -1;
 	GFAL_LONG64 unusedsize = -1;
 	char **spacetokens = NULL;
-	gfal_spacemd *spacemd = NULL;
+	srm_spacemd *spacemd = NULL;
 	char *spacetoken = NULL;
 
 	ret = srmv2_getspacetokens (spacetokendesc, srm_endpoint, &nbtokens, &spacetokens, errbuf, errbufsz, timeout);
@@ -144,7 +384,7 @@ int srmv2_getspacetokens (
 
 	if (numtoken < 0) {
 		// no suitable space token
-		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR,
+		srm_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR,
 				"[GFAL][srmv2_getbestspacetoken][EINVAL] %s: no associated space token with enough free space", spacetokendesc);
 		errno = EINVAL;
 		return (NULL);
@@ -152,7 +392,7 @@ int srmv2_getspacetokens (
 
 	spacetoken = spacemd[numtoken].spacetoken;
 	spacemd[numtoken].spacetoken = NULL;  // prevent it to be freed
-	gfal_spacemd_free (nbtokens, spacemd);
+	srm_spacemd_free (nbtokens, spacemd);
 	free (spacetokens);
     errno = 0;
 	return (spacetoken);

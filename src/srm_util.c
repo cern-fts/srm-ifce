@@ -264,3 +264,17 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 	}
 	return srm_call_status_FAILURE;
 }
+void srm_spacemd_free (int nbtokens, srm_spacemd *smd)
+{
+	int i;
+
+	if (smd == NULL)
+		return;
+
+	for (i = 0; i < nbtokens; ++i) {
+		if (smd[i].spacetoken) free (smd[i].spacetoken);
+		if (smd[i].owner) free (smd[i].owner);
+	}
+
+	free (smd);
+}

@@ -15,6 +15,11 @@
 
 
 /* Function types of the appropriate SOAP calls */
+typedef int (*soap_call_srm2__srmGetSpaceMetaData_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmGetSpaceMetaDataRequest *,
+    struct srm2__srmGetSpaceMetaDataResponse_ *);
+
 typedef int (*soap_call_srm2__srmGetSpaceTokens_fv)(
     struct soap *, const char *, const char *,
     struct srm2__srmGetSpaceTokensRequest *,
@@ -57,6 +62,7 @@ typedef unsigned int (*sleep_fv)(
 /* The collection of SOAP service calls. The pointers may be replaced with test
  * functions (dependency injection) */
 typedef struct misc_callers {
+	soap_call_srm2__srmGetSpaceMetaData_fv		call_srm2__srmGetSpaceMetaData;
 	soap_call_srm2__srmGetSpaceTokens_fv		call_srm2__srmGetSpaceTokens;
 	soap_call_srm2__srmLs_fv 					call_srm2__srmLs;
 	soap_call_srm2__srmStatusOfLsRequest_fv 	call_srm2__srmStatusOfLsRequest;

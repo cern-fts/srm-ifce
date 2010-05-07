@@ -18868,7 +18868,7 @@ fi
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
   enableval="$enable_debug"
-  CFLAGS="$CFLAGS -g -DDEBUG -D_DEBUG -O0 -ggdb -L/usr/local/lib -lcheck -fPIC"
+  CFLAGS="$CFLAGS -g -DDEBUG -D_DEBUG -O0 -ggdb -L/usr/local/lib -lcheck "
 fi;
 
 # Check whether --enable-wall or --disable-wall was given.

@@ -2,6 +2,7 @@
 #include "srm_soap.h"
 
 callers_t call_function = {
+		soap_call_srm2__srmGetSpaceMetaData,
 		soap_call_srm2__srmGetSpaceTokens,
 		soap_call_srm2__srmLs,
 		soap_call_srm2__srmStatusOfLsRequest,
