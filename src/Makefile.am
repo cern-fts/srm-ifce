@@ -180,7 +180,7 @@ BUILT_SOURCES =
 #	SWIG_LIB=$(SWIG_LIB_PATH) $(SWIG) -python -o $@ $<
 
 
-GFAL_SOURCE_FILES = \
+SRM_SOURCE_FILES = \
     stdsoap2.c \
     srmv2C.c \
     srmv2Client.c \
@@ -188,36 +188,36 @@ GFAL_SOURCE_FILES = \
 	srm_dependencies.c \
 	srm_util.c \
 	srmv2_directory_functions.c \
-	srmv2_data_transfer_functions.c \
 	srmv2_space_management_functions.c \
+	srmv2_data_transfer_functions.c \
 	srm_space_management_functions.c \
     srm_data_transfer_functions.c \
     srm_directory_functions.c 
 
-GFAL_FLAGS = \
+SRM_FLAGS = \
 	-I$(LFC_LOCATION)/include/lfc \
-	-DGFAL_ENABLE_RFIO -I/usr/include/shift -I/usr/local/include/shift -I$(DPM_LOCATION)/include/dpm \
-	-DGFAL_ENABLE_DCAP -I$(DCAP_LOCATION)/include \
-	-DGFAL_SECURE \
+	-DSRM_ENABLE_RFIO -I/usr/include/shift -I/usr/local/include/shift -I$(DPM_LOCATION)/include/dpm \
+	-DSRM_ENABLE_DCAP -I$(DCAP_LOCATION)/include \
+	-DSRM_SECURE \
 	-fPIC -D_LARGEFILE64_SOURCE \
 	-DVERSION=\"$(VERSION)-$(RELEASE)\" \
 	$(SOAPCPP2_FLAGS)
 
 # libsrm.a
 #-------------------------------------------------------------------------------
-libsrm_a_SOURCES = $(GFAL_SOURCE_FILES)
+libsrm_a_SOURCES = $(SRM_SOURCE_FILES)
 
 libsrm_a_CFLAGS = \
 	$(GLOBUS_NOTHR_CFLAGS) \
 	$(GLITE_CFLAGS) \
-	$(GFAL_FLAGS) \
+	$(SRM_FLAGS) \
 	$(GSOAP_CFLAGS) \
 	$(CGSI_GSOAP_CFLAGS) \
 	$(VOMS_CFLAGS)
 
 # libsrm.la
 #-------------------------------------------------------------------------------
-libsrm_la_SOURCES = $(GFAL_SOURCE_FILES)
+libsrm_la_SOURCES = $(SRM_SOURCE_FILES)
 
 libsrm_la_LIBADD = \
 	-luuid -lc -ldl \
@@ -230,18 +230,18 @@ libsrm_la_LIBADD = \
 libsrm_la_CFLAGS = \
 	$(GLOBUS_NOTHR_CFLAGS) \
 	$(GLITE_CFLAGS) \
-	$(GFAL_FLAGS) \
+	$(SRM_FLAGS) \
 	$(GSOAP_CFLAGS) \
 	$(CGSI_GSOAP_CFLAGS) \
 	$(VOMS_CFLAGS)
 
 libsrm_la_LDFLAGS = \
-	$(GFAL_FLAGS) \
+	$(SRM_FLAGS) \
 	-version-info $(INTERFACE_LIBTOOL_CURRENT):$(INTERFACE_LIBTOOL_REVISION):$(INTERFACE_LIBTOOL_AGE)
 
 # libsrm_pthr.la
 #-------------------------------------------------------------------------------
-#libsrm_pthr_la_SOURCES = $(GFAL_SOURCE_FILES)
+#libsrm_pthr_la_SOURCES = $(SRM_SOURCE_FILES)
 
 #libsrm_pthr_la_LIBADD = \
 #	-luuid -lc -ldl \
@@ -254,21 +254,21 @@ libsrm_la_LDFLAGS = \
 #libsrm_pthr_la_CFLAGS = \
 #	$(GLOBUS_THR_CFLAGS) \
 #	$(GLITE_CFLAGS) \
-#	$(GFAL_FLAGS) \
+#	$(SRM_FLAGS) \
 #	$(GSOAP_CFLAGS) \
 #	$(CGSI_GSOAP_CFLAGS) \
 #	$(VOMS_CFLAGS)
 #
 #libsrm_pthr_la_LDFLAGS = \
-#	$(GFAL_FLAGS) \
+#	$(SRM_FLAGS) \
 #	-version-info $(INTERFACE_LIBTOOL_CURRENT):$(INTERFACE_LIBTOOL_REVISION):$(INTERFACE_LIBTOOL_AGE)
 
 
 srm_unittest_SOURCES = srm_unittest.c
 srm_unittest_LDADD = libsrm.la  
-srm_unittest_CFLAGS = $(GFAL_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
+srm_unittest_CFLAGS = $(SRM_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
 
 srm_test_SOURCES = srm_test.c
 srm_test_LDADD = libsrm.la  
-srm_test_CFLAGS = $(GFAL_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
+srm_test_CFLAGS = $(SRM_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
 

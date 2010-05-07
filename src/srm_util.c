@@ -115,7 +115,7 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 
 	free (actual_format);
 }
-void srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
+int srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
 {
 	if (soap->fault != NULL && soap->fault->faultstring != NULL)
 	{
@@ -130,17 +130,18 @@ void srm_soup_call_err(struct srm_context *context,struct soap *soap,const char 
 		srm_errmsg (context, "[SE][%s][] %s: Unknown SOAP error (%d)",
 				 srmfunc,context->srm_endpoint, soap->error);
 	}
-	errno = ECOMM;
+	return ECOMM;
 }
-void srm_call_err(struct srm_context *context,struct srm_internal_context *internal_context
+int srm_call_err(struct srm_context *context,struct srm_internal_context *internal_context
 		,const char *srmfunc)
 {
+	int result_errno;
 	if (internal_context->retstatus->statusCode != SRM_USCORESUCCESS &&
 			internal_context->retstatus->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS &&
 			internal_context->retstatus->statusCode != SRM_USCOREDONE &&
 			internal_context->retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
 	{
-		errno = statuscode2errno (internal_context->retstatus->statusCode);
+		result_errno = statuscode2errno (internal_context->retstatus->statusCode);
 		if (internal_context->retstatus->explanation && internal_context->retstatus->explanation[0])
 		{
 			srm_errmsg (context, "[SE][%s][%s] %s: %s",
@@ -156,8 +157,25 @@ void srm_call_err(struct srm_context *context,struct srm_internal_context *inter
 	{
 		srm_errmsg (context, "[SE][%s][%s] %s: <empty response>",
 				srmfunc, statuscode2errmsg (internal_context->retstatus->statusCode), context->srm_endpoint);
-		errno = ECOMM;
+		result_errno = ECOMM;
 	}
+	return result_errno;
+}
+// return error status
+int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,char *srmfunc)
+{
+
+	if (status->explanation && status->explanation[0])
+	{
+		srm_errmsg (context, "[SE][%s][%s] %s: %s",
+				 srmfunc, statuscode2errmsg (status->statusCode),
+				 context->srm_endpoint, status->explanation);
+	}else
+	{	srm_errmsg (context, "[%s][%s][%s] %s: <none>",
+				 srmfunc, statuscode2errmsg (status->statusCode),
+				 context->srm_endpoint);
+	}
+	return statuscode2errno (status->statusCode);
 }
 void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqstatp,const char *srmfunc)
 {

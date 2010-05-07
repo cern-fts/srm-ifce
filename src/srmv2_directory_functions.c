@@ -103,7 +103,7 @@ srm_call_status srmv2_ls_async(struct srm_context *context,struct srm_ls_input *
 		// If no response break with failure
 		if ((rep.srmLsResponse == NULL)||(ret!=0))
 		{
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			current_status = srm_call_status_FAILURE;
 			break;
 		}
@@ -144,7 +144,7 @@ srm_call_status srmv2_ls_async(struct srm_context *context,struct srm_ls_input *
 			n = copy_ls_output(internal_context->retstatus, repfs, output);
 			if (n == -1)
 			{
-				srm_call_err(context,internal_context,srmfunc);
+				errno = srm_call_err(context,internal_context,srmfunc);
 				current_status  = srm_call_status_FAILURE;
 			}else
 			{
@@ -190,7 +190,7 @@ srm_call_status srmv2_status_of_ls_request(struct srm_context *context,
 		// If no response break with failure
 		if ((srep.srmStatusOfLsRequestResponse == NULL)||(ret!=0))
 		{
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			current_status = srm_call_status_FAILURE;
 			break;
 		}
@@ -219,7 +219,7 @@ srm_call_status srmv2_status_of_ls_request(struct srm_context *context,
 			n = copy_ls_output(internal_context->retstatus, repfs, output);
 			if (n == -1)
 			{
-				srm_call_err(context,internal_context,srmfunc);
+				errno = srm_call_err(context,internal_context,srmfunc);
 				current_status  = srm_call_status_FAILURE;
 			}else
 			{
@@ -265,7 +265,7 @@ srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_inter
 		if (result != 0)
 		{
 			// Soap call failure
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			current_status = srm_call_status_FAILURE;
 		}
 	}
@@ -439,7 +439,7 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 		// If no response break with failure
 		if ((rep.srmRmResponse == NULL)||(ret!=0))
 		{
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			current_status = srm_call_status_FAILURE;
 			break;
 		}
@@ -453,7 +453,7 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	repfs = rep.srmRmResponse->arrayOfFileStatuses;
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
-		srm_call_err(context,&internal_context,srmfunc);
+		errno = srm_call_err(context,&internal_context,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
@@ -513,7 +513,7 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 		// If no response break with failure
 		if ((rep.srmRmdirResponse == NULL)||(ret!=0))
 		{
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			current_status = srm_call_status_FAILURE;
 			break;
 		}
@@ -583,7 +583,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 		if (call_function.call_srm2__srmMkdir (&soap, context->srm_endpoint, srmfunc, &req, &rep))
 		{
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			srm_soap_deinit(&soap);
 			return (-1);
 		}
@@ -627,7 +627,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 		if (call_function.call_srm2__srmMkdir(&soap, context->srm_endpoint, srmfunc, &req, &rep))
 		{
-			srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soup_call_err(context,&soap,srmfunc);
 			srm_soap_deinit(&soap);
 			errno = ECOMM;
 			return (-1);

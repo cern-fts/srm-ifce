@@ -61,7 +61,7 @@ fi
 AC_ARG_ENABLE(
 	[debug],
 	[AS_HELP_STRING([--enable-debug],[Produce binaries with debugging symbols.])],
-	[CFLAGS="$CFLAGS -g -DDEBUG -D_DEBUG -O0 -ggdb -L/usr/local/lib -lcheck"])
+	[CFLAGS="$CFLAGS -g -DDEBUG -D_DEBUG -O0 -ggdb -L/usr/local/lib -lcheck "])
 
 AC_ARG_ENABLE(
 	[wall],

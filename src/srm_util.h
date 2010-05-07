@@ -5,8 +5,9 @@ void srm_soap_init(struct soap *soap);
 void srm_soap_deinit(struct soap *soap);
 
 void srm_errmsg (struct srm_context *context, const char *format, ...);
-void srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
-void srm_call_err(struct srm_context *context,struct srm_internal_context *internal_context,const char *srmfunc);
+int srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
+int srm_call_err(struct srm_context *context,struct srm_internal_context *internal_context,const char *srmfunc);
+int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,char *srmfunc);
 
 int statuscode2errno (int statuscode);
 const char * statuscode2errmsg (int statuscode);

@@ -5,12 +5,12 @@
 
 /* returns space tokens associated to the space description */
 int srmv2_getspacetokens (
-		struct srm_context *context,struct srm_getspacetokens_input *input)
+		struct srm_context *context,struct srm_getspacetokens_input *input,struct srm_getspacetokens_output *output)
 
-//		const char *spacetokendescspacetokendesc, const char *srm_endpoint, int *nbtokens, char ***spacetokens,
+//		const char *spacetokendesc spacetokendesc, const char *srm_endpoint, int *nbtokens, char ***spacetokens,
 	//	char *errbuf, int errbufsz, int timeout)
 {
-	/*int flags;
+	int flags;
 	int sav_errno = 0;
 	int i, ret;
 	struct soap soap;
@@ -20,103 +20,79 @@ int srmv2_getspacetokens (
 	struct srm2__ArrayOfString *tknrepp;
 	const char srmfunc[] = "GetSpaceTokens";
 
-	if (spacetokendesc == NULL || srm_endpoint == NULL || spacetokens == NULL || nbtokens == NULL) {
-		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[GFAL][srmv2_getspacetokens][EINVAL] Invalid arguments");
+	if (input->spacetokendesc == NULL || context->srm_endpoint == NULL
+			|| output->spacetokens == NULL || output == NULL)
+	{
+		srm_errmsg( context, "[SRM][srmv2_getspacetokens][EINVAL] Invalid arguments");
 		errno = EINVAL;
 		return (-1);
 	}
-	*nbtokens = 0;
-	*spacetokens = NULL;
+	output->nbtokens = 0;
+	*(output->spacetokens) = NULL;
 
 	srm_soap_init(&soap);
 
 	memset (&tknreq, 0, sizeof(tknreq));
 
-	tknreq.userSpaceTokenDescription = (char *) spacetokendesc;
+	tknreq.userSpaceTokenDescription = (char *) input->spacetokendesc;
 
-	if ((ret = soap_call_srm2__srmGetSpaceTokens (&soap, srm_endpoint, srmfunc, &tknreq, &tknrep))) {
-		if (soap.fault != NULL && soap.fault->faultstring != NULL)
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: %s",
-					gfal_remote_type, srmfunc, srm_endpoint, soap.fault->faultstring);
-		else if (soap.error == SOAP_EOF)
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Connection fails or timeout",
-				   	gfal_remote_type, srmfunc, srm_endpoint);
-		else
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Unknown SOAP error (%d)",
-					gfal_remote_type, srmfunc, srm_endpoint, soap.error);
-
-		soap_end (&soap);
-		soap_done (&soap);
-		errno = ECOMM;
+	if ((ret = call_function.call_srm2__srmGetSpaceTokens (&soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep)))
+	{
+		srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
 	if (tknrep.srmGetSpaceTokensResponse == NULL ||
 			(tknrepstatp = tknrep.srmGetSpaceTokensResponse->returnStatus) == NULL) {
-		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: <empty response>",
-				gfal_remote_type, srmfunc, srm_endpoint);
-		soap_end (&soap);
-		soap_done (&soap);
+		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
+				srmfunc, context->srm_endpoint);
+		srm_soap_deinit(&soap);
 		errno = ECOMM;
 		return (-1);
 	}
 
-	if (tknrepstatp->statusCode != SRM_USCORESUCCESS) {
-		sav_errno = statuscode2errno (tknrepstatp->statusCode);
-		if (tknrepstatp->explanation && tknrepstatp->explanation[0])
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: %s",
-					gfal_remote_type, srmfunc, statuscode2errmsg (tknrepstatp->statusCode),
-					srm_endpoint, tknrepstatp->explanation);
-		else
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: <none>",
-					gfal_remote_type, srmfunc, statuscode2errmsg (tknrepstatp->statusCode), srm_endpoint);
+	if (tknrepstatp->statusCode != SRM_USCORESUCCESS)
+	{
 
-		soap_end (&soap);
-		soap_done (&soap);
-		errno = sav_errno;
+		errno = srm_print_error_status(context,tknrepstatp,srmfunc);;
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
 	tknrepp = tknrep.srmGetSpaceTokensResponse->arrayOfSpaceTokens;
 
 	if (!tknrepp) {
-		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: <empty response>",
-				gfal_remote_type, srmfunc, statuscode2errmsg (tknrepstatp->statusCode), srm_endpoint);
-		soap_end (&soap);
-		soap_done (&soap);
+		srm_errmsg (context, "[SE][%s][%s] %s: <empty response>",
+				 srmfunc, statuscode2errmsg (tknrepstatp->statusCode), context->srm_endpoint);
+		srm_soap_deinit(&soap);
 		errno = ECOMM;
 		return (-1);
 	}
 
-	*nbtokens = tknrepp->__sizestringArray;
-	if (*nbtokens < 1 || !tknrepp->stringArray) {
-		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: %s: No such space token descriptor",
-				gfal_remote_type, srmfunc, statuscode2errmsg (tknrepstatp->statusCode),
-				srm_endpoint, spacetokendesc);
-		soap_end (&soap);
-		soap_done (&soap);
+	output->nbtokens = tknrepp->__sizestringArray;
+	if (output->nbtokens < 1 || !tknrepp->stringArray) {
+		srm_errmsg (context, "[SE][%s][%s] %s: %s: No such space token descriptor",
+				 srmfunc, statuscode2errmsg (tknrepstatp->statusCode),
+				context->srm_endpoint,input->spacetokendesc);
+		srm_soap_deinit(&soap);
 		errno = EINVAL;
 		return (-1);
 	}
 
-	if ((*spacetokens = (char **) calloc (*nbtokens + 1, sizeof (char *))) == NULL) {
-		soap_end (&soap);
-		soap_done (&soap);
+	if ((*output->spacetokens = (char **) calloc (output->nbtokens + 1, sizeof (char *))) == NULL) {
+		srm_soap_deinit(&soap);
 		errno = ENOMEM;
 		return (-1);
 	}
 
-	for (i = 0; i < *nbtokens; ++i)
-		(*spacetokens)[i] = strdup(tknrepp->stringArray[i]);
+	for (i = 0; i < output->nbtokens; ++i)
+		(*output->spacetokens)[i] = strdup(tknrepp->stringArray[i]);
 
-	soap_end (&soap);
-	soap_done (&soap);
-    errno = 0;*/
+	srm_soap_deinit(&soap);
+    errno = 0;
 	return (0);
 }
-
-
-
 // Calls first srmv2_getspacetokens
 // and srmv2_getspacemd
 /*char * srmv2_getbestspacetoken (const char *spacetokendesc,
