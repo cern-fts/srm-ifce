@@ -170,6 +170,27 @@ struct srm_preparetoget_output {
 	char 	*explanation;
 	int 	pinlifetime;
 };
+/*int nbfiles, const char **surls,
+SRM_LONG64 *filesizes, int desiredpintime, const char *spacetokendesc,
+char **protocols, char **reqtoken,*/
+
+typedef struct srm_preparetoput_input{
+	SRM_LONG64 *filesizes;
+	int nbfiles;
+	char **surls;
+	int desiredpintime;
+	char *spacetokendesc;
+	char **protocols;
+	char **reqtoken;
+};
+
+struct srm_preparetoput_output {
+	char 	*surl;
+	char 	*turl;
+	int 	status;
+	char 	*explanation;
+	int 	pinlifetime;
+};
 
 typedef struct srm_getspacetokens_input
 {

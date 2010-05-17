@@ -18,4 +18,13 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context);
 
 void srm_spacemd_free (int nbtokens, srm_spacemd *smd);
 
+int srm_set_protocol_in_transferParameters(
+	struct srm_context *context,
+    struct soap* soap,
+    struct srm2__TTransferParameters* transferParameters,
+    char** protocols);
+
+char* srm_strip_string(const char* str, const char chr);
+int srm_count_elements_of_string_array(char** a);
+
 #endif /* SRM_UTIL_H_ */

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <assert.h>
 #include "srm_soap.h"
 #include "srm_types.h"
 #include "srmv2H.h"
@@ -278,3 +279,64 @@ void srm_spacemd_free (int nbtokens, srm_spacemd *smd)
 
 	free (smd);
 }
+int srm_set_protocol_in_transferParameters(
+	struct srm_context *context,
+    struct soap* soap,
+    struct srm2__TTransferParameters* transferParameters,
+    char** protocols)
+{
+    struct srm2__ArrayOfString ** array = NULL;
+    assert(transferParameters);
+    array = &(transferParameters->arrayOfTransferProtocols);
+    *array = NULL;
+
+    if (protocols) {
+        *array = soap_malloc (soap, sizeof(struct srm2__ArrayOfString));
+
+        if (*array == NULL) {
+            srm_errmsg (context, "[SRM][soap_malloc][] error");
+            errno = ENOMEM;
+            return -1;
+        }
+
+        (*array)->__sizestringArray = srm_count_elements_of_string_array(protocols);
+        (*array)->stringArray = protocols;
+    }
+
+    return 0;
+}
+char* srm_strip_string(const char* str, const char chr)
+{
+    char *res = 0;
+
+    assert(str);
+
+    if (str) {
+        char *pos = strrchr(str, chr);
+        int size = -1;
+
+        if (pos) {
+            /* +1: to include the last character as well */
+            size = pos - str + 1;
+        } else {
+            size = strlen(str);
+        }
+
+        res = (char*) malloc(size + 1);
+        strncpy(res, str, size);
+        res[size] = 0;
+    }
+
+    return res;
+}
+
+
+int srm_count_elements_of_string_array(char** a)
+{
+    int ret = -1;
+    assert(a);
+    for (ret = 0; a[ret] != 0; ++ret) ;
+    return ret;
+}
+
+
