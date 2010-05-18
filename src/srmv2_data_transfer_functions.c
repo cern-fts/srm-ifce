@@ -5,20 +5,22 @@
 #include "srm_dependencies.h"
 
 
-srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
-		struct srm_preparetoput_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
-		struct srm_internal_context *internal_context);
+int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTPutRequestFileStatus *repfs);
 
 srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,
 		struct srmv2_pinfilestatus **filestatuses,
 		struct srm_internal_context *internal_context);
 
+srm_call_status srmv2_status_of_put_request(struct srm_context *context,
+		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_internal_context *internal_context);
 
-int srmv2_prepearetoput(struct srm_context *context,struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses)
+int srmv2_prepeare_to_put(struct srm_context *context,struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses)
 {
-	/*srm_call_status current_status;
+	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int i,result;
 
@@ -30,38 +32,33 @@ int srmv2_prepearetoput(struct srm_context *context,struct srm_preparetoput_inpu
 
 	internal_context.attempt = 1;
 
-	// Call srm ls
-	current_status = srmv2_prepare_to_put_async(context,input,output,&internal_context);
+	// request
+	current_status = srmv2_prepare_to_put_async(context,input,filestatuses,&internal_context);
 
 
-	// if ls was queued start polling statusOfLsRequest
+	// if request was queued start polling statusOfLsRequest
 	if (current_status == srm_call_status_QUEUED)
 	{
-		current_status = srmv2_status_of_put_request(context,output,&internal_context);
+		current_status = srmv2_status_of_put_request(context,filestatuses,&internal_context);
 		if (current_status != srm_call_status_SUCCESS)
 		{
 			current_status = srmv2_abort_request(context,&internal_context);
 			return -1;
 		}
 
-		// ls status of request
+		// status of request
 	}
 
 	if (current_status != srm_call_status_SUCCESS)
 	{
 		return -1;
-	}*/
+	}
 	return 0;
 }
-/*    int nbfiles, const char **surls, const char *srm_endpoint,
-    GFAL_LONG64 *filesizes, int desiredpintime, const char *spacetokendesc,
-    char **protocols, char **reqtoken, struct srmv2_pinfilestatus **filestatuses,
-    char *errbuf, int errbufsz, int timeout)
-*/
+
 //srm_preparetoput_output
 
 srm_call_status srmv2_status_of_put_request(struct srm_context *context,
-		struct srm_preparetoput_input *input,
 		struct srmv2_pinfilestatus **filestatuses,
 		struct srm_internal_context *internal_context)
 {
@@ -95,6 +92,21 @@ srm_call_status srmv2_status_of_put_request(struct srm_context *context,
 
 	}while ((current_status == srm_call_status_INTERNAL_ERROR)||(current_status == srm_call_status_QUEUED));
 
+	if (internal_context->retstatus->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
+		srm_errmsg (context,"[SRM][%s][%s] %s: Space lifetime expired",srmfunc, statuscode2errmsg(internal_context->retstatus->statusCode), context->srm_endpoint);
+		errno = statuscode2errno(internal_context->retstatus->statusCode);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+
+	if (current_status == srm_call_status_SUCCESS)
+	{
+		ret = copy_pinfilestatuses(internal_context->retstatus,
+								filestatuses,
+								repfs);
+	}
+	srm_soap_deinit(&soap);
 	return 0;
 }
 
@@ -182,7 +194,8 @@ srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 
 	if (ret)
 	{
-		//goto FUNCTION_CLEANUP_AND_RETURN; // TODO
+		srm_soap_deinit(&soap);
+		return (-1);
 	}
 
 
@@ -223,7 +236,8 @@ srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 
 		if (res < 0)
 		{
-			// goto FUNCTION_CLEANUP_AND_RETURN; TODO
+			srm_soap_deinit(&soap);
+			return (-1);
 		}
 	}
 
@@ -253,23 +267,27 @@ srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 	internal_context->token = rep.srmPrepareToPutResponse->requestToken;
 
 
-
-
-	return 0;
-}
-	/*
-
-
-
-
-	if (reqstatp->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
-		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR,"[%s][%s][%s] %s: Space lifetime expired",
-				gfal_remote_type, srmfunc_status, statuscode2errmsg(reqstatp->statusCode), srm_endpoint);
-		errno = statuscode2errno(reqstatp->statusCode);
-		soap_end (&soap);
-		soap_done (&soap);
+	if (current_status != srm_call_status_SUCCESS || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	{
+		errno = srm_call_err(context,internal_context,srmfunc);
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
+
+
+	if (current_status == srm_call_status_SUCCESS)
+	{
+		ret = copy_pinfilestatuses(internal_context->retstatus,
+								filestatuses,
+								repfs);
+	}
+
+	srm_soap_deinit(&soap);
+	return ret;
+}
+
+//struct srm2__ArrayOfTPutRequestFileStatus *repfs;
+	/*
 
     call_is_successfull =
         reqstatp->statusCode == SRM_USCORESUCCESS ||
@@ -393,7 +411,7 @@ int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		if (repfs->statusArray[i]->remainingPinLifetime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
 	}
-	return 0;
+	return n;
 }
 
 int srmv2_copy(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output **output)

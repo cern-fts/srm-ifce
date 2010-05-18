@@ -258,6 +258,7 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 				}
 				return srm_call_status_QUEUED;
 			case SRM_USCORESUCCESS:
+			case SRM_USCOREPARTIAL_USCORESUCCESS: // TODO
 				return srm_call_status_SUCCESS;
 			default:
 				return srm_call_status_FAILURE;
