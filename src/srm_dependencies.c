@@ -2,6 +2,12 @@
 #include "srm_soap.h"
 
 callers_t call_function = {
+		soap_call_srm2__srmStatusOfGetRequest,
+		soap_call_srm2__srmStatusOfBringOnlineRequest,
+		soap_call_srm2__srmStatusOfPutRequest,
+	    soap_call_srm2__srmPrepareToGet,
+	    soap_call_srm2__srmBringOnline,
+	    soap_call_srm2__srmPrepareToPut,
 		soap_call_srm2__srmGetSpaceMetaData,
 		soap_call_srm2__srmGetSpaceTokens,
 		soap_call_srm2__srmLs,

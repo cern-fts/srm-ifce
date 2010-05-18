@@ -1,12 +1,24 @@
 #include <errno.h>
+#include <assert.h>
 #include "srm_soap.h"
 #include "srm_util.h"
 #include "srm_dependencies.h"
 
 
-/*int srmv2_prepearetoput(struct srm_context *context,struct srm_preparetoput_input *input,struct srm_preparetoput_output **output)
+srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
+		struct srm_preparetoput_input *input,
+		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_internal_context *internal_context);
+
+srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
+		struct srm_preparetoput_input *input,
+		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_internal_context *internal_context);
+
+
+int srmv2_prepearetoput(struct srm_context *context,struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses)
 {
-	srm_call_status current_status;
+	/*srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int i,result;
 
@@ -19,13 +31,13 @@
 	internal_context.attempt = 1;
 
 	// Call srm ls
-	current_status = srmv2_ls_async(context,input,output,&internal_context);
+	current_status = srmv2_prepare_to_put_async(context,input,output,&internal_context);
 
 
 	// if ls was queued start polling statusOfLsRequest
 	if (current_status == srm_call_status_QUEUED)
 	{
-		current_status = srmv2_status_of_ls_request(context,output,&internal_context);
+		current_status = srmv2_status_of_put_request(context,output,&internal_context);
 		if (current_status != srm_call_status_SUCCESS)
 		{
 			current_status = srmv2_abort_request(context,&internal_context);
@@ -38,9 +50,9 @@
 	if (current_status != srm_call_status_SUCCESS)
 	{
 		return -1;
-	}
+	}*/
 	return 0;
-}*/
+}
 /*    int nbfiles, const char **surls, const char *srm_endpoint,
     GFAL_LONG64 *filesizes, int desiredpintime, const char *spacetokendesc,
     char **protocols, char **reqtoken, struct srmv2_pinfilestatus **filestatuses,
@@ -48,20 +60,53 @@
 */
 //srm_preparetoput_output
 
-int srmv2_statusofputrequest()
+srm_call_status srmv2_status_of_put_request(struct srm_context *context,
+		struct srm_preparetoput_input *input,
+		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_internal_context *internal_context)
 {
+	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
+	srm_call_status current_status;
+	int ret;
 	struct soap soap;
 	struct srm2__srmStatusOfPutRequestResponse_ srep;
 	struct srm2__srmStatusOfPutRequestRequest sreq;
-	const char srmfunc_status[] = "StatusOfPutRequest";
+	const char srmfunc[] = "StatusOfPutRequest";
+
+	memset (&sreq, 0, sizeof(sreq));
+	sreq.requestToken = internal_context->token;
+
+	do
+	{
+		ret = call_function.call_srm2__srmStatusOfPutRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
+		// If no response break with failure
+		if ((srep.srmStatusOfPutRequestResponse == NULL)||(ret!=0))
+		{
+			errno = srm_soup_call_err(context,&soap,srmfunc);
+			current_status = srm_call_status_FAILURE;
+			break;
+		}
+		// Copy response status
+		internal_context->retstatus = srep.srmStatusOfPutRequestResponse->returnStatus;
+		// Check status and wait with back off logic if necessary(Internal_error)
+		current_status = back_off_logic(context,srmfunc,internal_context);
+
+		repfs = srep.srmStatusOfPutRequestResponse->arrayOfFileStatuses;
+
+	}while ((current_status == srm_call_status_INTERNAL_ERROR)||(current_status == srm_call_status_QUEUED));
 
 	return 0;
 }
 
-int srmv2_preparetoput(struct srm_context *context,
+
+
+srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,
-		struct srm_preparetoput_output **filestatuses)
+		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_internal_context *internal_context)
 {
+	srm_call_status current_status;
+
 	int flags;
 	int sav_errno = 0;
 	int i;
@@ -182,119 +227,40 @@ int srmv2_preparetoput(struct srm_context *context,
 		}
 	}
 
-/*	if (timeout > 0)
-		endtime = time(NULL) + timeout;
+	do
+	{
+		ret = call_function.call_srm2__srmPrepareToPut (&soap, context->srm_endpoint, srmfunc, &req, &rep);
+		// If no response break with failure
+		if ((rep.srmPrepareToPutResponse== NULL)||(ret!=0))
+		{
+			errno = srm_soup_call_err(context,&soap,srmfunc);
+			current_status = srm_call_status_FAILURE;
+			break;
+		}
+		// Copy response status
+		internal_context->retstatus = rep.srmPrepareToPutResponse->returnStatus;
+		// Check status and wait with back off logic if necessary(Internal_error)
+		current_status = back_off_logic(context,srmfunc,internal_context);
 
-	sleep_time = 5;
-	nbretries = 0;*/
+		repfs = rep.srmPrepareToPutResponse->arrayOfFileStatuses;
+
+	}while (current_status == srm_call_status_INTERNAL_ERROR);
+
+
+	// wait for files ready
+
+	repfs = rep.srmPrepareToPutResponse->arrayOfFileStatuses;
+	internal_context->token = rep.srmPrepareToPutResponse->requestToken;
+
+
+
 
 	return 0;
 }
 	/*
 
-	/*
 
-    do {
-	    ret = gfal_srm_callers_v2.call_prepare_to_put(&soap, srm_endpoint, srmfunc, &req, &rep);
 
-        if (ret) {
-			if (soap.fault != NULL && soap.fault->faultstring != NULL)
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: %s",
-						gfal_remote_type, srmfunc, srm_endpoint, soap.fault->faultstring);
-			else if (soap.error == SOAP_EOF)
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Connection fails or timeout",
-						gfal_remote_type, srmfunc, srm_endpoint);
-			else
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Unknown SOAP error (%d)",
-						gfal_remote_type, srmfunc, srm_endpoint, soap.error);
-
-			soap_end (&soap);
-			soap_done (&soap);
-			errno = ECOMM;
-			return (-1);
-		}
-
-		reqstatp = rep.srmPrepareToPutResponse->returnStatus;
-
-		// INTERNAL_ERROR = transient error => automatic retry
-		if (reqstatp->statusCode == SRM_USCOREINTERNAL_USCOREERROR) {
-
-			if ((timeout > 0 && time(NULL) + sleep_time > endtime)) {
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][ETIMEDOUT] %s: User timeout over",
-						gfal_remote_type, srmfunc, srm_endpoint);
-				errno = ETIMEDOUT;
-				soap_end (&soap);
-				soap_done (&soap);
-				return (-1);
-			}
-
-			sleep (sleep_time);
-			if (++nbretries < 10)
-				sleep_time *= 2; // exponentially increase sleeping time, until ~40min
-		}
-	}
-	while (reqstatp->statusCode == SRM_USCOREINTERNAL_USCOREERROR);
-
-	// wait for files ready
-
-	repfs = rep.srmPrepareToPutResponse->arrayOfFileStatuses;
-	r_token = rep.srmPrepareToPutResponse->requestToken;
-	memset (&sreq, 0, sizeof(sreq));
-	sreq.requestToken = rep.srmPrepareToPutResponse->requestToken;
-
-	sleep_time = 5;
-	nbretries = 0;
-
-	while (reqstatp->statusCode == SRM_USCOREREQUEST_USCOREQUEUED ||
-			reqstatp->statusCode == SRM_USCOREREQUEST_USCOREINPROGRESS ||
-			reqstatp->statusCode == SRM_USCOREINTERNAL_USCOREERROR) {
-
-		// if user timeout has passed, abort the request
-		if (timeout > 0 && time(NULL) + sleep_time > endtime) {
-			abortreq.requestToken = r_token;
-			soap_call_srm2__srmAbortRequest (&soap, srm_endpoint, "AbortRequest", &abortreq, &abortrep);
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][ETIMEDOUT] %s: User timeout over",
-					gfal_remote_type, srmfunc_status, srm_endpoint);
-			sav_errno = ETIMEDOUT;
-
-			soap_end (&soap);
-			soap_done (&soap);
-			errno = sav_errno;
-			return (-1);
-		}
-
-		sleep (sleep_time);
-		if (++nbretries < 10)
-			sleep_time *= 2; // exponentially increase sleeping time, until ~40min
-
-		if ((ret = soap_call_srm2__srmStatusOfPutRequest (&soap, srm_endpoint, srmfunc_status, &sreq, &srep))) {
-			if (soap.fault != NULL && soap.fault->faultstring != NULL)
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: %s",
-						gfal_remote_type, srmfunc_status, srm_endpoint, soap.fault->faultstring);
-			else if (soap.error == SOAP_EOF)
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Connection fails or timeout",
-						gfal_remote_type, srmfunc_status, srm_endpoint);
-			else
-				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Unknown SOAP error (%d)",
-						gfal_remote_type, srmfunc_status, srm_endpoint, soap.error);
-
-			soap_end (&soap);
-			soap_done (&soap);
-			errno = ECOMM;
-			return (-1);
-		}
-
-		if (srep.srmStatusOfPutRequestResponse == NULL || (reqstatp = srep.srmStatusOfPutRequestResponse->returnStatus) == NULL) {
-			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: <empty response>",
-					gfal_remote_type, srmfunc_status, srm_endpoint);
-			soap_end (&soap);
-			soap_done (&soap);
-			errno = ECOMM;
-			return (-1);
-		}
-
-		repfs = srep.srmStatusOfPutRequestResponse->arrayOfFileStatuses;
-	}
 
 	if (reqstatp->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
 		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR,"[%s][%s][%s] %s: Space lifetime expired",
@@ -385,6 +351,51 @@ FUNCTION_CLEANUP_AND_RETURN:
     return ret;
 }
 */
+
+
+int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTPutRequestFileStatus *repfs)
+{
+	const char srmfunc_status[] = "StatusOfGetRequest";
+	int n,i;
+	n = repfs->__sizestatusArray;
+	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+	{
+		//srm_soap_deinit(&soap);
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		if (repfs->statusArray[i]->SURL)
+			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
+		if (repfs->statusArray[i]->transferURL)
+			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
+		if (repfs->statusArray[i]->status) {
+			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc_status, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc_status, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else if ((*filestatuses)[i].status != 0)
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
+						 srmfunc_status, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}
+		if (repfs->statusArray[i]->remainingPinLifetime)
+			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
+	}
+	return 0;
+}
+
 int srmv2_copy(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output **output)
 {
 	return 0;

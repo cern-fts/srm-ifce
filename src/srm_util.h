@@ -27,4 +27,6 @@ int srm_set_protocol_in_transferParameters(
 char* srm_strip_string(const char* str, const char chr);
 int srm_count_elements_of_string_array(char** a);
 
+srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_internal_context *internal_context);
+
 #endif /* SRM_UTIL_H_ */

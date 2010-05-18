@@ -12,7 +12,6 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 // Local Functions
 /////////////////////////
 int copy_ls_output(struct srm2__TReturnStatus *reqstatp,struct srm2__ArrayOfTMetaDataPathDetail *repfs,struct srm_ls_output **statuses);
-srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_internal_context *internal_context);
 srm_call_status srmv2_ls_async(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output **output,struct srm_internal_context *internal_context);
 srm_call_status srmv2_status_of_ls_request(struct srm_context *context,struct srm_ls_output **output,struct srm_internal_context *internal_context);
 
@@ -241,39 +240,7 @@ srm_call_status srmv2_status_of_ls_request(struct srm_context *context,
 
 	return (current_status);
 }
-srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_internal_context *internal_context)
-{
-	const char srmfunc[] = "AbortRequest";
-	struct srm2__srmAbortRequestRequest abortreq;
-	struct srm2__srmAbortRequestResponse_ abortrep;
-	struct soap soap;
-	srm_call_status current_status = srm_call_status_SUCCESS;
-	int result;
-	srm_soap_init(&soap);
 
-
-	if (internal_context->token == NULL)
-	{
-		// No token supplied
-		current_status = srm_call_status_FAILURE;
-	}else
-	{
-		abortreq.requestToken = internal_context->token;
-
-		result = call_function.call_srm2__srmAbortRequest (&soap, context->srm_endpoint, srmfunc, &abortreq, &abortrep);
-
-		if (result != 0)
-		{
-			// Soap call failure
-			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
-		}
-	}
-
-	srm_soap_deinit(&soap);
-
-	return current_status;
-}
 
 
 int copy_ls_output(struct srm2__TReturnStatus *reqstatp, struct srm2__ArrayOfTMetaDataPathDetail *repfs,struct srm_ls_output **statuses)

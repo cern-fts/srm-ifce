@@ -412,18 +412,18 @@ START_TEST (test_srmv2_abort_request)
 	context.srm_endpoint = "test";
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
-	result = srmv2_abort_request(&context,&output,&internal_context);
+	result = srmv2_abort_request(&context,&internal_context);
 	fail_if ((result  != srm_call_status_FAILURE),
 				   "Expected Failure 1!\n");
 
 	internal_context.token = test_string;
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
-	result = srmv2_abort_request(&context,&output,&internal_context);
+	result = srmv2_abort_request(&context,&internal_context);
 	fail_if ((result  != srm_call_status_SUCCESS),
 				   "Expected Success!\n");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test2;
-	result = srmv2_abort_request(&context,&output,&internal_context);
+	result = srmv2_abort_request(&context,&internal_context);
 	fail_if ((result  != srm_call_status_FAILURE),
 				   "Expected Failure 2!\n");
 

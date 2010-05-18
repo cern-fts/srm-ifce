@@ -340,3 +340,36 @@ int srm_count_elements_of_string_array(char** a)
 }
 
 
+srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_internal_context *internal_context)
+{
+	const char srmfunc[] = "AbortRequest";
+	struct srm2__srmAbortRequestRequest abortreq;
+	struct srm2__srmAbortRequestResponse_ abortrep;
+	struct soap soap;
+	srm_call_status current_status = srm_call_status_SUCCESS;
+	int result;
+	srm_soap_init(&soap);
+
+
+	if (internal_context->token == NULL)
+	{
+		// No token supplied
+		current_status = srm_call_status_FAILURE;
+	}else
+	{
+		abortreq.requestToken = internal_context->token;
+
+		result = call_function.call_srm2__srmAbortRequest (&soap, context->srm_endpoint, srmfunc, &abortreq, &abortrep);
+
+		if (result != 0)
+		{
+			// Soap call failure
+			errno = srm_soup_call_err(context,&soap,srmfunc);
+			current_status = srm_call_status_FAILURE;
+		}
+	}
+
+	srm_soap_deinit(&soap);
+
+	return current_status;
+}

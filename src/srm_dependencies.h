@@ -55,6 +55,37 @@ typedef int (*soap_call_srm2__srmMkdir_fv)(
     struct srm2__srmMkdirRequest *,
     struct srm2__srmMkdirResponse_ *);
 
+typedef int (*soap_call_srm2__srmPrepareToGet_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmPrepareToGetRequest *,
+    struct srm2__srmPrepareToGetResponse_ *);
+
+typedef int (*soap_call_srm2__srmBringOnline_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmBringOnlineRequest *,
+    struct srm2__srmBringOnlineResponse_ *);
+
+typedef int (*soap_call_srm2__srmPrepareToPut_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmPrepareToPutRequest *,
+    struct srm2__srmPrepareToPutResponse_ *);
+
+typedef int (*soap_call_srm2__srmStatusOfPutRequest_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmStatusOfPutRequestRequest *,
+    struct srm2__srmStatusOfPutRequestResponse_ *);
+
+typedef int (*soap_call_srm2__srmStatusOfBringOnlineRequest_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmStatusOfBringOnlineRequestRequest *,
+    struct srm2__srmStatusOfBringOnlineRequestResponse_ *);
+
+typedef int (*soap_call_srm2__srmStatusOfGetRequest_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmStatusOfGetRequestRequest *,
+    struct srm2__srmStatusOfGetRequestResponse_ *);
+
+//soap_call_srm2__srmStatusOfPutRequest (&soap, srm_endpoint, srmfunc_status, &sreq, &srep)
 
 typedef unsigned int (*sleep_fv)(
     unsigned int);
@@ -62,6 +93,12 @@ typedef unsigned int (*sleep_fv)(
 /* The collection of SOAP service calls. The pointers may be replaced with test
  * functions (dependency injection) */
 typedef struct misc_callers {
+	soap_call_srm2__srmStatusOfGetRequest_fv	call_srm2__srmStatusOfGetRequest;
+	soap_call_srm2__srmStatusOfBringOnlineRequest_fv	call_srm2__srmStatusOfBringOnlineRequest;
+	soap_call_srm2__srmStatusOfPutRequest_fv	call_srm2__srmStatusOfPutRequest;
+	soap_call_srm2__srmPrepareToGet_fv			call_srm2__srmPrepareToGet;
+	soap_call_srm2__srmBringOnline_fv			call_srm2__srmBringOnline;
+	soap_call_srm2__srmPrepareToPut_fv			call_srm2__srmPrepareToPut;
 	soap_call_srm2__srmGetSpaceMetaData_fv		call_srm2__srmGetSpaceMetaData;
 	soap_call_srm2__srmGetSpaceTokens_fv		call_srm2__srmGetSpaceTokens;
 	soap_call_srm2__srmLs_fv 					call_srm2__srmLs;
