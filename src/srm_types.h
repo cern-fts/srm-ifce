@@ -154,21 +154,21 @@ typedef struct srm_mkdir_input{
 	char 	*dir_name;
 };
 
-typedef struct srm_preparetoget_input{
-	int nbfiles;
-	char **surls;
-	int desiredpintime;
-	char *spacetokendesc;
-	char **protocols;
-	char **reqtoken;
-};
-
 struct srm_preparetoget_output {
 	char 	*surl;
 	char 	*turl;
 	int 	status;
 	char 	*explanation;
 	int 	pinlifetime;
+};
+
+typedef struct srm_preparetoget_input{
+    int nbfiles;
+    char **surls;
+    int desiredpintime;
+    char *spacetokendesc;
+    char **protocols;
+    char **reqtoken;
 };
 
 typedef struct srm_preparetoput_input{
