@@ -2,6 +2,8 @@
 #include "srm_soap.h"
 
 callers_t call_function = {
+		soap_call_srm2__srmPutDone,
+		soap_call_srm2__srmReleaseFiles,
 		soap_call_srm2__srmStatusOfGetRequest,
 		soap_call_srm2__srmStatusOfBringOnlineRequest,
 		soap_call_srm2__srmStatusOfPutRequest,

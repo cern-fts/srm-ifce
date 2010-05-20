@@ -46,6 +46,15 @@ const char *srmv2_errmsg[] = {
 	"SRM_CUSTOM_STATUS"
 };
 
+void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context)
+{
+	if (context->timeout > 0)
+	{
+		internal_context->end_time = (time(NULL) + context->timeout);
+	}
+
+	internal_context->attempt = 1;
+}
 
 void srm_soap_init(struct soap *soap)
 {
@@ -374,3 +383,4 @@ srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_inter
 
 	return current_status;
 }
+

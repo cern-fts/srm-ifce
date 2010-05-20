@@ -85,7 +85,15 @@ typedef int (*soap_call_srm2__srmStatusOfGetRequest_fv)(
     struct srm2__srmStatusOfGetRequestRequest *,
     struct srm2__srmStatusOfGetRequestResponse_ *);
 
-//soap_call_srm2__srmStatusOfPutRequest (&soap, srm_endpoint, srmfunc_status, &sreq, &srep)
+typedef int (*soap_call_srm2__srmPutDone_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmPutDoneRequest*,
+    struct srm2__srmPutDoneResponse_ *);
+
+typedef int (*soap_call_srm2__srmReleaseFiles_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmReleaseFilesRequest*,
+    struct srm2__srmReleaseFilesResponse_ *);
 
 typedef unsigned int (*sleep_fv)(
     unsigned int);
@@ -93,6 +101,8 @@ typedef unsigned int (*sleep_fv)(
 /* The collection of SOAP service calls. The pointers may be replaced with test
  * functions (dependency injection) */
 typedef struct misc_callers {
+	soap_call_srm2__srmPutDone_fv 				call_srm2__srmPutDone;
+	soap_call_srm2__srmReleaseFiles_fv			call_srm2__srmReleaseFiles;
 	soap_call_srm2__srmStatusOfGetRequest_fv	call_srm2__srmStatusOfGetRequest;
 	soap_call_srm2__srmStatusOfBringOnlineRequest_fv	call_srm2__srmStatusOfBringOnlineRequest;
 	soap_call_srm2__srmStatusOfPutRequest_fv	call_srm2__srmStatusOfPutRequest;

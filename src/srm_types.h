@@ -154,14 +154,6 @@ typedef struct srm_mkdir_input{
 	char 	*dir_name;
 };
 
-struct srm_preparetoget_output {
-	char 	*surl;
-	char 	*turl;
-	int 	status;
-	char 	*explanation;
-	int 	pinlifetime;
-};
-
 typedef struct srm_preparetoget_input{
     int nbfiles;
     char **surls;
@@ -181,6 +173,17 @@ typedef struct srm_preparetoput_input{
 	char **reqtoken;
 };
 
+typedef struct srm_putdone_input{
+	int nbfiles;
+	char **surls;
+	char *reqtoken;
+};
+
+typedef struct srm_releasefiles_input{
+	int nbfiles;
+	char **surls;
+	char *reqtoken;
+};
 struct srmv2_pinfilestatus {
 	char 	*surl;
 	char 	*turl;

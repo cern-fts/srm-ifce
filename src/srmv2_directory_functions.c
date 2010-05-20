@@ -23,12 +23,7 @@ int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_l
 	int i,result;
 
 	// Setup the timeout
-	if (context->timeout > 0)
-	{
-		internal_context.end_time = (time(NULL) + context->timeout);
-	}
-
-	internal_context.attempt = 1;
+	back_off_logic_init(context,&internal_context);
 
 	// Call srm ls
 	current_status = srmv2_ls_async(context,input,output,&internal_context);
@@ -383,6 +378,8 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	struct srm_internal_context internal_context;
 	int i,n,ret;
 
+	back_off_logic_init(context,&internal_context);
+
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
@@ -462,6 +459,8 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 	struct srm_internal_context internal_context;
 	struct soap soap;
 	const char srmfunc[] = "srmRmdir";
+
+	back_off_logic_init(context,&internal_context);
 
 	srm_soap_init(&soap);
 

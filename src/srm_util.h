@@ -12,6 +12,7 @@ int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatu
 int statuscode2errno (int statuscode);
 const char * statuscode2errmsg (int statuscode);
 
+void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context);
 srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 		struct srm_internal_context *internal_context);
 int wait_for_new_attempt(struct srm_internal_context *internal_context);
