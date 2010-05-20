@@ -184,6 +184,22 @@ typedef struct srm_releasefiles_input{
 	char **surls;
 	char *reqtoken;
 };
+
+typedef struct srm_abortfiles_input{
+	int nbfiles;
+	char **surls;
+	char *reqtoken;
+};
+
+typedef struct srm_bringonline_input{
+	int nbfiles;
+	char **surls;
+	int desiredpintime;
+	char *spacetokendesc;
+	char **protocols;
+	char **reqtoken;
+};
+
 struct srmv2_pinfilestatus {
 	char 	*surl;
 	char 	*turl;

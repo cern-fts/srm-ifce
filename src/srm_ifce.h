@@ -36,4 +36,10 @@ int srmv2_put_done(struct srm_context *context,
 int srmv2_release_files(struct srm_context *context,
 		struct srm_releasefiles_input *input, struct srmv2_filestatus **statuses);
 
+int srmv2_abort_files(struct srm_context *context,
+		struct srm_abortfiles_input *input,struct srmv2_filestatus **statuses);
+
+int srmv2_abort_request_new (struct srm_context *context,
+		char *reqtoken);
+
 #endif

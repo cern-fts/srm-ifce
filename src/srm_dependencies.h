@@ -95,12 +95,20 @@ typedef int (*soap_call_srm2__srmReleaseFiles_fv)(
     struct srm2__srmReleaseFilesRequest*,
     struct srm2__srmReleaseFilesResponse_ *);
 
+typedef int (*soap_call_srm2__srmAbortFiles_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmAbortFilesRequest *,
+    struct srm2__srmAbortFilesResponse_ *);
+
+
+
 typedef unsigned int (*sleep_fv)(
     unsigned int);
 
 /* The collection of SOAP service calls. The pointers may be replaced with test
  * functions (dependency injection) */
 typedef struct misc_callers {
+	soap_call_srm2__srmAbortFiles_fv			call_srm2__srmAbortFiles;
 	soap_call_srm2__srmPutDone_fv 				call_srm2__srmPutDone;
 	soap_call_srm2__srmReleaseFiles_fv			call_srm2__srmReleaseFiles;
 	soap_call_srm2__srmStatusOfGetRequest_fv	call_srm2__srmStatusOfGetRequest;
