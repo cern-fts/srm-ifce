@@ -35,8 +35,18 @@ srm_call_status srmv2_status_of_get_request(struct srm_context *context,
 		struct srmv2_pinfilestatus **filestatuses,
 		struct srm_internal_context *internal_context);
 
+srm_call_status srmv2_status_of_bringonline (struct srm_context *context,
+		struct srmv2_filestatus **filestatuses,
+		struct srm_internal_context *internal_context);
 
-int srmv2_prepeare_to_put(struct srm_context *context,struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses)
+srm_call_status srmv2_bringonline_async (struct srm_context *context,
+		struct srm_bringonline_input *input,
+		struct srmv2_filestatus **filestatuses,
+		struct srm_internal_context *internal_context);
+
+
+int srmv2_prepeare_to_put(struct srm_context *context,
+		struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses)
 {
 	srm_call_status current_status;
 	struct srm_internal_context internal_context;
@@ -761,8 +771,7 @@ int srmv2_copy(struct srm_context *context,struct srm_ls_input *input,struct srm
 	return 0;
 }
 int srmv2_abort_files(struct srm_context *context,
-		struct srm_abortfiles_input *input,
-		struct srmv2_filestatus **statuses)
+		struct srm_abortfiles_input *input,struct srmv2_filestatus **statuses)
 {
 	int ret;
 	srm_call_status current_status;
@@ -1024,14 +1033,15 @@ srm_call_status srmv2_bringonline_async (struct srm_context *context,
 		return -1;
 	}
 
-	if (current_status != srm_call_status_SUCCESS || !repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (current_status != srm_call_status_SUCCESS || current_status != srm_call_status_QUEUED ||
+			!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
-	if (current_status == srm_call_status_SUCCESS)
+	if (current_status == srm_call_status_SUCCESS || current_status == srm_call_status_QUEUED )
 	{
 		ret = copy_pinfilestatuses(internal_context->retstatus,
 								filestatuses,
@@ -1041,8 +1051,226 @@ srm_call_status srmv2_bringonline_async (struct srm_context *context,
 
 	srm_soap_deinit(&soap);
 	return ret;
+}
+srm_call_status srmv2_status_of_bringonline (struct srm_context *context,
+		struct srmv2_filestatus **filestatuses,
+		struct srm_internal_context *internal_context)
+{
+	srm_call_status current_status;
+	int sav_errno = 0;
+	int i = 0;
+	int n;
+	int ret;
+	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
+	struct srm2__TReturnStatus *reqstatp;
+	struct soap soap;
+	struct srm2__srmStatusOfBringOnlineRequestResponse_ srep;
+	struct srm2__srmStatusOfBringOnlineRequestRequest sreq;
+	const char srmfunc[] = "StatusOfBringOnlineRequest";
+
+	srm_soap_init(&soap);
+
+	memset (&sreq, 0, sizeof(sreq));
+	sreq.requestToken = (char *) internal_context->token;
+
+
+	do
+	{
+		ret = call_function.call_srm2__srmStatusOfBringOnlineRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
+		// If no response break with failure
+		if ((srep.srmStatusOfBringOnlineRequestResponse == NULL)||(ret!=0))
+		{
+			errno = srm_soup_call_err(context,&soap,srmfunc);
+			current_status = srm_call_status_FAILURE;
+			break;
+		}
+		// Copy response status
+		internal_context->retstatus = srep.srmStatusOfBringOnlineRequestResponse->returnStatus;
+		// Check status and wait with back off logic if necessary(Internal_error)
+		current_status = back_off_logic(context,srmfunc,internal_context);
+
+		repfs = srep.srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses;
+
+	}while (current_status == srm_call_status_INTERNAL_ERROR);
+
+
+	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+	{
+		errno = srm_call_err(context,internal_context,srmfunc);
+		srm_soap_deinit(&soap);
+		return (current_status);
+	}
+
+	if (current_status == srm_call_status_SUCCESS )
+	{
+		ret = copy_pinfilestatuses(internal_context->retstatus,
+								filestatuses,
+								repfs,
+								srmfunc);
+	}
+
+
+	srm_soap_deinit(&soap);
+	return (current_status);
 
 }
+int srmv2_bring_online(struct srm_context *context,
+		struct srm_bringonline_input *input, struct srmv2_pinfilestatus **filestatuses)
+{
+	srm_call_status current_status;
+	struct srm_internal_context internal_context;
+	int i,result;
+
+	// Setup the timeout
+	back_off_logic_init(context,&internal_context);
+
+	// request
+	current_status = srmv2_bringonline_async(context,input,filestatuses,&internal_context);
+
+
+	// if request was queued start polling statusOfLsRequest
+	if (current_status == srm_call_status_QUEUED)
+	{
+		current_status = srmv2_status_of_bringonline(context,filestatuses,&internal_context);
+		if (current_status != srm_call_status_SUCCESS)
+		{
+			current_status = srmv2_abort_request(context,&internal_context);
+			return -1;
+		}
+
+		// status of request
+	}
+
+	if (current_status != srm_call_status_SUCCESS)
+	{
+		return -1;
+	}
+	return 0;
+}
+/*
+srmv2_prestagestatuse (const char *reqtoken, const char *srm_endpoint, struct srmv2_pinfilestatus **filestatuses,
+		char *errbuf, int errbufsz, int timeout)
+{
+	int flags;
+	int sav_errno = 0;
+	int i = 0;
+	int n;
+	int ret;
+	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
+	struct srm2__TReturnStatus *reqstatp;
+	struct soap soap;
+	struct srm2__srmStatusOfBringOnlineRequestResponse_ srep;
+	struct srm2__srmStatusOfBringOnlineRequestRequest sreq;
+	const char srmfunc[] = "StatusOfBringOnlineRequest";
+
+	soap_init (&soap);
+	soap.namespaces = namespaces_srmv2;
+
+#ifdef GFAL_SECURE
+	flags = CGSI_OPT_DISABLE_NAME_CHECK;
+	soap_register_plugin_arg (&soap, client_cgsi_plugin, &flags);
+#endif
+
+	soap.send_timeout = gfal_get_timeout_sendreceive ();
+	soap.recv_timeout = gfal_get_timeout_sendreceive ();
+	soap.connect_timeout = gfal_get_timeout_connect ();
+
+	memset (&sreq, 0, sizeof(sreq));
+	sreq.requestToken = (char *) reqtoken;
+
+	if ((ret = soap_call_srm2__srmStatusOfBringOnlineRequest (&soap, srm_endpoint, srmfunc, &sreq, &srep))) {
+		if (soap.fault != NULL && soap.fault->faultstring != NULL)
+			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: %s",
+					gfal_remote_type, srmfunc, srm_endpoint, soap.fault->faultstring);
+		else if (soap.error == SOAP_EOF)
+			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Connection fails or timeout",
+				   	gfal_remote_type, srmfunc, srm_endpoint);
+		else
+			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: Unknown SOAP error (%d)",
+					gfal_remote_type, srmfunc, srm_endpoint, soap.error);
+
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+
+	if (srep.srmStatusOfBringOnlineRequestResponse == NULL ||
+			(reqstatp = srep.srmStatusOfBringOnlineRequestResponse->returnStatus) == NULL) {
+		gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][] %s: <empty response>",
+				gfal_remote_type, srmfunc, srm_endpoint);
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+
+	// return file statuses
+	repfs = srep.srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses;
+
+	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
+		if (reqstatp->statusCode != SRM_USCORESUCCESS &&
+				reqstatp->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS) {
+
+			sav_errno = statuscode2errno (reqstatp->statusCode);
+			if (reqstatp->explanation && reqstatp->explanation[0])
+				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: %s",
+						gfal_remote_type, srmfunc, statuscode2errmsg (reqstatp->statusCode),
+						srm_endpoint, reqstatp->explanation);
+			else
+				gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: <none>",
+						gfal_remote_type, srmfunc, statuscode2errmsg (reqstatp->statusCode), srm_endpoint);
+		} else {
+			gfal_errmsg (errbuf, errbufsz, GFAL_ERRLEVEL_ERROR, "[%s][%s][%s] %s: <empty response>",
+					gfal_remote_type, srmfunc, statuscode2errmsg (reqstatp->statusCode), srm_endpoint);
+			sav_errno = ECOMM;
+		}
+
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = sav_errno;
+		return (-1);
+	}
+
+	n = repfs->__sizestatusArray;
+
+	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof(struct srmv2_pinfilestatus))) == NULL) {
+		soap_end (&soap);
+		soap_done (&soap);
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++) {
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
+		if (repfs->statusArray[i]->sourceSURL)
+			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
+		if (repfs->statusArray[i]->status) {
+			(*filestatuses)[i].status = filestatus2returncode (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",
+						gfal_remote_type, srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",
+						gfal_remote_type, srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",
+						gfal_remote_type, srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}
+		if (repfs->statusArray[i]->remainingPinTime)
+			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+	}
+
+	soap_end (&soap);
+	soap_done (&soap);
+    errno = 0;
+	return (n);
+}
+*/
 /*    int nbfiles, const char **surls, int desiredpintime,
     const char *spacetokendesc, char **protocols, char **reqtoken,
     struct srmv2_pinfilestatus **filestatuses)*/

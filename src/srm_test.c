@@ -8,8 +8,36 @@
 void PrintResult(struct srm_ls_output* output);
 
 
-int main(void) {
+int main(void)
+{
+	int i;
+	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
+	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+	struct srm_context context;
+	struct srm_preparetoget_input input_get;
+	struct srmv2_pinfilestatus *filestatuses;
 
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	input_get.nbfiles = 1;
+	input_get.desiredpintime = 1000;
+	input_get.surls = test_surls_get;
+
+
+
+
+    i = srm_prepeare_to_get(&context,&input_get,&filestatuses);
+
+   //printf("%s \n",filestatuses->surl);
+	return EXIT_SUCCESS;
+}
+
+void Test()
+{
 	struct srm_context context;
 	struct srm_ls_input input_ls;
 	struct srm_ls_output* output_ls;
@@ -97,8 +125,10 @@ int main(void) {
 	{
 		PrintResult(output_ls);
 	}*/
+}
+void PrintFilestatuses(struct srmv2_pinfilestatus* output)
+{
 
-	return EXIT_SUCCESS;
 }
 void PrintResult(struct srm_ls_output* output)
 {

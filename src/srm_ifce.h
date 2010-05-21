@@ -24,22 +24,25 @@ int srmv2_getspacetokens (struct srm_context *context,
 int srmv2_getspacemd (struct srm_context *context,
 		struct srmv2_getspacemd_input *input, srm_spacemd **spaces);
 
-int srmv2_prepeare_to_put(struct srm_context *context,
+int srm_prepeare_to_put(struct srm_context *context,
 		struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses);
 
-int srmv2_prepeare_to_get(struct srm_context *context,
+int srm_prepeare_to_get(struct srm_context *context,
 		struct srm_preparetoget_input *input, struct srmv2_pinfilestatus **filestatuses);
 
-int srmv2_put_done(struct srm_context *context,
+int srm_bring_online(struct srm_context *context,
+		struct srm_bringonline_input *input, struct srmv2_pinfilestatus **filestatuses);
+
+int srm_put_done(struct srm_context *context,
 		struct srm_putdone_input *input, struct srmv2_filestatus **statuses);
 
-int srmv2_release_files(struct srm_context *context,
+int srm_release_files(struct srm_context *context,
 		struct srm_releasefiles_input *input, struct srmv2_filestatus **statuses);
 
-int srmv2_abort_files(struct srm_context *context,
+int srm_abort_files(struct srm_context *context,
 		struct srm_abortfiles_input *input,struct srmv2_filestatus **statuses);
 
-int srmv2_abort_request_new (struct srm_context *context,
+int srm_abort_request_new (struct srm_context *context,
 		char *reqtoken);
 
 #endif
