@@ -15,33 +15,33 @@ int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
 						char srmfunc);
 
-srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
+int srmv2_prepare_to_put_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoput_output *output,
 		struct srm_internal_context *internal_context);
 
-srm_call_status srmv2_status_of_put_request(struct srm_context *context,
+int srmv2_status_of_put_request(struct srm_context *context,
 		struct srm_preparetoput_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context);
 
-srm_call_status srmv2_prepare_to_get_async(struct srm_context *context,
+int srmv2_prepare_to_get_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context);
 
-srm_call_status srmv2_status_of_get_request(struct srm_context *context,
+int srmv2_status_of_get_request(struct srm_context *context,
 		struct srm_preparetoget_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context);
 
-srm_call_status srmv2_status_of_bringonline (struct srm_context *context,
-		struct srmv2_filestatus **filestatuses,
+int srmv2_status_of_bringonline (struct srm_context *context,
+		struct srm_bringonline_output *output,
 		struct srm_internal_context *internal_context);
 
-srm_call_status srmv2_bringonline_async (struct srm_context *context,
+int srmv2_bringonline_async (struct srm_context *context,
 		struct srm_bringonline_input *input,
-		struct srmv2_filestatus **filestatuses,
+		struct srm_bringonline_output *output,
 		struct srm_internal_context *internal_context);
 
 
@@ -56,23 +56,22 @@ int srmv2_prepeare_to_put(struct srm_context *context,
 	back_off_logic_init(context,&internal_context);
 
 	// request
-	current_status = srmv2_prepare_to_put_async(context,input,filestatuses,&internal_context);
+	internal_context.current_status = srmv2_prepare_to_put_async(context,input,filestatuses,&internal_context);
 
 
 	// if request was queued start polling statusOfLsRequest
-	if (current_status == srm_call_status_QUEUED)
+	if (internal_context.current_status == srm_call_status_QUEUED)
 	{
-		current_status = srmv2_status_of_put_request(context,input,filestatuses,&internal_context);
-		if (current_status != srm_call_status_SUCCESS)
+		if (srmv2_status_of_put_request(context,input,filestatuses,&internal_context))
 		{
-			current_status = srmv2_abort_request(context,&internal_context);
+			srmv2_abort_request(context,&internal_context);
 			return -1;
 		}
 
 		// status of request
 	}
 
-	if (current_status != srm_call_status_SUCCESS)
+	if (internal_context.current_status != srm_call_status_SUCCESS)
 	{
 		return -1;
 	}
@@ -81,13 +80,12 @@ int srmv2_prepeare_to_put(struct srm_context *context,
 
 //srm_preparetoput_output
 
-srm_call_status srmv2_status_of_put_request(struct srm_context *context,
+int srmv2_status_of_put_request(struct srm_context *context,
 		struct srm_preparetoput_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context)
 {
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
-	srm_call_status current_status;
 	int ret = 0;
 	struct soap soap;
 	struct srm2__srmStatusOfPutRequestResponse_ srep;
@@ -95,7 +93,7 @@ srm_call_status srmv2_status_of_put_request(struct srm_context *context,
 	const char srmfunc[] = "StatusOfPutRequest";
 
 	memset (&sreq, 0, sizeof(sreq));
-	sreq.requestToken = internal_context->token;
+	sreq.requestToken = output->token;
 
 	do
 	{
@@ -104,36 +102,37 @@ srm_call_status srmv2_status_of_put_request(struct srm_context *context,
 		if ((srep.srmStatusOfPutRequestResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context->current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context->retstatus = srep.srmStatusOfPutRequestResponse->returnStatus;
+		output->retstatus = srep.srmStatusOfPutRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,internal_context);
+		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
 		repfs = srep.srmStatusOfPutRequestResponse->arrayOfFileStatuses;
 
-	}while ((current_status == srm_call_status_INTERNAL_ERROR)||(current_status == srm_call_status_QUEUED));
+	}while ((internal_context->current_status == srm_call_status_INTERNAL_ERROR)||(internal_context->current_status == srm_call_status_QUEUED));
 
-	if (internal_context->retstatus->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
-		srm_errmsg (context,"[SRM][%s][%s] %s: Space lifetime expired",srmfunc, statuscode2errmsg(internal_context->retstatus->statusCode), context->srm_endpoint);
-		errno = statuscode2errno(internal_context->retstatus->statusCode);
+	if (output->retstatus->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
+		srm_errmsg (context,"[SRM][%s][%s] %s: Space lifetime expired",srmfunc, statuscode2errmsg(output->retstatus->statusCode), context->srm_endpoint);
+		errno = statuscode2errno(output->retstatus->statusCode);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
-	if (current_status != srm_call_status_SUCCESS || !repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (internal_context->current_status != srm_call_status_SUCCESS ||
+			!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
-	if (current_status == srm_call_status_SUCCESS)
+	if (internal_context->current_status == srm_call_status_SUCCESS)
 	{
-		ret = copy_pinfilestatuses(internal_context->retstatus,
-								filestatuses,
+		ret = copy_pinfilestatuses(output->retstatus,
+								output->filestatuses,
 								repfs,
 								srmfunc);
 	}
@@ -143,12 +142,11 @@ srm_call_status srmv2_status_of_put_request(struct srm_context *context,
 
 
 
-srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
+int srmv2_prepare_to_put_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoput_output *output,
 		struct srm_internal_context *internal_context)
 {
-	srm_call_status current_status;
 	int i;
 	int n;
 	int ret = 0;
@@ -279,25 +277,26 @@ srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 		if ((rep.srmPrepareToPutResponse== NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context->current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context->retstatus = rep.srmPrepareToPutResponse->returnStatus;
+		output->retstatus = rep.srmPrepareToPutResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,internal_context);
+		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
 		repfs = rep.srmPrepareToPutResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
-	if (copy_token(internal_context,current_status,rep.srmPrepareToPutResponse->requestToken))
+	if (copy_token(output->token,internal_context->current_status,rep.srmPrepareToPutResponse->requestToken))
 	{
 		srm_soap_deinit(&soap);
 		return -1;
 	}
 
-	if (current_status != srm_call_status_SUCCESS || !repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (internal_context->current_status != srm_call_status_SUCCESS ||
+			!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
 		srm_soap_deinit(&soap);
@@ -305,10 +304,10 @@ srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 	}
 
 
-	if (current_status == srm_call_status_SUCCESS)
+	if (internal_context->current_status == srm_call_status_SUCCESS)
 	{
-		ret = copy_pinfilestatuses(internal_context->retstatus,
-								filestatuses,
+		ret = copy_pinfilestatuses(output->retstatus,
+								output->filestatuses,
 								repfs,
 								srmfunc);
 	}
@@ -320,7 +319,7 @@ srm_call_status srmv2_prepare_to_put_async(struct srm_context *context,
 int srmv2_prepeare_to_get(struct srm_context *context,
 		struct srm_preparetoget_input *input, struct srmv2_pinfilestatus **filestatuses)
 {
-	srm_call_status current_status;
+/*	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int i,result;
 
@@ -328,34 +327,33 @@ int srmv2_prepeare_to_get(struct srm_context *context,
 	back_off_logic_init(context,&internal_context);
 
 	// request
-	current_status = srmv2_prepare_to_get_async(context,input,filestatuses,&internal_context);
+	internal_context->current_status = srmv2_prepare_to_get_async(context,input,filestatuses,&internal_context);
 
 
 	// if request was queued start polling statusOfLsRequest
-	if (current_status == srm_call_status_QUEUED)
+	if (internal_context->current_status == srm_call_status_QUEUED)
 	{
-		current_status = srmv2_status_of_get_request(context,input,filestatuses,&internal_context);
-		if (current_status != srm_call_status_SUCCESS)
+		internal_context->current_status = srmv2_status_of_get_request(context,input,filestatuses,&internal_context);
+		if (internal_context->current_status != srm_call_status_SUCCESS)
 		{
-			current_status = srmv2_abort_request(context,&internal_context);
+			internal_context->current_status = srmv2_abort_request(context,&internal_context);
 			return -1;
 		}
 
 		// status of request
 	}
 
-	if (current_status != srm_call_status_SUCCESS)
+	if (internal_context->current_status != srm_call_status_SUCCESS)
 	{
 		return -1;
-	}
+	}*/
 	return 0;
 }
-srm_call_status srmv2_prepare_to_get_async(struct srm_context *context,
+int srmv2_prepare_to_get_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context)
 {
-	srm_call_status current_status;
 	char *targetspacetoken;
 	int i;
 	int n;
@@ -454,37 +452,37 @@ srm_call_status srmv2_prepare_to_get_async(struct srm_context *context,
 		if ((rep.srmPrepareToGetResponse== NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context->current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context->retstatus = rep.srmPrepareToGetResponse->returnStatus;
+		output->retstatus = rep.srmPrepareToGetResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,internal_context);
+		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
 		repfs = rep.srmPrepareToGetResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
 	/* wait for files ready */
 
-	if (copy_token(internal_context,current_status,rep.srmPrepareToGetResponse->requestToken))
+	if (copy_token(output->token,internal_context->current_status,rep.srmPrepareToGetResponse->requestToken))
 	{
 		srm_soap_deinit(&soap);
 		return -1;
 	}
 
-	if (current_status != srm_call_status_SUCCESS || !repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (internal_context->current_status != srm_call_status_SUCCESS || !repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
-	if (current_status == srm_call_status_SUCCESS)
+	if (internal_context->current_status == srm_call_status_SUCCESS)
 	{
-		ret = copy_pinfilestatuses(internal_context->retstatus,
-								filestatuses,
+		ret = copy_pinfilestatuses(output->retstatus,
+								output->filestatuses,
 								repfs,
 								srmfunc);
 	}
@@ -493,21 +491,22 @@ srm_call_status srmv2_prepare_to_get_async(struct srm_context *context,
 	return ret;
 }
 
-srm_call_status srmv2_status_of_get_request(struct srm_context *context,
+int srmv2_status_of_get_request(struct srm_context *context,
 		struct srm_preparetoget_input *input,
-		struct srmv2_pinfilestatus **filestatuses,
+		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context)
 {
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
-	srm_call_status current_status;
 	int ret = 0;
 	struct soap soap;
 	struct srm2__srmStatusOfGetRequestResponse_ srep;
 	struct srm2__srmStatusOfGetRequestRequest sreq;
 	const char srmfunc[] = "StatusOfPutRequest";
 
+	srm_soap_init(&soap);
+
 	memset (&sreq, 0, sizeof(sreq));
-	sreq.requestToken = internal_context->token;
+	sreq.requestToken = output->token;
 
 	do
 	{
@@ -516,21 +515,27 @@ srm_call_status srmv2_status_of_get_request(struct srm_context *context,
 		if ((srep.srmStatusOfGetRequestResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context->current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context->retstatus = srep.srmStatusOfGetRequestResponse->returnStatus;
+		output->retstatus = srep.srmStatusOfGetRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,internal_context);
+		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
 		repfs = srep.srmStatusOfGetRequestResponse->arrayOfFileStatuses;
 
-	}while ((current_status == srm_call_status_INTERNAL_ERROR)||(current_status == srm_call_status_QUEUED));
+	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
 
+	if (internal_context->current_status == srm_call_status_QUEUED)
+	{
+		srm_soap_deinit(&soap);
+		return (0);
+	}
 
-	if (current_status != srm_call_status_SUCCESS || !repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (internal_context->current_status != srm_call_status_SUCCESS ||
+			!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
 		srm_soap_deinit(&soap);
@@ -538,10 +543,10 @@ srm_call_status srmv2_status_of_get_request(struct srm_context *context,
 	}
 
 
-	if (current_status == srm_call_status_SUCCESS)
+	if (internal_context->current_status == srm_call_status_SUCCESS)
 	{
-		ret = copy_pinfilestatuses(internal_context->retstatus,
-								filestatuses,
+		ret = copy_pinfilestatuses(output->retstatus,
+								output->filestatuses,
 								repfs,
 								srmfunc);
 	}
@@ -592,17 +597,17 @@ int srmv2_put_done(struct srm_context *context,
 		if ((rep.srmPutDoneResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context.current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context.retstatus = rep.srmPutDoneResponse->returnStatus;
+		//internal_context.retstatus = rep.srmPutDoneResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,&internal_context);
+		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,rep.srmPutDoneResponse->returnStatus);
 
 		repfs = rep.srmPutDoneResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
@@ -659,17 +664,17 @@ int srmv2_release_files(struct srm_context *context,
 		if ((rep.srmReleaseFilesResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context.current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context.retstatus = rep.srmReleaseFilesResponse->returnStatus;
+		//internal_context.retstatus = rep.srmReleaseFilesResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,&internal_context);
+		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,rep.srmReleaseFilesResponse->returnStatus);
 
 		repfs = rep.srmReleaseFilesResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
@@ -774,7 +779,6 @@ int srmv2_abort_files(struct srm_context *context,
 		struct srm_abortfiles_input *input,struct srmv2_filestatus **statuses)
 {
 	int ret;
-	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	struct srm2__srmAbortFilesResponse_ rep;
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
@@ -811,17 +815,17 @@ int srmv2_abort_files(struct srm_context *context,
 		if ((rep.srmAbortFilesResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context.current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context.retstatus = rep.srmAbortFilesResponse->returnStatus;
+		//internal_context.retstatus = rep.srmAbortFilesResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,&internal_context);
+		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,rep.srmAbortFilesResponse->returnStatus);
 
 		repfs = rep.srmAbortFilesResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
@@ -835,10 +839,8 @@ int srmv2_abort_files(struct srm_context *context,
 	srm_soap_deinit(&soap);
 	return (ret);
 }
-int srmv2_abort_request_new (struct srm_context *context,char *reqtoken)
+int srmv2_abort_request_new (struct srm_context *context,struct srm_abort_request_input *input)
 {
-
-	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int ret;
 	struct srm2__srmAbortRequestResponse_ rep;
@@ -854,7 +856,7 @@ int srmv2_abort_request_new (struct srm_context *context,char *reqtoken)
 
 	memset (&req, 0, sizeof(req));
 
-	req.requestToken = (char *) reqtoken;
+	req.requestToken = (char *) input->reqtoken;
 
 	do
 	{
@@ -863,17 +865,17 @@ int srmv2_abort_request_new (struct srm_context *context,char *reqtoken)
 		if ((rep.srmAbortRequestResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context.current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context.retstatus = rep.srmAbortRequestResponse->returnStatus;
+		//internal_context.retstatus = rep.srmAbortRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,&internal_context);
+		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,rep.srmAbortRequestResponse->returnStatus);
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
-	if (current_status != srm_call_status_SUCCESS)
+	if (internal_context.current_status != srm_call_status_SUCCESS)
 	{
 		errno = srm_call_err(context,&internal_context,srmfunc);
 		srm_soap_deinit (&soap);
@@ -883,24 +885,23 @@ int srmv2_abort_request_new (struct srm_context *context,char *reqtoken)
 	srm_soap_deinit (&soap);
 	return (ret);
 }
-srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_internal_context *internal_context)
+int srmv2_abort_request(struct srm_context *context,struct srm_abort_request_input *input)
 {
 	const char srmfunc[] = "AbortRequest";
 	struct srm2__srmAbortRequestRequest abortreq;
 	struct srm2__srmAbortRequestResponse_ abortrep;
 	struct soap soap;
-	srm_call_status current_status = srm_call_status_SUCCESS;
 	int result;
 	srm_soap_init(&soap);
 
 
-	if (internal_context->token == NULL)
+	if (input->reqtoken == NULL)
 	{
 		// No token supplied
-		current_status = srm_call_status_FAILURE;
+		return (-1);
 	}else
 	{
-		abortreq.requestToken = internal_context->token;
+		abortreq.requestToken = input->reqtoken;
 
 		result = call_function.call_srm2__srmAbortRequest (&soap, context->srm_endpoint, srmfunc, &abortreq, &abortrep);
 
@@ -908,18 +909,17 @@ srm_call_status srmv2_abort_request(struct srm_context *context,struct srm_inter
 		{
 			// Soap call failure
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
 		}
 	}
 
 	srm_soap_deinit(&soap);
 
-	return current_status;
+	return result;
 }
 
-srm_call_status srmv2_bringonline_async (struct srm_context *context,
+int srmv2_bringonline_async (struct srm_context *context,
 		struct srm_bringonline_input *input,
-		struct srmv2_filestatus **filestatuses,
+		struct srm_bringonline_output *output,
 		struct srm_internal_context *internal_context)
 {
 	srm_call_status current_status;
@@ -1014,17 +1014,17 @@ srm_call_status srmv2_bringonline_async (struct srm_context *context,
 		if ((rep.srmBringOnlineResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context->current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context->retstatus = rep.srmBringOnlineResponse->returnStatus;
+		output->retstatus = rep.srmBringOnlineResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,internal_context);
+		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus );
 
 		repfs = rep.srmBringOnlineResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
 	/* wait for files ready */
 	if (copy_token(internal_context,current_status,rep.srmBringOnlineResponse->requestToken))
@@ -1033,7 +1033,7 @@ srm_call_status srmv2_bringonline_async (struct srm_context *context,
 		return -1;
 	}
 
-	if (current_status != srm_call_status_SUCCESS || current_status != srm_call_status_QUEUED ||
+	if (internal_context->current_status != srm_call_status_SUCCESS || internal_context->current_status != srm_call_status_QUEUED ||
 			!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
@@ -1041,10 +1041,10 @@ srm_call_status srmv2_bringonline_async (struct srm_context *context,
 		return (-1);
 	}
 
-	if (current_status == srm_call_status_SUCCESS || current_status == srm_call_status_QUEUED )
+	if (internal_context->current_status == srm_call_status_SUCCESS || internal_context->current_status == srm_call_status_QUEUED )
 	{
-		ret = copy_pinfilestatuses(internal_context->retstatus,
-								filestatuses,
+		ret = copy_pinfilestatuses(output->retstatus,
+								output->filestatuses,
 								repfs,
 								srmfunc);
 	}
@@ -1052,11 +1052,10 @@ srm_call_status srmv2_bringonline_async (struct srm_context *context,
 	srm_soap_deinit(&soap);
 	return ret;
 }
-srm_call_status srmv2_status_of_bringonline (struct srm_context *context,
-		struct srmv2_filestatus **filestatuses,
+int srmv2_status_of_bringonline (struct srm_context *context,
+		struct srm_bringonline_output *output,
 		struct srm_internal_context *internal_context)
 {
-	srm_call_status current_status;
 	int sav_errno = 0;
 	int i = 0;
 	int n;
@@ -1071,7 +1070,7 @@ srm_call_status srmv2_status_of_bringonline (struct srm_context *context,
 	srm_soap_init(&soap);
 
 	memset (&sreq, 0, sizeof(sreq));
-	sreq.requestToken = (char *) internal_context->token;
+	sreq.requestToken = (char *) output->token;
 
 
 	do
@@ -1081,41 +1080,42 @@ srm_call_status srmv2_status_of_bringonline (struct srm_context *context,
 		if ((srep.srmStatusOfBringOnlineRequestResponse == NULL)||(ret!=0))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
-			current_status = srm_call_status_FAILURE;
+			internal_context->current_status = srm_call_status_FAILURE;
 			break;
 		}
 		// Copy response status
-		internal_context->retstatus = srep.srmStatusOfBringOnlineRequestResponse->returnStatus;
+		output->retstatus = srep.srmStatusOfBringOnlineRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
-		current_status = back_off_logic(context,srmfunc,internal_context);
+		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
 		repfs = srep.srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses;
 
-	}while (current_status == srm_call_status_INTERNAL_ERROR);
+	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,internal_context,srmfunc);
 		srm_soap_deinit(&soap);
-		return (current_status);
+		return (-1);
 	}
 
-	if (current_status == srm_call_status_SUCCESS )
+	if (internal_context->current_status == srm_call_status_SUCCESS )
 	{
-		ret = copy_pinfilestatuses(internal_context->retstatus,
-								filestatuses,
+		ret = copy_pinfilestatuses(output->retstatus,
+								output->filestatuses,
 								repfs,
 								srmfunc);
 	}
 
 
 	srm_soap_deinit(&soap);
-	return (current_status);
+	return (ret);
 
 }
 int srmv2_bring_online(struct srm_context *context,
-		struct srm_bringonline_input *input, struct srmv2_pinfilestatus **filestatuses)
+		struct srm_bringonline_input *input,
+		struct srm_bringonline_output *output)
 {
 	srm_call_status current_status;
 	struct srm_internal_context internal_context;
@@ -1125,23 +1125,22 @@ int srmv2_bring_online(struct srm_context *context,
 	back_off_logic_init(context,&internal_context);
 
 	// request
-	current_status = srmv2_bringonline_async(context,input,filestatuses,&internal_context);
+	srmv2_bringonline_async(context,input,output,&internal_context);
 
 
 	// if request was queued start polling statusOfLsRequest
-	if (current_status == srm_call_status_QUEUED)
+	if (internal_context.current_status == srm_call_status_QUEUED)
 	{
-		current_status = srmv2_status_of_bringonline(context,filestatuses,&internal_context);
-		if (current_status != srm_call_status_SUCCESS)
+		if (srmv2_status_of_bringonline(context,output,&internal_context))
 		{
-			current_status = srmv2_abort_request(context,&internal_context);
+			internal_context.current_status = srmv2_abort_request(context,&internal_context);
 			return -1;
 		}
 
 		// status of request
 	}
 
-	if (current_status != srm_call_status_SUCCESS)
+	if (internal_context.current_status != srm_call_status_SUCCESS)
 	{
 		return -1;
 	}

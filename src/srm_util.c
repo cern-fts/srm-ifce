@@ -142,31 +142,31 @@ int srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *
 	}
 	return ECOMM;
 }
-int srm_call_err(struct srm_context *context,struct srm_internal_context *internal_context
-		,const char *srmfunc)
+int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,
+		const char *srmfunc)
 {
 	int result_errno;
-	if (internal_context->retstatus->statusCode != SRM_USCORESUCCESS &&
-			internal_context->retstatus->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS &&
-			internal_context->retstatus->statusCode != SRM_USCOREDONE &&
-			internal_context->retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
+	if (retstatus->statusCode != SRM_USCORESUCCESS &&
+			retstatus->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS &&
+			retstatus->statusCode != SRM_USCOREDONE &&
+			retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
 	{
-		result_errno = statuscode2errno (internal_context->retstatus->statusCode);
-		if (internal_context->retstatus->explanation && internal_context->retstatus->explanation[0])
+		result_errno = statuscode2errno (retstatus->statusCode);
+		if (retstatus->explanation && retstatus->explanation[0])
 		{
 			srm_errmsg (context, "[SE][%s][%s] %s: %s",
-					srmfunc, statuscode2errmsg (internal_context->retstatus->statusCode),
-					context->srm_endpoint, internal_context->retstatus->explanation);
+					srmfunc, statuscode2errmsg (retstatus->statusCode),
+					context->srm_endpoint, retstatus->explanation);
 		}else
 		{
 			srm_errmsg (context, "[SE][%s][%s] %s: <none>",
-					srmfunc, statuscode2errmsg (internal_context->retstatus->statusCode), context->srm_endpoint);
+					srmfunc, statuscode2errmsg (retstatus->statusCode), context->srm_endpoint);
 		}
 	}
 	else
 	{
 		srm_errmsg (context, "[SE][%s][%s] %s: <empty response>",
-				srmfunc, statuscode2errmsg (internal_context->retstatus->statusCode), context->srm_endpoint);
+				srmfunc, statuscode2errmsg (retstatus->statusCode), context->srm_endpoint);
 		result_errno = ECOMM;
 	}
 	return result_errno;
@@ -231,10 +231,10 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 }
 // Return all statuses timeout, failure,internal error, queued
 srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
-		struct srm_internal_context *internal_context)
+		struct srm_internal_context *internal_context,struct srm2__TReturnStatus  *retstatus)
 {
 
-	if (internal_context->retstatus == NULL)
+	if (retstatus == NULL)
 	{
 		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
 				srmfunc, context->srm_endpoint);
@@ -243,7 +243,7 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 		return srm_call_status_FAILURE;
 	}else
 	{
-		switch (internal_context->retstatus->statusCode )
+		switch (retstatus->statusCode )
 		{
 			case SRM_USCOREINTERNAL_USCOREERROR:
 				if (wait_for_new_attempt(internal_context) != 0)
@@ -349,13 +349,13 @@ int srm_count_elements_of_string_array(char** a)
     return ret;
 }
 
-int copy_token(struct srm_internal_context *internal_context,srm_call_status current_status,char *token)
+int copy_token(char *tokendest,srm_call_status current_status,char *token)
 {
 	if (current_status == srm_call_status_QUEUED)
 	{
 		if (token)
 		{
-			if ((internal_context->token = strdup (token)) == NULL)
+			if ((tokendest	 = strdup (token)) == NULL)
 			{
 				errno = ENOMEM;
 				return (-1);

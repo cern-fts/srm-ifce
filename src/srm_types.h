@@ -85,6 +85,21 @@ enum srm_call_status_ {srm_call_status_SUCCESS = 0,srm_call_status_FAILURE = 1,s
 
 typedef enum srm_call_status_ srm_call_status;
 
+struct srmv2_pinfilestatus {
+	char 	*surl;
+	char 	*turl;
+	int 	status;
+	char 	*explanation;
+	int 	pinlifetime;
+};
+
+struct srmv2_filestatus {
+	char 	*surl;
+	char 	*turl;
+	int 	status;
+	char 	*explanation;
+};
+
 typedef struct srm_context {
 	enum se_type		version;
 	char *				srm_endpoint;
@@ -95,9 +110,8 @@ typedef struct srm_context {
 };
 
 typedef struct srm_internal_context {
+	srm_call_status 			current_status;
 	time_t 						end_time;
-	struct srm2__TReturnStatus *retstatus;
-	char 						*token;
 	int 						attempt;
 };
 
@@ -109,14 +123,20 @@ typedef struct srm_ls_input{
 	int count;
 };
 
-
 #if ! defined(linux) || defined(_LARGEFILE64_SOURCE)
-struct srm_ls_output {
+struct srm_mdfilestatus {
+	char 	*surl;
+	struct stat64	stat;
+	int		fileid;
+	int 	status;
+};
+
+struct srmv2_mdfilestatus {
 	char 	*surl;
 	struct stat64	stat;
 	int 	status;
 	char 	*explanation;
-	struct srm_ls_output *subpaths;
+	struct srmv2_mdfilestatus *subpaths;
 	int nbsubpaths;
 	srm_file_locality locality;
 	char *checksumtype;
@@ -126,16 +146,21 @@ struct srm_ls_output {
 };
 #endif
 
+typedef struct srm_ls_output {
+	struct srmv2_mdfilestatus **statuses;
+	char 						*token;
+	struct srm2__TReturnStatus  *retstatus;
+};
+
 typedef struct srm_rm_input{
 	int nbfiles;
 	char **surls; // null terminated array of strings
 };
 
-struct srm_rm_output {
-	char 	*surl;
-	char 	*turl;
-	int 	status;
-	char 	*explanation;
+typedef struct srm_rm_output {
+	char 						*token;
+	struct srm2__TReturnStatus  *retstatus;
+	struct srmv2_filestatus **statuses;
 };
 
 typedef struct srm_rmdir_input{
@@ -143,11 +168,10 @@ typedef struct srm_rmdir_input{
 	char *surl;
 };
 
-struct srm_rmdir_output {
-	char 	*surl;
-	char 	*turl;
-	int 	status;
-	char 	*explanation;
+typedef struct srm_rmdir_output {
+	char 						*token;
+	struct srm2__TReturnStatus  *retstatus;
+	struct srmv2_filestatus **statuses;
 };
 
 typedef struct srm_mkdir_input{
@@ -173,6 +197,18 @@ typedef struct srm_preparetoput_input{
 	char **reqtoken;
 };
 
+typedef struct srm_preparetoget_output{
+	char 						*token;
+	struct srm2__TReturnStatus  *retstatus;
+	struct srmv2_pinfilestatus **filestatuses;
+};
+
+typedef struct srm_preparetoput_output{
+	char 						*token;
+	struct srm2__TReturnStatus  *retstatus;
+	struct srmv2_pinfilestatus **filestatuses;
+};
+
 typedef struct srm_putdone_input{
 	int nbfiles;
 	char **surls;
@@ -182,6 +218,10 @@ typedef struct srm_putdone_input{
 typedef struct srm_releasefiles_input{
 	int nbfiles;
 	char **surls;
+	char *reqtoken;
+};
+typedef struct srm_abort_request_input
+{
 	char *reqtoken;
 };
 
@@ -200,21 +240,11 @@ typedef struct srm_bringonline_input{
 	char **reqtoken;
 };
 
-struct srmv2_pinfilestatus {
-	char 	*surl;
-	char 	*turl;
-	int 	status;
-	char 	*explanation;
-	int 	pinlifetime;
+typedef struct srm_bringonline_output{
+	char 						*token;
+	struct srm2__TReturnStatus  *retstatus;
+	struct srmv2_pinfilestatus **filestatuses;
 };
-
-struct srmv2_filestatus {
-	char 	*surl;
-	char 	*turl;
-	int 	status;
-	char 	*explanation;
-};
-
 
 typedef struct srm_getspacetokens_input
 {

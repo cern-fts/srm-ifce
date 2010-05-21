@@ -5,7 +5,7 @@
 #include "srm_types.h"
 #include "srm_ifce.h"
 
-void PrintResult(struct srm_ls_output* output);
+void PrintResult(struct srmv2_mdfilestatus* output);
 
 
 int main(void)
@@ -130,7 +130,7 @@ void PrintFilestatuses(struct srmv2_pinfilestatus* output)
 {
 
 }
-void PrintResult(struct srm_ls_output* output)
+void PrintResult(struct srmv2_mdfilestatus* output)
 {
 	int i;
 	printf("Directory: %s \n",output->surl);
