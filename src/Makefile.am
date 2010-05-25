@@ -196,12 +196,14 @@ SRM_SOURCE_FILES = \
 
 SRM_FLAGS = \
 	-I$(LFC_LOCATION)/include/lfc \
-	-DSRM_ENABLE_RFIO -I/usr/include/shift -I/usr/local/include/shift -I$(DPM_LOCATION)/include/dpm \
-	-DSRM_ENABLE_DCAP -I$(DCAP_LOCATION)/include \
-	-DSRM_SECURE \
+	-DGFAL_ENABLE_RFIO -I/usr/include/shift -I/usr/local/include/shift -I$(DPM_LOCATION)/include/dpm \
+	-DGFAL_ENABLE_DCAP -I$(DCAP_LOCATION)/include \
+	-DGFAL_SECURE \
 	-fPIC -D_LARGEFILE64_SOURCE \
 	-DVERSION=\"$(VERSION)-$(RELEASE)\" \
 	$(SOAPCPP2_FLAGS)
+	
+
 
 # libsrm.a
 #-------------------------------------------------------------------------------

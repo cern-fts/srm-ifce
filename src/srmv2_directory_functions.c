@@ -173,7 +173,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 
 	srm_soap_deinit(&soap);
 
-	return current_status;
+	return ret;
 }
 int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_ls_output *output,struct srm_internal_context *internal_context)
