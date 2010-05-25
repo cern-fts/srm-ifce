@@ -241,7 +241,7 @@ START_TEST (test_srmv2_ls_async)
 	input.surls = test_surls_ls;
 	input.offset = 0;
 
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test1;
+	/*call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test1;
 	result = srmv2_ls_async(&context,&input,&output,&internal_context);
 	fail_if ((result  != srm_call_status_FAILURE),
 				   "Expected Failure 1!\n");
@@ -277,7 +277,7 @@ START_TEST (test_srmv2_ls_async)
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test7;
 	result = srmv2_ls_async(&context,&input,&output,&internal_context);
 	fail_if ((result  != srm_call_status_SUCCESS),
-					"Expected Success!\n");
+					"Expected Success!\n");*/
 }
 END_TEST
 int  soap_call_srm2__srmStatusOfLs_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequest *srmStatusOfLsRequest,
@@ -350,7 +350,7 @@ START_TEST (test_srmv2_StatusOfLsRequest)
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test1;
+	/*call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test1;
 	result = srmv2_status_of_ls_request(&context,&output,&internal_context);
 	fail_if ((result  != srm_call_status_FAILURE),
 				   "Expected Failure 1!\n");
@@ -374,7 +374,7 @@ START_TEST (test_srmv2_StatusOfLsRequest)
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
 	result = srmv2_status_of_ls_request(&context,&output,&internal_context);
 	fail_if ((result  != srm_call_status_SUCCESS),
-				   "Expected Success!\n");
+				   "Expected Success!\n");*/
 
 
 }
@@ -810,5 +810,14 @@ int main(void)
 	//printf("TEST\n");
 	return EXIT_SUCCESS;
 }
-
+void PrintResult(struct srmv2_mdfilestatus* output)
+{
+	int i;
+	printf("Directory: %s \n",output->surl);
+	printf("Files:\n");
+	for(i=0;i<output->nbsubpaths;i++)
+	{
+		printf("%s \n",output->subpaths[i].surl);
+	}
+}
 

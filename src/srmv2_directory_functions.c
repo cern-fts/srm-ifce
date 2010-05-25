@@ -13,15 +13,14 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 /////////////////////////
 int copy_ls_output(struct srm2__TReturnStatus *reqstatp, struct srm2__ArrayOfTMetaDataPathDetail *repfs,struct srmv2_mdfilestatus **statuses);
 
-int srmv2_ls_async(struct srm_context *context,struct srm_ls_input *input,
+int srmv2_ls_async_internal(struct srm_context *context,struct srm_ls_input *input,
 		struct srm_ls_output *output,struct srm_internal_context *internal_context);
-int srmv2_status_of_ls_request(struct srm_context *context,
+int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_ls_output *output,struct srm_internal_context *internal_context);
 
 
 int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output *output)
 {
-	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int i,result;
 
@@ -29,14 +28,15 @@ int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_l
 	back_off_logic_init(context,&internal_context);
 
 	// Call srm ls
-	srmv2_ls_async(context,input,output,&internal_context);
+	srmv2_ls_async_internal(context,input,output,&internal_context);
 
 
 	// if ls was queued start polling statusOfLsRequest
-	if (internal_context.current_status == srm_call_status_QUEUED)
+	while (internal_context.current_status == srm_call_status_QUEUED)
 	{
-
-		if (srmv2_status_of_ls_request(context,output,&internal_context))
+		srmv2_status_of_ls_request_async_internal(context,output,&internal_context);
+		if ((internal_context.current_status != srm_call_status_SUCCESS)
+				&&(internal_context.current_status != srm_call_status_QUEUED))
 		{
 			srmv2_abort_request(context,&internal_context);
 			return -1;
@@ -51,8 +51,17 @@ int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_l
 	}
 	return 0;
 }
+int srm_ls_async(struct srm_context *context,
+		struct srm_ls_input *input,struct srm_ls_output *output)
+{
+	struct srm_internal_context internal_context;
+
+	back_off_logic_init(context,&internal_context);
+
+	return srmv2_ls_async_internal(context,input,output,&internal_context);
+}
 // Asynchronous srm ls call
-int srmv2_ls_async(struct srm_context *context,
+int srmv2_ls_async_internal(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output,struct srm_internal_context *internal_context)
 {
 	int n,ret;
@@ -166,7 +175,7 @@ int srmv2_ls_async(struct srm_context *context,
 
 	return current_status;
 }
-int srmv2_status_of_ls_request(struct srm_context *context,
+int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_ls_output *output,struct srm_internal_context *internal_context)
 {
 	const char srmfunc[] = "StatusOfLsRequest";

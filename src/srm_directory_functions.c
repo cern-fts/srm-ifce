@@ -3,7 +3,7 @@
 
 
 
-int srm_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output **output)
+int srm_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output *output)
 {
 	switch (context->version)
 	{
@@ -17,7 +17,7 @@ int srm_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_
 	}
 }
 
-int srm_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_output **output)
+int srm_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_output *output)
 {
 	switch (context->version)
 	{
@@ -30,7 +30,7 @@ int srm_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_
 			return (-1);
 	}
 }
-int srm_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output **output)
+int srm_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output *output)
 {
 	switch (context->version)
 	{
