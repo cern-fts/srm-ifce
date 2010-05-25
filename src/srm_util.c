@@ -349,13 +349,13 @@ int srm_count_elements_of_string_array(char** a)
     return ret;
 }
 
-int copy_token(char *tokendest,srm_call_status current_status,char *token)
+int copy_token(char *tokendest,char *tokensrc,srm_call_status current_status)
 {
 	if (current_status == srm_call_status_QUEUED)
 	{
-		if (token)
+		if (tokensrc)
 		{
-			if ((tokendest	 = strdup (token)) == NULL)
+			if ((tokendest	 = strdup (tokensrc)) == NULL)
 			{
 				errno = ENOMEM;
 				return (-1);

@@ -3,8 +3,6 @@
 #include "srm_util.h"
 #include "srm_dependencies.h"
 
-
-int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output *output);
 int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_output *output);
 int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output *output);
 int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
@@ -13,53 +11,6 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 /////////////////////////
 int copy_ls_output(struct srm2__TReturnStatus *reqstatp, struct srm2__ArrayOfTMetaDataPathDetail *repfs,struct srmv2_mdfilestatus **statuses);
 
-int srmv2_ls_async_internal(struct srm_context *context,struct srm_ls_input *input,
-		struct srm_ls_output *output,struct srm_internal_context *internal_context);
-int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
-		struct srm_ls_output *output,struct srm_internal_context *internal_context);
-
-
-int srmv2_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output *output)
-{
-	struct srm_internal_context internal_context;
-	int i,result;
-
-	// Setup the timeout
-	back_off_logic_init(context,&internal_context);
-
-	// Call srm ls
-	srmv2_ls_async_internal(context,input,output,&internal_context);
-
-
-	// if ls was queued start polling statusOfLsRequest
-	while (internal_context.current_status == srm_call_status_QUEUED)
-	{
-		srmv2_status_of_ls_request_async_internal(context,output,&internal_context);
-		if ((internal_context.current_status != srm_call_status_SUCCESS)
-				&&(internal_context.current_status != srm_call_status_QUEUED))
-		{
-			srmv2_abort_request(context,&internal_context);
-			return -1;
-		}
-
-		// ls status of request
-	}
-
-	if (internal_context.current_status != srm_call_status_SUCCESS)
-	{
-		return -1;
-	}
-	return 0;
-}
-int srm_ls_async(struct srm_context *context,
-		struct srm_ls_input *input,struct srm_ls_output *output)
-{
-	struct srm_internal_context internal_context;
-
-	back_off_logic_init(context,&internal_context);
-
-	return srmv2_ls_async_internal(context,input,output,&internal_context);
-}
 // Asynchronous srm ls call
 int srmv2_ls_async_internal(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output,struct srm_internal_context *internal_context)
@@ -124,18 +75,12 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
 	// If queued
-	// TODO copy token
-	/*if (internal_context->current_status == srm_call_status_QUEUED)
+	if (copy_token(output->token,rep.srmLsResponse->requestToken,internal_context->current_status))
 	{
-		if (rep.srmLsResponse->requestToken == NULL)
-		{
-			// queued but token empty so this is an error
-			internal_context->current_status = srm_call_status_FAILURE;
-		}else
-		{
-			output->token = rep.srmLsResponse->requestToken;
-		}
-	}else*/
+		srm_soap_deinit(&soap);
+		return -1;
+	}
+
 	// If success
 	if (internal_context->current_status == srm_call_status_SUCCESS)
 	{
@@ -175,6 +120,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 
 	return ret;
 }
+
 int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_ls_output *output,struct srm_internal_context *internal_context)
 {
@@ -247,7 +193,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 	}
 	srm_soap_deinit(&soap);
 
-	return (internal_context->current_status);
+	return (ret);
 }
 
 

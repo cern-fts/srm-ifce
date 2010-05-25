@@ -28,6 +28,6 @@ int srm_set_protocol_in_transferParameters(
 char* srm_strip_string(const char* str, const char chr);
 int srm_count_elements_of_string_array(char** a);
 
-int copy_token(char *tokendest,srm_call_status current_status,char *token);
+int copy_token(char *tokendest,char *tokensrc,srm_call_status current_status);
 
 #endif /* SRM_UTIL_H_ */

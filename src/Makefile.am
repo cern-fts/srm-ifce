@@ -186,13 +186,13 @@ SRM_SOURCE_FILES = \
     srmv2Client.c \
     srmSoapBinding.c \
 	srm_dependencies.c \
+	srm_version_wrapper.c \
 	srm_util.c \
 	srmv2_directory_functions.c \
+	srmv2_sync_wrapper.c \
+	srmv2_async_wrapper.c \
 	srmv2_space_management_functions.c \
-	srmv2_data_transfer_functions.c \
-	srm_space_management_functions.c \
-    srm_data_transfer_functions.c \
-    srm_directory_functions.c 
+	srmv2_data_transfer_functions.c 
 
 SRM_FLAGS = \
 	-I$(LFC_LOCATION)/include/lfc \
