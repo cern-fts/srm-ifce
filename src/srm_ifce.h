@@ -31,10 +31,10 @@ int srmv2_getspacemd (struct srm_context *context,
 		struct srmv2_getspacemd_input *input, srm_spacemd **spaces);
 
 int srm_prepeare_to_put(struct srm_context *context,
-		struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses);
+		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
 int srm_prepeare_to_get(struct srm_context *context,
-		struct srm_preparetoget_input *input, struct srmv2_pinfilestatus **filestatuses);
+		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
 int srm_bring_online(struct srm_context *context,
 		struct srm_bringonline_input *input, struct srmv2_pinfilestatus **filestatuses);

@@ -122,7 +122,9 @@ int srmv2_ls_async_internal(struct srm_context *context,
 }
 
 int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
-		struct srm_ls_output *output,struct srm_internal_context *internal_context)
+		struct srm_ls_input *input,
+		struct srm_ls_output *output,
+		struct srm_internal_context *internal_context)
 {
 	const char srmfunc[] = "StatusOfLsRequest";
 	struct soap soap;

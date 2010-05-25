@@ -276,47 +276,8 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	return ret;
 }
 
-int srmv2_prepeare_to_get(struct srm_context *context,
-		struct srm_preparetoget_input *input, struct srmv2_pinfilestatus **filestatuses)
-{
-	struct srm_internal_context internal_context;
-	int i,result;
-
-	// Setup the timeout
-	back_off_logic_init(context,&internal_context);
-
-	// request
-	srmv2_prepare_to_get_async(context,input,filestatuses,&internal_context);
 
 
-	// if request was queued start polling statusOfLsRequest
-	while (internal_context.current_status == srm_call_status_QUEUED)
-	{
-		srmv2_status_of_get_request(context,input,filestatuses,&internal_context);
-		if ((internal_context.current_status != srm_call_status_SUCCESS)&&
-				(internal_context.current_status != srm_call_status_QUEUED))
-		{
-			internal_context.current_status = srmv2_abort_request(context,&internal_context);
-			return -1;
-		}
-		// status of request
-	}
-
-	if (internal_context.current_status != srm_call_status_SUCCESS)
-	{
-		return -1;
-	}
-	return 0;
-}
-int srmv2_prepare_to_get_async(struct srm_context *context,
-		struct srm_preparetoget_input *input,
-		struct srm_preparetoget_output *output)
-{
-	struct srm_internal_context internal_context;
-
-	// Setup the timeout
-		back_off_logic_init(context,&internal_context);
-}
 int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 		struct srm_preparetoget_input *input,
 		struct srm_preparetoget_output *output,
@@ -459,7 +420,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	return ret;
 }
 
-int srmv2_status_of_get_request(struct srm_context *context,
+int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 		struct srm_preparetoget_input *input,
 		struct srm_preparetoget_output *output,
 		struct srm_internal_context *internal_context)

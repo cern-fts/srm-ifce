@@ -130,12 +130,13 @@ int srm_put_done(struct srm_context *context,
 }
 
 int srm_prepeare_to_get(struct srm_context *context,
-		struct srm_preparetoget_input *input, struct srmv2_pinfilestatus **filestatuses)
+		struct srm_preparetoget_input *input,
+		struct srm_preparetoget_output *output)
 {
 	switch (context->version)
 	{
 		case TYPE_SRMv2:
-			return srmv2_prepeare_to_get(context,input,filestatuses);
+			return srmv2_prepeare_to_get_sync(context,input,output);
 		case TYPE_SRM:
 			// TODO
 			return 0;
@@ -145,12 +146,13 @@ int srm_prepeare_to_get(struct srm_context *context,
 }
 
 int srm_prepeare_to_put(struct srm_context *context,
-		struct srm_preparetoput_input *input, struct srmv2_pinfilestatus **filestatuses)
+		struct srm_preparetoput_input *input,
+		struct srm_preparetoput_output *output)
 {
 	switch (context->version)
 	{
 		case TYPE_SRMv2:
-			return srmv2_prepeare_to_put_sync(context,input,filestatuses);
+			return srmv2_prepeare_to_put_sync(context,input,output);
 		case TYPE_SRM:
 			// TODO
 			return 0;
