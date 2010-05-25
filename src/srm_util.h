@@ -28,6 +28,20 @@ int srm_set_protocol_in_transferParameters(
 char* srm_strip_string(const char* str, const char chr);
 int srm_count_elements_of_string_array(char** a);
 
-int copy_token(char *tokendest,char *tokensrc,srm_call_status current_status);
+int copy_token(char *tokendest,char *tokensrc);
+
+int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_filestatus **statuses,
+						struct srm2__ArrayOfTSURLReturnStatus *repfs,
+						char *srmfunc);
+
+int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
+						char srmfunc);
+
+int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_mdfilestatus **statuses,
+						struct srm2__ArrayOfTMetaDataPathDetail *repfs);
 
 #endif /* SRM_UTIL_H_ */

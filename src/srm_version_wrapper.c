@@ -177,12 +177,12 @@ int srm_abort_files(struct srm_context *context,
 }
 
 int srm_bring_online(struct srm_context *context,
-		struct srm_bringonline_input *input, struct srmv2_pinfilestatus **filestatuses)
+		struct srm_bringonline_input *input,struct srm_bringonline_output *output)
 {
 	switch (context->version)
 	{
 		case TYPE_SRMv2:
-			return srmv2_bring_online(context,input,filestatuses);
+			return srmv2_bring_online_sync(context,input,output);
 		case TYPE_SRM:
 			// TODO
 			return 0;

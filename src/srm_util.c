@@ -349,24 +349,233 @@ int srm_count_elements_of_string_array(char** a)
     return ret;
 }
 
-int copy_token(char *tokendest,char *tokensrc,srm_call_status current_status)
+int copy_token(char *tokendest,char *tokensrc)
 {
-	if (current_status == srm_call_status_QUEUED)
+	if (tokensrc)
 	{
-		if (tokensrc)
+		if ((tokendest	 = strdup (tokensrc)) == NULL)
 		{
-			if ((tokendest	 = strdup (tokensrc)) == NULL)
-			{
-				errno = ENOMEM;
-				return (-1);
-			}
-		}else
-		{
-			errno = EINVAL;
-			// queued but empty token
+			errno = ENOMEM;
 			return (-1);
 		}
+	}else
+	{
+		errno = EINVAL;
+		// queued but empty token
+		return (-1);
 	}
 	return 0;
 }
 
+int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_filestatus **statuses,
+						struct srm2__ArrayOfTSURLReturnStatus *repfs,
+						char *srmfunc)
+{
+	int i,n;
+
+	n = repfs->__sizestatusArray;
+
+	if ((*statuses = (struct srmv2_filestatus *) calloc (n, sizeof(struct srmv2_filestatus))) == NULL)
+	{
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*statuses + i, 0, sizeof (struct srmv2_filestatus));
+		if (repfs->statusArray[i]->surl)
+			(*statuses)[i].surl = strdup (repfs->statusArray[i]->surl);
+		if (repfs->statusArray[i]->status) {
+			(*statuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*statuses)[i].explanation), "[SRM][%s][%s] %s",
+						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*statuses)[i].explanation), "[SRM][%s][%s] %s",
+						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else
+				asprintf (&((*statuses)[i].explanation), "[SRM][%s][%s] <none>",
+						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}
+	}
+	return n;
+}
+int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
+						char srmfunc)
+{
+	int n,i;
+	n = repfs->__sizestatusArray;
+	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+	{
+		//srm_soap_deinit(&soap);
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		if (repfs->statusArray[i]->SURL)
+			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
+		if (repfs->statusArray[i]->transferURL)
+			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
+		if (repfs->statusArray[i]->status) {
+			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else if ((*filestatuses)[i].status != 0)
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}
+		if (repfs->statusArray[i]->remainingPinLifetime)
+			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
+	}
+	return n;
+}
+
+int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
+		struct srmv2_mdfilestatus **statuses,
+		struct srm2__ArrayOfTMetaDataPathDetail *repfs)
+{
+	int i, n, r;
+	const char srmfunc[] = "Ls";
+
+	if (reqstatp == NULL || repfs == NULL || statuses == NULL)
+	{
+		errno = EFAULT;
+		return (-1);
+	}
+
+	n = repfs->__sizepathDetailArray;
+
+	if ((*statuses = (struct srmv2_mdfilestatus *) calloc (n, sizeof (struct srmv2_mdfilestatus))) == NULL)
+	{
+		return (-1);
+	}
+
+	for (i = 0; i < n; ++i)
+	{
+		if (!repfs->pathDetailArray[i])
+			continue;
+		memset (*statuses + i, 0, sizeof(struct srm_ls_output));
+		if (repfs->pathDetailArray[i]->path)
+		{
+			(*statuses)[i].surl = strdup (repfs->pathDetailArray[i]->path);
+		}
+		if (repfs->pathDetailArray[i]->status)
+		{
+			(*statuses)[i].status = statuscode2errno(repfs->pathDetailArray[i]->status->statusCode);
+		}
+		if ((*statuses)[i].status) {
+			if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
+			{
+				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
+						repfs->pathDetailArray[i]->status->explanation);
+			}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+			{
+				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
+						reqstatp->explanation);
+			}else
+			{
+				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] <none>",
+						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode));
+			}
+
+			continue;
+		}
+		if (repfs->pathDetailArray[i]->size)
+		{
+			(*statuses)[i].stat.st_size = *(repfs->pathDetailArray[i]->size);
+		}else
+		{
+			(*statuses)[i].stat.st_size = 0;
+		}
+		if (repfs->pathDetailArray[i]->fileLocality)
+		{
+			(*statuses)[i].locality = *(repfs->pathDetailArray[i]->fileLocality); // TODO check this line
+        }
+		(*statuses)[i].stat.st_uid = 2;//TODO: create haseh placeholder for string<->uid/gid mapping
+		(*statuses)[i].stat.st_gid = 2;
+		(*statuses)[i].stat.st_nlink = 1;
+
+		if (repfs->pathDetailArray[i]->otherPermission)
+		{
+			(*statuses)[i].stat.st_mode = *(repfs->pathDetailArray[i]->otherPermission);
+		}
+		if (repfs->pathDetailArray[i]->groupPermission)
+		{
+			(*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->groupPermission->mode << 3;
+		}
+		if (repfs->pathDetailArray[i]->ownerPermission)
+		{
+			(*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->ownerPermission->mode << 6;
+		}
+		if (repfs->pathDetailArray[i]->type)
+		{
+			switch (*(repfs->pathDetailArray[i]->type))
+			{
+				case FILE_:
+					(*statuses)[i].stat.st_mode |= S_IFREG;
+					break;
+				case DIRECTORY:
+					(*statuses)[i].stat.st_mode |= S_IFDIR;
+					break;
+				case LINK:
+					(*statuses)[i].stat.st_mode |= S_IFLNK;
+					break;
+			}
+		}
+		if (repfs->pathDetailArray[i]->checkSumType && repfs->pathDetailArray[i]->checkSumValue)
+		{
+			(*statuses)[i].checksumtype = strdup (repfs->pathDetailArray[i]->checkSumType);
+			(*statuses)[i].checksum = strdup (repfs->pathDetailArray[i]->checkSumValue);
+		}
+		if (repfs->pathDetailArray[i]->arrayOfSpaceTokens &&
+                repfs->pathDetailArray[i]->arrayOfSpaceTokens->__sizestringArray > 0 &&
+                repfs->pathDetailArray[i]->arrayOfSpaceTokens->stringArray)
+		{
+            int j;
+            (*statuses)[i].nbspacetokens = repfs->pathDetailArray[i]->arrayOfSpaceTokens->__sizestringArray;
+
+            if (((*statuses)[i].spacetokens = (char **) calloc ((*statuses)[i].nbspacetokens, sizeof (char *))) == NULL)
+                return (-1);
+            for (j = 0; j < (*statuses)[i].nbspacetokens; ++j)
+            {
+                if (repfs->pathDetailArray[i]->arrayOfSpaceTokens->stringArray[j] == NULL)
+                    continue;
+                (*statuses)[i].spacetokens[j] = strdup (repfs->pathDetailArray[i]->arrayOfSpaceTokens->stringArray[j]);
+            }
+        }
+
+		if (repfs->pathDetailArray[i]->arrayOfSubPaths)
+		{
+			r = copy_mdfilestatuses (reqstatp, &((*statuses)[i].subpaths), repfs->pathDetailArray[i]->arrayOfSubPaths );
+
+			if (r < 0)
+				return (r);
+
+			(*statuses)[i].nbsubpaths = r;
+		}
+	}
+
+    errno = 0;
+	return (n);
+}
