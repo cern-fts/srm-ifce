@@ -146,6 +146,10 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 		const char *srmfunc)
 {
 	int result_errno;
+	if (retstatus == NULL)
+	{
+		return ECOMM;
+	}
 	if (retstatus->statusCode != SRM_USCORESUCCESS &&
 			retstatus->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS &&
 			retstatus->statusCode != SRM_USCOREDONE &&

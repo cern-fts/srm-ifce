@@ -334,7 +334,7 @@ int  soap_call_srm2__srmStatusOfLs_test4(struct soap *soap, const char *soap_end
 //////////////////////////////////////////////////////////////////
 // test test_srmv2_Rm_async
 //////////////////////////////////////////////////////////////////
-START_TEST (test_srmv2_StatusOfLsRequest)
+START_TEST (test_srmv2_status_of_ls_request)
 {
 	int i;
 	struct srm_mdfilestatus *filestatus;
@@ -641,6 +641,213 @@ START_TEST (test_srmv2_mkdir)
 }
 END_TEST
 
+int  soap_call_srm2__srmAbortFiles_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmAbortFilesRequest *srmAbortFilesRequest,
+						struct srm2__srmAbortFilesResponse_ *_param_18)
+{
+	struct srm2__srmAbortFilesResponse *resp  = (struct srm2__srmAbortFilesResponse *) soap_malloc (soap,sizeof (struct srm2__srmAbortFilesResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREINVALID_USCOREREQUEST; // token empty
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmAbortFilesResponse = resp;
+
+	return 0;
+}
+
+int  soap_call_srm2__srmAbortFiles_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmAbortFilesRequest *srmAbortFilesRequest,
+						struct srm2__srmAbortFilesResponse_ *_param_18)
+{
+	struct srm2__srmAbortFilesResponse *resp  = (struct srm2__srmAbortFilesResponse *) soap_malloc (soap,sizeof (struct srm2__srmAbortFilesResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS; // token empty
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmAbortFilesResponse = resp;
+
+	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->__sizestatusArray = 1;
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////
+// test test_abort_files
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_abort_files)
+{
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	struct srmv2_filestatus *statuses;
+	struct srm_abort_files_input input;
+	struct srm_context context;
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.nbfiles = 1;
+	input.surls = test_surls;
+	input.reqtoken = "test";
+
+	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test1;
+	result = srmv2_abort_files(&context,&input,&statuses);
+	fail_if ((result  != -1),
+				   "Expected Failure 1!\n");
+
+	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test2;
+	result = srmv2_abort_files(&context,&input,&statuses);
+	fail_if ((result == -1),
+				   "Expected Success!\n");
+}
+END_TEST
+
+int  soap_call_srm2__srmPutDone_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmPutDoneRequest *srmAbortFilesRequest,
+						struct srm2__srmPutDoneResponse_ *_param_18)
+{
+	struct srm2__srmPutDoneResponse *resp  = (struct srm2__srmPutDoneResponse *) soap_malloc (soap,sizeof (struct srm2__srmPutDoneResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREINVALID_USCOREREQUEST;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmPutDoneResponse = resp;
+
+	return 0;
+}
+int  soap_call_srm2__srmPutDone_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmPutDoneRequest *srmAbortFilesRequest,
+						struct srm2__srmPutDoneResponse_ *_param_18)
+{
+	struct srm2__srmPutDoneResponse *resp  = (struct srm2__srmPutDoneResponse *) soap_malloc (soap,sizeof (struct srm2__srmPutDoneResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmPutDoneResponse = resp;
+
+	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->__sizestatusArray = 1;
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+
+
+	return 0;
+}
+
+int  soap_call_srm2__srmPutDone_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmPutDoneRequest *srmAbortFilesRequest,
+						struct srm2__srmPutDoneResponse_ *_param_18)
+{
+	struct srm2__srmPutDoneResponse *resp  = (struct srm2__srmPutDoneResponse *) soap_malloc (soap,sizeof (struct srm2__srmPutDoneResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmPutDoneResponse = resp;
+
+	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->__sizestatusArray = 1;
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+
+
+	return 0;
+}
+
+int  soap_call_srm2__srmPutDone_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmPutDoneRequest *srmAbortFilesRequest,
+						struct srm2__srmPutDoneResponse_ *_param_18)
+{
+	struct srm2__srmPutDoneResponse *resp  = (struct srm2__srmPutDoneResponse *) soap_malloc (soap,sizeof (struct srm2__srmPutDoneResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmPutDoneResponse = NULL; // THIS FAILS
+
+
+	return 0;
+}
+int  soap_call_srm2__srmPutDone_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmPutDoneRequest *srmAbortFilesRequest,
+						struct srm2__srmPutDoneResponse_ *_param_18)
+{
+	struct srm2__srmPutDoneResponse *resp  = (struct srm2__srmPutDoneResponse *) soap_malloc (soap,sizeof (struct srm2__srmPutDoneResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = NULL;// THIS FAILS
+	_param_18->srmPutDoneResponse = resp;
+
+
+	return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////
+// test test_put_done
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_put_done)
+{
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	struct srmv2_filestatus *statuses;
+	struct srm_putdone_input input;
+	struct srm_context context;
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.nbfiles = 1;
+	input.surls = test_surls;
+	input.reqtoken = "test";
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test1;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result  != -1),
+				   "Expected Failure 1!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test2;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result == -1),
+				   "Expected Success!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test3;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result != -1),
+				   "Expected Failure!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test4;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result != -1),
+				   "Expected Failure!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test5;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result != -1),
+				   "Expected Failure!\n");
+}
+END_TEST
+
+
+
 Suite * test_suite (void)
 {
   Suite *s = suite_create ("New srm interface unit test suit");
@@ -651,17 +858,21 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_1, test_wait_for_new_attempt);
   tcase_add_test (tc_case_1, test_back_off_logic);
   tcase_add_test (tc_case_1, test_srmv2_ls_async);
-  tcase_add_test (tc_case_1, test_srmv2_StatusOfLsRequest);
+  tcase_add_test (tc_case_1, test_srmv2_status_of_ls_request);
   tcase_add_test (tc_case_1, test_srmv2_abort_request);
   tcase_add_test (tc_case_1, test_srmv2_rmdir);
   tcase_add_test (tc_case_1, test_srmv2_rm);
   tcase_add_test (tc_case_1, test_srmv2_mkdir);
+  tcase_add_test (tc_case_1, test_srmv2_abort_files);
+  tcase_add_test (tc_case_1, test_srmv2_put_done);
+
 
 
   suite_add_tcase (s, tc_case_1);
 
   return s;
 }
+
 
 int main(void)
 {
@@ -674,7 +885,8 @@ int main(void)
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 
-
+//	TestPutDone();
+//	TestAbortFiles();
 //	TestMkdir();
 //	TestRm();
 //	TestStatusOfLs();
@@ -958,4 +1170,77 @@ void TestMkdir()
 	result = srmv2_mkdir(&context,&input);
 //	fail_if ((result  != 0),
 //				   "Expected Success!\n");
+}
+void TestAbortFiles()
+{
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	struct srmv2_filestatus *statuses;
+	struct srm_abort_files_input input;
+	struct srm_context context;
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.nbfiles = 1;
+	input.surls = test_surls;
+	input.reqtoken = "test";
+
+	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test1;
+	result = srmv2_abort_files(&context,&input,&statuses);
+	//fail_if ((result  != -1),
+				   //"Expected Failure 1!\n");
+
+	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test2;
+	result = srmv2_abort_files(&context,&input,&statuses);
+	//fail_if ((result == -1),
+		//		   "Expected Success!\n");
+}
+void TestPutDone()
+{
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	struct srmv2_filestatus *statuses;
+	struct srm_putdone_input input;
+	struct srm_context context;
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.nbfiles = 1;
+	input.surls = test_surls;
+	input.reqtoken = "test";
+
+	/*call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test1;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result  != -1),
+				   "Expected Failure 1!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test2;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result == -1),
+				   "Expected Success!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test3;
+	result = srmv2_put_done(&context,&input,&statuses);
+	fail_if ((result != -1),
+				   "Expected Failure!\n");*/
+
+	/*call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test4;
+	result = srmv2_put_done(&context,&input,&statuses);*/
+	//fail_if ((result != -1),
+		//		   "Expected Failure!\n");
+
+	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test5;
+	result = srmv2_put_done(&context,&input,&statuses);
+//	fail_if ((result != -1),
+	//			   "Expected Failure!\n");
 }

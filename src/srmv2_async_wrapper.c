@@ -62,4 +62,26 @@ int srmv2_status_of_put_request_async(struct srm_context *context,
 
 	return srmv2_status_of_put_request_async_internal(context,input,output,&internal_context);
 }
+int srmv2_bring_online_async(struct srm_context *context,
+		struct srm_bringonline_input *input,
+		struct srm_bringonline_output *output)
+{
+	struct srm_internal_context internal_context;
+
+	back_off_logic_init(context,&internal_context);
+
+	return srmv2_bring_online_async_internal(context,input,output,&internal_context);
+}
+int srmv2_status_of_bring_online_async(struct srm_context *context,
+		struct srm_bringonline_input *input,
+		struct srm_bringonline_output *output)
+{
+	struct srm_internal_context internal_context;
+
+	back_off_logic_init(context,&internal_context);
+
+	return srmv2_status_of_bring_online_async_internal(context,input,output,&internal_context);
+}
+
+
 

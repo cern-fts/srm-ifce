@@ -44,6 +44,46 @@ int srm_status_of_ls_async(struct srm_context *context,struct srm_ls_input *inpu
 			return (-1);
 	}
 }
+int srm_bring_online(struct srm_context *context,struct srm_bringonline_input *input,struct srm_bringonline_output *output)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_bring_online_sync(context,input,output);
+		case TYPE_SRM:
+			// TODO
+			return 0;
+		default:
+			return (-1);
+	}
+}
+int srm_bring_online_async(struct srm_context *context,struct srm_bringonline_input *input,struct srm_bringonline_output *output)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_bring_online_async(context,input,output);
+		case TYPE_SRM:
+			// TODO
+			return 0;
+		default:
+			return (-1);
+	}
+}
+int srm_status_of_bring_online_async(struct srm_context *context,struct srm_bringonline_input *input,struct srm_bringonline_output *output)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_status_of_bring_online_async(context,input,output);
+		case TYPE_SRM:
+			// TODO
+			return 0;
+		default:
+			return (-1);
+	}
+}
+
 
 int srm_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_output *output)
 {
@@ -162,7 +202,7 @@ int srm_prepeare_to_put(struct srm_context *context,
 }
 
 int srm_abort_files(struct srm_context *context,
-		struct srm_abortfiles_input *input,struct srmv2_filestatus **statuses)
+		struct srm_abort_files_input *input,struct srmv2_filestatus **statuses)
 {
 	switch (context->version)
 	{
@@ -176,18 +216,5 @@ int srm_abort_files(struct srm_context *context,
 	}
 }
 
-int srm_bring_online(struct srm_context *context,
-		struct srm_bringonline_input *input,struct srm_bringonline_output *output)
-{
-	switch (context->version)
-	{
-		case TYPE_SRMv2:
-			return srmv2_bring_online_sync(context,input,output);
-		case TYPE_SRM:
-			// TODO
-			return 0;
-		default:
-			return (-1);
-	}
-}
+
 

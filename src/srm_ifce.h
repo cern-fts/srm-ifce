@@ -21,6 +21,15 @@ int srm_rmdir(struct srm_context *context,
 int srm_mkdir(struct srm_context *context,
 		struct srm_mkdir_input *input);
 
+int srm_bring_online(struct srm_context *context,
+		struct srm_bringonline_input *input, struct srm_bringonline_output *output);
+
+int srm_bring_online_async(struct srm_context *context,
+		struct srm_bringonline_input *input,struct srm_bringonline_output *output);
+
+int srm_status_of_bring_online_async(struct srm_context *context,
+		struct srm_bringonline_input *input,struct srm_bringonline_output *output);
+
 char* srmv2_getbestspacetoken (struct srm_context *context,
 		struct srm_getbestspacetokens_input *input);
 
@@ -36,8 +45,6 @@ int srm_prepeare_to_put(struct srm_context *context,
 int srm_prepeare_to_get(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
-int srm_bring_online(struct srm_context *context,
-		struct srm_bringonline_input *input, struct srm_bringonline_output *output);
 
 int srm_put_done(struct srm_context *context,
 		struct srm_putdone_input *input, struct srmv2_filestatus **statuses);
@@ -46,7 +53,7 @@ int srm_release_files(struct srm_context *context,
 		struct srm_releasefiles_input *input, struct srmv2_filestatus **statuses);
 
 int srm_abort_files(struct srm_context *context,
-		struct srm_abortfiles_input *input,struct srmv2_filestatus **statuses);
+		struct srm_abort_files_input *input,struct srmv2_filestatus **statuses);
 
 int srm_abort_request (struct srm_context *context,
 		char *reqtoken);

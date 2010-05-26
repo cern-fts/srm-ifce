@@ -225,7 +225,7 @@ typedef struct srm_abort_request_input
 	char *reqtoken;
 };
 
-typedef struct srm_abortfiles_input{
+typedef struct srm_abort_files_input{
 	int nbfiles;
 	char **surls;
 	char *reqtoken;
