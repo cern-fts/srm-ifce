@@ -631,7 +631,13 @@ int srmv2_release_files(struct srm_context *context,
 		return (-1);
 	}
 
-	ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
+	if (internal_context.current_status == srm_call_status_SUCCESS)
+	{
+		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
+	}else
+	{
+		ret = -1;
+	}
 
 	srm_soap_deinit(&soap);
 	return (ret);
@@ -690,7 +696,6 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	{
 		spacetokeninput.spacetokendesc = input->spacetokendesc;
 		targetspacetoken = srmv2_getbestspacetoken (context,&spacetokeninput);
-		srmv2_getbestspacetoken (context);
 		if (targetspacetoken != NULL)
 		{
 			req.targetSpaceToken = targetspacetoken;
@@ -754,40 +759,35 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 
 	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
-
-	if (internal_context->current_status != srm_call_status_SUCCESS || internal_context->current_status != srm_call_status_QUEUED ||
-			!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
-	{
-		errno = srm_call_err(context,output->retstatus,srmfunc);
-		srm_soap_deinit(&soap);
-		return (-1);
-	}
-
 	switch (internal_context->current_status)
 	{
+		case srm_call_status_TIMEOUT:
+			ret = -1;
+			break;
 		case srm_call_status_QUEUED:
 			if (copy_token(output->token,rep.srmBringOnlineResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
-				srm_soap_deinit(&soap);
-				return -1;
+				ret = -1;
 			}
-			ret = copy_pinfilestatuses(output->retstatus,
-											output->filestatuses,
-											repfs,
-											srmfunc);
 			break;
 		case srm_call_status_SUCCESS:
-			ret = copy_pinfilestatuses(output->retstatus,
+			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			{
+				internal_context->current_status = srm_call_status_FAILURE;
+				errno = srm_call_err(context,output->retstatus,srmfunc);
+				ret = -1;
+			}else
+			{
+				ret = copy_pinfilestatuses(output->retstatus,
 											output->filestatuses,
 											repfs,
 											srmfunc);
+			}
 			break;
 		default:
 			ret = -1;
 			break;
-
-
 	}
 
 	srm_soap_deinit(&soap);

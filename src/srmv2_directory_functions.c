@@ -76,14 +76,11 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_QUEUED:
-			if (internal_context->current_status == srm_call_status_QUEUED)
+			if (copy_token(output->token,rep.srmLsResponse->requestToken))
 			{
-				if (copy_token(output->token,rep.srmLsResponse->requestToken))
-				{
-					internal_context->current_status = srm_call_status_FAILURE;
-					srm_soap_deinit(&soap);
-					return -1;
-				}
+				internal_context->current_status = srm_call_status_FAILURE;
+				srm_soap_deinit(&soap);
+				return -1;
 			}
 			break;
 		case srm_call_status_SUCCESS:
