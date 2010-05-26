@@ -75,9 +75,6 @@ int srmv2_ls_async_internal(struct srm_context *context,
 
 	switch (internal_context->current_status)
 	{
-		case srm_call_status_TIMEOUT:
-			ret = -1;
-			break;
 		case srm_call_status_QUEUED:
 			if (internal_context->current_status == srm_call_status_QUEUED)
 			{
@@ -104,7 +101,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 				n = copy_mdfilestatuses(output->retstatus, output->statuses,repfs);
 				if (n == -1)
 				{
-					errno = srm_call_err(context,internal_context,srmfunc);
+					errno = srm_call_err(context,output->retstatus,srmfunc);
 					internal_context->current_status  = srm_call_status_FAILURE;
 					ret = -1;
 				}
@@ -137,6 +134,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
+	internal_context->current_status = srm_call_status_FAILURE;
 
 	do
 	{
@@ -159,41 +157,50 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
 	// If success
-	if (internal_context->current_status == srm_call_status_SUCCESS)
+	switch (internal_context->current_status)
 	{
-		// Copy file structure to another pointer for easier manipulation
-		repfs = srep.srmStatusOfLsRequestResponse->details;
-		// Check if file structure ok
-		if (!repfs || repfs->__sizepathDetailArray <= 0 || !repfs->pathDetailArray)
-		{
-			// file list empty error
-			internal_context->current_status  = srm_call_status_FAILURE;
-		}else
-		{
-			// Everything is fine copy file structure and check if copy went ok
-			n = copy_mdfilestatuses(output->retstatus, output->statuses,repfs );
-			if (n == -1)
+		case srm_call_status_SUCCESS:
+			// Copy file structure to another pointer for easier manipulation
+			repfs = srep.srmStatusOfLsRequestResponse->details;
+			// Check if file structure ok
+			if (!repfs || repfs->__sizepathDetailArray <= 0 || !repfs->pathDetailArray)
 			{
-				errno = srm_call_err(context,internal_context,srmfunc);
+				// file list empty error
 				internal_context->current_status  = srm_call_status_FAILURE;
+				ret = -1;
 			}else
 			{
-				// TODO check this code:
+				// Everything is fine copy file structure and check if copy went ok
+				n = copy_mdfilestatuses(output->retstatus, output->statuses,repfs );
+				if (n == -1)
+				{
+					errno = srm_call_err(context,output->retstatus,srmfunc);
+					internal_context->current_status  = srm_call_status_FAILURE;
+					ret = -1;
+				}else
+				{
+					// TODO check this code:
 
-			/*	if (n == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
-						repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
-				{
-					// offset is only supported for a single directory listing
-					input->offset += repfs->pathDetailArray[0]->arrayOfSubPaths->__sizepathDetailArray;
-				}else if (input->offset)
-				{
-					input->offset = 0;
-				}*/
+				/*	if (n == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
+							repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
+					{
+						// offset is only supported for a single directory listing
+						input->offset += repfs->pathDetailArray[0]->arrayOfSubPaths->__sizepathDetailArray;
+					}else if (input->offset)
+					{
+						input->offset = 0;
+					}*/
+				}
 			}
-		}
+			break;
+		case srm_call_status_QUEUED:
+			break;
+		default:
+			ret = -1;
+			break;
 	}
-	srm_soap_deinit(&soap);
 
+	srm_soap_deinit(&soap);
 	return (ret);
 }
 
@@ -250,7 +257,7 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	repfs = rep.srmRmResponse->arrayOfFileStatuses;
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
-		errno = srm_call_err(context,&internal_context,srmfunc);
+		errno = srm_call_err(context,output->retstatus,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}

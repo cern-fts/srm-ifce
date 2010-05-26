@@ -16,7 +16,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 	// if ls was queued start polling statusOfLsRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
 	{
-		result = srmv2_status_of_ls_request_async_internal(context,output,&internal_context);
+		result = srmv2_status_of_ls_request_async_internal(context,input,output,&internal_context);
 		if ((internal_context.current_status != srm_call_status_SUCCESS)
 				&&(internal_context.current_status != srm_call_status_QUEUED)
 				&&(result!=0))
