@@ -835,25 +835,33 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 
 	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
-
-	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+	switch (internal_context->current_status)
 	{
-		errno = srm_call_err(context,output->retstatus,srmfunc);
-		srm_soap_deinit(&soap);
-		return (-1);
+		case srm_call_status_SUCCESS:
+			// Check if file structure ok
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+			{
+				internal_context->current_status  = srm_call_status_FAILURE;
+				errno = srm_call_err(context,output->retstatus,srmfunc);
+				ret = -1;
+			}else
+			{
+				ret = copy_pinfilestatuses(output->retstatus,
+												output->filestatuses,
+												repfs,
+												srmfunc);
+				if (ret == -1)
+				{
+					internal_context->current_status  = srm_call_status_FAILURE;
+				}
+			}
+			break;
+		case srm_call_status_QUEUED:
+			break;
+		default:
+			ret = -1;
+			break;
 	}
-
-	if (internal_context->current_status == srm_call_status_SUCCESS )
-	{
-		ret = copy_pinfilestatuses(output->retstatus,
-								output->filestatuses,
-								repfs,
-								srmfunc);
-	}else
-	{
-		ret = -1;
-	}
-
 
 	srm_soap_deinit(&soap);
 	return (ret);

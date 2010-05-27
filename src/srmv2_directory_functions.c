@@ -157,12 +157,11 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_SUCCESS:
-			// Copy file structure to another pointer for easier manipulation
-			repfs = srep.srmStatusOfLsRequestResponse->details;
 			// Check if file structure ok
 			if (!repfs || repfs->__sizepathDetailArray <= 0 || !repfs->pathDetailArray)
 			{
 				// file list empty error
+				errno = srm_call_err(context,output->retstatus,srmfunc);
 				internal_context->current_status  = srm_call_status_FAILURE;
 				ret = -1;
 			}else
