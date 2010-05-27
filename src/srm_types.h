@@ -256,7 +256,7 @@ struct srm_getspacetokens_output
 	char ***spacetokens;
 };
 
-typedef struct srmv2_getspacemd_input
+typedef struct srm_getspacemd_input
 {
 	int nbtokens;
 	char ***spacetokens;

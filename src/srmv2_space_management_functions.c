@@ -4,7 +4,7 @@
 #include "srm_dependencies.h"
 
 int srmv2_getspacemd (struct srm_context *context,
-		struct srmv2_getspacemd_input *input, srm_spacemd **spaces)
+		struct srm_getspacemd_input *input, srm_spacemd **spaces)
 {
 	int flags;
 	int sav_errno = 0;
@@ -173,7 +173,7 @@ int srmv2_getspacemd (struct srm_context *context,
     errno = 0;
 	return (0);
 }
-/* returns space tokens associated to the space description */
+// returns space tokens associated to the space description
 int srmv2_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_input *input,
 		struct srm_getspacetokens_output *output)
@@ -261,13 +261,13 @@ int srmv2_getspacetokens (struct srm_context *context,
     errno = 0;
 	return (0);
 }
-/* returns best space token */
+// returns best space token
 char* srmv2_getbestspacetoken (struct srm_context *context,
 		struct srm_getbestspacetokens_input *input)
 {
 	struct srm_getspacetokens_input getspacetoken_input;
 	struct srm_getspacetokens_output getspacetoken_output;
-	struct srmv2_getspacemd_input getspacemd_input;;
+	struct srm_getspacemd_input getspacemd_input;;
 	int sav_errno = 0;
 	int i, ret, numtoken = -1;
 	SRM_LONG64 unusedsize = -1;
@@ -307,7 +307,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 		return (NULL);
 	}
 
-	/* Get the spacetoken with the least free space, but a bit more than needed */
+	// Get the spacetoken with the least free space, but a bit more than needed
 	for (i = 0; i < getspacetoken_output.nbtokens; ++i) {
 		if (getspacetoken_output.spacetokens[i]) free (getspacetoken_output.spacetokens[i]);
 		if (spacemd[i].unusedsize < input->neededsize + SRM_SIZE_MARGIN)
@@ -319,7 +319,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 	}
 
 	if (numtoken < 0) {
-		/* no suitable space token */
+		// no suitable space token
 		srm_errmsg (context,"[SRM][srmv2_getbestspacetoken][EINVAL] %s: no associated space token with enough free space",
 				input->spacetokendesc);
 		errno = EINVAL;
