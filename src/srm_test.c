@@ -10,11 +10,13 @@ void TestLs();
 
 int main(void)
 {
-	/*int i;
+	int i;
 	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
 	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+	char *protocols[] = {"file","rfio","dcap","gsidcap","kdcap","",NULL};
 	struct srm_context context;
 	struct srm_preparetoget_input input_get;
+	struct srm_preparetoget_input output_get;
 	struct srmv2_pinfilestatus *filestatuses;
 
 	context.verbose = 1;
@@ -26,13 +28,13 @@ int main(void)
 	input_get.nbfiles = 1;
 	input_get.desiredpintime = 1000;
 	input_get.surls = test_surls_get;
+	input_get.protocols = protocols;
+	input_get.spacetokendesc = NULL;
 
 
+    i = srm_prepeare_to_get(&context,&input_get,&output_get);
 
-
-    i = srm_prepeare_to_get(&context,&input_get,&filestatuses);*/
-
-	TestLs();
+	//TestLs();
 
    //printf("%s \n",filestatuses->surl);
 	return EXIT_SUCCESS;

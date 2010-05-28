@@ -28,7 +28,7 @@ int srm_set_protocol_in_transferParameters(
 char* srm_strip_string(const char* str, const char chr);
 int srm_count_elements_of_string_array(char** a);
 
-int copy_token(char *tokendest,char *tokensrc);
+int copy_token(char **tokendest,char *tokensrc);
 
 int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_filestatus **statuses,
