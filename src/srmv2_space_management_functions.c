@@ -45,7 +45,7 @@ int srmv2_getspacemd (struct srm_context *context,
 	}
 
 	tknreq.arrayOfSpaceTokens->__sizestringArray = input->nbtokens;
-	tknreq.arrayOfSpaceTokens->stringArray = (char **) input->spacetokens;
+	tknreq.arrayOfSpaceTokens->stringArray = input->spacetokens;
 
 	if ((ret = call_function.call_srm2__srmGetSpaceMetaData(&soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep)))
 	{
@@ -188,15 +188,13 @@ int srmv2_getspacetokens (struct srm_context *context,
 	struct srm2__ArrayOfString *tknrepp;
 	const char srmfunc[] = "GetSpaceTokens";
 
-	if (input->spacetokendesc == NULL || context->srm_endpoint == NULL
-			|| output->spacetokens == NULL || output == NULL)
+	if (input == NULL || input->spacetokendesc == NULL || context->srm_endpoint == NULL || output == NULL)
 	{
 		srm_errmsg( context, "[SRM][srmv2_getspacetokens][EINVAL] Invalid arguments");
 		errno = EINVAL;
 		return (-1);
 	}
 	output->nbtokens = 0;
-	*(output->spacetokens) = NULL;
 
 	srm_soap_init(&soap);
 
@@ -248,14 +246,14 @@ int srmv2_getspacetokens (struct srm_context *context,
 		return (-1);
 	}
 
-	if ((*output->spacetokens = (char **) calloc (output->nbtokens + 1, sizeof (char *))) == NULL) {
+	if ((output->spacetokens = (char **) calloc (output->nbtokens + 1, sizeof (char *))) == NULL) {
 		srm_soap_deinit(&soap);
 		errno = ENOMEM;
 		return (-1);
 	}
 
 	for (i = 0; i < output->nbtokens; ++i)
-		(*output->spacetokens)[i] = strdup(tknrepp->stringArray[i]);
+		output->spacetokens[i] = strdup(tknrepp->stringArray[i]);
 
 	srm_soap_deinit(&soap);
     errno = 0;

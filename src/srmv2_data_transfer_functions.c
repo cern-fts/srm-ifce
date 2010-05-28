@@ -199,7 +199,8 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	{
 		req.targetSpaceToken = NULL;
 	} else
-		{
+	{
+
 			spacetokeninput.neededsize = totalsize;
 			spacetokeninput.spacetokendesc = input->spacetokendesc;
 			targetspacetoken = srmv2_getbestspacetoken (context,&spacetokeninput);

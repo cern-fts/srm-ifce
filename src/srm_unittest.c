@@ -1929,7 +1929,7 @@ int  soap_call_srm2__srmGetSpaceMetaData_test5(struct soap *soap, const char *so
 	return 0; // success
 }
 //////////////////////////////////////////////////////////////////
-// test test_srmv2_status_of_put_request_async
+// test test_srmv2_getspacemd
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_getspacemd)
 {
@@ -2006,6 +2006,141 @@ START_TEST (test_srmv2_getspacemd)
 }
 END_TEST
 
+
+int  soap_call_srm2__srmGetSpaceTokens_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetSpaceTokensRequest *srmGetSpaceTokensRequest,
+						struct srm2__srmGetSpaceTokensResponse_ *_param_18)
+{
+	struct srm2__srmGetSpaceTokensResponse *resp  = (struct srm2__srmGetSpaceTokensResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetSpaceTokensResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	resp->arrayOfSpaceTokens = NULL; // FAILS
+	_param_18->srmGetSpaceTokensResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmGetSpaceTokens_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetSpaceTokensRequest *srmGetSpaceTokensRequest,
+						struct srm2__srmGetSpaceTokensResponse_ *_param_18)
+{
+	_param_18->srmGetSpaceTokensResponse = NULL; // FAILS
+	return 0; // success
+}
+int  soap_call_srm2__srmGetSpaceTokens_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetSpaceTokensRequest *srmGetSpaceTokensRequest,
+						struct srm2__srmGetSpaceTokensResponse_ *_param_18)
+{
+	struct srm2__srmGetSpaceTokensResponse *resp  = (struct srm2__srmGetSpaceTokensResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetSpaceTokensResponse));
+	resp->returnStatus = NULL;// FAILS
+	resp->arrayOfSpaceTokens = NULL;
+	_param_18->srmGetSpaceTokensResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmGetSpaceTokens_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetSpaceTokensRequest *srmGetSpaceTokensRequest,
+						struct srm2__srmGetSpaceTokensResponse_ *_param_18)
+{
+	struct srm2__srmGetSpaceTokensResponse *resp  = (struct srm2__srmGetSpaceTokensResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetSpaceTokensResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	resp->arrayOfSpaceTokens = NULL;
+	_param_18->srmGetSpaceTokensResponse = resp;
+	return 0; // success
+}
+
+int  soap_call_srm2__srmGetSpaceTokens_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetSpaceTokensRequest *srmGetSpaceTokensRequest,
+						struct srm2__srmGetSpaceTokensResponse_ *_param_18)
+{
+	struct srm2__srmGetSpaceTokensResponse *resp  = (struct srm2__srmGetSpaceTokensResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetSpaceTokensResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	resp->arrayOfSpaceTokens = (struct srm2__ArrayOfString*) soap_malloc (soap,sizeof (struct srm2__ArrayOfString));
+	resp->arrayOfSpaceTokens->__sizestringArray = 1;
+	resp->arrayOfSpaceTokens->stringArray = (struct srm2__ArrayOfString**) soap_malloc (soap,sizeof (struct srm2__ArrayOfString *));
+	resp->arrayOfSpaceTokens->stringArray[0] = (struct srm2__ArrayOfString*) soap_malloc (soap,sizeof (struct srm2__ArrayOfString));
+	resp->arrayOfSpaceTokens->stringArray[0] = test_string;
+	_param_18->srmGetSpaceTokensResponse = resp;
+
+	return 0; // success
+}
+int  soap_call_srm2__srmGetSpaceTokens_test6(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetSpaceTokensRequest *srmGetSpaceTokensRequest,
+						struct srm2__srmGetSpaceTokensResponse_ *_param_18)
+{
+	return -1; // failure
+}
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_getspacetokens
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_getspacetokens)
+{
+	int i;
+	struct srm_getspacetokens_input input;
+	struct srm_getspacetokens_output output;
+	struct srm_context context;
+
+	struct srm2__TReturnStatus retstatus;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	char *test_tokens1[] = {"token1",NULL};
+	char *test_tokens2[] = {"token1","token2",NULL};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	input.spacetokendesc = "MySpaceTokens";
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test2;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test3;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test4;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test5;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != 0),
+					"Expected Success!\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+	fail_if ((strcmp(output.spacetokens[0],test_string)  != 0),
+						"Expected the same string !\n");
+
+}
+END_TEST
+
 Suite * test_suite (void)
 {
   Suite *s = suite_create ("New srm interface unit test suit");
@@ -2031,6 +2166,7 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_1, test_srmv2_prepare_to_put_async);
   tcase_add_test (tc_case_1, test_srmv2_status_of_put_request_async);
   tcase_add_test (tc_case_1, test_srmv2_getspacemd);
+  tcase_add_test (tc_case_1, test_srmv2_getspacetokens);
 
   suite_add_tcase (s, tc_case_1);
 
@@ -2048,6 +2184,7 @@ int main(void)
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 
+//	TestSpaceTokens();
 //	TestSpaceMD();
 //	TestStatusOfPut();
 //	TestPut();
@@ -2078,7 +2215,64 @@ void PrintResult(struct srmv2_mdfilestatus* output)
 	}
 }
 
+void TestSpaceTokens()
+{
+	int i;
+	struct srm_getspacetokens_input input;
+	struct srm_getspacetokens_output output;
+	struct srm_context context;
 
+	struct srm2__TReturnStatus retstatus;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	char *test_tokens1[] = {"token1",NULL};
+	char *test_tokens2[] = {"token1","token2",NULL};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != -1),
+		//			"Expected Failure !\n");
+
+	input.spacetokendesc = "MySpaceTokens";
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != -1),
+		//			"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test2;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != -1),
+		//			"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test3;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != -1),
+		//			"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test4;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != -1),
+		//			"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test5;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != 0),
+		//			"Expected Success!\n");
+
+	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
+	result = srmv2_getspacetokens(&context,&input,&output);
+	//fail_if ((result  != -1),
+		//			"Expected Failure !\n");
+}
 void TestLs()
 {
 	struct srm_mdfilestatus *filestatus;

@@ -253,13 +253,13 @@ typedef struct srm_getspacetokens_input
 struct srm_getspacetokens_output
 {
 	int nbtokens;
-	char ***spacetokens;
+	char **spacetokens;
 };
 
 typedef struct srm_getspacemd_input
 {
 	int nbtokens;
-	char ***spacetokens;
+	char **spacetokens;
 };
 
 typedef struct srm_getbestspacetokens_input
