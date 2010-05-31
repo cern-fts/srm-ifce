@@ -57,15 +57,14 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmStatusOfPutRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
-		if ((srep.srmStatusOfPutRequestResponse == NULL)||(ret!=0))
+		if ((srep.srmStatusOfPutRequestResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,srep.srmStatusOfPutRequestResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = srep.srmStatusOfPutRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -93,8 +92,8 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
-				ret = copy_pinfilestatuses(output->retstatus,
-											output->filestatuses,
+				ret = copy_pinfilestatuses_put(output->retstatus,
+											&output->filestatuses,
 											repfs,
 											srmfunc);
 			}
@@ -242,15 +241,14 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmPrepareToPut (&soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
-		if ((rep.srmPrepareToPutResponse== NULL)||(ret!=0))
+		if ((rep.srmPrepareToPutResponse== NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,rep.srmPrepareToPutResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = rep.srmPrepareToPutResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -275,8 +273,8 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
-				ret = copy_pinfilestatuses(output->retstatus,
-											output->filestatuses,
+				ret = copy_pinfilestatuses_put(output->retstatus,
+											&output->filestatuses,
 											repfs,
 											srmfunc);
 			}
@@ -392,15 +390,14 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmPrepareToGet (&soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
-		if ((rep.srmPrepareToGetResponse== NULL)||(ret!=0))
+		if ((rep.srmPrepareToGetResponse== NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,rep.srmPrepareToGetResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = rep.srmPrepareToGetResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -425,8 +422,8 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
-				ret = copy_pinfilestatuses(output->retstatus,
-											output->filestatuses,
+				ret = copy_pinfilestatuses_get(output->retstatus,
+											&output->filestatuses,
 											repfs,
 											srmfunc);
 			}
@@ -461,15 +458,14 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmStatusOfGetRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
-		if ((srep.srmStatusOfGetRequestResponse == NULL)||(ret!=0))
+		if ((srep.srmStatusOfGetRequestResponse == NULL)||(ret!=0) ||
+				copy_returnstatus(&output->retstatus,srep.srmStatusOfGetRequestResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = srep.srmStatusOfGetRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -490,8 +486,8 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
-				ret = copy_pinfilestatuses(output->retstatus,
-											output->filestatuses,
+				ret = copy_pinfilestatuses_get(output->retstatus,
+											&output->filestatuses,
 											repfs,
 											srmfunc);
 			}
@@ -755,15 +751,14 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmBringOnline (&soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
-		if ((rep.srmBringOnlineResponse == NULL)||(ret!=0))
+		if ((rep.srmBringOnlineResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,rep.srmBringOnlineResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = rep.srmBringOnlineResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus );
 
@@ -788,8 +783,8 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 				ret = -1;
 			}else
 			{
-				ret = copy_pinfilestatuses(output->retstatus,
-											output->filestatuses,
+				ret = copy_pinfilestatuses_bringonline(output->retstatus,
+											&output->filestatuses,
 											repfs,
 											srmfunc);
 			}
@@ -828,15 +823,14 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmStatusOfBringOnlineRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
-		if ((srep.srmStatusOfBringOnlineRequestResponse == NULL)||(ret!=0))
+		if ((srep.srmStatusOfBringOnlineRequestResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,srep.srmStatusOfBringOnlineRequestResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = srep.srmStatusOfBringOnlineRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -855,8 +849,8 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 				ret = -1;
 			}else
 			{
-				ret = copy_pinfilestatuses(output->retstatus,
-												output->filestatuses,
+				ret = copy_pinfilestatuses_bringonline(output->retstatus,
+												&output->filestatuses,
 												repfs,
 												srmfunc);
 				if (ret == -1)

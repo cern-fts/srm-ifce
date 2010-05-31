@@ -56,15 +56,14 @@ int srmv2_ls_async_internal(struct srm_context *context,
 		// Gsoap call soap_call_srm2__srmLs
 		ret = call_function.call_srm2__srmLs(&soap,context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
-		if ((rep.srmLsResponse == NULL)||(ret!=0))
+		if ((rep.srmLsResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,rep.srmLsResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = rep.srmLsResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -137,15 +136,14 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 	{
 		ret = call_function.call_srm2__srmStatusOfLsRequest (&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
-		if ((srep.srmStatusOfLsRequestResponse == NULL)||(ret!=0))
+		if ((srep.srmStatusOfLsRequestResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,srep.srmStatusOfLsRequestResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = srep.srmStatusOfLsRequestResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus );
 
@@ -236,15 +234,14 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 		// Gsoap call
 		ret = call_function.call_srm2__srmRm (&soap,context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
-		if ((rep.srmRmResponse == NULL)||(ret!=0))
+		if ((rep.srmRmResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,rep.srmRmResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = rep.srmRmResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,output->retstatus);
 
@@ -312,15 +309,14 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 		// Gsoap call
 		ret = call_function.call_srm2__srmRmdir(&soap,context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
-		if ((rep.srmRmdirResponse == NULL)||(ret!=0))
+		if ((rep.srmRmdirResponse == NULL)||(ret!=0)||
+				copy_returnstatus(&output->retstatus,rep.srmRmdirResponse->returnStatus))
 		{
 			errno = srm_soup_call_err(context,&soap,srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		// Copy response status
-		output->retstatus = rep.srmRmdirResponse->returnStatus;
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,output->retstatus);
 

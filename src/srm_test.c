@@ -6,18 +6,25 @@
 #include "srm_ifce.h"
 
 void PrintResult(struct srmv2_mdfilestatus* output);
+void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
 void TestLs();
 
 int main(void)
 {
-	int i;
+	int a,b,c;
 	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
+	char *test_surls_put[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test600"};
 	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	char *protocols[] = {"file","rfio","dcap","gsidcap","kdcap","",NULL};
+	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
 	struct srm_context context;
 	struct srm_preparetoget_input input_get;
-	struct srm_preparetoget_input output_get;
+	struct srm_preparetoget_output output_get;
+	struct srm_preparetoput_input input_put;
+    struct srm_preparetoput_output output_put;
 	struct srmv2_pinfilestatus *filestatuses;
+	struct srm_putdone_input input_putdone;
+	char* globus_url_copy;
+	long int filesizes[1] ={ 1024 };
 
 	context.verbose = 1;
 	context.errbufsz = 0;
@@ -32,13 +39,54 @@ int main(void)
 	input_get.spacetokendesc = NULL;
 
 
-    i = srm_prepeare_to_get(&context,&input_get,&output_get);
+	input_put.filesizes = filesizes;
+	input_put.nbfiles = 1;
+	input_put.desiredpintime = 1000;
+	input_put.surls = test_surls_put;
+	input_put.protocols = protocols;
+	input_put.spacetokendesc = NULL;
+
+
+    a = srm_prepeare_to_get(&context,&input_get,&output_get);
+	PrintPinFileStatuses(output_get.filestatuses,a);
+
+    b = srm_prepeare_to_put(&context,&input_put,&output_put);
+    PrintPinFileStatuses(output_put.filestatuses,b);
+
+
+    if (b>0)
+    {
+    	if (a>0 && b>0)
+    	{
+    		asprintf(&globus_url_copy,"globus-url-copy %s %s ",output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
+    		system(globus_url_copy);
+    		printf("%s \n",globus_url_copy);
+    	}
+    	input_putdone.nbfiles = 1;
+    	input_putdone.surls = test_surls_put;
+    	input_putdone.reqtoken = output_put.token;
+
+    	c = srm_put_done(&context,&input_putdone,&filestatuses);
+    	printf("Put Done\nToken: %s \nSurl: %s\nResult: %d\n",output_put.token,test_surls_put[0],c);
+    }
 
 	//TestLs();
 
    //printf("%s \n",filestatuses->surl);
 	return EXIT_SUCCESS;
 }
+void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count)
+{
+	int i;
+	for(i=0;i<count;i++)
+	{
+		printf("Surl: %s \n",statuses[i].surl);
+		printf("Turl: %s \n",statuses[i].turl);
+		printf("Pin lifetime: %d \n",statuses[i].pinlifetime);
+
+	}
+}
+
 void TestLs()
 {
 	int i;

@@ -200,13 +200,13 @@ typedef struct srm_preparetoput_input{
 typedef struct srm_preparetoget_output{
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
-	struct srmv2_pinfilestatus **filestatuses;
+	struct srmv2_pinfilestatus *filestatuses;
 };
 
 typedef struct srm_preparetoput_output{
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
-	struct srmv2_pinfilestatus **filestatuses;
+	struct srmv2_pinfilestatus  *filestatuses;
 };
 
 typedef struct srm_putdone_input{
@@ -243,7 +243,7 @@ typedef struct srm_bringonline_input{
 typedef struct srm_bringonline_output{
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
-	struct srmv2_pinfilestatus **filestatuses;
+	struct srmv2_pinfilestatus  *filestatuses;
 };
 
 typedef struct srm_getspacetokens_input

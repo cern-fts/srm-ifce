@@ -410,7 +410,93 @@ int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 	}
 	return n;
 }
-int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
+int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTGetRequestFileStatus *repfs,
+						char srmfunc)
+{
+	int n,i;
+	n = repfs->__sizestatusArray;
+	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+	{
+		//srm_soap_deinit(&soap);
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		if (repfs->statusArray[i]->sourceSURL)
+			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
+		if (repfs->statusArray[i]->transferURL)
+			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
+		/*TODO
+		   if (repfs->statusArray[i]->status) {
+			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else if ((*filestatuses)[i].status != 0)
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}*/
+		if (repfs->statusArray[i]->remainingPinTime)
+			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+	}
+	return n;
+}
+
+int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs,
+						char srmfunc)
+{
+	int n,i;
+	n = repfs->__sizestatusArray;
+	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+	{
+		//srm_soap_deinit(&soap);
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		if (repfs->statusArray[i]->sourceSURL)
+			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
+		/*TODO
+		   if (repfs->statusArray[i]->status) {
+			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else if ((*filestatuses)[i].status != 0)
+				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}*/
+		if (repfs->statusArray[i]->remainingPinTime)
+			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+	}
+	return n;
+}
+
+int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
 						char srmfunc)
@@ -433,7 +519,8 @@ int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
 		if (repfs->statusArray[i]->transferURL)
 			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
-		if (repfs->statusArray[i]->status) {
+		/*TODO
+		   if (repfs->statusArray[i]->status) {
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
@@ -446,7 +533,7 @@ int copy_pinfilestatuses(struct srm2__TReturnStatus *reqstatp,
 			else if ((*filestatuses)[i].status != 0)
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}
+		}*/
 		if (repfs->statusArray[i]->remainingPinLifetime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
 	}
@@ -582,4 +669,31 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 
     errno = 0;
 	return (n);
+}
+
+
+int copy_returnstatus(struct srm2__TReturnStatus **destination,struct srm2__TReturnStatus *returnStatus)
+{
+	if (returnStatus)
+	{
+		*destination = (struct srm2__TReturnStatus *) malloc (sizeof (struct srm2__TReturnStatus));
+		if ((*destination) != NULL)
+		{
+			if (returnStatus->explanation)
+			{
+				if (((**destination).explanation = strdup(returnStatus->explanation)) == NULL)
+				{
+					errno = ENOMEM;
+					return (-1);
+				}
+			}
+			(**destination).statusCode = returnStatus->statusCode;
+			return 0;
+		}else
+		{
+			errno = ENOMEM;
+			return (-1);
+		}
+	}
+	return 0;
 }
