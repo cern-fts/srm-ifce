@@ -66,7 +66,7 @@ int main(void)
     	input_putdone.surls = test_surls_put;
     	input_putdone.reqtoken = output_put.token;
 
-    	c = srm_put_done(&context,&input_putdone,&filestatuses);
+ //   	c = srm_put_done(&context,&input_putdone,&filestatuses);
     	printf("Put Done\nToken: %s \nSurl: %s\nResult: %d\n",output_put.token,test_surls_put[0],c);
     }
 

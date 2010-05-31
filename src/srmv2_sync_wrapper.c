@@ -12,6 +12,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 	// Call srm ls
 	result = srmv2_ls_async_internal(context,input,output,&internal_context);
 
+	internal_context.attempt = 1;
 
 	// if ls was queued start polling statusOfLsRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
@@ -47,6 +48,7 @@ int srmv2_prepeare_to_put_sync(struct srm_context *context,
 	// request
 	result = srmv2_prepare_to_put_async_internal(context,input,output,&internal_context);
 
+	internal_context.attempt = 1;
 
 	// if put was queued start polling statusOfPutRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
@@ -80,6 +82,7 @@ int srmv2_prepeare_to_get_sync(struct srm_context *context,
 	// request
 	result = srmv2_prepare_to_get_async_internal(context,input,output,&internal_context);
 
+	internal_context.attempt = 1;
 
 	// if put was queued start polling statusOfPutRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
@@ -112,6 +115,7 @@ int srmv2_bring_online_sync(struct srm_context *context,
 	// request
 	result = srmv2_bring_online_async_internal(context,input,output,&internal_context);
 
+	internal_context.attempt = 1;
 
 	// if put was queued start polling statusOfPutRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))

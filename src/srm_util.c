@@ -52,8 +52,18 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
 	{
 		internal_context->end_time = (time(NULL) + context->timeout);
 	}
-
+	internal_context->estimated_wait_time = -1;
 	internal_context->attempt = 1;
+}
+void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time)
+{
+	if (time == NULL)
+	{
+		internal_context->estimated_wait_time = -1;
+	}else
+	{
+		internal_context->estimated_wait_time = *time;
+	}
 }
 
 void srm_soap_init(struct soap *soap)
@@ -212,25 +222,44 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 	after_sleep = time(NULL) ;
 	srand( time(NULL) ); // new seed
 
-	// Exponential logic
-	if (internal_context->attempt<=10) // Maximum 10 attempts
+	if (internal_context->estimated_wait_time <= -1)
 	{
-		random_limit = (1<<(internal_context->attempt));
-		random_wait = (rand() % random_limit);
-		internal_context->attempt++;
-		after_sleep += random_wait;
+		// Exponential logic
+		if (internal_context->attempt<=10) // Maximum 10 attempts
+		{
+			random_limit = (1<<(internal_context->attempt));
+			random_wait = (rand() % random_limit);
+			internal_context->attempt++;
+			after_sleep += random_wait;
+			if (after_sleep > internal_context->end_time)
+			{
+				// Timeout
+				return -1;
+			}
+			call_function.call_sleep(random_wait);
+			//call_function.call_sleep(random_wait);
+		}else
+		{
+			// Timeout, attempts exceeded
+			return -1;
+		}
+	}else
+	if (internal_context->estimated_wait_time == 0)
+	{
+		// Timeout
+		return -1;
+	}else
+	{
+		after_sleep += internal_context->estimated_wait_time ;
 		if (after_sleep > internal_context->end_time)
 		{
 			// Timeout
 			return -1;
 		}
-		call_function.call_sleep(random_wait);
-		//call_function.call_sleep(random_wait);
-	}else
-	{
-		// Timeout, attempts exceeded
-		return -1;
+		call_function.call_sleep(internal_context->estimated_wait_time );
 	}
+
+
 	return 0;
 }
 // Return all statuses timeout, failure,internal error, queued

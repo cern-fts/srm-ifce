@@ -113,6 +113,7 @@ typedef struct srm_internal_context {
 	srm_call_status 			current_status;
 	time_t 						end_time;
 	int 						attempt;
+	int							estimated_wait_time;
 };
 
 typedef struct srm_ls_input{
@@ -147,7 +148,7 @@ struct srmv2_mdfilestatus {
 #endif
 
 typedef struct srm_ls_output {
-	struct srmv2_mdfilestatus **statuses;
+	struct srmv2_mdfilestatus   *statuses;
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
 };

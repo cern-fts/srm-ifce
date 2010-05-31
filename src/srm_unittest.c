@@ -33,6 +33,7 @@ START_TEST (test_wait_for_new_attempt)
 {
 	struct srm_internal_context internal_context;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 11;
 	fail_if (wait_for_new_attempt(&internal_context) != -1,
 		   "Wait for new attempt does not return timeout error for 11 attempts!\n");
@@ -49,6 +50,25 @@ START_TEST (test_wait_for_new_attempt)
 		   "Timeout should not occur!\n");
 	fail_if (mock_sleep_time > 1, // be careful changing this number
 		  "Random sleep time exceeded expected value !!!\n");
+
+
+	internal_context.attempt = 1; // be careful changing this number
+	internal_context.end_time = time(NULL)+100;
+	internal_context.estimated_wait_time = 0;
+	fail_if (wait_for_new_attempt(&internal_context) != -1,
+		   "Timeout should occur!\n");
+
+
+	internal_context.attempt = 1; // be careful changing this number
+	internal_context.end_time = time(NULL)+100;
+	internal_context.estimated_wait_time = -10;
+	fail_if (mock_sleep_time > 1, // be careful changing this number
+			  "Random sleep time exceeded expected value !!!\n");
+
+	internal_context.estimated_wait_time = 10;
+	wait_for_new_attempt(&internal_context);
+	fail_if (mock_sleep_time != 10,
+			  "Sleep time estimated wait time not equal to sleep time!\n");
 }
 END_TEST
 
@@ -63,9 +83,14 @@ START_TEST (test_back_off_logic)
 	struct srm2__TReturnStatus retstatus;
 	srm_call_status result;
 
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
 	call_function.call_sleep = mock_sleep; // set mock sleep function
 
-
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1; // be careful changing this number
 	internal_context.end_time = time(NULL)+10000;
 
@@ -124,11 +149,11 @@ START_TEST (test_back_off_logic)
 					   "Expected Success!\n");
 
 	internal_context.attempt = 1;
-		retstatus.statusCode = SRM_USCOREFAILURE;
-		result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+	retstatus.statusCode = SRM_USCOREFAILURE;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
-		fail_if ((result  != srm_call_status_FAILURE),
-						   "Expected Failure!\n");
+	fail_if ((result  != srm_call_status_FAILURE),
+					   "Expected Failure!\n");
 }
 END_TEST
 
@@ -142,9 +167,11 @@ int  soap_call_srm2__srmLs_test2(struct soap *soap, const char *soap_endpoint, c
 {
 	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREFAILURE;
+	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmLsResponse = resp;
-	retstatus->statusCode = SRM_USCOREFAILURE;
+	_param_18->srmLsResponse->details = NULL;
 
 	return -1; // failure
 }
@@ -153,10 +180,11 @@ int  soap_call_srm2__srmLs_test3(struct soap *soap, const char *soap_endpoint, c
 {
 	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
+	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmLsResponse = resp;
 	_param_18->srmLsResponse->details = NULL;
-	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 
 	return 0; // success
 }
@@ -227,6 +255,7 @@ START_TEST (test_srmv2_ls_async)
 	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -247,6 +276,7 @@ START_TEST (test_srmv2_ls_async)
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 				   "Expected Failure 1!\n");
 
+	internal_context.attempt = 1;
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test2;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
@@ -276,8 +306,6 @@ START_TEST (test_srmv2_ls_async)
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
 					"Expected Queued!\n");
 
-
-	output.statuses = &filestatus;
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test7;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
@@ -348,6 +376,7 @@ START_TEST (test_srmv2_status_of_ls_request)
 	struct srm2__TReturnStatus retstatus;
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -388,7 +417,7 @@ START_TEST (test_srmv2_status_of_ls_request)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.statuses = &filestatus;
+	//output.statuses = &filestatus;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
@@ -1006,6 +1035,7 @@ int  soap_call_srm2__srmBringOnline_test3(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	_param_18->srmBringOnlineResponse = resp;
 	_param_18->srmBringOnlineResponse->arrayOfFileStatuses = NULL;
+	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 
 	return 0; // success
@@ -1020,6 +1050,7 @@ int  soap_call_srm2__srmBringOnline_test4(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
 	_param_18->srmBringOnlineResponse = resp;
+	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1032,6 +1063,7 @@ int  soap_call_srm2__srmBringOnline_test5(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
 	_param_18->srmBringOnlineResponse = resp;
+	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1044,6 +1076,7 @@ int  soap_call_srm2__srmBringOnline_test6(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	resp->requestToken = test_string;
 	_param_18->srmBringOnlineResponse = resp;
+	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1055,6 +1088,7 @@ int  soap_call_srm2__srmBringOnline_test7(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmBringOnlineResponse = resp;
+	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTBringOnlineRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus *));
@@ -1078,6 +1112,7 @@ START_TEST (test_srmv2_bring_online_async)
 	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -1152,6 +1187,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test2(struct soap *soap, const char 
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
+	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1164,6 +1200,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test3(struct soap *soap, const char 
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
+	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1181,6 +1218,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test4(struct soap *soap, const char 
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
+	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
 
 
 	return 0; // success
@@ -1196,6 +1234,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test5(struct soap *soap, const char 
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = NULL; // FAILS
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
+	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
 
 
 	return 0; // success
@@ -1217,6 +1256,7 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -1288,6 +1328,7 @@ int  soap_call_srm2__srmPrepareToGet_test2(struct soap *soap, const char *soap_e
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
 	_param_18->srmPrepareToGetResponse = resp;
+	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREFAILURE;
 
 	return -1; // failure
@@ -1300,6 +1341,7 @@ int  soap_call_srm2__srmPrepareToGet_test3(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->arrayOfFileStatuses = NULL;
+	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 
 	return 0; // success
@@ -1314,6 +1356,7 @@ int  soap_call_srm2__srmPrepareToGet_test4(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToGetResponse = resp;
+	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1326,6 +1369,7 @@ int  soap_call_srm2__srmPrepareToGet_test5(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToGetResponse = resp;
+	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1338,6 +1382,7 @@ int  soap_call_srm2__srmPrepareToGet_test6(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	resp->requestToken = test_string;
 	_param_18->srmPrepareToGetResponse = resp;
+	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1349,6 +1394,7 @@ int  soap_call_srm2__srmPrepareToGet_test7(struct soap *soap, const char *soap_e
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmPrepareToGetResponse = resp;
+	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTGetRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus *));
@@ -1372,6 +1418,7 @@ START_TEST (test_srmv2_prepare_to_get_async)
 	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -1446,6 +1493,7 @@ int  soap_call_srm2__srmStatusOfGet_test2(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmStatusOfGetRequestResponse = resp;
+	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1458,6 +1506,7 @@ int  soap_call_srm2__srmStatusOfGet_test3(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmStatusOfGetRequestResponse = resp;
+	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1475,6 +1524,7 @@ int  soap_call_srm2__srmStatusOfGet_test4(struct soap *soap, const char *soap_en
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	_param_18->srmStatusOfGetRequestResponse = resp;
+	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
 
 
 	return 0; // success
@@ -1490,7 +1540,7 @@ int  soap_call_srm2__srmStatusOfGet_test5(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = NULL; // FAILS
 	_param_18->srmStatusOfGetRequestResponse = resp;
-
+	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1511,6 +1561,7 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -1581,6 +1632,7 @@ int  soap_call_srm2__srmPrepareToPut_test2(struct soap *soap, const char *soap_e
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
 	_param_18->srmPrepareToPutResponse = resp;
+	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREFAILURE;
 
 	return -1; // failure
@@ -1593,6 +1645,7 @@ int  soap_call_srm2__srmPrepareToPut_test3(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	_param_18->srmPrepareToPutResponse = resp;
 	_param_18->srmPrepareToPutResponse->arrayOfFileStatuses = NULL;
+	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 
 	return 0; // success
@@ -1619,6 +1672,7 @@ int  soap_call_srm2__srmPrepareToPut_test5(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToPutResponse = resp;
+	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1631,6 +1685,7 @@ int  soap_call_srm2__srmPrepareToPut_test6(struct soap *soap, const char *soap_e
 	resp->returnStatus = retstatus;
 	resp->requestToken = test_string;
 	_param_18->srmPrepareToPutResponse = resp;
+	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }
@@ -1642,6 +1697,7 @@ int  soap_call_srm2__srmPrepareToPut_test7(struct soap *soap, const char *soap_e
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmPrepareToPutResponse = resp;
+	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTPutRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus *));
@@ -1665,6 +1721,7 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -1804,6 +1861,7 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -2184,6 +2242,7 @@ int main(void)
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 
+//	TestGet();
 //	TestSpaceTokens();
 //	TestSpaceMD();
 //	TestStatusOfPut();
@@ -2195,7 +2254,8 @@ int main(void)
 //	TestMkdir();
 //	TestRm();
 //	TestStatusOfLs();
-//	TestIt();
+//////	TestIt();
+//	TestBackoff();
 //	TestLs();
 //	TestAbortRequest();
 //	TestRmdir();
@@ -2275,16 +2335,17 @@ void TestSpaceTokens()
 }
 void TestLs()
 {
-	struct srm_mdfilestatus *filestatus;
 	struct srm_ls_output output;
+	struct srm_mdfilestatus *filestatus;
 	const char *srmfunc = "testfunc";
 	struct srm_context context;
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	struct srm_ls_input input;
 	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	srm_call_status result;
+	int result;
 
+	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -2302,42 +2363,13 @@ void TestLs()
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test1;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_FAILURE),
-				   //"Expected Failure 1!\n");
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
+		//		   "Expected Failure 1!\n");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test2;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_FAILURE),
-	//				"Expected Failure 2!\n");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test3;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_FAILURE),
-	//				"Expected Failure 3!\n");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test4;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_FAILURE),
-	//				"Expected Failure 4!\n");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test5;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_TIMEOUT),
-	//				"Expected Timeout!\n");
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test6;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_QUEUED),
-	//				"Expected Queued!\n");
-
-	output.statuses = &filestatus;
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test7;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((result  != srm_call_status_SUCCESS),
-	//				"Expected Success!\n");
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
+		//			"Expected Failure 2!\n");
 }
 void TestStatusOfLs()
 {
@@ -2675,71 +2707,7 @@ void TestRm()
 	//fail_if ((result  != 0),
 				   //"Expected Success!\n");
 }
-void TestStatusOfBringOnline()
-{
-	int i;
-	struct srm_bringonline_input input;
-	struct srm_bringonline_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
-	int result;
 
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
-
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test1;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-		//		    "Expected Failure 1!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test2;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-		//		   "Expected Queued in first call!\n");
-	for (i=0;i<15;i++)
-	{
-		result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-		//fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-			//		   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
-	}
-	//fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   //"Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test3;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-	//			   "Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= &filestatus;
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-		//		   "Expected Success!\n");
-}
 void TestPut()
 {
 	struct srm_preparetoput_input input;
@@ -2954,4 +2922,222 @@ void TestSpaceMD()
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	//fail_if ((result  != 0),
 		//			"Expected Success!\n");
+}
+
+void TestStatusOfBringOnline()
+{
+	int i;
+	struct srm_bringonline_input input;
+	struct srm_bringonline_output output;
+	struct srmv2_pinfilestatus *filestatus;
+	const char *srmfunc = "testfunc";
+	struct srm_context context;
+	struct srm_internal_context internal_context;
+	struct srm2__TReturnStatus retstatus;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	char *test_protocols[] = {"protocol1","protocol2"};
+	int result;
+
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.nbfiles = 1;
+	input.desiredpintime = 1000;
+	input.spacetokendesc  = NULL;
+	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
+	input.surls = test_surls;
+	input.protocols = test_protocols;
+
+	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test1;
+	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
+		//		    "Expected Failure 1!\n");
+
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test2;
+	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
+		//		   "Expected Queued in first call!\n");
+	for (i=0;i<15;i++)
+	{
+		result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+		//fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
+			//		   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
+	}
+	//fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
+				   //"Expected Timeout!\n");
+
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test3;
+	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+//	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
+	//			   "Expected Timeout!\n");
+
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	output.filestatuses= &filestatus;
+	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
+	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
+		//		   "Expected Success!\n");
+}
+void TestGet()
+{
+	struct srm_preparetoget_input input;
+	struct srm_preparetoget_output output;
+	struct srmv2_pinfilestatus *filestatus;
+	const char *srmfunc = "testfunc";
+	struct srm_context context;
+	struct srm_internal_context internal_context;
+	struct srm2__TReturnStatus retstatus;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	char *test_protocols[] = {"protocol1","protocol2"};
+	int result;
+
+	internal_context.estimated_wait_time = -1;
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.nbfiles = 1;
+	input.desiredpintime = 1000;
+	input.spacetokendesc  = NULL;
+	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
+	input.surls = test_surls;
+	input.protocols = test_protocols;
+
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test1;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
+	//			   "Expected Failure 1!\n");
+
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test2;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
+	//				"Expected Failure 2!\n");
+
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test3;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
+	//				"Expected Failure 3!\n");
+
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test4;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
+	//				"Expected Failure 4!\n");
+
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test5;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
+//					"Expected Timeout!\n");
+
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+
+
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test6;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
+		//			"Expected Queued!\n");
+
+
+	output.filestatuses= &filestatus;
+	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test7;
+	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
+		//			"Expected Success!\n");
+}
+void TestBackoff()
+{
+	const char *srmfunc = "testfunc";
+	struct srm_context context;
+	struct srm_internal_context internal_context;
+	struct srm2__TReturnStatus retstatus;
+	srm_call_status result;
+
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	internal_context.estimated_wait_time = -1;
+	internal_context.attempt = 1; // be careful changing this number
+	internal_context.end_time = time(NULL)+10000;
+
+	result = back_off_logic(&context,srmfunc,&internal_context,NULL);
+	//fail_if ((result  != srm_call_status_FAILURE)||(errno != ECOMM),
+		//	   "if internal_context->retstatus is null the function must return FAILURE!\n");
+
+	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+	//fail_if ((internal_context.attempt   != 2),
+		//		   "Wait new attempt!\n");
+
+	//fail_if ((result  != srm_call_status_INTERNAL_ERROR),
+				   //"Expected Internal Error!\n");
+
+	internal_context.attempt = 11;
+	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	//fail_if ((result  != srm_call_status_TIMEOUT),
+		//			   "Expected Timeout 1!\n");
+
+	internal_context.attempt = 11;
+	retstatus.statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	//fail_if ((result  != srm_call_status_TIMEOUT),
+		//			   "Expected Timeout 2!\n");
+
+	internal_context.attempt = 11;
+	retstatus.statusCode = SRM_USCOREREQUEST_USCOREINPROGRESS;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	//fail_if ((result  != srm_call_status_TIMEOUT),
+		//			   "Expected Timeout 3!\n");
+
+	internal_context.attempt = 1;
+	retstatus.statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	//fail_if ((result  != srm_call_status_QUEUED),
+		//			   "Expected Queued 1!\n");
+
+	internal_context.attempt = 1;
+	retstatus.statusCode = SRM_USCOREREQUEST_USCOREINPROGRESS;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	///fail_if ((result  != srm_call_status_QUEUED),
+		//			   "Expected Queued 2!\n");
+
+	internal_context.attempt = 1;
+	retstatus.statusCode = SRM_USCORESUCCESS;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	//fail_if ((result  != srm_call_status_SUCCESS),
+		//			   "Expected Success!\n");
+
+	internal_context.attempt = 1;
+	retstatus.statusCode = SRM_USCOREFAILURE;
+	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
+
+	//fail_if ((result  != srm_call_status_FAILURE),
+		//			   "Expected Failure!\n");
 }
