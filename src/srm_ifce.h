@@ -70,4 +70,8 @@ int srmv2_getspacetokens (struct srm_context *context,
 int srmv2_getspacemd (struct srm_context *context,
 		struct srmv2_getspacemd_input *input, srm_spacemd **spaces);
 
+int srm_ping(struct srm_context *context,
+		struct srm_ping_output *output);
+
+
 #endif

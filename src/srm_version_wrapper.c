@@ -230,5 +230,20 @@ int srm_abort_request(struct srm_context *context,
 			return (-1);
 	}
 }
+int srm_ping(struct srm_context *context,
+		struct srm_ping_output *output)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_ping(context,output);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+
 
 

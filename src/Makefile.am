@@ -192,6 +192,7 @@ SRM_SOURCE_FILES = \
 	srmv2_sync_wrapper.c \
 	srmv2_async_wrapper.c \
 	srmv2_space_management_functions.c \
+	srmv2_discovery_functions.c \
 	srmv2_data_transfer_functions.c 
 
 SRM_FLAGS = \

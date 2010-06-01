@@ -124,6 +124,10 @@ typedef struct srm_ls_input{
 	int count;
 };
 
+typedef struct srm_ping_output{
+	char *versioninfo;
+};
+
 #if ! defined(linux) || defined(_LARGEFILE64_SOURCE)
 struct srm_mdfilestatus {
 	char 	*surl;

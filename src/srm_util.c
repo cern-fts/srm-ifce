@@ -382,11 +382,11 @@ int srm_count_elements_of_string_array(char** a)
     return ret;
 }
 
-int copy_token(char **tokendest,char *tokensrc)
+int copy_string(char **dest,char *src)
 {
-	if (tokensrc)
+	if (src)
 	{
-		if ((*tokendest	 = strdup (tokensrc)) == NULL)
+		if ((*dest	 = strdup (src)) == NULL)
 		{
 			errno = ENOMEM;
 			return (-1);

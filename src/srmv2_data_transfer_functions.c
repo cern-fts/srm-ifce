@@ -268,7 +268,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_QUEUED:
-			if (copy_token(&output->token,rep.srmPrepareToPutResponse->requestToken))
+			if (copy_string(&output->token,rep.srmPrepareToPutResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				ret = -1;
@@ -418,7 +418,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_QUEUED:
-			if (copy_token(&output->token,rep.srmPrepareToGetResponse->requestToken))
+			if (copy_string(&output->token,rep.srmPrepareToGetResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				ret = -1;
@@ -781,7 +781,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_QUEUED:
-			if (copy_token(&output->token,rep.srmBringOnlineResponse->requestToken))
+			if (copy_string(&output->token,rep.srmBringOnlineResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				ret = -1;
@@ -986,6 +986,7 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 					abortrep.srmAbortRequestResponse->returnStatus == NULL ||
 					abortrep.srmAbortRequestResponse->returnStatus->statusCode != SRM_USCORESUCCESS)
 			{
+				errno = EINVAL;
 				srm_soap_deinit(&soap);
 				return (-1);
 			}
