@@ -2263,6 +2263,86 @@ START_TEST (test_srmv2_getspacetokens)
 }
 END_TEST
 
+int  soap_call_srm2__srmPing_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPingRequest *srmPingRequest,
+						struct srm2__srmPingResponse_ *_param_18)
+{
+	struct srm2__srmPingResponse *resp  = (struct srm2__srmPingResponse *) soap_malloc (soap,sizeof (struct srm2__srmPingResponse));
+	resp->versionInfo = test_string;
+	_param_18->srmPingResponse = resp;
+
+
+	return 0; // success
+}
+int  soap_call_srm2__srmPing_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPingRequest *srmPingRequest,
+						struct srm2__srmPingResponse_ *_param_18)
+{
+	struct srm2__srmPingResponse *resp  = (struct srm2__srmPingResponse *) soap_malloc (soap,sizeof (struct srm2__srmPingResponse));
+	resp->versionInfo = NULL; // FAIL
+	_param_18->srmPingResponse = resp;
+
+	return 0;
+}
+int  soap_call_srm2__srmPing_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPingRequest *srmPingRequest,
+						struct srm2__srmPingResponse_ *_param_18)
+{
+	_param_18->srmPingResponse = NULL; // FAIL
+
+	return 0;
+}
+int  soap_call_srm2__srmPing_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPingRequest *srmPingRequest,
+						struct srm2__srmPingResponse_ *_param_18)
+{
+	struct srm2__srmPingResponse *resp  = (struct srm2__srmPingResponse *) soap_malloc (soap,sizeof (struct srm2__srmPingResponse));
+	resp->versionInfo = test_string;
+	_param_18->srmPingResponse = resp;
+
+	return -1; // fail
+}
+
+
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_getspacetokens
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_ping)
+{
+	int i;
+	struct srm_ping_output output;
+	struct srm_context context;
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+
+	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test1;
+	result = srmv2_ping(&context,&output);
+	fail_if ((result  != 0),
+					"Expected Success !\n");
+
+	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test2;
+	result = srmv2_ping(&context,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test3;
+	result = srmv2_ping(&context,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test4;
+	result = srmv2_ping(&context,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+
+
+}
+END_TEST
+
 Suite * test_suite (void)
 {
   Suite *s = suite_create ("New srm interface unit test suit");
@@ -2289,44 +2369,13 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_1, test_srmv2_status_of_put_request_async);
   tcase_add_test (tc_case_1, test_srmv2_getspacemd);
   tcase_add_test (tc_case_1, test_srmv2_getspacetokens);
+  tcase_add_test (tc_case_1, test_srmv2_ping);
 
   suite_add_tcase (s, tc_case_1);
 
   return s;
 }
-void TestLsOutput()
-{
-	int i;
-	struct srm_mdfilestatus *filestatus;
-	struct srm_ls_input input;
-	struct srm_ls_output output;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	int result;
 
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	output.token = "test";
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.offset = NULL;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-		//		   "Expected Success!\n");
-}
 int main(void)
 {
 	int number_failed;
@@ -3235,4 +3284,37 @@ void TestBackoff()
 
 	//fail_if ((result  != srm_call_status_FAILURE),
 		//			   "Expected Failure!\n");
+}
+void TestLsOutput()
+{
+	int i;
+	struct srm_mdfilestatus *filestatus;
+	struct srm_ls_input input;
+	struct srm_ls_output output;
+	const char *srmfunc = "testfunc";
+	struct srm_context context;
+	struct srm_internal_context internal_context;
+	struct srm2__TReturnStatus retstatus;
+	int result;
+
+	internal_context.estimated_wait_time = -1;
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	output.token = "test";
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.offset = NULL;
+
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
+	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
+		//		   "Expected Success!\n");
 }

@@ -201,13 +201,37 @@ void TestPrepareToPutPrepareToGet()
     }
 }
 void TestLs();
-void Test();
+void TestDirectoryFunctions();
+void TestPing()
+{
+	int a;
+	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+	struct srm_context context;
+	struct srm_ping_output output;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	a = srm_ping(&context,&output);
+
+	if (a == 0)
+	{
+		printf("Ping result: %s\n",output.versioninfo);
+	}else
+	{
+		printf("Ping error \n",output.versioninfo);
+	}
+
+}
 int main(void)
 {
 	//TestPrepareToPutPrepareToGet();
 	//TestLs();
-
-	Test();
+	TestPing();
+	//TestDirectoryFunctions();
    //printf("%s \n",filestatuses->surl);
 	return EXIT_SUCCESS;
 }
@@ -259,7 +283,7 @@ void TestLs()
 	}
 }
 
-void Test()
+void TestDirectoryFunctions()
 {
 	struct srm_context context;
 	struct srm_ls_input input_ls;
