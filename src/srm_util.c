@@ -399,7 +399,6 @@ int copy_token(char **tokendest,char *tokensrc)
 	}
 	return 0;
 }
-
 int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_filestatus **statuses,
 						struct srm2__ArrayOfTSURLReturnStatus *repfs,

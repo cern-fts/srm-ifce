@@ -159,7 +159,6 @@ typedef struct srm_rm_input{
 };
 
 typedef struct srm_rm_output {
-	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
 	struct srmv2_filestatus 	*statuses;
 };
@@ -170,9 +169,7 @@ typedef struct srm_rmdir_input{
 };
 
 typedef struct srm_rmdir_output {
-	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
-	struct srmv2_filestatus 	*statuses;
 };
 
 typedef struct srm_mkdir_input{

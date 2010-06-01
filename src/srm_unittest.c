@@ -583,7 +583,6 @@ START_TEST (test_srmv2_rmdir)
 	fail_if ((result  != -1),
 				   "Expected Failure 2!\n");
 
-	output.statuses = &filestatus;
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test3;
 	result = srmv2_rmdir(&context,&input,&output);
 	fail_if ((result  != 0),
@@ -2578,7 +2577,6 @@ void TestIt()
 }
 void TestRmdir()
 {
-	struct srmv2_filestatus *filestatus;
 	struct srm_rmdir_input input;
 	struct srm_rmdir_output output;
 	const char *srmfunc = "testfunc";
@@ -2606,7 +2604,6 @@ void TestRmdir()
 //	fail_if ((result  != -1),
 	//			   "Expected Failure 2!\n");
 
-	output.statuses = &filestatus;
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test3;
 	result = srmv2_rmdir(&context,&input,&output);
 	//fail_if ((result  != 0),

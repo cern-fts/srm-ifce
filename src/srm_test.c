@@ -201,11 +201,13 @@ void TestPrepareToPutPrepareToGet()
     }
 }
 void TestLs();
+void Test();
 int main(void)
 {
-	TestPrepareToPutPrepareToGet();
-	TestLs();
+	//TestPrepareToPutPrepareToGet();
+	//TestLs();
 
+	Test();
    //printf("%s \n",filestatuses->surl);
 	return EXIT_SUCCESS;
 }
@@ -268,7 +270,6 @@ void Test()
 	struct srm_rmdir_output* output_rmdir;
 	struct srm_mkdir_input input_mkdir;
 	int i;
-	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1"};
 	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 
 	char *test_surls_rm[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba",
@@ -284,46 +285,28 @@ void Test()
 	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
-	input_ls.nbfiles = 1;
-	input_ls.count = 0;
-	input_ls.numlevels  = 1;
-	input_ls.surls = test_surls_ls;
-	input_ls.offset = 0;
 
 	input_rm.nbfiles = 2;
 	input_rm.surls = test_surls_rm;
 
-	input_rmdir.recursive = 1;
-	input_rmdir.surl = test_surl_rmdir;
 
+	TestLs();
 	input_mkdir.dir_name = test_surl_dir;
 
-    i = srm_ls(&context,&input_ls,&output_ls);
-
-    if (!i)
-	{
-		PrintResult(output_ls);
-	}
+    TestLs();
 
     i = srm_mkdir(&context,&input_mkdir);
     printf("Mkdir:%s %d \n",input_mkdir.dir_name,i);
 
-    i = srm_ls(&context,&input_ls,&output_ls);
 
-	if (!i)
-	{
-		PrintResult(output_ls);
-	}
-
+    TestLs();
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_surl_rmdir;
 	i = srm_rmdir(&context,&input_rmdir,&output_rmdir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,i);
 
-    i = srm_ls(&context,&input_ls,&output_ls);
+	TestLs();
 
-	if (!i)
-	{
-		PrintResult(output_ls);
-	}
 
     /*system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
     system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");

@@ -320,19 +320,6 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 
 	if (internal_context.current_status == srm_call_status_SUCCESS)
 	{
-		if ((output->statuses = (struct srmv2_filestatus*) calloc (1, sizeof (struct srmv2_filestatus))) == NULL)
-		{
-			srm_errmsg (context, "[SRM][malloc][] error");
-			errno = ENOMEM;
-			srm_soap_deinit(&soap);
-			return (-1);
-		}
-		(output->statuses)[0].surl = strdup (input->surl);
-		(output->statuses)[0].status = statuscode2errno(output->retstatus->statusCode);
-		if ((output->statuses)[0].status)
-		{
-			srm_print_explanation(&((output->statuses)[0].explanation), output->retstatus,srmfunc);
-		}
 		srm_soap_deinit(&soap);
 		errno = 0;
 		return (0);
