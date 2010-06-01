@@ -426,15 +426,53 @@ START_TEST (test_srmv2_status_of_ls_request)
 
 }
 END_TEST
-srm_call_status soap_call_srm2__abort_request_test1(struct srm_context *context,
-		struct srm_internal_context *internal_context)
+int soap_call_srm2__abort_request_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+		struct srm2__srmAbortRequestRequest *request,
+	    struct srm2__srmAbortRequestResponse_ *_param_18)
 {
 	return 0;
 }
-srm_call_status soap_call_srm2__abort_request_test2(struct srm_context *context,
-		struct srm_internal_context *internal_context)
+int soap_call_srm2__abort_request_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+		struct srm2__srmAbortRequestRequest *request,
+	    struct srm2__srmAbortRequestResponse_ *_param_18)
 {
 	return -1;
+}
+int soap_call_srm2__abort_request_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+		struct srm2__srmAbortRequestRequest *request,
+	    struct srm2__srmAbortRequestResponse_ *_param_18)
+{
+	struct srm2__srmAbortRequestResponse *resp  = (struct srm2__srmAbortRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmAbortRequestResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR; // Failure
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmAbortRequestResponse = resp;
+
+	return 0; // success
+}
+int soap_call_srm2__abort_request_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+		struct srm2__srmAbortRequestRequest *request,
+	    struct srm2__srmAbortRequestResponse_ *_param_18)
+{
+	struct srm2__srmAbortRequestResponse *resp  = (struct srm2__srmAbortRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmAbortRequestResponse));
+	resp->returnStatus = NULL; // FAILURE
+	_param_18->srmAbortRequestResponse = resp;
+
+	return 0; // success
+}
+int soap_call_srm2__abort_request_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+		struct srm2__srmAbortRequestRequest *request,
+	    struct srm2__srmAbortRequestResponse_ *_param_18)
+{
+	struct srm2__srmAbortRequestResponse *resp  = (struct srm2__srmAbortRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmAbortRequestResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmAbortRequestResponse = resp;
+
+	return 0; // success
 }
 //////////////////////////////////////////////////////////////////
 // test test_srmv2_abort_request
@@ -460,13 +498,28 @@ START_TEST (test_srmv2_abort_request)
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
 	result = srmv2_abort_request(&context,token);
-	fail_if ((result  != 0),
-				   "Expected Success!\n");
+	fail_if ((result  != -1),
+				   "Expected Failure!\n");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test2;
 	result = srmv2_abort_request(&context,token);
 	fail_if ((result  != -1),
-				   "Expected Failure 2!\n");
+				   "Expected Failure!\n");
+
+	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test3;
+	result = srmv2_abort_request(&context,token);
+	fail_if ((result  != -1),
+				   "Expected Failure!\n");
+
+	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test4;
+	result = srmv2_abort_request(&context,token);
+	fail_if ((result  != -1),
+				   "Expected Failure!\n");
+
+	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test5;
+	result = srmv2_abort_request(&context,token);
+	fail_if ((result  != 0),
+				   "Expected Success!\n");
 }
 END_TEST
 int  soap_call_srm2__srmRmDir_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
@@ -1634,6 +1687,7 @@ int  soap_call_srm2__srmPrepareToPut_test2(struct soap *soap, const char *soap_e
 	_param_18->srmPrepareToPutResponse = resp;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREFAILURE;
+	retstatus->explanation = NULL;
 
 	return -1; // failure
 }
@@ -1647,6 +1701,7 @@ int  soap_call_srm2__srmPrepareToPut_test3(struct soap *soap, const char *soap_e
 	_param_18->srmPrepareToPutResponse->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
+	retstatus->explanation = NULL;
 
 	return 0; // success
 }
@@ -1715,6 +1770,7 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	struct srmv2_pinfilestatus *filestatus;
 	const char *srmfunc = "testfunc";
 	struct srm_context context;
+	SRM_LONG64 filesizes_test[] = { 1024 };
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
@@ -1731,6 +1787,7 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
+	input.filesizes = filesizes_test;
 	input.nbfiles = 1;
 	input.desiredpintime = 1000;
 	input.spacetokendesc  = NULL;
@@ -1773,7 +1830,13 @@ START_TEST (test_srmv2_prepare_to_put_async)
 					"Expected Queued!\n");
 
 
-	output.filestatuses= &filestatus;
+	input.filesizes = NULL;
+	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
+	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	fail_if ((result != -1),
+					"Expected Failure 4!\n");
+
+	input.filesizes = filesizes_test;
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
@@ -2229,8 +2292,47 @@ Suite * test_suite (void)
   suite_add_tcase (s, tc_case_1);
 
   return s;
-}
+}/*
+void TestPutFileSize()
+{
+	struct srm_preparetoput_input input;
+	struct srm_preparetoput_output output;
+	struct srmv2_pinfilestatus *filestatus;
+	const char *srmfunc = "testfunc";
+	struct srm_context context;
+	SRM_LONG64 filesizes_test[] = { 1024 };
+	struct srm_internal_context internal_context;
+	struct srm2__TReturnStatus retstatus;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	char *test_protocols[] = {"protocol1","protocol2"};
+	int result;
 
+	internal_context.estimated_wait_time = -1;
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.filesizes = filesizes_test;
+	input.nbfiles = 1;
+	input.desiredpintime = 1000;
+	input.spacetokendesc  = NULL;
+	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
+	input.surls = test_surls;
+	input.protocols = test_protocols;
+
+
+	//output.filestatuses= &filestatus;
+	input.filesizes = NULL;
+	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
+	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
+		//			"Expected Success!\n");
+}*/
 int main(void)
 {
 	int number_failed;
@@ -2242,6 +2344,7 @@ int main(void)
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 
+//	TestPutFileSize();
 //	TestGet();
 //	TestSpaceTokens();
 //	TestSpaceMD();

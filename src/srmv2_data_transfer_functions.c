@@ -160,6 +160,13 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	req.desiredFileStorageType = &s_types[PERMANENT];
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
 
+	if (input->filesizes == NULL &&  input->nbfiles>0)
+	{
+		errno = EINVAL;
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
 	for (i = 0; i < input->nbfiles; i++) {
 		if ((req.arrayOfFileRequests->requestArray[i] =
 					soap_malloc (&soap, sizeof(struct srm2__TPutFileRequest))) == NULL) {
@@ -961,6 +968,7 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 	if (token == NULL)
 	{
 		// No token supplied
+		srm_soap_deinit(&soap);
 		return (-1);
 	}else
 	{
@@ -972,6 +980,15 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 		{
 			// Soap call failure
 			errno = srm_soup_call_err(context,&soap,srmfunc);
+		}else
+		{
+			if (abortrep.srmAbortRequestResponse == NULL ||
+					abortrep.srmAbortRequestResponse->returnStatus == NULL ||
+					abortrep.srmAbortRequestResponse->returnStatus->statusCode != SRM_USCORESUCCESS)
+			{
+				srm_soap_deinit(&soap);
+				return (-1);
+			}
 		}
 	}
 

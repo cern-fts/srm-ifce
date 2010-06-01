@@ -161,7 +161,7 @@ typedef struct srm_rm_input{
 typedef struct srm_rm_output {
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
-	struct srmv2_filestatus **statuses;
+	struct srmv2_filestatus 	*statuses;
 };
 
 typedef struct srm_rmdir_input{
@@ -172,7 +172,7 @@ typedef struct srm_rmdir_input{
 typedef struct srm_rmdir_output {
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
-	struct srmv2_filestatus **statuses;
+	struct srmv2_filestatus 	*statuses;
 };
 
 typedef struct srm_mkdir_input{
@@ -185,7 +185,6 @@ typedef struct srm_preparetoget_input{
     int desiredpintime;
     char *spacetokendesc;
     char **protocols;
-    char **reqtoken;
 };
 
 typedef struct srm_preparetoput_input{
@@ -195,7 +194,6 @@ typedef struct srm_preparetoput_input{
 	int desiredpintime;
 	char *spacetokendesc;
 	char **protocols;
-	char **reqtoken;
 };
 
 typedef struct srm_preparetoget_output{
@@ -221,10 +219,6 @@ typedef struct srm_releasefiles_input{
 	char **surls;
 	char *reqtoken;
 };
-typedef struct srm_abort_request_input
-{
-	char *reqtoken;
-};
 
 typedef struct srm_abort_files_input{
 	int nbfiles;
@@ -238,7 +232,6 @@ typedef struct srm_bringonline_input{
 	int desiredpintime;
 	char *spacetokendesc;
 	char **protocols;
-	char **reqtoken;
 };
 
 typedef struct srm_bringonline_output{

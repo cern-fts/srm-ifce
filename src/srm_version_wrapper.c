@@ -216,5 +216,19 @@ int srm_abort_files(struct srm_context *context,
 	}
 }
 
+int srm_abort_request(struct srm_context *context,
+		char *token)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_abort_request(context,token);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
 
 
