@@ -120,7 +120,7 @@ typedef struct srm_ls_input{
 	int nbfiles;
 	char **surls; // null terminated array of strings
 	int numlevels;
-	int offset;
+	int *offset;
 	int count;
 };
 

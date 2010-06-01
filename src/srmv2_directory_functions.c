@@ -96,6 +96,17 @@ int srmv2_ls_async_internal(struct srm_context *context,
 				{
 					errno = srm_call_err(context,output->retstatus,srmfunc);
 					internal_context->current_status  = srm_call_status_FAILURE;
+				}else
+				{
+					if (ret == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
+							repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
+					{
+						// offset is only supported for a single directory listing
+						*input->offset += repfs->pathDetailArray[0]->arrayOfSubPaths->__sizepathDetailArray;
+					}else if (input->offset)
+					{
+						*input->offset = 0;
+					}
 				}
 			}
 			break;
@@ -118,7 +129,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 	struct srm2__srmStatusOfLsRequestResponse_ srep;
 	struct srm2__srmStatusOfLsRequestRequest sreq;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
-	int ret,n;
+	int ret;
 
 	// wait for files ready
 
@@ -161,25 +172,22 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 			}else
 			{
 				// Everything is fine copy file structure and check if copy went ok
-				n = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs );
-				if (n == -1)
+				ret = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs );
+				if (ret == -1)
 				{
 					errno = srm_call_err(context,output->retstatus,srmfunc);
 					internal_context->current_status  = srm_call_status_FAILURE;
-					ret = -1;
 				}else
 				{
-					// TODO check this code:
-
-				/*	if (n == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
+					if (ret == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
 							repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
 					{
 						// offset is only supported for a single directory listing
-						input->offset += repfs->pathDetailArray[0]->arrayOfSubPaths->__sizepathDetailArray;
+						*input->offset += repfs->pathDetailArray[0]->arrayOfSubPaths->__sizepathDetailArray;
 					}else if (input->offset)
 					{
-						input->offset = 0;
-					}*/
+						*input->offset = 0;
+					}
 				}
 			}
 			break;
@@ -273,7 +281,7 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 
 	srm_soap_deinit(&soap);
     errno = 0;
-	return 0;
+	return (n);
 }
 //srmv2_rmdir (const char *surl, const char *srm_endpoint, int recursive,
 //struct srmv2_filestatus **statuses, char *errbuf, int errbufsz, int timeout)

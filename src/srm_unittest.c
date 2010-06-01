@@ -265,6 +265,7 @@ START_TEST (test_srmv2_ls_async)
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
+	input.offset = NULL;
 	input.nbfiles = 1;
 	input.count = 0;
 	input.numlevels  = 1;
@@ -376,6 +377,9 @@ START_TEST (test_srmv2_status_of_ls_request)
 	struct srm2__TReturnStatus retstatus;
 	int result;
 
+
+	input.offset = NULL;
+
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -417,10 +421,9 @@ START_TEST (test_srmv2_status_of_ls_request)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	//output.statuses = &filestatus;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
+	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  != 1),
 				   "Expected Success!\n");
 
 
@@ -648,10 +651,9 @@ START_TEST (test_srmv2_rm)
 	fail_if ((result  != -1),
 				   "Expected Failure 1!\n");
 
-	output.statuses = &filestatus;
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
 	result = srmv2_rm(&context,&input,&output);
-	fail_if ((result  != 0),
+	fail_if ((result  != 1),
 				   "Expected Success!\n");
 }
 END_TEST
@@ -2291,19 +2293,17 @@ Suite * test_suite (void)
   suite_add_tcase (s, tc_case_1);
 
   return s;
-}/*
-void TestPutFileSize()
+}
+void TestLsOutput()
 {
-	struct srm_preparetoput_input input;
-	struct srm_preparetoput_output output;
-	struct srmv2_pinfilestatus *filestatus;
+	int i;
+	struct srm_mdfilestatus *filestatus;
+	struct srm_ls_input input;
+	struct srm_ls_output output;
 	const char *srmfunc = "testfunc";
 	struct srm_context context;
-	SRM_LONG64 filesizes_test[] = { 1024 };
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
@@ -2311,31 +2311,28 @@ void TestPutFileSize()
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
 
+	output.token = "test";
+
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
-	input.filesizes = filesizes_test;
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
+	input.offset = NULL;
 
-
-	//output.filestatuses= &filestatus;
-	input.filesizes = NULL;
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-		//			"Expected Success!\n");
-}*/
+	internal_context.attempt = 1;
+	internal_context.end_time = time(NULL)+10000;
+	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
+	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
+	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
+		//		   "Expected Success!\n");
+}
 int main(void)
 {
 	int number_failed;
 	int i;
+
+//	TestLsOutput();
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
@@ -2516,7 +2513,6 @@ void TestStatusOfLs()
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.statuses = &filestatus;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
@@ -2801,7 +2797,6 @@ void TestRm()
 	//fail_if ((result  != -1),
 		//		   "Expected Failure 1!\n");
 
-	output.statuses = &filestatus;
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
 	result = srmv2_rm(&context,&input,&output);
 	//fail_if ((result  != 0),

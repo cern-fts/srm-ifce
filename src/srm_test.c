@@ -230,7 +230,7 @@ void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count)
 void TestLs()
 {
 	int i;
-	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1"};
+	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1","srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1"};
 	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 	struct srm_context context;
 	struct srm_ls_input input_ls;
@@ -242,7 +242,7 @@ void TestLs()
 	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
-	input_ls.nbfiles = 1;
+	input_ls.nbfiles = 2;
 	input_ls.count = 0;
 	input_ls.numlevels  = 1;
 	input_ls.surls = test_surls_ls;
@@ -269,11 +269,11 @@ void Test()
 	struct srm_rmdir_input input_rmdir;
 	struct srm_rmdir_output* output_rmdir;
 	struct srm_mkdir_input input_mkdir;
-	int i;
+	int i,j;
 	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 
 	char *test_surls_rm[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba",
-							 "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba"};
+							 "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba2"};
 
 
 	char *test_surl_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/3/4";
@@ -286,15 +286,12 @@ void Test()
 	context.version = TYPE_SRMv2;
 
 
-	input_rm.nbfiles = 2;
-	input_rm.surls = test_surls_rm;
+
 
 
 	TestLs();
+
 	input_mkdir.dir_name = test_surl_dir;
-
-    TestLs();
-
     i = srm_mkdir(&context,&input_mkdir);
     printf("Mkdir:%s %d \n",input_mkdir.dir_name,i);
 
@@ -307,8 +304,18 @@ void Test()
 
 	TestLs();
 
+	system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
 
-    /*system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
+	input_rm.nbfiles = 2;
+	input_rm.surls = test_surls_rm;
+	i = srm_rm(&context,&input_rm,&output_rm);
+	for(j=0;j<i;j++)
+	{
+		printf("Remove files:%s\n",input_rm.surls[j],i);
+	}
+
+	TestLs();
+/*
     system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");
 
     i = srm_ls(&context,&input_ls,&output_ls);
