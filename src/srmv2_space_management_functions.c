@@ -4,7 +4,7 @@
 #include "srm_dependencies.h"
 
 int srmv2_getspacemd (struct srm_context *context,
-		struct srm_getspacemd_input *input, srm_spacemd **spaces)
+		struct srm_getspacemd_input *input,struct srm_spacemd **spaces)
 {
 	int flags;
 	int sav_errno = 0;
@@ -94,7 +94,7 @@ int srmv2_getspacemd (struct srm_context *context,
 		return (-1);
 	}
 
-	if ((*spaces = (srm_spacemd *) calloc (input->nbtokens, sizeof (srm_spacemd))) == NULL) {
+	if ((*spaces = (struct srm_spacemd *) calloc (input->nbtokens, sizeof (struct srm_spacemd))) == NULL) {
 		soap_end (&soap);
 		soap_done (&soap);
 		errno = ENOMEM;
@@ -270,7 +270,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 	int i, ret, numtoken = -1;
 	SRM_LONG64 unusedsize = -1;
 	char **spacetokens = NULL;
-	srm_spacemd *spacemd = NULL;
+	struct srm_spacemd *spacemd = NULL;
 	char *spacetoken = NULL;
 
 	getspacetoken_input.spacetokendesc = input->spacetokendesc;

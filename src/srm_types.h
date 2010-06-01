@@ -263,7 +263,7 @@ typedef struct srm_getbestspacetokens_input
 	SRM_LONG64 neededsize;
 };
 
-typedef struct {
+typedef struct srm_spacemd{
 	char *spacetoken;
 	char *owner;
 	SRM_LONG64 totalsize;
@@ -273,6 +273,6 @@ typedef struct {
 	int lifetimeleft;
 	TRetentionPolicy retentionpolicy;
 	TAccessLatency accesslatency;
-} srm_spacemd;
+};
 
 #endif /* _SRM_TYPES_H */

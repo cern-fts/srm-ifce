@@ -17,7 +17,7 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 		struct srm_internal_context *internal_context,struct srm2__TReturnStatus  *retstatus);
 int wait_for_new_attempt(struct srm_internal_context *internal_context);
 
-void srm_spacemd_free (int nbtokens, srm_spacemd *smd);
+void srm_spacemd_free (int nbtokens, struct srm_spacemd *smd);
 
 int srm_set_protocol_in_transferParameters(
 	struct srm_context *context,

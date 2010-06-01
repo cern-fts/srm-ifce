@@ -25,19 +25,19 @@ int srm_status_of_bring_online_async(struct srm_context *context,
 int srm_prepeare_to_put(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
-int srmv2_prepare_to_put_async(struct srm_context *context,
+int srm_prepare_to_put_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
-int srmv2_status_of_put_request_async(struct srm_context *context,
+int srm_status_of_put_request_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
 int srm_prepeare_to_get(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
-int srmv2_prepare_to_get_async(struct srm_context *context,
+int srm_prepare_to_get_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
-int srmv2_status_of_get_request_async(struct srm_context *context,
+int srm_status_of_get_request_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
 int srm_rm(struct srm_context *context,
@@ -68,7 +68,7 @@ int srmv2_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_input *input,struct srm_getspacetokens_output *output);
 
 int srmv2_getspacemd (struct srm_context *context,
-		struct srmv2_getspacemd_input *input, srm_spacemd **spaces);
+		struct srmv2_getspacemd_input *input,struct srm_spacemd **spaces);
 
 int srm_ping(struct srm_context *context,
 		struct srm_ping_output *output);
