@@ -132,7 +132,7 @@ int TestBringOnline(char **files,char **protocols)
 
 	return a;
 }
-int main(void)
+void TestPrepareToPutPrepareToGet()
 {
 	int a,b,c;
 	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
@@ -199,8 +199,12 @@ int main(void)
 
 
     }
-
-	//TestLs();
+}
+void TestLs();
+int main(void)
+{
+	TestPrepareToPutPrepareToGet();
+	TestLs();
 
    //printf("%s \n",filestatuses->surl);
 	return EXIT_SUCCESS;
@@ -247,7 +251,7 @@ void TestLs()
 		//	struct srm_ls_input *input,struct srm_ls_output *output)
     i = srm_ls_async(&context,&input_ls,&output_ls);
 
-	if (!i)
+	if (i > 0)
 	{
 		PrintResult(output_ls.statuses);
 	}

@@ -39,17 +39,17 @@ int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTGetRequestFileStatus *repfs,
-						char srmfunc);
+						char *srmfunc);
 
 int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
-						char srmfunc);
+						char *srmfunc);
 
 int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs,
-						char srmfunc);
+						char *srmfunc);
 
 int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_mdfilestatus **statuses,

@@ -442,7 +442,7 @@ int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTGetRequestFileStatus *repfs,
-						char srmfunc)
+						char *srmfunc)
 {
 	int n,i;
 	n = repfs->__sizestatusArray;
@@ -462,7 +462,6 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
 		if (repfs->statusArray[i]->transferURL)
 			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
-		/*TODO
 		   if (repfs->statusArray[i]->status) {
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
@@ -476,7 +475,7 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 			else if ((*filestatuses)[i].status != 0)
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}*/
+		}
 		if (repfs->statusArray[i]->remainingPinTime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
 	}
@@ -486,7 +485,7 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs,
-						char srmfunc)
+						char *srmfunc)
 {
 	int n,i;
 	n = repfs->__sizestatusArray;
@@ -504,8 +503,9 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
 		if (repfs->statusArray[i]->sourceSURL)
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
-		/*TODO
-		   if (repfs->statusArray[i]->status) {
+
+		if (repfs->statusArray[i]->status)
+		{
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
@@ -518,7 +518,7 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 			else if ((*filestatuses)[i].status != 0)
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}*/
+		}
 		if (repfs->statusArray[i]->remainingPinTime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
 	}
@@ -528,7 +528,7 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
-						char srmfunc)
+						char *srmfunc)
 {
 	int n,i;
 	n = repfs->__sizestatusArray;
@@ -548,8 +548,9 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
 		if (repfs->statusArray[i]->transferURL)
 			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
-		/*TODO
-		   if (repfs->statusArray[i]->status) {
+
+		if (repfs->statusArray[i]->status)
+		{
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] %s",
@@ -562,7 +563,7 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 			else if ((*filestatuses)[i].status != 0)
 				asprintf (&((*filestatuses)[i].explanation), "[SRM][%s][%s] <none>",
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}*/
+		}
 		if (repfs->statusArray[i]->remainingPinLifetime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
 	}

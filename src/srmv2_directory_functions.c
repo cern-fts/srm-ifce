@@ -12,16 +12,13 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 int srmv2_ls_async_internal(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output,struct srm_internal_context *internal_context)
 {
-	int n,ret;
+	int ret;
 	enum xsd__boolean trueoption = true_;
 	struct soap soap;
 	const char srmfunc[] = "Ls";
 	struct srm2__srmLsRequest req;
 	struct srm2__srmLsResponse_ rep;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
-	int file_count = 0;
-	char *files;
-	srm_call_status current_status;
 
 	srm_soap_init(&soap);
 
@@ -94,12 +91,11 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			}else
 			{
 				// Everything is fine copy file structure and check if copy went ok
-				n = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs);
-				if (n == -1)
+				ret = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs);
+				if (ret == -1)
 				{
 					errno = srm_call_err(context,output->retstatus,srmfunc);
 					internal_context->current_status  = srm_call_status_FAILURE;
-					ret = -1;
 				}
 			}
 			break;
