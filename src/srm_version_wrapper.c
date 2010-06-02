@@ -244,6 +244,47 @@ int srm_ping(struct srm_context *context,
 			return (-1);
 	}
 }
+char* srm_getbestspacetoken (struct srm_context *context,
+		struct srm_getbestspacetokens_input *input)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_getbestspacetoken(context,input);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+int srm_getspacetokens (struct srm_context *context,
+		struct srm_getspacetokens_input *input,struct srm_getspacetokens_output *output)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_getspacetokens(context,input,output);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
 
-
+int srm_getspacemd (struct srm_context *context,
+		struct srm_getspacemd_input *input,struct srm_spacemd **spaces)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_getspacemd(context,input,spaces);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
 

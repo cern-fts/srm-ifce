@@ -2301,7 +2301,7 @@ int  soap_call_srm2__srmPing_test4(struct soap *soap, const char *soap_endpoint,
 
 
 //////////////////////////////////////////////////////////////////
-// test test_srmv2_getspacetokens
+// test test_srmv2_ping
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_ping)
 {
@@ -2337,9 +2337,6 @@ START_TEST (test_srmv2_ping)
 	result = srmv2_ping(&context,&output);
 	fail_if ((result  != -1),
 					"Expected Failure !\n");
-
-
-
 }
 END_TEST
 

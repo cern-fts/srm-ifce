@@ -45,6 +45,33 @@ const char *srmv2_errmsg[] = {
 	"SRM_FILE_UNAVAILABLE",
 	"SRM_CUSTOM_STATUS"
 };
+static int srm_timeout_connect = 60;
+static int srm_timeout_sendreceive = 0;
+
+int srm_get_timeout_connect ()
+{
+	return (srm_timeout_connect);
+}
+
+void srm_set_timeout_connect (int value)
+{
+
+	if (value >= 0)
+		srm_timeout_connect = value;
+}
+
+int srm_get_timeout_sendreceive ()
+{
+	return (srm_timeout_sendreceive);
+}
+
+void srm_set_timeout_sendreceive (int value)
+{
+	if (value >= 0)
+		srm_timeout_sendreceive = value;
+}
+
+
 
 void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context)
 {
@@ -77,9 +104,9 @@ void srm_soap_init(struct soap *soap)
 	soap_register_plugin_arg (soap, client_cgsi_plugin, &flags);
 	#endif
 
-	soap->send_timeout = 1000;//gfal_get_timeout_sendreceive ();
-	soap->recv_timeout = 1000;//gfal_get_timeout_sendreceive ();
-	soap->connect_timeout = 1000;//gfal_get_timeout_connect ();
+	soap->send_timeout =  srm_get_timeout_sendreceive ();
+	soap->recv_timeout =  srm_get_timeout_sendreceive ();
+	soap->connect_timeout = srm_get_timeout_connect ();
 }
 void srm_soap_deinit(struct soap *soap)
 {

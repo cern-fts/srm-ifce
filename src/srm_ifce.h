@@ -61,17 +61,22 @@ int srm_abort_files(struct srm_context *context,
 int srm_abort_request (struct srm_context *context,
 		char *reqtoken);
 
-char* srmv2_getbestspacetoken (struct srm_context *context,
+char* srm_getbestspacetoken (struct srm_context *context,
 		struct srm_getbestspacetokens_input *input);
 
-int srmv2_getspacetokens (struct srm_context *context,
+int srm_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_input *input,struct srm_getspacetokens_output *output);
 
-int srmv2_getspacemd (struct srm_context *context,
-		struct srmv2_getspacemd_input *input,struct srm_spacemd **spaces);
+int srm_getspacemd (struct srm_context *context,
+		struct srm_getspacemd_input *input,struct srm_spacemd **spaces);
 
 int srm_ping(struct srm_context *context,
 		struct srm_ping_output *output);
 
+// gsoap timeouts
+void srm_set_timeout_connect (int);
+int srm_get_timeout_connect ();
+void srm_set_timeout_sendreceive (int);
+int srm_get_timeout_sendreceive ();
 
 #endif

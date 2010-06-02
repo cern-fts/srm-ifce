@@ -5,145 +5,104 @@
 #include "srm_types.h"
 #include "srm_ifce.h"
 
-void PrintResult(struct srmv2_mdfilestatus* output);
-void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
-void TestLs();
 
-int TestPutDone(char** surls,char *token)
+char *test_srm_endpoint =  "httpg://lxb7993.cern.ch:8446/srm/managerv2";
+char *source_file = "file:///etc/group";
+char *test_file1 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
+char *test_file2 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file23";
+char *test_unexisting = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting1";
+char *test_dir = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/";
+
+int TestAbortFiles(char **files,char *token);
+int TestBringOnline(char **files,char **protocols);
+int TestReleaseFiles(char **files,char *token);
+int TestPing(char *endpoint);
+
+void SetCopyCommand(char **command)
 {
+	asprintf (command, "lcg-cr --verbose --nobdii -D srmv2 --vo dteam  %s -d %s ", source_file,test_file1);
+}
+void SetDelCommand(char **command,char *file)
+{
+	asprintf (command, "lcg-del --verbose --nobdii -D srmv2 --vo dteam %s", file);
+}
+void SetRegisterFileCommand(char **command,char *file)
+{
+	asprintf (command, "lcg-rf --verbose --nobdii -D srmv2 --vo dteam %s", file);
+}
+void SetDelDirCommand(char **command,char *file)
+{
+	asprintf (command, "lcg-del --dir --verbose --nobdii -D srmv2 --vo dteam %s", file);
+}
+void TestPrepareToPut()
+{
+	int a,b,c;
+	char *command;
+	char *test_surls_get[] = {test_file1};
+	char *test_surls_put[] = {test_file2};
+	char *test_surls_unexisting[] = {test_unexisting};
+
+
+	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
+	struct srm_context context;
+	struct srm_preparetoget_input input_get;
+	struct srm_preparetoget_output output_get;
+	struct srm_preparetoput_input input_put,input_put2;
+    struct srm_preparetoput_output output_put,output_put2,output_put3;
 	struct srmv2_pinfilestatus *filestatuses;
-	int c;
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	struct srm_putdone_input input_putdone;
-	struct srm_context context;
+	long int filesizes[1] ={ 1024 };
 
 	context.verbose = 1;
 	context.errbufsz = 0;
+	context.errbuf = NULL;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
-   	input_putdone.nbfiles = 1;
-	input_putdone.surls = surls;
-	input_putdone.reqtoken = token;
-	c = srm_put_done(&context,&input_putdone,&filestatuses);
-	printf("Put Done\nToken: %s \nSurl: %s\nResult: %d\n",token,surls[0],c);
-
-	return c;
-}
-
-int TestAbortRequest(char *token)
-{
-	struct srmv2_pinfilestatus *filestatuses;
-	int c;
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	struct srm_context context;
-
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
-	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	input_get.nbfiles = 1;
+	input_get.desiredpintime = 1000;
+	input_get.surls = test_surls_get;
+	input_get.protocols = protocols;
+	input_get.spacetokendesc = NULL;
 
 
-	c = srm_abort_request(&context,token);
-	printf("Abort request\nToken: %s \nResult: %d\n",token,c);
+	input_put.filesizes = filesizes;
+	input_put.nbfiles = 1;
+	input_put.desiredpintime = 1000;
+	input_put.surls = test_surls_unexisting;
+	input_put.protocols = protocols;
+	input_put.spacetokendesc = NULL;
 
-	return c;
-}
-void TestGlobusUrlCopy(char *sourceturl,char *destinationturl)
-{
-	char* globus_url_copy;
-	asprintf(&globus_url_copy,"globus-url-copy %s %s ",sourceturl,destinationturl);
-	printf("%s \n",globus_url_copy);
-	system(globus_url_copy);
-}
-int TestAbortFiles(char **files,char *token)
-{
-	struct srmv2_filestatus *filestatuses;
-	int c;
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	struct srm_context context;
-	struct srm_abort_files_input input;
+	input_put2.filesizes = filesizes;
+	input_put2.nbfiles = 1;
+	input_put2.desiredpintime = 1000;
+	input_put2.surls = test_surls_put;
+	input_put2.protocols = protocols;
+	input_put2.spacetokendesc = NULL;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
-	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	// delete file
+    b = srm_prepeare_to_put(&context,&input_put,&output_put);
+    // if b != 1 error
 
-	input.nbfiles = 1;
-	input.surls = files;
-	input.reqtoken = token;
+    b = srm_prepeare_to_put(&context,&input_put,&output_put2);
 
-	c = srm_abort_files(&context,&input,&filestatuses);
-	printf("Abort files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,c);
-
-	return c;
-}
-int TestReleaseFiles(char **files,char *token)
-{
-	struct srmv2_filestatus *filestatuses;
-	int a;
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	struct srm_context context;
-	struct srm_releasefiles_input input;
-
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
-	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
-
-	input.nbfiles = 1;
-	input.surls = files;
-	input.reqtoken = token;
-
-	a = srm_release_files(&context,&input,&filestatuses);
-	printf("Release files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,a);
-
-	return a;
-}
-int TestBringOnline(char **files,char **protocols)
-{
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	struct srm_context context;
-	struct srm_bringonline_input input_bringonline;
-	struct srm_bringonline_output output_bringonline;
-	int a;
-
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
-	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
-
-	input_bringonline.desiredpintime = 1000;
-	input_bringonline.nbfiles = 1;
-	input_bringonline.protocols = protocols;
-	input_bringonline.surls = files;
-	input_bringonline.spacetokendesc = NULL;
-
-
-
-	a = srm_bring_online(&context,&input_bringonline,&output_bringonline);
-	printf("BRING ONLINE \n");
-	PrintPinFileStatuses(output_bringonline.filestatuses,a);
-
-	return a;
+	//b = srm_prepeare_to_get(&context,&input_get,&output_get);
 }
 void TestPrepareToPutPrepareToGet()
 {
 	int a,b,c;
-	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
-	char *test_surls_put[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test600"};
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+	char *command;
+	char *test_surls_get[] = {test_file1};
+	char *test_surls_put[] = {test_file2};
+	char *test_surls_unexisting[] = {test_unexisting};
+
+
 	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
 	struct srm_context context;
 	struct srm_preparetoget_input input_get;
 	struct srm_preparetoget_output output_get;
 	struct srm_preparetoput_input input_put;
-    struct srm_preparetoput_output output_put;
+    struct srm_preparetoput_output output_put,output_put2,output_put3;
 	struct srmv2_pinfilestatus *filestatuses;
 	long int filesizes[1] ={ 1024 };
 
@@ -167,17 +126,36 @@ void TestPrepareToPutPrepareToGet()
 	input_put.protocols = protocols;
 	input_put.spacetokendesc = NULL;
 
+	SetCopyCommand(&command);
+	system(command);
 
-	TestBringOnline(test_surls_get,protocols);
-    TestBringOnline(test_surls_put,protocols);
+	// delete file2
+
+	a = TestBringOnline(test_surls_get,protocols);
+	// fail if a != 1
+
+    b = TestBringOnline(test_surls_put,protocols);
+    // fail if b != -1
 
     a = srm_prepeare_to_get(&context,&input_get,&output_get);
-	PrintPinFileStatuses(output_get.filestatuses,a);
+    // if a != 1 error
+//	PrintPinFileStatuses(output_get.filestatuses,a);
+
 
     b = srm_prepeare_to_put(&context,&input_put,&output_put);
-    PrintPinFileStatuses(output_put.filestatuses,b);
+    // if b != 1 error
 
+    b = srm_prepeare_to_put(&context,&input_put,&output_put2);
+    // if b != -1 error
+    //PrintPinFileStatuses(output_put.filestatuses,b);
 
+	a = TestAbortRequest(output_put.token);
+	// fail if  a != 0
+
+	// delete file
+    b = srm_prepeare_to_put(&context,&input_put,&output_put);
+    // if b != 1 error
+   // PrintPinFileStatuses(output_put.filestatuses,b);
 
     if (b>0)
     {
@@ -188,49 +166,116 @@ void TestPrepareToPutPrepareToGet()
     	{
     		TestGlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
     	}
-    	//TestReleaseFiles(test_surls_get,output_get.token);
-    	//TestPutDone(test_surls_put,output_put.token);
-    	//
 
-    	printf("Token Get: %s \nToken Put: %s\n",output_get.token,output_put.token);
+    	a = TestReleaseFiles(test_surls_get,output_get.token);
+    	// fail if a!=1
+
+    	b = TestPutDone(test_surls_put,output_put.token);
+    	// fail if b!=1
+
+    	input_get.surls = test_surls_unexisting;
+    	a = srm_prepeare_to_get(&context,&input_get,&output_get);
+    	// fail if a!=-1
+
+
+
+    /*	printf("Token Get: %s \nToken Put: %s\n",output_get.token,output_put.token);
     	//TestPutDone(test_surls_put,output_put.token);
         TestAbortRequest(output_put.token);
-     	TestAbortRequest(output_get.token);
+     	TestAbortRequest(output_get.token);*/
 
 
     }
-}
-void TestLs();
-void TestDirectoryFunctions();
-void TestPing()
-{
-	int a;
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	struct srm_context context;
-	struct srm_ping_output output;
 
-	context.verbose = 1;
+    SetDelCommand(&command,test_file1);
+    system(command);;
+    SetRegisterFileCommand(&command,test_file2);
+    system(command);
+    SetDelCommand(&command,test_file2);
+    system(command);;
+    SetDelDirCommand(&command,test_dir);
+    system(command);;
+
+}
+
+
+void PrintResult(struct srmv2_mdfilestatus* output);
+void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
+void TestLs();
+void TestPrepareToPutPrepareToGet();
+
+//////////////////////////////////////////////////////////////////
+// test test_srm_ping
+//////////////////////////////////////////////////////////////////
+START_TEST (test_get_put_release_abort)
+{
+
+}
+END_TEST
+//////////////////////////////////////////////////////////////////
+// test test_srm_ping
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srm_ping)
+{
+	struct srm_ping_output output;
+	struct srm_context context;
+	int result;
+
+	context.verbose = 0;
+	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
-	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
-	a = srm_ping(&context,&output);
 
-	if (a == 0)
-	{
-		printf("Ping result: %s\n",output.versioninfo);
-	}else
-	{
-		printf("Ping error \n",output.versioninfo);
-	}
+	context.srm_endpoint = test_srm_endpoint;
+	result = srm_ping(&context,&output);
+	fail_if ((result  != 0),
+					"Expected Success !\n");
 
+
+	srm_set_timeout_connect(1);
+	context.srm_endpoint = "test";
+	result = srm_ping(&context,&output); // returns 12?
+	fail_if ((result  == 0),
+					"Expected Failure !\n");
+	srm_set_timeout_connect(60);
+
+}
+END_TEST
+Suite * test_suite (void)
+{
+  Suite *s = suite_create ("New srm interface communication with real endpoint test suit");
+
+  TCase *tc_case_1 = tcase_create ("T1");
+
+  tcase_add_checked_fixture (tc_case_1, NULL,NULL);
+  tcase_add_test (tc_case_1, test_srm_ping);
+
+  suite_add_tcase (s, tc_case_1);
+
+  return s;
+}
+
+void DoTests()
+{
+	int number_failed;
+	Suite *s = test_suite ();
+	SRunner *sr = srunner_create (s);
+	srunner_run_all (sr, CK_NORMAL);
+	number_failed = srunner_ntests_failed (sr);
+	srunner_free (sr);
 }
 int main(void)
 {
+	TestPrepareToPut();
+	//TestPrepareToPutPrepareToGet();
+	//DoTests();
+
+	//	TestPrepareToPutPrepareToGet();
+	//TestSpaceTokensSpaceMetadata();
 	//TestPrepareToPutPrepareToGet();
 	//TestLs();
-	TestPing();
+	//TestPing();
 	//TestDirectoryFunctions();
    //printf("%s \n",filestatuses->surl);
 	return EXIT_SUCCESS;
@@ -255,7 +300,6 @@ void TestLs()
 {
 	int i;
 	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1","srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1"};
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 	struct srm_context context;
 	struct srm_ls_input input_ls;
 	struct srm_ls_output output_ls;
@@ -294,7 +338,6 @@ void TestDirectoryFunctions()
 	struct srm_rmdir_output* output_rmdir;
 	struct srm_mkdir_input input_mkdir;
 	int i,j;
-	char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 
 	char *test_surls_rm[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba",
 							 "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba2"};
@@ -374,4 +417,184 @@ void PrintResult(struct srmv2_mdfilestatus* output)
 	{
 		printf("%s \n",output->subpaths[i].surl);
 	}
+}
+int TestPutDone(char** surls,char *token)
+{
+	struct srmv2_pinfilestatus *filestatuses;
+	int c;
+	struct srm_putdone_input input_putdone;
+	struct srm_context context;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+   	input_putdone.nbfiles = 1;
+	input_putdone.surls = surls;
+	input_putdone.reqtoken = token;
+	c = srm_put_done(&context,&input_putdone,&filestatuses);
+	printf("Put Done\nToken: %s \nSurl: %s\nResult: %d\n",token,surls[0],c);
+
+	return c;
+}
+
+int TestAbortRequest(char *token)
+{
+	struct srmv2_pinfilestatus *filestatuses;
+	int c;
+	struct srm_context context;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+
+	c = srm_abort_request(&context,token);
+	printf("Abort request\nToken: %s \nResult: %d\n",token,c);
+
+	return c;
+}
+void TestGlobusUrlCopy(char *sourceturl,char *destinationturl)
+{
+	char* globus_url_copy;
+	asprintf(&globus_url_copy,"globus-url-copy %s %s ",sourceturl,destinationturl);
+	printf("%s \n",globus_url_copy);
+	system(globus_url_copy);
+}
+int TestAbortFiles(char **files,char *token)
+{
+	struct srmv2_filestatus *filestatuses;
+	int c;
+	struct srm_context context;
+	struct srm_abort_files_input input;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	input.nbfiles = 1;
+	input.surls = files;
+	input.reqtoken = token;
+
+	c = srm_abort_files(&context,&input,&filestatuses);
+	printf("Abort files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,c);
+
+	return c;
+}
+int TestReleaseFiles(char **files,char *token)
+{
+	struct srmv2_filestatus *filestatuses;
+	int a;
+	struct srm_context context;
+	struct srm_releasefiles_input input;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	input.nbfiles = 1;
+	input.surls = files;
+	input.reqtoken = token;
+
+	a = srm_release_files(&context,&input,&filestatuses);
+	printf("Release files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,a);
+
+	return a;
+}
+int TestBringOnline(char **files,char **protocols)
+{
+	struct srm_context context;
+	struct srm_bringonline_input input_bringonline;
+	struct srm_bringonline_output output_bringonline;
+	int a;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	input_bringonline.desiredpintime = 1000;
+	input_bringonline.nbfiles = 1;
+	input_bringonline.protocols = protocols;
+	input_bringonline.surls = files;
+	input_bringonline.spacetokendesc = NULL;
+
+
+
+	a = srm_bring_online(&context,&input_bringonline,&output_bringonline);
+	printf("BRING ONLINE \n");
+	PrintPinFileStatuses(output_bringonline.filestatuses,a);
+
+	return a;
+}
+
+void TestSpaceTokensSpaceMetadata()
+{
+	int a;
+	struct srm_context context;
+
+	struct srm_getbestspacetokens_input input_bestspacetokens;
+
+	struct srm_getspacemd_input input_md;
+	struct srm_spacemd  *spacemd;
+
+	struct srm_getspacetokens_input input_space_tokens;
+	struct srm_getspacetokens_output output_space_tokens;
+
+
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	input_space_tokens.spacetokendesc = "NULL";
+
+	//output_space_tokens.
+	a = srm_getspacetokens(&context,&input_space_tokens,&output_space_tokens);
+
+	//input_md pseudo = output_space_tokens
+	input_md.nbtokens = 0;
+	input_md.spacetokens = NULL;
+	a = srm_getspacemd(&context,&input_md,&spacemd);
+
+	input_bestspacetokens.neededsize = 1000;
+	//input_bestspacetokens.spacetokendesc = ....;
+	a = srm_getbestspacetoken(&context,&input_bestspacetokens);
+
+
+
+}
+int TestPing(char *endpoint)
+{
+	int a;
+	struct srm_context context;
+	struct srm_ping_output output;
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	a = srm_ping(&context,&output);
+
+	if (a == 0)
+	{
+		printf("Ping result: %s\n",output.versioninfo);
+	}else
+	{
+		printf("Ping error \n",output.versioninfo);
+	}
+	return a;
 }
