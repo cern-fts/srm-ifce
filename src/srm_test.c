@@ -9,14 +9,19 @@
 char *test_srm_endpoint =  "httpg://lxb7993.cern.ch:8446/srm/managerv2";
 char *source_file = "file:///etc/group";
 char *test_file1 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
-char *test_file2 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file23";
-char *test_unexisting = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting1";
-char *test_dir = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/";
+char *test_file2 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
+char *test_unexisting = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting";
+char *test_dir = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test";
+
+void PrintResult(struct srmv2_mdfilestatus* output);
+void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
+void TestPrepareToPutPrepareToGet();
 
 int TestAbortFiles(char **files,char *token);
 int TestBringOnline(char **files,char **protocols);
 int TestReleaseFiles(char **files,char *token);
 int TestPing(char *endpoint);
+int TestLs(char *surl);
 
 void SetCopyCommand(char **command)
 {
@@ -34,59 +39,116 @@ void SetDelDirCommand(char **command,char *file)
 {
 	asprintf (command, "lcg-del --dir --verbose --nobdii -D srmv2 --vo dteam %s", file);
 }
-void TestPrepareToPut()
+void TestDirectoryFunctions()
 {
-	int a,b,c;
 	char *command;
-	char *test_surls_get[] = {test_file1};
-	char *test_surls_put[] = {test_file2};
-	char *test_surls_unexisting[] = {test_unexisting};
-
-
-	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
+	int a;
 	struct srm_context context;
-	struct srm_preparetoget_input input_get;
-	struct srm_preparetoget_output output_get;
-	struct srm_preparetoput_input input_put,input_put2;
-    struct srm_preparetoput_output output_put,output_put2,output_put3;
-	struct srmv2_pinfilestatus *filestatuses;
-	long int filesizes[1] ={ 1024 };
+	struct srm_ls_input input_ls;
+	struct srm_ls_output* output_ls;
+	struct srm_rm_input input_rm;
+	struct srm_rm_output* output_rm;
+	struct srm_rmdir_input input_rmdir;
+	struct srm_rmdir_output* output_rmdir;
+	struct srm_mkdir_input input_mkdir;
+	int j;
+
+	char *test_surls_rm[] = {test_file1};
+
+
+	char *test_surl_mkdir;
+	char *test_surl_rmdir;
+	asprintf(&test_surl_rmdir,"%s/test_dir",test_dir);
+	asprintf(&test_surl_mkdir,"%s/test_dir/1/2",test_dir);
 
 	context.verbose = 1;
 	context.errbufsz = 0;
-	context.errbuf = NULL;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
-	input_get.nbfiles = 1;
-	input_get.desiredpintime = 1000;
-	input_get.surls = test_surls_get;
-	input_get.protocols = protocols;
-	input_get.spacetokendesc = NULL;
+	// delete file1
+    SetDelCommand(&command,test_file1);
+    system(command);
+
+	// delete folder
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_dir;
+	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,a); //fail if a != 0
 
 
-	input_put.filesizes = filesizes;
-	input_put.nbfiles = 1;
-	input_put.desiredpintime = 1000;
-	input_put.surls = test_surls_unexisting;
-	input_put.protocols = protocols;
-	input_put.spacetokendesc = NULL;
 
-	input_put2.filesizes = filesizes;
-	input_put2.nbfiles = 1;
-	input_put2.desiredpintime = 1000;
-	input_put2.surls = test_surls_put;
-	input_put2.protocols = protocols;
-	input_put2.spacetokendesc = NULL;
+	a = TestLs(test_dir);
+	// fail if a != -1
 
-	// delete file
-    b = srm_prepeare_to_put(&context,&input_put,&output_put);
-    // if b != 1 error
+	SetCopyCommand(&command);
+	system(command);
 
-    b = srm_prepeare_to_put(&context,&input_put,&output_put2);
+	a = TestLs(test_dir);
+	// fail if a != 1
 
-	//b = srm_prepeare_to_get(&context,&input_get,&output_get);
+	input_mkdir.dir_name = test_surl_mkdir;
+	a = srm_mkdir(&context,&input_mkdir);
+	printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
+	// fail if a != 0
+
+	a = TestLs(test_surl_rmdir);
+	// fail if a != 1
+
+	a = TestLs(test_dir);
+	// fail if a != 2
+
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_surl_rmdir;
+	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	// fail if a != 0
+
+	a = TestLs(test_dir);
+	// fail if a != 1
+
+
+	input_rm.nbfiles = 1;
+	input_rm.surls = test_surls_rm;
+	a = srm_rm(&context,&input_rm,&output_rm);
+	for(j=0;j<a;j++)
+	{
+		printf("Remove files:%s\n",input_rm.surls[j],a);
+	}
+
+	a = TestLs(test_dir);
+	// fail if a != 0
+
+
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_dir;
+	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	// fail if a != 0
+
+
+/*
+    system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");
+
+    i = srm_ls(&context,&input_ls,&output_ls);
+
+	if (!i)
+	{
+		PrintResult(output_ls);
+	}
+
+    i = srm_rm(&context,&input_rm,&output_rm);
+    printf("Remove:%d\n",i);
+    i = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+    printf("Remove dir:%d\n",i);
+
+    i = srm_ls(&context,&input_ls,&output_ls);
+
+    if (!i)
+	{
+		PrintResult(output_ls);
+	}*/
 }
 void TestPrepareToPutPrepareToGet()
 {
@@ -130,6 +192,10 @@ void TestPrepareToPutPrepareToGet()
 	system(command);
 
 	// delete file2
+    SetRegisterFileCommand(&command,test_file2);
+    system(command);
+    SetDelCommand(&command,test_file2);
+    system(command);;
 
 	a = TestBringOnline(test_surls_get,protocols);
 	// fail if a != 1
@@ -149,8 +215,8 @@ void TestPrepareToPutPrepareToGet()
     // if b != -1 error
     //PrintPinFileStatuses(output_put.filestatuses,b);
 
-	a = TestAbortRequest(output_put.token);
-	// fail if  a != 0
+	a = TestAbortFiles(test_surls_put,output_put.token);
+	// fail if  a != 1
 
 	// delete file
     b = srm_prepeare_to_put(&context,&input_put,&output_put);
@@ -188,28 +254,128 @@ void TestPrepareToPutPrepareToGet()
     }
 
     SetDelCommand(&command,test_file1);
-    system(command);;
+    system(command);
     SetRegisterFileCommand(&command,test_file2);
     system(command);
     SetDelCommand(&command,test_file2);
-    system(command);;
+    system(command);
     SetDelDirCommand(&command,test_dir);
-    system(command);;
+    system(command);
 
 }
-
-
-void PrintResult(struct srmv2_mdfilestatus* output);
-void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
-void TestLs();
-void TestPrepareToPutPrepareToGet();
 
 //////////////////////////////////////////////////////////////////
 // test test_srm_ping
 //////////////////////////////////////////////////////////////////
-START_TEST (test_get_put_release_abort)
+START_TEST (test_data_transfer_functions)
 {
+	int a,b,c;
+	char *command;
+	char *test_surls_get[] = {test_file1};
+	char *test_surls_put[] = {test_file2};
+	char *test_surls_unexisting[] = {test_unexisting};
 
+
+	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
+	struct srm_context context;
+	struct srm_preparetoget_input input_get;
+	struct srm_preparetoget_output output_get;
+	struct srm_preparetoput_input input_put;
+	struct srm_preparetoput_output output_put,output_put2,output_put3;
+	struct srmv2_pinfilestatus *filestatuses;
+	long int filesizes[1] ={ 1024 };
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	input_get.nbfiles = 1;
+	input_get.desiredpintime = 1000;
+	input_get.surls = test_surls_get;
+	input_get.protocols = protocols;
+	input_get.spacetokendesc = NULL;
+
+
+	input_put.filesizes = filesizes;
+	input_put.nbfiles = 1;
+	input_put.desiredpintime = 1000;
+	input_put.surls = test_surls_put;
+	input_put.protocols = protocols;
+	input_put.spacetokendesc = NULL;
+
+	SetCopyCommand(&command);
+	system(command);
+
+	// delete file2
+	SetRegisterFileCommand(&command,test_file2);
+	system(command);
+	SetDelCommand(&command,test_file2);
+	system(command);;
+
+	a = TestBringOnline(test_surls_get,protocols);
+	fail_if ((a != 1), "Expected Success !\n");
+	// fail if a != 1
+
+	b = TestBringOnline(test_surls_put,protocols);
+	fail_if ((b != -1), "Expected Failure !\n");
+	// fail if b != -1
+
+	a = srm_prepeare_to_get(&context,&input_get,&output_get);
+	fail_if ((a != 1), "Expected Success !\n");
+	// if a != 1 error
+//	PrintPinFileStatuses(output_get.filestatuses,a);
+
+
+	b = srm_prepeare_to_put(&context,&input_put,&output_put);
+	fail_if ((b != 1), "Expected Success !\n");
+	// if b != 1 error
+
+	b = srm_prepeare_to_put(&context,&input_put,&output_put2);
+	fail_if ((b != -1), "Expected Failure !\n");
+	// if b != -1 error
+	//PrintPinFileStatuses(output_put.filestatuses,b);
+
+	a = TestAbortFiles(test_surls_put,output_put.token);
+	fail_if ((a != 1), "Expected Success !\n");
+	// fail if  a != 1
+
+	// delete file
+	b = srm_prepeare_to_put(&context,&input_put,&output_put);
+	fail_if ((b != 1), "Expected Success !\n");
+	// if b != 1 error
+   // PrintPinFileStatuses(output_put.filestatuses,b);
+
+	if (b>0)
+	{
+		if (a>0 && b>0)
+		{
+			TestGlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
+		}
+
+		a = TestReleaseFiles(test_surls_get,output_get.token);
+		fail_if ((a != 1), "Expected Success !\n");
+		// fail if a!=1
+
+		b = TestPutDone(test_surls_put,output_put.token);
+		fail_if ((b != 1), "Expected Success !\n");
+		// fail if b!=1
+
+		input_get.surls = test_surls_unexisting;
+		a = srm_prepeare_to_get(&context,&input_get,&output_get);
+		fail_if ((a != -1), "Expected Failure !\n");
+		// fail if a!=-1
+	}
+
+	SetDelCommand(&command,test_file1);
+	system(command);
+	SetRegisterFileCommand(&command,test_file2);
+	system(command);
+	SetDelCommand(&command,test_file2);
+	system(command);
+	SetDelDirCommand(&command,test_dir);
+	system(command);
 }
 END_TEST
 //////////////////////////////////////////////////////////////////
@@ -247,16 +413,21 @@ Suite * test_suite (void)
   Suite *s = suite_create ("New srm interface communication with real endpoint test suit");
 
   TCase *tc_case_1 = tcase_create ("T1");
+  TCase *tc_case_2 = tcase_create ("T2");
 
   tcase_add_checked_fixture (tc_case_1, NULL,NULL);
   tcase_add_test (tc_case_1, test_srm_ping);
-
   suite_add_tcase (s, tc_case_1);
+
+  tcase_add_checked_fixture (tc_case_2, NULL,NULL);
+  tcase_add_test (tc_case_2, test_data_transfer_functions);
+  tcase_set_timeout(tc_case_2, 60);
+  suite_add_tcase (s, tc_case_2);
 
   return s;
 }
 
-void DoTests()
+int DoTests()
 {
 	int number_failed;
 	Suite *s = test_suite ();
@@ -264,22 +435,20 @@ void DoTests()
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
+
+	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
+///////////////////////////////////////////////
+// MAIN
+///////////////////////////////////////////////
 int main(void)
 {
-	TestPrepareToPut();
-	//TestPrepareToPutPrepareToGet();
-	//DoTests();
+	TestDirectoryFunctions();
 
-	//	TestPrepareToPutPrepareToGet();
-	//TestSpaceTokensSpaceMetadata();
-	//TestPrepareToPutPrepareToGet();
-	//TestLs();
-	//TestPing();
-	//TestDirectoryFunctions();
-   //printf("%s \n",filestatuses->surl);
-	return EXIT_SUCCESS;
+	//return DoTests();
 }
+
 void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count)
 {
 	int i;
@@ -296,10 +465,10 @@ void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count)
 	}
 }
 
-void TestLs()
+int TestLs(char *surl)
 {
 	int i;
-	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1","srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1"};
+	char *test_surls_ls[] = {surl};
 	struct srm_context context;
 	struct srm_ls_input input_ls;
 	struct srm_ls_output output_ls;
@@ -310,99 +479,24 @@ void TestLs()
 	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
-	input_ls.nbfiles = 2;
+	input_ls.nbfiles = 1;
 	input_ls.count = 0;
 	input_ls.numlevels  = 1;
 	input_ls.surls = test_surls_ls;
 	input_ls.offset = 0;
 
-//	system("lcg-ls --verbose --nobdii -D srmv2 srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1");
+	//	system("lcg-ls --verbose --nobdii -D srmv2 srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1");
 	//int srm_ls_async(struct srm_context *context,
-		//	struct srm_ls_input *input,struct srm_ls_output *output)
-    i = srm_ls_async(&context,&input_ls,&output_ls);
+	//	struct srm_ls_input *input,struct srm_ls_output *output)
+    i = srm_ls(&context,&input_ls,&output_ls);
 
 	if (i > 0)
 	{
 		PrintResult(output_ls.statuses);
+		return output_ls.statuses->nbsubpaths;
 	}
-}
+	return i;
 
-void TestDirectoryFunctions()
-{
-	struct srm_context context;
-	struct srm_ls_input input_ls;
-	struct srm_ls_output* output_ls;
-	struct srm_rm_input input_rm;
-	struct srm_rm_output* output_rm;
-	struct srm_rmdir_input input_rmdir;
-	struct srm_rmdir_output* output_rmdir;
-	struct srm_mkdir_input input_mkdir;
-	int i,j;
-
-	char *test_surls_rm[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba",
-							 "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba2"};
-
-
-	char *test_surl_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/3/4";
-	char *test_surl_rmdir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2";
-
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
-	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
-
-
-
-
-
-	TestLs();
-
-	input_mkdir.dir_name = test_surl_dir;
-    i = srm_mkdir(&context,&input_mkdir);
-    printf("Mkdir:%s %d \n",input_mkdir.dir_name,i);
-
-
-    TestLs();
-	input_rmdir.recursive = 1;
-	input_rmdir.surl = test_surl_rmdir;
-	i = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,i);
-
-	TestLs();
-
-	system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/proba");
-
-	input_rm.nbfiles = 2;
-	input_rm.surls = test_surls_rm;
-	i = srm_rm(&context,&input_rm,&output_rm);
-	for(j=0;j<i;j++)
-	{
-		printf("Remove files:%s\n",input_rm.surls[j],i);
-	}
-
-	TestLs();
-/*
-    system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");
-
-    i = srm_ls(&context,&input_ls,&output_ls);
-
-	if (!i)
-	{
-		PrintResult(output_ls);
-	}
-
-    i = srm_rm(&context,&input_rm,&output_rm);
-    printf("Remove:%d\n",i);
-    i = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-    printf("Remove dir:%d\n",i);
-
-    i = srm_ls(&context,&input_ls,&output_ls);
-
-    if (!i)
-	{
-		PrintResult(output_ls);
-	}*/
 }
 void PrintFilestatuses(struct srmv2_pinfilestatus* output)
 {
