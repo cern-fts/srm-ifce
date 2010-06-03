@@ -2,6 +2,8 @@
 #include "srm_soap.h"
 
 callers_t call_function = {
+		soap_call_srm2__srmSetPermission,
+		soap_call_srm2__srmGetPermission,
 		soap_call_srm2__srmPing,
 		soap_call_srm2__srmAbortFiles,
 		soap_call_srm2__srmPutDone,

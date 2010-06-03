@@ -287,4 +287,33 @@ int srm_getspacemd (struct srm_context *context,
 			return (-1);
 	}
 }
+int srm_getpermission (struct srm_context *context,
+		struct srm_getpermission_input *input,struct srm_getpermission_output *output)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_get_permission(context,input,output);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+int srm_setpermission (struct srm_context *context,
+		struct srm_setpermission_input *input)
+{
+	switch (context->version)
+	{
+		case TYPE_SRMv2:
+			return srmv2_set_permission(context,input);
+		case TYPE_SRM:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+
 

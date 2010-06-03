@@ -58,6 +58,10 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 int copy_returnstatus(struct srm2__TReturnStatus **destination,
 		struct srm2__TReturnStatus *returnStatus);
 
+int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
+		struct srm_filepermission **permissions,
+		struct srm2__ArrayOfTPermissionReturn *repperm);
+
 void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time);
 
 #endif /* SRM_UTIL_H_ */

@@ -483,7 +483,7 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 	{
 		if (!repfs->statusArray[i])
 			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
 		if (repfs->statusArray[i]->sourceSURL)
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
 		if (repfs->statusArray[i]->transferURL)
@@ -526,7 +526,7 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 	{
 		if (!repfs->statusArray[i])
 			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
 		if (repfs->statusArray[i]->sourceSURL)
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
 
@@ -569,7 +569,7 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 	{
 		if (!repfs->statusArray[i])
 			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_filestatus));
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
 		if (repfs->statusArray[i]->SURL)
 			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
 		if (repfs->statusArray[i]->transferURL)
@@ -595,7 +595,115 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 	}
 	return n;
 }
+int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
+		struct srm_filepermission **permissions,
+		struct srm2__ArrayOfTPermissionReturn *repperm)
+{
+	int i, n, j , k;
+	const char srmfunc[] = "GetPermission";
 
+	if (reqstatp == NULL || repperm == NULL || permissions == NULL)
+	{
+		errno = EFAULT;
+		return (-1);
+	}
+
+	n = repperm->__sizepermissionArray;
+
+	if ((*permissions = (struct srm_filepermission *) calloc (n, sizeof (struct srm_filepermission))) == NULL)
+	{
+		return (-1);
+	}
+
+	for (i = 0; i < n; ++i)
+	{
+		if (!repperm->permissionArray[i])
+			continue;
+		memset (*permissions + i, 0, sizeof(struct srm_filepermission));
+		if (repperm->permissionArray[i]->owner)
+		{
+			(*permissions)[i].owner = strdup (repperm->permissionArray[i]->owner);
+		}
+		if (repperm->permissionArray[i]->surl)
+		{
+			(*permissions)[i].surl = strdup (repperm->permissionArray[i]->surl);
+		}
+		if (repperm->permissionArray[i]->status)
+		{
+			(*permissions)[i].status = statuscode2errno(repperm->permissionArray[i]->status->statusCode);
+		}
+		if ((*permissions)[i].status)
+		{
+			if (repperm->permissionArray[i]->status->explanation && repperm->permissionArray[i]->status->explanation[0])
+			{
+				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] %s",
+						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
+						repperm->permissionArray[i]->status->explanation);
+			}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+			{
+				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] %s",
+						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
+						reqstatp->explanation);
+			}else
+			{
+				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] <none>",
+						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode));
+			}
+			continue;
+		}
+		if (repperm->permissionArray[i]->ownerPermission)
+		{
+			(*permissions)[i].owner_permission = *repperm->permissionArray[i]->ownerPermission;
+		}
+		if (repperm->permissionArray[i]->otherPermission)
+		{
+			(*permissions)[i].other_permission = *repperm->permissionArray[i]->otherPermission;
+		}
+		if (repperm->permissionArray[i]->arrayOfGroupPermissions &&
+				repperm->permissionArray[i]->arrayOfGroupPermissions->__sizegroupPermissionArray>0)
+		{
+			k = repperm->permissionArray[i]->arrayOfGroupPermissions->__sizegroupPermissionArray;
+			(*permissions)[i].group_permissions_count = k;
+			if (( (*permissions)[i].group_permissions = (struct srm_permission *) calloc (k, sizeof (struct srm_permission))) == NULL)
+				return (-1);
+			for (j = 0; j < k; ++j)
+			{
+				if (repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j] == NULL)
+					continue;
+
+				(*permissions)[i].group_permissions[j].name_id = strdup (repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j]->groupID);
+				(*permissions)[i].group_permissions[j].mode = repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j]->mode;
+			}
+		}else
+		{
+			(*permissions)[i].group_permissions_count = 0;
+			(*permissions)[i].group_permissions = NULL;
+		}
+		if (repperm->permissionArray[i]->arrayOfUserPermissions &&
+				repperm->permissionArray[i]->arrayOfUserPermissions->__sizeuserPermissionArray>0)
+		{
+			k = repperm->permissionArray[i]->arrayOfUserPermissions->__sizeuserPermissionArray;
+			(*permissions)[i].user_permissions_count = k;
+			if (( (*permissions)[i].user_permissions = (struct srm_permission *) calloc (k, sizeof (struct srm_permission))) == NULL)
+				return (-1);
+			for (j = 0; j < k; ++j)
+			{
+				if (repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j] == NULL)
+					continue;
+
+				(*permissions)[i].user_permissions[j].name_id = strdup (repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j]->userID);
+				(*permissions)[i].user_permissions[j].mode = repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j]->mode;
+			}
+		}else
+		{
+			(*permissions)[i].user_permissions_count = 0;
+			(*permissions)[i].user_permissions = NULL;
+		}
+	}
+
+	errno = 0;
+	return (n);
+}
 int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		struct srmv2_mdfilestatus **statuses,
 		struct srm2__ArrayOfTMetaDataPathDetail *repfs)
@@ -620,7 +728,7 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 	{
 		if (!repfs->pathDetailArray[i])
 			continue;
-		memset (*statuses + i, 0, sizeof(struct srm_ls_output));
+		memset (*statuses + i, 0, sizeof(struct srmv2_mdfilestatus));
 		if (repfs->pathDetailArray[i]->path)
 		{
 			(*statuses)[i].surl = strdup (repfs->pathDetailArray[i]->path);
@@ -648,6 +756,7 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 
 			continue;
 		}
+
 		if (repfs->pathDetailArray[i]->size)
 		{
 			(*statuses)[i].stat.st_size = *(repfs->pathDetailArray[i]->size);

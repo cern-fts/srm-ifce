@@ -126,29 +126,6 @@ void TestDirectoryFunctions()
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
 	// fail if a != 0
-
-
-/*
-    system("lcg-cp --verbose --nobdii -D srmv2 --vo dteam file:///etc/group srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/2/proba");
-
-    i = srm_ls(&context,&input_ls,&output_ls);
-
-	if (!i)
-	{
-		PrintResult(output_ls);
-	}
-
-    i = srm_rm(&context,&input_rm,&output_rm);
-    printf("Remove:%d\n",i);
-    i = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-    printf("Remove dir:%d\n",i);
-
-    i = srm_ls(&context,&input_ls,&output_ls);
-
-    if (!i)
-	{
-		PrintResult(output_ls);
-	}*/
 }
 void TestPrepareToPutPrepareToGet()
 {
@@ -263,9 +240,119 @@ void TestPrepareToPutPrepareToGet()
     system(command);
 
 }
+//////////////////////////////////////////////////////////////////
+// test test_directory_functions
+//////////////////////////////////////////////////////////////////
+START_TEST (test_directory_functions)
+{
+	char *command;
+	int a;
+	struct srm_context context;
+	struct srm_ls_input input_ls;
+	struct srm_ls_output* output_ls;
+	struct srm_rm_input input_rm;
+	struct srm_rm_output* output_rm;
+	struct srm_rmdir_input input_rmdir;
+	struct srm_rmdir_output* output_rmdir;
+	struct srm_mkdir_input input_mkdir;
+	int j;
+
+	char *test_surls_rm[] = {test_file1};
+
+
+	char *test_surl_mkdir;
+	char *test_surl_rmdir;
+	asprintf(&test_surl_rmdir,"%s/test_dir",test_dir);
+	asprintf(&test_surl_mkdir,"%s/test_dir/1/2",test_dir);
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = TYPE_SRMv2;
+
+	// delete file1
+	SetRegisterFileCommand(&command,test_file1);
+	system(command);
+	SetDelCommand(&command,test_file1);
+	system(command);;
+	// delete file2
+	SetRegisterFileCommand(&command,test_file2);
+	system(command);
+	SetDelCommand(&command,test_file2);
+	system(command);;
+
+	// delete folder
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_dir;
+	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+
+
+
+	a = TestLs(test_dir);
+	fail_if ((a != -1), "Expected Unexistent Folder!\n");
+	// fail if a != -1
+
+	SetCopyCommand(&command);
+	system(command);
+
+	a = TestLs(test_dir);
+	fail_if ((a != 1), "Expected One File!\n");
+	// fail if a != 1
+
+	input_mkdir.dir_name = test_surl_mkdir;
+	a = srm_mkdir(&context,&input_mkdir);
+	printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
+	fail_if ((a != 0), "Expected Success!\n");
+	// fail if a != 0
+
+	a = TestLs(test_surl_rmdir);
+	fail_if ((a != 1), "Expected 1 File in this folder!\n");
+	// fail if a != 1
+
+	a = TestLs(test_dir);
+	fail_if ((a != 2), "Expected 2 Files in this folder!\n");
+	// fail if a != 2
+
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_surl_rmdir;
+	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	fail_if ((a != 0), "Expected Success!\n");
+	// fail if a != 0
+
+	a = TestLs(test_dir);
+	fail_if ((a != 1), "Expected 1 File in this folder!\n");
+	// fail if a != 1
+
+	SetDelCommand(&command,test_file1);
+	system(command);;
+
+	input_rm.nbfiles = 1;
+	input_rm.surls = test_surls_rm;
+	a = srm_rm(&context,&input_rm,&output_rm);
+	for(j=0;j<a;j++)
+	{
+		printf("Remove files:%s\n",input_rm.surls[j],a);
+	}
+
+	a = TestLs(test_dir);
+	fail_if ((a != 0), "Expected Empty Folder!\n");
+	// fail if a != 0
+
+
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = test_dir;
+	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	fail_if ((a != 0), "Expected Success!\n");
+	// fail if a != 0
+}
+END_TEST
 
 //////////////////////////////////////////////////////////////////
-// test test_srm_ping
+// test test_data_transfer_functions
 //////////////////////////////////////////////////////////////////
 START_TEST (test_data_transfer_functions)
 {
@@ -305,14 +392,22 @@ START_TEST (test_data_transfer_functions)
 	input_put.protocols = protocols;
 	input_put.spacetokendesc = NULL;
 
-	SetCopyCommand(&command);
+	// delete file1
+	SetRegisterFileCommand(&command,test_file1);
 	system(command);
-
+	SetDelCommand(&command,test_file1);
+	system(command);;
 	// delete file2
 	SetRegisterFileCommand(&command,test_file2);
 	system(command);
 	SetDelCommand(&command,test_file2);
 	system(command);;
+
+
+	SetCopyCommand(&command);
+	system(command);
+
+
 
 	a = TestBringOnline(test_surls_get,protocols);
 	fail_if ((a != 1), "Expected Success !\n");
@@ -414,6 +509,7 @@ Suite * test_suite (void)
 
   TCase *tc_case_1 = tcase_create ("T1");
   TCase *tc_case_2 = tcase_create ("T2");
+  TCase *tc_case_3 = tcase_create ("T3");
 
   tcase_add_checked_fixture (tc_case_1, NULL,NULL);
   tcase_add_test (tc_case_1, test_srm_ping);
@@ -423,6 +519,12 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_2, test_data_transfer_functions);
   tcase_set_timeout(tc_case_2, 60);
   suite_add_tcase (s, tc_case_2);
+
+  tcase_add_checked_fixture (tc_case_3, NULL,NULL);
+  tcase_add_test (tc_case_3, test_directory_functions);
+  tcase_set_timeout(tc_case_3, 60);
+  suite_add_tcase (s, tc_case_3);
+
 
   return s;
 }
@@ -439,14 +541,59 @@ int DoTests()
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
+void TestPermissions()
+{
+	char *surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
+	struct srm_getpermission_input input;
+	struct srm_getpermission_output output;
+
+	struct srm_setpermission_input input_set;
+	struct srm_permission user_perm;
+	struct srm_context context;
+	int result;
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+
+	input.nbfiles = 1;
+	input.surls =  surls;
+
+	result = srmv2_get_permission(&context,&input,&output);
+
+
+	input_set.surl = surls[0];
+	input_set.owner_permission = SRM_PERMISSION_RWX;
+	input_set.other_permission = SRM_PERMISSION_RW;
+	input_set.group_permissions_count = 0;
+	input_set.group_permissions = NULL;
+
+	user_perm.mode = SRM_PERMISSION_RWX;
+	user_perm.name_id = "tmanev";
+
+	input_set.user_permissions_count = 1;
+	input_set.user_permissions = &user_perm;
+	input_set.permission_type = SRM_PERMISSION_ADD;
+
+	result = srmv2_set_permission(&context,&input_set);
+
+
+	result = srmv2_get_permission(&context,&input,&output);
+
+}
+
 ///////////////////////////////////////////////
 // MAIN
 ///////////////////////////////////////////////
 int main(void)
 {
-	TestDirectoryFunctions();
+	TestPermissions();
+	//TestDirectoryFunctions();
 
-	//return DoTests();
+//	return DoTests();
+	return 0;
 }
 
 void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count)

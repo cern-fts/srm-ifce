@@ -62,7 +62,6 @@ enum TRetentionPolicy_
 	SRM_POLICY_OUTPUT,
 	SRM_POLICY_CUSTODIAL
 };
-/// Typedef synonym for enum ns1__TRetentionPolicy.
 typedef enum TRetentionPolicy_ TRetentionPolicy;
 
 enum TAccessLatency_
@@ -71,17 +70,59 @@ enum TAccessLatency_
 	SRM_LATENCY_ONLINE,
 	SRM_LATENCY_NEARLINE
 };
-/// Typedef synonym for enum ns1__TAccessLatency.
 typedef enum TAccessLatency_ TAccessLatency;
 
+enum TPermissionType_
+{
+	SRM_PERMISSION_ADD = 0,
+	SRM_PERMISSION_REMOVE = 1,
+	SRM_PERMISSION_CHANGE = 2
+};
 
-enum se_type {TYPE_NONE = 0, TYPE_SRM, TYPE_SRMv2, TYPE_SE};
+typedef enum TPermissionType_ TPermissionType;
 
-enum srm_file_locality_ {srm_file_locality_ONLINE = 0, srm_file_locality_NEARLINE = 1, srm_file_locality_ONLINE_USCOREAND_USCORENEARLINE = 2, srm_file_locality_LOST = 3, srm_file_locality_NONE = 4, srm_file_locality_UNAVAILABLE = 5};
+enum TPermissionMode_
+{
+	SRM_PERMISSION_NONE = 0,
+	SRM_PERMISSION_X = 1,
+	SRM_PERMISSION_W = 2,
+	SRM_PERMISSION_WX = 3,
+	SRM_PERMISSION_R = 4,
+	SRM_PERMISSION_RX = 5,
+	SRM_PERMISSION_RW = 6,
+	SRM_PERMISSION_RWX = 7
+};
+
+typedef enum TPermissionMode_ TPermissionMode;
+
+enum se_type
+{
+	TYPE_NONE = 0,
+	TYPE_SRM,
+	TYPE_SRMv2,
+	TYPE_SE
+};
+
+enum srm_file_locality_
+{
+	srm_file_locality_ONLINE = 0,
+	srm_file_locality_NEARLINE = 1,
+	srm_file_locality_ONLINE_USCOREAND_USCORENEARLINE = 2,
+	srm_file_locality_LOST = 3,
+	srm_file_locality_NONE = 4,
+	srm_file_locality_UNAVAILABLE = 5
+};
 
 typedef enum srm_file_locality_ srm_file_locality ;
 
-enum srm_call_status_ {srm_call_status_SUCCESS = 0,srm_call_status_FAILURE = 1,srm_call_status_TIMEOUT = 2,srm_call_status_QUEUED = 3,srm_call_status_INTERNAL_ERROR = 4};
+enum srm_call_status_
+{
+	srm_call_status_SUCCESS = 0,
+	srm_call_status_FAILURE = 1,
+	srm_call_status_TIMEOUT = 2,
+	srm_call_status_QUEUED = 3,
+	srm_call_status_INTERNAL_ERROR = 4
+};
 
 typedef enum srm_call_status_ srm_call_status;
 
@@ -262,6 +303,50 @@ typedef struct srm_getbestspacetokens_input
 	char *spacetokendesc;
 	SRM_LONG64 neededsize;
 };
+typedef struct srm_permission
+{
+	char *name_id;
+	TPermissionMode mode;
+};
+
+typedef struct srm_setpermission_input
+{
+	char *surl;
+	TPermissionType permission_type;
+	TPermissionMode owner_permission;
+	TPermissionMode other_permission;
+	int user_permissions_count;
+	struct srm_permission *user_permissions;
+	int group_permissions_count;
+	struct srm_permission *group_permissions;
+};
+
+typedef struct srm_getpermission_input
+{
+	int nbfiles;
+	char **surls;
+};
+
+typedef struct srm_filepermission
+{
+	char 	*surl;
+	int 	status;
+	char 	*explanation;
+	char 	*owner;
+	TPermissionMode owner_permission;
+	TPermissionMode other_permission;
+	int user_permissions_count;
+	struct srm_permission *user_permissions;
+	int group_permissions_count;
+	struct srm_permission *group_permissions;
+};
+
+typedef struct srm_getpermission_output
+{
+	struct srm2__TReturnStatus  *retstatus;
+	struct srm_filepermission 	*permissions;
+};
+
 
 typedef struct srm_spacemd{
 	char *spacetoken;

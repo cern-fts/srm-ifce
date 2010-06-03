@@ -73,6 +73,12 @@ int srm_getspacemd (struct srm_context *context,
 int srm_ping(struct srm_context *context,
 		struct srm_ping_output *output);
 
+int srm_getpermission (struct srm_context *context,
+		struct srm_getpermission_input *input,struct srm_getpermission_output *output);
+
+int srm_setpermission (struct srm_context *context,
+		struct srm_setpermission_input *input);
+
 // gsoap timeouts
 void srm_set_timeout_connect (int);
 int srm_get_timeout_connect ();
