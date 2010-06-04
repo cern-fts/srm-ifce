@@ -2340,6 +2340,251 @@ START_TEST (test_srmv2_ping)
 }
 END_TEST
 
+int  soap_call_srm2__srmSetPermission_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmSetPermissionRequest *srmSetPermissionRequest,
+						struct srm2__srmSetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmSetPermissionResponse *resp  = (struct srm2__srmSetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmSetPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmSetPermissionResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmSetPermission_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmSetPermissionRequest *srmSetPermissionRequest,
+						struct srm2__srmSetPermissionResponse_ *_param_18)
+{
+	_param_18->srmSetPermissionResponse = NULL; // FAILS
+	return 0; // success
+}
+int  soap_call_srm2__srmSetPermission_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmSetPermissionRequest *srmSetPermissionRequest,
+						struct srm2__srmSetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmSetPermissionResponse *resp  = (struct srm2__srmSetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmSetPermissionResponse));
+	resp->returnStatus = NULL;// FAILS
+	_param_18->srmSetPermissionResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmSetPermission_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmSetPermissionRequest *srmSetPermissionRequest,
+						struct srm2__srmSetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmSetPermissionResponse *resp  = (struct srm2__srmSetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmSetPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmSetPermissionResponse = resp;
+	return 0; // success
+}
+
+int  soap_call_srm2__srmSetPermission_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmSetPermissionRequest *srmSetPermissionRequest,
+						struct srm2__srmSetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmSetPermissionResponse *resp  = (struct srm2__srmSetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmSetPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmSetPermissionResponse = resp;
+
+	return 0; // success
+}
+int  soap_call_srm2__srmSetPermission_test6(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmSetPermissionRequest *srmSetPermissionRequest,
+						struct srm2__srmSetPermissionResponse_ *_param_18)
+{
+	return -1; // failure
+}
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_set_permission
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_set_permission)
+{
+	int i;
+	struct srm_setpermission_input input;
+	struct srm_permission user_perm;
+	struct srm_context context;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint = "test";
+
+
+	input.surl = test_surls[0];
+	input.owner_permission = SRM_PERMISSION_RWX;
+	input.other_permission = SRM_PERMISSION_RW;
+	input.group_permissions_count = 0;
+	input.group_permissions = NULL;
+
+	user_perm.mode = SRM_PERMISSION_RWX;
+	user_perm.name_id = "tmanev";
+
+	input.user_permissions_count = 1;
+	input.user_permissions = &user_perm;
+	input.permission_type = SRM_PERMISSION_ADD;
+
+
+
+	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test1;
+	result = srmv2_set_permission(&context,&input);
+	fail_if ((result  != 0),
+					"Expected Success !\n");
+
+	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test2;
+	result = srmv2_set_permission(&context,&input);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test3;
+	result = srmv2_set_permission(&context,&input);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test4;
+	result = srmv2_set_permission(&context,&input);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test5;
+	result = srmv2_set_permission(&context,&input);
+	fail_if ((result  != 0),
+					"Expected Success!\n");
+
+	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test6;
+	result = srmv2_set_permission(&context,&input);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+}
+END_TEST
+
+int  soap_call_srm2__srmGetPermission_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetPermissionRequest *srmGetPermissionRequest,
+						struct srm2__srmGetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmGetPermissionResponse *resp  = (struct srm2__srmGetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmGetPermissionResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmGetPermission_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetPermissionRequest *srmGetPermissionRequest,
+						struct srm2__srmGetPermissionResponse_ *_param_18)
+{
+	_param_18->srmGetPermissionResponse = NULL; // FAILS
+	return 0; // success
+}
+int  soap_call_srm2__srmGetPermission_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetPermissionRequest *srmGetPermissionRequest,
+						struct srm2__srmGetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmGetPermissionResponse *resp  = (struct srm2__srmGetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetPermissionResponse));
+	resp->returnStatus = NULL;// FAILS
+	_param_18->srmGetPermissionResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmGetPermission_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetPermissionRequest *srmGetPermissionRequest,
+						struct srm2__srmGetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmGetPermissionResponse *resp  = (struct srm2__srmGetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmGetPermissionResponse = resp;
+	return 0; // success
+}
+
+int  soap_call_srm2__srmGetPermission_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetPermissionRequest *srmGetPermissionRequest,
+						struct srm2__srmGetPermissionResponse_ *_param_18)
+{
+	struct srm2__srmGetPermissionResponse *resp  = (struct srm2__srmGetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmGetPermissionResponse = resp;
+
+	return 0; // success
+}
+int  soap_call_srm2__srmGetPermission_test6(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmGetPermissionRequest *srmGetPermissionRequest,
+						struct srm2__srmGetPermissionResponse_ *_param_18)
+{
+	return -1; // failure
+}
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_get_permission
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_get_permission)
+{
+	int i;
+	struct srm_getpermission_input input;
+	struct srm_getpermission_output output;
+	struct srm_context context;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint = "test";
+
+
+	input.nbfiles = 1;
+	input.surls =  test_surls;
+
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
+	result = srmv2_get_permission(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test2;
+	result = srmv2_get_permission(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test3;
+	result = srmv2_get_permission(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
+	result = srmv2_get_permission(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
+	result = srmv2_get_permission(&context,&input,&output);
+	fail_if ((result  != 0),
+					"Expected Success!\n");
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
+	result = srmv2_get_permission(&context,&input,&output);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+}
+END_TEST
+
 Suite * test_suite (void)
 {
   Suite *s = suite_create ("New srm interface unit test suit");
@@ -2367,6 +2612,9 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_1, test_srmv2_getspacemd);
   tcase_add_test (tc_case_1, test_srmv2_getspacetokens);
   tcase_add_test (tc_case_1, test_srmv2_ping);
+  tcase_add_test (tc_case_1, test_srmv2_set_permission);
+  tcase_add_test (tc_case_1, test_srmv2_get_permission);
+
 
   suite_add_tcase (s, tc_case_1);
 
@@ -2376,942 +2624,15 @@ Suite * test_suite (void)
 int main(void)
 {
 	int number_failed;
-	int i;
-
-//	TestLsOutput();
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
+	//TestSetPermission();
 
-//	TestPutFileSize();
-//	TestGet();
-//	TestSpaceTokens();
-//	TestSpaceMD();
-//	TestStatusOfPut();
-//	TestPut();
-//	TestStatusOfBringOnline();
-//	TestBringOnline();
-//	TestPutDone();
-//	TestAbortFiles();
-//	TestMkdir();
-//	TestRm();
-//	TestStatusOfLs();
-//////	TestIt();
-//	TestBackoff();
-//	TestLs();
-//	TestAbortRequest();
-//	TestRmdir();
-
-
-	//printf("TEST\n");
-	return EXIT_SUCCESS;
-}
-void PrintResult(struct srmv2_mdfilestatus* output)
-{
-	int i;
-	printf("Directory: %s \n",output->surl);
-	printf("Files:\n");
-	for(i=0;i<output->nbsubpaths;i++)
-	{
-		printf("%s \n",output->subpaths[i].surl);
-	}
+	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-void TestSpaceTokens()
-{
-	int i;
-	struct srm_getspacetokens_input input;
-	struct srm_getspacetokens_output output;
-	struct srm_context context;
 
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_tokens1[] = {"token1",NULL};
-	char *test_tokens2[] = {"token1","token2",NULL};
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
-
-	input.spacetokendesc = "MySpaceTokens";
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test2;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test3;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test4;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test5;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != 0),
-		//			"Expected Success!\n");
-
-	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
-	result = srmv2_getspacetokens(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
-}
-void TestLs()
-{
-	struct srm_ls_output output;
-	struct srm_mdfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	struct srm_ls_input input;
-	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
-
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.count = 0;
-	input.numlevels  = 1;
-	input.surls = test_surls_ls;
-	input.offset = 0;
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test1;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-		//		   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test2;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-		//			"Expected Failure 2!\n");
-}
-void TestStatusOfLs()
-{
-	struct srm_mdfilestatus *filestatus;
-	struct srm_ls_input input;
-	struct srm_ls_output output;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	srm_call_status result;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	output.token = "test";
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test1;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-	//				"Expected Failure 1!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test2;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-	//			   "Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test3;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-	//			   "Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-	//			   "Expected Success!\n");
-}
-void TestAbortRequest()
-{
-	const char *token = "testtoken";
-	struct srm_context context;
-	struct srm2__TReturnStatus retstatus;
-	srm_call_status result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
-	result = srmv2_abort_request(&context,NULL);
-	//fail_if ((result  != srm_call_status_FAILURE),
-		//		   "Expected Failure 1!\n");
-
-	// TODO TODO TODO internal_context.token = test_string;
-	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
-	result = srmv2_abort_request(&context,token);
-	//fail_if ((result  != srm_call_status_SUCCESS),
-		//		   "Expected Success!\n");
-
-	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test2;
-	result = srmv2_abort_request(&context,token);
-	//fail_if ((result  != srm_call_status_FAILURE),
-		//		   "Expected Failure 2!\n");
-}
-void TestIt()
-{
-	struct srm_rmdir_input input;
-	struct srm_rmdir_output* output;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm2__TReturnStatus retstatus;
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 1;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.surl = test_string;
-	input.recursive = 1;
-
-
-	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test3;
-	result = srmv2_rmdir(&context,&input,&output);
-}
-void TestRmdir()
-{
-	struct srm_rmdir_input input;
-	struct srm_rmdir_output output;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm2__TReturnStatus retstatus;
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.surl = test_string;
-	input.recursive = 0;
-
-	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test1;
-	result = srmv2_rmdir(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//		   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test2;
-	result = srmv2_rmdir(&context,&input,&output);
-//	fail_if ((result  != -1),
-	//			   "Expected Failure 2!\n");
-
-	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test3;
-	result = srmv2_rmdir(&context,&input,&output);
-	//fail_if ((result  != 0),
-		//		   "Expected Success!\n");
-}
-void TestMkdir()
-{
-	struct srm_mkdir_input input;
-	struct srm_context context;
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.dir_name = "/dpm/cern.ch/home/dteam/1/2/3/4";
-
-	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test1;
-	result = srmv2_mkdir(&context,&input);
-//	fail_if ((result  != -1),
-//				   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test2;
-	result = srmv2_mkdir(&context,&input);
-//	fail_if ((result  != 0),
-//				   "Expected Success!\n");
-}
-void TestAbortFiles()
-{
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	struct srmv2_filestatus *statuses;
-	struct srm_abort_files_input input;
-	struct srm_context context;
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.surls = test_surls;
-	input.reqtoken = "test";
-
-	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test1;
-	result = srmv2_abort_files(&context,&input,&statuses);
-	//fail_if ((result  != -1),
-				   //"Expected Failure 1!\n");
-
-	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test2;
-	result = srmv2_abort_files(&context,&input,&statuses);
-	//fail_if ((result == -1),
-		//		   "Expected Success!\n");
-}
-void TestPutDone()
-{
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	struct srmv2_filestatus *statuses;
-	struct srm_putdone_input input;
-	struct srm_context context;
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.surls = test_surls;
-	input.reqtoken = "test";
-
-	/*call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test1;
-	result = srmv2_put_done(&context,&input,&statuses);
-	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test2;
-	result = srmv2_put_done(&context,&input,&statuses);
-	fail_if ((result == -1),
-				   "Expected Success!\n");
-
-	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test3;
-	result = srmv2_put_done(&context,&input,&statuses);
-	fail_if ((result != -1),
-				   "Expected Failure!\n");*/
-
-	/*call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test4;
-	result = srmv2_put_done(&context,&input,&statuses);*/
-	//fail_if ((result != -1),
-		//		   "Expected Failure!\n");
-
-	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test5;
-	result = srmv2_put_done(&context,&input,&statuses);
-//	fail_if ((result != -1),
-	//			   "Expected Failure!\n");
-}
-void TestBringOnline()
-{
-	struct srm_bringonline_input input;
-	struct srm_bringonline_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
-	int result;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
-
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test1;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//			   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test2;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 2!\n");
-
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test3;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 3!\n");
-
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test4;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 4!\n");
-
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test5;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-	//				"Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-
-
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test6;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-	//				"Expected Queued!\n");
-
-
-	output.filestatuses= &filestatus;
-	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test7;
-	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-	//				"Expected Success!\n");*/
-}
-void TestRm()
-{
-	struct srmv2_filestatus *filestatus;
-	struct srm_rm_input input;
-	struct srm_rm_output output;
-	struct srm_context context;
-
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.surls = test_strings;
-	input.nbfiles = 1;
-
-	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
-	result = srmv2_rm(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//		   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
-	result = srmv2_rm(&context,&input,&output);
-	//fail_if ((result  != 0),
-				   //"Expected Success!\n");
-}
-
-void TestPut()
-{
-	struct srm_preparetoput_input input;
-	struct srm_preparetoput_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
-	int result;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
-
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test1;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//			   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test2;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 2!\n");
-
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test3;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 3!\n");
-
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test4;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 4!\n");
-
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test5;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-	//				"Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-
-
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test6;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-	//				"Expected Queued!\n");
-
-
-	output.filestatuses= &filestatus;
-	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
-	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-	//				"Expected Success!\n");
-
-}
-void TestStatusOfPut()
-{
-	int i;
-	struct srm_preparetoput_input input;
-	struct srm_preparetoput_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
-	int result;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... putbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
-
-	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test1;
-	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-		//		    "Expected Failure 1!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test2;
-	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-		//		   "Expected Queued in first call!\n");
-	for (i=0;i<15;i++)
-	{
-		result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
-		//fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-			//		   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
-	}
-	//fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-		//		   "Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test3;
-	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-		//		   "Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= &filestatus;
-	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test4;
-	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-		//		   "Expected Success!\n");
-
-
-	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test5;
-	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-		//		   "Expected Failure!\n");
-}
-void TestSpaceMD()
-{
-	int i;
-	struct srm_getspacemd_input input;
-	struct srm_spacemd *spaces;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_tokens1[] = {"token1",NULL};
-	char *test_tokens2[] = {"token1","token2",NULL};
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbtokens = 0;
-	input.spacetokens = NULL;
-
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//		    "Expected Failure 1!\n");
-
-	input.nbtokens = 1;
-	input.spacetokens = NULL;
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//		    "Expected Failure 1!\n");
-
-	input.nbtokens = 1; // FAILS wrong count
-	input.spacetokens = test_tokens2;
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//			"Expected Failure 1!\n");
-
-	input.nbtokens = 2;
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//			"Expected Failure 1!\n");
-
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test2;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//			"Expected Failure 1!\n");
-
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test3;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//			"Expected Failure 1!\n");
-
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test4;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != -1),
-		//			"Expected Failure 1!\n");
-
-
-	input.nbtokens = 1;
-	input.spacetokens = test_tokens1;
-	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test5;
-	result = srmv2_getspacemd(&context,&input,&spaces);
-	//fail_if ((result  != 0),
-		//			"Expected Success!\n");
-}
-
-void TestStatusOfBringOnline()
-{
-	int i;
-	struct srm_bringonline_input input;
-	struct srm_bringonline_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
-	int result;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
-
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test1;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-		//		    "Expected Failure 1!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test2;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-		//		   "Expected Queued in first call!\n");
-	for (i=0;i<15;i++)
-	{
-		result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-		//fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-			//		   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
-	}
-	//fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   //"Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test3;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-//	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-	//			   "Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= &filestatus;
-	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
-	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-		//		   "Expected Success!\n");
-}
-void TestGet()
-{
-	struct srm_preparetoget_input input;
-	struct srm_preparetoget_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
-	int result;
-
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.nbfiles = 1;
-	input.desiredpintime = 1000;
-	input.spacetokendesc  = NULL;
-	// TODO test ... getbestspacetoken input.spacetokendesc = "TEST_SPACE_TOKEN_DESC";
-	input.surls = test_surls;
-	input.protocols = test_protocols;
-
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test1;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//			   "Expected Failure 1!\n");
-
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test2;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 2!\n");
-
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test3;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 3!\n");
-
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test4;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-	//				"Expected Failure 4!\n");
-
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test5;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-//					"Expected Timeout!\n");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-
-
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test6;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-		//			"Expected Queued!\n");
-
-
-	output.filestatuses= &filestatus;
-	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test7;
-	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-		//			"Expected Success!\n");
-}
-void TestBackoff()
-{
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	srm_call_status result;
-
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1; // be careful changing this number
-	internal_context.end_time = time(NULL)+10000;
-
-	result = back_off_logic(&context,srmfunc,&internal_context,NULL);
-	//fail_if ((result  != srm_call_status_FAILURE)||(errno != ECOMM),
-		//	   "if internal_context->retstatus is null the function must return FAILURE!\n");
-
-	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-	//fail_if ((internal_context.attempt   != 2),
-		//		   "Wait new attempt!\n");
-
-	//fail_if ((result  != srm_call_status_INTERNAL_ERROR),
-				   //"Expected Internal Error!\n");
-
-	internal_context.attempt = 11;
-	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	//fail_if ((result  != srm_call_status_TIMEOUT),
-		//			   "Expected Timeout 1!\n");
-
-	internal_context.attempt = 11;
-	retstatus.statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	//fail_if ((result  != srm_call_status_TIMEOUT),
-		//			   "Expected Timeout 2!\n");
-
-	internal_context.attempt = 11;
-	retstatus.statusCode = SRM_USCOREREQUEST_USCOREINPROGRESS;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	//fail_if ((result  != srm_call_status_TIMEOUT),
-		//			   "Expected Timeout 3!\n");
-
-	internal_context.attempt = 1;
-	retstatus.statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	//fail_if ((result  != srm_call_status_QUEUED),
-		//			   "Expected Queued 1!\n");
-
-	internal_context.attempt = 1;
-	retstatus.statusCode = SRM_USCOREREQUEST_USCOREINPROGRESS;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	///fail_if ((result  != srm_call_status_QUEUED),
-		//			   "Expected Queued 2!\n");
-
-	internal_context.attempt = 1;
-	retstatus.statusCode = SRM_USCORESUCCESS;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	//fail_if ((result  != srm_call_status_SUCCESS),
-		//			   "Expected Success!\n");
-
-	internal_context.attempt = 1;
-	retstatus.statusCode = SRM_USCOREFAILURE;
-	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
-
-	//fail_if ((result  != srm_call_status_FAILURE),
-		//			   "Expected Failure!\n");
-}
-void TestLsOutput()
-{
-	int i;
-	struct srm_mdfilestatus *filestatus;
-	struct srm_ls_input input;
-	struct srm_ls_output output;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	int result;
-
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	output.token = "test";
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.offset = NULL;
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	//fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-		//		   "Expected Success!\n");
-}

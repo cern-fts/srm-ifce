@@ -70,14 +70,17 @@ int srmv2_set_permission(struct srm_context *context,
 
 	result = call_function.call_srm2__srmSetPermission (&soap, context->srm_endpoint, srmfunc, &req, &rep);
 
-	if (result != 0)
+	if (result != 0||
+			rep.srmSetPermissionResponse== NULL ||
+			rep.srmSetPermissionResponse->returnStatus == NULL)
 	{
 		// Soap call failure
 		errno = srm_soup_call_err(context,&soap,srmfunc);
+		result = -1;
 	}else
 	{
 		// check response
-		if (rep.srmSetPermissionResponse == NULL)
+		if (rep.srmSetPermissionResponse->returnStatus->statusCode != SRM_USCORESUCCESS)
 		{
 			errno = EINVAL;
 			srm_soap_deinit(&soap);
