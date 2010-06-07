@@ -631,9 +631,6 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 		if (repperm->permissionArray[i]->status)
 		{
 			(*permissions)[i].status = statuscode2errno(repperm->permissionArray[i]->status->statusCode);
-		}
-		if ((*permissions)[i].status)
-		{
 			if (repperm->permissionArray[i]->status->explanation && repperm->permissionArray[i]->status->explanation[0])
 			{
 				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] %s",
@@ -649,7 +646,7 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] <none>",
 						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode));
 			}
-			continue;
+			//continue;
 		}
 		if (repperm->permissionArray[i]->ownerPermission)
 		{
@@ -859,6 +856,9 @@ int copy_returnstatus(struct srm2__TReturnStatus **destination,struct srm2__TRet
 			errno = ENOMEM;
 			return (-1);
 		}
+	}else
+	{
+		return -1; // empty response
 	}
 	return 0;
 }

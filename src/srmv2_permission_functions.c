@@ -131,6 +131,7 @@ int srmv2_get_permission(struct srm_context *context,
 	{
 		// Soap call failure
 		errno = srm_soup_call_err(context,&soap,srmfunc);
+		result = -1;
 	}else
 	{
 		repperm = rep.srmGetPermissionResponse->arrayOfPermissionReturns;

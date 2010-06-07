@@ -2493,9 +2493,8 @@ int  soap_call_srm2__srmGetPermission_test3(struct soap *soap, const char *soap_
 {
 	struct srm2__srmGetPermissionResponse *resp  = (struct srm2__srmGetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetPermissionResponse));
 	resp->returnStatus = NULL;// FAILS
+	resp->arrayOfPermissionReturns = NULL;
 	_param_18->srmGetPermissionResponse = resp;
-
-
 	return 0; // success
 }
 
@@ -2516,9 +2515,23 @@ int  soap_call_srm2__srmGetPermission_test5(struct soap *soap, const char *soap_
 {
 	struct srm2__srmGetPermissionResponse *resp  = (struct srm2__srmGetPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmGetPermissionResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+
+
+	resp->arrayOfPermissionReturns = (struct srm2__ArrayOfString*) soap_malloc (soap,sizeof (struct srm2__ArrayOfString));
+	resp->arrayOfPermissionReturns->__sizepermissionArray = 1;
+	resp->arrayOfPermissionReturns->permissionArray = (struct srm2__TPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TPermissionReturn *));
+	resp->arrayOfPermissionReturns->permissionArray[0] = (struct srm2__TPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TPermissionReturn));
+	resp->arrayOfPermissionReturns->permissionArray[0]->surl = test_string;
+	resp->arrayOfPermissionReturns->permissionArray[0]->owner = test_string;
+	resp->arrayOfPermissionReturns->permissionArray[0]->ownerPermission = NULL;
+	resp->arrayOfPermissionReturns->permissionArray[0]->arrayOfGroupPermissions = NULL;
+	resp->arrayOfPermissionReturns->permissionArray[0]->arrayOfUserPermissions = NULL;
+	resp->arrayOfPermissionReturns->permissionArray[0]->otherPermission = NULL;
+	resp->arrayOfPermissionReturns->permissionArray[0]->status = retstatus;
+
 	_param_18->srmGetPermissionResponse = resp;
 
 	return 0; // success
@@ -2575,7 +2588,7 @@ START_TEST (test_srmv2_get_permission)
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
 	result = srmv2_get_permission(&context,&input,&output);
-	fail_if ((result  != 0),
+	fail_if ((result  != 1),
 					"Expected Success!\n");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
@@ -2620,17 +2633,72 @@ Suite * test_suite (void)
 
   return s;
 }
+void TestGetPermission()
+{
+	int i;
+	struct srm_getpermission_input input;
+	struct srm_getpermission_output output;
+	struct srm_context context;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint = "test";
+
+
+	input.nbfiles = 1;
+	input.surls =  test_surls;
+
+	//call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
+	//result = srmv2_get_permission(&context,&input,&output);
+//	fail_if ((result  != -1),
+//					"Expected Failure !\n");
+
+	//call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test2;
+	//result = srmv2_get_permission(&context,&input,&output);
+//	fail_if ((result  != -1),
+//					"Expected Failure !\n");
+
+	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test3;
+	result = srmv2_get_permission(&context,&input,&output);
+	//fail_if ((result  != -1),
+	//				"Expected Failure !\n");
+
+//	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
+//	result = srmv2_get_permission(&context,&input,&output);
+//	fail_if ((result  != -1),
+//					"Expected Failure !\n");
+
+//	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
+//	result = srmv2_get_permission(&context,&input,&output);
+//	fail_if ((result  != 1),
+//					"Expected Success!\n");
+
+//	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
+//	result = srmv2_get_permission(&context,&input,&output);
+//	fail_if ((result  != -1),
+//					"Expected Failure !\n");
+}
 
 int main(void)
 {
 	int number_failed;
+	int i;
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
-	//TestSetPermission();
+/*	for(i=0;i<10;i++)
+	{
+		TestGetPermission();
+	}*/
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
