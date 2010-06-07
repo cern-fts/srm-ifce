@@ -2,6 +2,9 @@
 #include "srm_soap.h"
 
 callers_t call_function = {
+		soap_call_srm2__srmReleaseSpace,
+		soap_call_srm2__srmReserveSpace,
+		soap_call_srm2__srmStatusOfReserveSpaceRequest,
 		soap_call_srm2__srmSetPermission,
 		soap_call_srm2__srmGetPermission,
 		soap_call_srm2__srmPing,

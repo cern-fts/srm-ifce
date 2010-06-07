@@ -528,6 +528,82 @@ Suite * test_suite (void)
 
   return s;
 }
+void TestReserveSpace()
+{
+	struct srm_getspacemd_input input_metadata;
+	struct srm_spacemd *spaces;
+
+	struct srm_getbestspacetokens_input input_bestspacetoken;
+
+	struct srm_getspacetokens_input input_get;
+	struct srm_getspacetokens_output output_get;
+
+	struct srm_reservespace_input input_reserve;
+	struct srm_reservespace_output output_reserve1;
+	struct srm_reservespace_output output_reserve2;
+	struct srm_context context;
+	int result,i;
+	char *test_spacetoken_descriptor = "tmanev_test_space";;
+	char *best_spacetoken;
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+
+	input_reserve.desired_lifetime = 100;
+	input_reserve.desired_size = 1048576*2; // 2MB
+	input_reserve.spacetokendescriptor = test_spacetoken_descriptor;
+
+	result = srmv2_getspacetokens (&context,
+			&input_get,
+			&output_get);
+
+
+	for(i=0;i<output_get.nbtokens;i++)
+	{
+		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		result = srmv2_releasespace_test_function(&context,output_get.spacetokens[i]);
+	}
+
+	result = srmv2_reservespace_test_function(&context,
+			&input_reserve,
+			&output_reserve1);
+
+	result = srmv2_reservespace_test_function(&context,
+			&input_reserve,
+			&output_reserve2);
+
+	input_get.spacetokendesc = test_spacetoken_descriptor;
+
+	result = srmv2_getspacetokens (&context,
+			&input_get,
+			&output_get);
+
+
+	for(i=0;i<output_get.nbtokens;i++)
+	{
+		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+	}
+
+	input_bestspacetoken.neededsize = 10;
+	input_bestspacetoken.spacetokendesc = test_spacetoken_descriptor;
+	best_spacetoken = srmv2_getbestspacetoken (&context,&input_bestspacetoken);
+	printf("GetBestSpaceToken : %s\n",best_spacetoken);
+
+	input_metadata.nbtokens = output_get.nbtokens;
+	input_metadata.spacetokens = output_get.spacetokens;
+	result = srmv2_getspacemd (&context,&input_metadata,&spaces);
+
+	for(i=0;i<input_metadata.nbtokens;i++)
+	{
+		printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken);
+		printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner);
+	}
+	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken);
+	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken);
+}
 
 int DoTests()
 {
@@ -589,7 +665,8 @@ void TestPermissions()
 ///////////////////////////////////////////////
 int main(void)
 {
-	TestPermissions();
+	TestReserveSpace();
+	//TestPermissions();
 	//TestDirectoryFunctions();
 
 //	return DoTests();

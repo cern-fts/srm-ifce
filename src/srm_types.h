@@ -126,7 +126,8 @@ enum srm_call_status_
 
 typedef enum srm_call_status_ srm_call_status;
 
-struct srmv2_pinfilestatus {
+struct srmv2_pinfilestatus
+{
 	char 	*surl;
 	char 	*turl;
 	int 	status;
@@ -134,14 +135,16 @@ struct srmv2_pinfilestatus {
 	int 	pinlifetime;
 };
 
-struct srmv2_filestatus {
+struct srmv2_filestatus
+{
 	char 	*surl;
 	char 	*turl;
 	int 	status;
 	char 	*explanation;
 };
 
-typedef struct srm_context {
+typedef struct srm_context
+{
 	enum se_type		version;
 	char *				srm_endpoint;
 	char * 				errbuf;
@@ -150,14 +153,16 @@ typedef struct srm_context {
 	int 				timeout;
 };
 
-typedef struct srm_internal_context {
+typedef struct srm_internal_context
+{
 	srm_call_status 			current_status;
 	time_t 						end_time;
 	int 						attempt;
 	int							estimated_wait_time;
 };
 
-typedef struct srm_ls_input{
+typedef struct srm_ls_input
+{
 	int nbfiles;
 	char **surls; // null terminated array of strings
 	int numlevels;
@@ -165,19 +170,22 @@ typedef struct srm_ls_input{
 	int count;
 };
 
-typedef struct srm_ping_output{
+typedef struct srm_ping_output
+{
 	char *versioninfo;
 };
 
 #if ! defined(linux) || defined(_LARGEFILE64_SOURCE)
-struct srm_mdfilestatus {
+struct srm_mdfilestatus
+{
 	char 	*surl;
 	struct stat64	stat;
 	int		fileid;
 	int 	status;
 };
 
-struct srmv2_mdfilestatus {
+struct srmv2_mdfilestatus
+{
 	char 	*surl;
 	struct stat64	stat;
 	int 	status;
@@ -192,7 +200,8 @@ struct srmv2_mdfilestatus {
 };
 #endif
 
-typedef struct srm_ls_output {
+typedef struct srm_ls_output
+{
 	struct srmv2_mdfilestatus   *statuses;
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
@@ -203,25 +212,30 @@ typedef struct srm_rm_input{
 	char **surls; // null terminated array of strings
 };
 
-typedef struct srm_rm_output {
+typedef struct srm_rm_output
+{
 	struct srm2__TReturnStatus  *retstatus;
 	struct srmv2_filestatus 	*statuses;
 };
 
-typedef struct srm_rmdir_input{
+typedef struct srm_rmdir_input
+{
 	int recursive;
 	char *surl;
 };
 
-typedef struct srm_rmdir_output {
+typedef struct srm_rmdir_output
+{
 	struct srm2__TReturnStatus  *retstatus;
 };
 
-typedef struct srm_mkdir_input{
+typedef struct srm_mkdir_input
+{
 	char 	*dir_name;
 };
 
-typedef struct srm_preparetoget_input{
+typedef struct srm_preparetoget_input
+{
     int nbfiles;
     char **surls;
     int desiredpintime;
@@ -229,7 +243,8 @@ typedef struct srm_preparetoget_input{
     char **protocols;
 };
 
-typedef struct srm_preparetoput_input{
+typedef struct srm_preparetoput_input
+{
 	SRM_LONG64 *filesizes;
 	int nbfiles;
 	char **surls;
@@ -238,13 +253,15 @@ typedef struct srm_preparetoput_input{
 	char **protocols;
 };
 
-typedef struct srm_preparetoget_output{
+typedef struct srm_preparetoget_output
+{
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
 	struct srmv2_pinfilestatus *filestatuses;
 };
 
-typedef struct srm_preparetoput_output{
+typedef struct srm_preparetoput_output
+{
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
 	struct srmv2_pinfilestatus  *filestatuses;
@@ -256,19 +273,22 @@ typedef struct srm_putdone_input{
 	char *reqtoken;
 };
 
-typedef struct srm_releasefiles_input{
+typedef struct srm_releasefiles_input
+{
 	int nbfiles;
 	char **surls;
 	char *reqtoken;
 };
 
-typedef struct srm_abort_files_input{
+typedef struct srm_abort_files_input
+{
 	int nbfiles;
 	char **surls;
 	char *reqtoken;
 };
 
-typedef struct srm_bringonline_input{
+typedef struct srm_bringonline_input
+{
 	int nbfiles;
 	char **surls;
 	int desiredpintime;
@@ -276,7 +296,8 @@ typedef struct srm_bringonline_input{
 	char **protocols;
 };
 
-typedef struct srm_bringonline_output{
+typedef struct srm_bringonline_output
+{
 	char 						*token;
 	struct srm2__TReturnStatus  *retstatus;
 	struct srmv2_pinfilestatus  *filestatuses;
@@ -360,4 +381,22 @@ typedef struct srm_spacemd{
 	TAccessLatency accesslatency;
 };
 
+typedef struct srm_reservespace_input
+{
+	char *spacetokendescriptor;
+	int desired_lifetime;
+	unsigned int desired_size;
+};
+
+typedef struct srm_reservespace_output
+{
+	struct srm2__TReturnStatus  *retstatus;
+	char *spacetoken;
+	int lifetime;
+	unsigned int size_total;
+	unsigned int size_guaranteed;
+};
+
 #endif /* _SRM_TYPES_H */
+
+

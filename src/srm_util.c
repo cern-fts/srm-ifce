@@ -474,7 +474,6 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 	n = repfs->__sizestatusArray;
 	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
 	{
-		//srm_soap_deinit(&soap);
 		errno = ENOMEM;
 		return (-1);
 	}
@@ -517,7 +516,6 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 	n = repfs->__sizestatusArray;
 	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
 	{
-		//srm_soap_deinit(&soap);
 		errno = ENOMEM;
 		return (-1);
 	}
@@ -560,7 +558,6 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 	n = repfs->__sizestatusArray;
 	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
 	{
-		//srm_soap_deinit(&soap);
 		errno = ENOMEM;
 		return (-1);
 	}

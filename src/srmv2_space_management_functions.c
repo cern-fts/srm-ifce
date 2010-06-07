@@ -332,3 +332,96 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 	return (spacetoken);
 }
 
+// returns space tokens associated to the space description
+int srmv2_reservespace_test_function(struct srm_context *context,
+		struct srm_reservespace_input *input,
+		struct srm_reservespace_output *output)
+{
+	int flags;
+	int sav_errno = 0;
+	int i, ret;
+	struct soap soap;
+	struct srm2__srmReserveSpaceResponse_ rep;
+	struct srm2__srmReserveSpaceRequest req;
+	struct srm2__TReturnStatus *repstatp;
+	struct srm2__ArrayOfString *repp;
+	struct srm2__TRetentionPolicyInfo retentionPolicy;
+	const char srmfunc[] = "ReserveSpace";
+
+	if (input->spacetokendescriptor == NULL)
+	{
+		srm_errmsg( context, "[SRM][%s][EINVAL] Invalid arguments",srmfunc);
+		errno = EINVAL;
+		return (-1);
+	}
+
+	srm_soap_init(&soap);
+
+	memset (&req, 0, sizeof(req));
+
+	req.userSpaceTokenDescription = input->spacetokendescriptor;
+	req.desiredSizeOfTotalSpace  = NULL;
+	req.desiredSizeOfGuaranteedSpace = input->desired_size;
+	retentionPolicy.accessLatency = NULL;
+	retentionPolicy.retentionPolicy = 0;
+	req.retentionPolicyInfo = &retentionPolicy;
+	req.desiredLifetimeOfReservedSpace =  &input->desired_lifetime;
+
+	if ((ret = call_function.call_srm2__srmReserveSpace(&soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	{
+		srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	if (copy_string(&output->spacetoken,rep.srmReserveSpaceResponse->spaceToken))
+	{
+		srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	if (output->spacetoken != NULL)
+	{
+		printf("Reserved Space token: %s \n",output->spacetoken);
+	}
+	srm_soap_deinit(&soap);
+    errno = 0;
+	return (0);
+}
+
+int srmv2_releasespace_test_function(struct srm_context *context,
+		char *spacetoken)
+{
+	int flags;
+	int sav_errno = 0;
+	int i, ret;
+	struct soap soap;
+	struct srm2__srmReleaseSpaceResponse_ rep;
+	struct srm2__srmReleaseSpaceRequest req;
+	struct srm2__TReturnStatus *repstatp;
+	const char srmfunc[] = "ReserveSpace";
+
+	if (spacetoken == NULL)
+	{
+		srm_errmsg( context, "[SRM][%s][EINVAL] Invalid arguments",srmfunc);
+		errno = EINVAL;
+		return (-1);
+	}
+
+	srm_soap_init(&soap);
+
+	memset (&req, 0, sizeof(req));
+
+	req.spaceToken = spacetoken;
+
+	if ((ret = call_function.call_srm2__srmReleaseSpace(&soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	{
+		srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+	srm_soap_deinit(&soap);
+    errno = 0;
+	return (0);
+}
