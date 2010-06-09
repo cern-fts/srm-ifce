@@ -130,6 +130,11 @@ typedef int (*soap_call_srm2__srmReleaseSpace_fv)(
     struct srm2__srmReleaseSpaceRequest *,
     struct srm2__srmReleaseSpaceResponse_ *);
 
+typedef int (*soap_call_srm2__srmCheckPermission_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmCheckPermissionRequest *,
+    struct srm2__srmCheckPermissionResponse_ *);
+
 
 typedef unsigned int (*sleep_fv)(
     unsigned int);
@@ -137,6 +142,7 @@ typedef unsigned int (*sleep_fv)(
 /* The collection of SOAP service calls. The pointers may be replaced with test
  * functions (dependency injection) */
 typedef struct misc_callers {
+	soap_call_srm2__srmCheckPermission_fv		call_srm2__srmCheckPermission;
 	soap_call_srm2__srmReleaseSpace_fv			call_srm2__srmReleaseSpace;
 	soap_call_srm2__srmReserveSpace_fv			call_srm2__srmReserveSpace;
 	soap_call_srm2__srmStatusOfReserveSpaceRequest_fv	call_srm2__srmStatusOfReserveSpaceRequest;

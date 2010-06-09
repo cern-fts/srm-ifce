@@ -12,6 +12,7 @@ char *test_file1 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/ho
 char *test_file2 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
 char *test_unexisting = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting";
 char *test_dir = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test";
+char *test_spacedescriptor = "srm_test_space";
 
 void PrintResult(struct srmv2_mdfilestatus* output);
 void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
@@ -503,30 +504,125 @@ START_TEST (test_srm_ping)
 
 }
 END_TEST
+
+//////////////////////////////////////////////////////////////////
+// test test_srm_space_management
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srm_space_management)
+{
+	struct srm_getspacemd_input input_metadata;
+	struct srm_spacemd *spaces;
+
+	struct srm_getbestspacetokens_input input_bestspacetoken;
+
+	struct srm_getspacetokens_input input_get;
+	struct srm_getspacetokens_output output_get;
+
+	struct srm_reservespace_input input_reserve;
+	struct srm_reservespace_output output_reserve1;
+	struct srm_reservespace_output output_reserve2;
+	struct srm_context context;
+	int result,i;
+	char *test_spacetoken_descriptor = test_spacedescriptor;
+	char *best_spacetoken;
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint =  test_srm_endpoint;
+
+	input_reserve.desired_lifetime = 100;
+	input_reserve.desired_size = 1048576*2; // 2MB
+	input_reserve.spacetokendescriptor = "srm_test_space";
+
+	result = srmv2_getspacetokens (&context,
+			&input_get,
+			&output_get);
+
+
+	for(i=0;i<output_get.nbtokens;i++)
+	{
+		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		result = srmv2_releasespace_test_function(&context,output_get.spacetokens[i]);
+	}
+
+	result = srmv2_reservespace_test_function(&context,
+			&input_reserve,
+			&output_reserve1); // fail if result != 0
+	fail_if ((result != 0), "Expected Success !\n");
+
+	result = srmv2_reservespace_test_function(&context,
+			&input_reserve,
+			&output_reserve2); // fail if result != 0
+	fail_if ((result != 0), "Expected Success !\n");
+
+	input_get.spacetokendesc = "srm_test_space";
+
+	result = srmv2_getspacetokens (&context,
+			&input_get,
+			&output_get); // fail if output_get.nbtokens != 2 || result != 0
+	fail_if ((result != 0 || output_get.nbtokens != 2), "Expected Success !\n");
+
+
+	for(i=0;i<output_get.nbtokens;i++)
+	{
+		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		fail_if ((output_get.spacetokens[i] == NULL), "Expected token !\n");
+	}
+
+	input_bestspacetoken.neededsize = 10;
+	input_bestspacetoken.spacetokendesc = "srm_test_space";
+	best_spacetoken = srmv2_getbestspacetoken (&context,&input_bestspacetoken);
+	printf("GetBestSpaceToken : %s\n",best_spacetoken); // fail if best_spacetoken == NULL
+
+	input_metadata.nbtokens = output_get.nbtokens;
+	input_metadata.spacetokens = output_get.spacetokens;
+	result = srmv2_getspacemd (&context,&input_metadata,&spaces);
+	for(i=0;i<input_metadata.nbtokens;i++)
+	{
+		printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken); // fail if  == NULL
+		printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner); // fail if  == NULL
+		fail_if ((spaces[i].owner == NULL), "Expected owner not null !\n");
+		fail_if ((spaces[i].spacetoken == NULL), "Expected spacetoken not null !\n");
+	}
+
+	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken); // fail if result != 0
+	fail_if ((result != 0), "Expected Success !\n");
+	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken); // fail if result != 0
+	fail_if ((result != 0), "Expected Success !\n");
+}
+END_TEST
+
 Suite * test_suite (void)
 {
-  Suite *s = suite_create ("New srm interface communication with real endpoint test suit");
+	Suite *s = suite_create ("New srm interface communication with real endpoint test suit");
 
-  TCase *tc_case_1 = tcase_create ("T1");
-  TCase *tc_case_2 = tcase_create ("T2");
-  TCase *tc_case_3 = tcase_create ("T3");
+	TCase *tc_case_1 = tcase_create ("T1");
+	TCase *tc_case_2 = tcase_create ("T2");
+	TCase *tc_case_3 = tcase_create ("T3");
+	TCase *tc_case_4 = tcase_create ("T4");
 
-  tcase_add_checked_fixture (tc_case_1, NULL,NULL);
-  tcase_add_test (tc_case_1, test_srm_ping);
-  suite_add_tcase (s, tc_case_1);
+	/*tcase_add_checked_fixture (tc_case_1, NULL,NULL);
+	tcase_add_test (tc_case_1, test_srm_ping);
+	suite_add_tcase (s, tc_case_1);
 
-  tcase_add_checked_fixture (tc_case_2, NULL,NULL);
-  tcase_add_test (tc_case_2, test_data_transfer_functions);
-  tcase_set_timeout(tc_case_2, 60);
-  suite_add_tcase (s, tc_case_2);
+	tcase_add_checked_fixture (tc_case_2, NULL,NULL);
+	tcase_add_test (tc_case_2, test_data_transfer_functions);
+	tcase_set_timeout(tc_case_2, 60);
+	suite_add_tcase (s, tc_case_2);
 
-  tcase_add_checked_fixture (tc_case_3, NULL,NULL);
-  tcase_add_test (tc_case_3, test_directory_functions);
-  tcase_set_timeout(tc_case_3, 60);
-  suite_add_tcase (s, tc_case_3);
+	tcase_add_checked_fixture (tc_case_3, NULL,NULL);
+	tcase_add_test (tc_case_3, test_directory_functions);
+	tcase_set_timeout(tc_case_3, 60);
+	suite_add_tcase (s, tc_case_3);*/
 
+	tcase_add_checked_fixture (tc_case_4, NULL,NULL);
+	tcase_add_test (tc_case_4, test_srm_space_management);
+	tcase_set_timeout(tc_case_4, 60);
+	suite_add_tcase (s, tc_case_4);
 
-  return s;
+	return s;
 }
 void TestReserveSpace()
 {
@@ -543,14 +639,14 @@ void TestReserveSpace()
 	struct srm_reservespace_output output_reserve2;
 	struct srm_context context;
 	int result,i;
-	char *test_spacetoken_descriptor = "tmanev_test_space";;
+	char *test_spacetoken_descriptor = test_spacetoken_descriptor;//"tmanev_test_space";;
 	char *best_spacetoken;
 
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
 	context.version = TYPE_SRMv2;
-	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+	context.srm_endpoint = test_srm_endpoint;// "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 
 	input_reserve.desired_lifetime = 100;
 	input_reserve.desired_size = 1048576*2; // 2MB
@@ -569,17 +665,17 @@ void TestReserveSpace()
 
 	result = srmv2_reservespace_test_function(&context,
 			&input_reserve,
-			&output_reserve1);
+			&output_reserve1); // fail if result != 0
 
 	result = srmv2_reservespace_test_function(&context,
 			&input_reserve,
-			&output_reserve2);
+			&output_reserve2); // fail if result != 0
 
 	input_get.spacetokendesc = test_spacetoken_descriptor;
 
 	result = srmv2_getspacetokens (&context,
 			&input_get,
-			&output_get);
+			&output_get); // fail if output_get.nbtokens != 2 || result != 0
 
 
 	for(i=0;i<output_get.nbtokens;i++)
@@ -590,7 +686,7 @@ void TestReserveSpace()
 	input_bestspacetoken.neededsize = 10;
 	input_bestspacetoken.spacetokendesc = test_spacetoken_descriptor;
 	best_spacetoken = srmv2_getbestspacetoken (&context,&input_bestspacetoken);
-	printf("GetBestSpaceToken : %s\n",best_spacetoken);
+	printf("GetBestSpaceToken : %s\n",best_spacetoken); // fail if best_spacetoken == NULL
 
 	input_metadata.nbtokens = output_get.nbtokens;
 	input_metadata.spacetokens = output_get.spacetokens;
@@ -598,11 +694,11 @@ void TestReserveSpace()
 
 	for(i=0;i<input_metadata.nbtokens;i++)
 	{
-		printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken);
-		printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner);
+		printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken); // fail if  == NULL
+		printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner); // fail if  == NULL
 	}
-	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken);
-	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken);
+	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken); // fail if result != NULL
+	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken); // fail if result != NULL
 }
 
 int DoTests()
@@ -669,7 +765,7 @@ int main(void)
 	//TestPermissions();
 	//TestDirectoryFunctions();
 
-//	return DoTests();
+	//return DoTests();
 	return 0;
 }
 

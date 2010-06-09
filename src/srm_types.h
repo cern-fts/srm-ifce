@@ -348,6 +348,13 @@ typedef struct srm_getpermission_input
 	char **surls;
 };
 
+typedef struct srm_checkpermission_input
+{
+	int amode;
+	int nbfiles;
+	char **surls;
+};
+
 typedef struct srm_filepermission
 {
 	char 	*surl;

@@ -426,6 +426,57 @@ int copy_string(char **dest,char *src)
 	}
 	return 0;
 }
+int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_filestatus **statuses,
+						struct srm2__ArrayOfTSURLPermissionReturn *repfs,
+						char *srmfunc,
+						int amode)
+{
+	int i,n;
+
+	n = repfs->__sizesurlPermissionArray;
+
+	if ((*statuses = (struct srmv2_filestatus *) calloc (n, sizeof(struct srmv2_filestatus))) == NULL)
+	{
+		errno = ENOMEM;
+		return (-1);
+	}
+	for (i = 0; i < n; i++) {
+		if (!repfs->surlPermissionArray[i])
+			continue;
+		memset (*statuses + i, 0, sizeof (struct srmv2_filestatus));
+		if (repfs->surlPermissionArray[i]->surl)
+			(*statuses)[i].surl = strdup (repfs->surlPermissionArray[i]->surl);
+		if (repfs->surlPermissionArray[i]->status) {
+			(*statuses)[i].status = statuscode2errno (repfs->surlPermissionArray[i]->status->statusCode);
+			if (repfs->surlPermissionArray[i]->status->explanation && repfs->surlPermissionArray[i]->status->explanation[0])
+				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
+						repfs->surlPermissionArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else
+				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] <none>",
+						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode));
+		} else
+			(*statuses)[i].status = ENOMEM;
+        if ((*statuses)[i].status == 0) {
+			enum srm2__TPermissionMode perm = *(repfs->surlPermissionArray[i]->permission);
+
+			if ((amode == R_OK && (perm == NONE || perm == X || perm == W || perm == WX)) ||
+					(amode == W_OK && (perm == NONE || perm == X || perm == R || perm == RX)) ||
+					(amode == X_OK && (perm == NONE || perm == W || perm == R || perm == RW)) ||
+					(amode == (R_OK|W_OK) && perm != RW && perm != RWX) ||
+					(amode == (R_OK|X_OK) && perm != RX && perm != RWX) ||
+					(amode == (W_OK|X_OK) && perm != WX && perm != RWX) ||
+					(amode == (R_OK|W_OK|X_OK) && perm != RWX))
+				(*statuses)[i].status = EACCES;
+		}
+	}
+	return n;
+}
 int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_filestatus **statuses,
 						struct srm2__ArrayOfTSURLReturnStatus *repfs,

@@ -151,3 +151,66 @@ int srmv2_get_permission(struct srm_context *context,
 
 	return result;
 }
+
+
+int srmv2_check_permission(struct srm_context *context,
+		struct srm_checkpermission_input *input,
+		struct srmv2_filestatus **statuses)
+{
+	int ret;
+	struct srm2__srmCheckPermissionResponse_ rep;
+	struct srm2__ArrayOfTSURLPermissionReturn *repfs;
+	struct srm2__srmCheckPermissionRequest req;
+	struct srm2__TReturnStatus *reqstatp;
+	struct soap soap;
+	const char srmfunc[] = "CheckPermission";
+
+	srm_soap_init(&soap);
+
+	memset (&req, 0, sizeof(req));
+
+	/* NOTE: only one SURL in the array */
+	if ((req.arrayOfSURLs =
+				soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL) {
+		srm_errmsg (context, "[SRM][soap_malloc][] error");
+		errno = ENOMEM;
+		srm_soap_deinit (&soap);
+		return (-1);
+	}
+
+	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
+	req.arrayOfSURLs->urlArray = (char **) input->surls;
+
+	if ((ret = call_function.call_srm2__srmCheckPermission (&soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	{
+		errno = srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit (&soap);
+		return (-1);
+	}
+
+	if (rep.srmCheckPermissionResponse == NULL || (reqstatp = rep.srmCheckPermissionResponse->returnStatus) == NULL)
+	{
+		srm_errmsg (context, "[SRM][%s][] %s: <empty response>",srmfunc, context->srm_endpoint);
+		srm_soap_deinit (&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+
+	repfs = rep.srmCheckPermissionResponse->arrayOfPermissions;
+
+	if (!repfs || repfs->__sizesurlPermissionArray < 1 || !repfs->surlPermissionArray)
+	{
+		errno = srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit (&soap);
+		return (-1);
+	}
+
+	ret = copy_permissionfilestatuses(reqstatp,
+									statuses,
+									repfs,
+									srmfunc,
+									input->amode);
+	srm_soap_deinit (&soap);
+	return (ret);
+
+}

@@ -30,6 +30,11 @@ int srm_count_elements_of_string_array(char** a);
 
 int copy_string(char **dest,char *src);
 
+int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_filestatus **statuses,
+						struct srm2__ArrayOfTSURLPermissionReturn *repfs,
+						char *srmfunc,
+						int amode);
 
 int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_filestatus **statuses,
