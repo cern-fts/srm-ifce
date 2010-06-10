@@ -41,6 +41,11 @@ int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srm2__ArrayOfTSURLReturnStatus *repfs,
 						char *srmfunc);
 
+int copy_pinfilestatuses_extendlifetime(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs,
+						char *srmfunc);
+
 int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTGetRequestFileStatus *repfs,

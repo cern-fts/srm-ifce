@@ -455,3 +455,70 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
     errno = 0;
 	return (0);
 }
+int srmv2_extend_file_lifetime(struct srm_context *context,
+		struct srm_extendfilelifetime_input *input,
+		struct srmv2_pinfilestatus **filestatuses)
+{
+	int ret;
+	struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs;
+	struct srm2__srmExtendFileLifeTimeResponse_ rep;
+	struct srm2__srmExtendFileLifeTimeRequest req;
+	struct srm2__TReturnStatus *reqstatp;
+	struct soap soap;
+	int i = 0;
+	const char srmfunc[] = "ExtendFileLifeTime";
+
+	srm_soap_init(&soap);
+
+	/* issue "extendfilelifetime" request */
+
+	memset (&req, 0, sizeof(req));
+
+	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	{
+		srm_errmsg (context, "[SRM][soap_malloc][] error");
+		errno = ENOMEM;
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	req.authorizationID = NULL;
+	req.requestToken = input->reqtoken;
+	req.newFileLifeTime = NULL;
+	req.newPinLifeTime = &input->pintime;
+	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
+	req.arrayOfSURLs->urlArray = input->surls;
+
+	if ((ret = call_function.call_srm2__srmExtendFileLifeTime (&soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	{
+		errno = srm_soup_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	if (rep.srmExtendFileLifeTimeResponse == NULL || (reqstatp = rep.srmExtendFileLifeTimeResponse->returnStatus) == NULL)
+	{
+		srm_errmsg (context, "[SE][%s][] %s: <empty response>", srmfunc, context->srm_endpoint);
+		srm_soap_deinit(&soap);
+		errno = ECOMM;
+		return (-1);
+	}
+
+	/* return file statuses */
+	repfs = rep.srmExtendFileLifeTimeResponse->arrayOfFileStatuses;
+
+	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+	{
+		errno = srm_call_err(context,reqstatp,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	ret = copy_pinfilestatuses_extendlifetime(reqstatp,
+							filestatuses,
+							repfs,
+							srmfunc);
+
+	srm_soap_deinit(&soap);
+	return (ret);
+}

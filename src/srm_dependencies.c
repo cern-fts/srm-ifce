@@ -2,6 +2,7 @@
 #include "srm_soap.h"
 
 callers_t call_function = {
+		soap_call_srm2__srmExtendFileLifeTime,
 		soap_call_srm2__srmCheckPermission,
 		soap_call_srm2__srmReleaseSpace,
 		soap_call_srm2__srmReserveSpace,

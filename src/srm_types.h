@@ -354,6 +354,13 @@ typedef struct srm_checkpermission_input
 	int nbfiles;
 	char **surls;
 };
+typedef struct srm_extendfilelifetime_input
+{
+	int nbfiles;
+	char **surls;
+	char *reqtoken;
+	int pintime;
+};
 
 typedef struct srm_filepermission
 {

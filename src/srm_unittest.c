@@ -2597,6 +2597,274 @@ START_TEST (test_srmv2_get_permission)
 					"Expected Failure !\n");
 }
 END_TEST
+int  soap_call_srm2__srmCheckPermission_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
+						struct srm2__srmCheckPermissionResponse_ *_param_18)
+{
+	struct srm2__srmCheckPermissionResponse *resp  = (struct srm2__srmCheckPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmCheckPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmCheckPermissionResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmCheckPermission_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
+						struct srm2__srmCheckPermissionResponse_ *_param_18)
+{
+	_param_18->srmCheckPermissionResponse = NULL; // FAILS
+	return 0; // success
+}
+int  soap_call_srm2__srmCheckPermission_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
+						struct srm2__srmCheckPermissionResponse_ *_param_18)
+{
+	struct srm2__srmCheckPermissionResponse *resp  = (struct srm2__srmCheckPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmCheckPermissionResponse));
+	resp->returnStatus = NULL;// FAILS
+	_param_18->srmCheckPermissionResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmCheckPermission_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
+						struct srm2__srmCheckPermissionResponse_ *_param_18)
+{
+	struct srm2__srmCheckPermissionResponse *resp  = (struct srm2__srmCheckPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmCheckPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmCheckPermissionResponse = resp;
+	return 0; // success
+}
+
+int  soap_call_srm2__srmCheckPermission_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
+						struct srm2__srmCheckPermissionResponse_ *_param_18)
+{
+	struct srm2__srmCheckPermissionResponse *resp  = (struct srm2__srmCheckPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmCheckPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	enum srm2__TPermissionMode *cur_permission = (enum srm2__TPermissionMode *) soap_malloc (soap,sizeof (enum srm2__TPermissionMode));;
+	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmCheckPermissionResponse = resp;
+	*cur_permission = RWX;
+
+	resp->arrayOfPermissions = (struct srm2__ArrayOfTSURLPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLPermissionReturn));
+	resp->arrayOfPermissions->__sizesurlPermissionArray = 1;
+	resp->arrayOfPermissions->surlPermissionArray = (struct srm2__TSURLPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn *));
+	resp->arrayOfPermissions->surlPermissionArray[0] = (struct srm2__TSURLPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn));
+	resp->arrayOfPermissions->surlPermissionArray[0]->surl = test_string;
+	resp->arrayOfPermissions->surlPermissionArray[0]->permission = cur_permission;
+	resp->arrayOfPermissions->surlPermissionArray[0]->status = retstatus;
+
+
+	return 0; // success
+}
+int  soap_call_srm2__srmCheckPermission_test6(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
+						struct srm2__srmCheckPermissionResponse_ *_param_18)
+{
+	struct srm2__srmCheckPermissionResponse *resp  = (struct srm2__srmCheckPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmCheckPermissionResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	enum srm2__TPermissionMode *cur_permission = (enum srm2__TPermissionMode *) soap_malloc (soap,sizeof (enum srm2__TPermissionMode));;
+	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmCheckPermissionResponse = resp;
+	*cur_permission = WX;
+
+	resp->arrayOfPermissions = (struct srm2__ArrayOfTSURLPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLPermissionReturn));
+	resp->arrayOfPermissions->__sizesurlPermissionArray = 1;
+	resp->arrayOfPermissions->surlPermissionArray = (struct srm2__TSURLPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn *));
+	resp->arrayOfPermissions->surlPermissionArray[0] = (struct srm2__TSURLPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn));
+	resp->arrayOfPermissions->surlPermissionArray[0]->surl = test_string;
+	resp->arrayOfPermissions->surlPermissionArray[0]->permission = cur_permission;
+	resp->arrayOfPermissions->surlPermissionArray[0]->status = retstatus;
+
+
+	return 0; // success
+}
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_check_permission
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_check_permission)
+{
+	int i;
+	struct srm_checkpermission_input input;
+	struct srmv2_filestatus *status;
+	struct srm_context context;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint = "test";
+
+	input.amode = R_OK;
+	input.nbfiles = 1;
+	input.surls = test_surls;
+
+	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test1;
+	result = srmv2_check_permission(&context,&input,&status); //failure empty fs
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test2;
+	result = srmv2_check_permission(&context,&input,&status);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test3;
+	result = srmv2_check_permission(&context,&input,&status);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test4;
+	result = srmv2_check_permission(&context,&input,&status);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test5;
+	result = srmv2_check_permission(&context,&input,&status);
+	fail_if ((result  != 1),
+					"Expected Success!\n");
+	fail_if ((status[0].status != 0),
+						"Expected Status 0!\n");
+
+	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test6;
+	result = srmv2_check_permission(&context,&input,&status);
+	fail_if ((result  != 1),
+					"Expected Success!\n");
+	fail_if ((status[0].status == 0),
+						"Expected Status EACCESS!\n");
+
+}
+END_TEST
+
+int  soap_call_srm2__srmExtendFileLifeTime_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
+						struct srm2__srmExtendFileLifeTimeResponse_ *_param_18)
+{
+	struct srm2__srmExtendFileLifeTimeResponse *resp  = (struct srm2__srmExtendFileLifeTimeResponse *) soap_malloc (soap,sizeof (struct srm2__srmExtendFileLifeTimeResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmExtendFileLifeTimeResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmExtendFileLifeTime_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
+						struct srm2__srmExtendFileLifeTimeResponse_ *_param_18)
+{
+	_param_18->srmExtendFileLifeTimeResponse = NULL; // FAILS
+	return 0; // success
+}
+int  soap_call_srm2__srmExtendFileLifeTime_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
+						struct srm2__srmExtendFileLifeTimeResponse_ *_param_18)
+{
+	struct srm2__srmExtendFileLifeTimeResponse *resp  = (struct srm2__srmExtendFileLifeTimeResponse *) soap_malloc (soap,sizeof (struct srm2__srmExtendFileLifeTimeResponse));
+	resp->returnStatus = NULL;// FAILS
+	_param_18->srmExtendFileLifeTimeResponse = resp;
+
+
+	return 0; // success
+}
+
+int  soap_call_srm2__srmExtendFileLifeTime_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
+						struct srm2__srmExtendFileLifeTimeResponse_ *_param_18)
+{
+	struct srm2__srmExtendFileLifeTimeResponse *resp  = (struct srm2__srmExtendFileLifeTimeResponse *) soap_malloc (soap,sizeof (struct srm2__srmExtendFileLifeTimeResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmExtendFileLifeTimeResponse = resp;
+	return 0; // success
+}
+
+int  soap_call_srm2__srmExtendFileLifeTime_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
+						struct srm2__srmExtendFileLifeTimeResponse_ *_param_18)
+{
+	struct srm2__srmExtendFileLifeTimeResponse *resp  = (struct srm2__srmExtendFileLifeTimeResponse *) soap_malloc (soap,sizeof (struct srm2__srmExtendFileLifeTimeResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	int *pinlifetime = (int *) soap_malloc (soap,sizeof (int));
+	retstatus->statusCode = SRM_USCORESUCCESS;  // FAILS
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmExtendFileLifeTimeResponse = resp;
+	*pinlifetime = 100;
+
+	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLLifetimeReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLLifetimeReturnStatus));
+	resp->arrayOfFileStatuses->__sizestatusArray = 1;
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLLifetimeReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLLifetimeReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLLifetimeReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLLifetimeReturnStatus));
+	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->fileLifetime = pinlifetime;
+	resp->arrayOfFileStatuses->statusArray[0]->pinLifetime = pinlifetime;
+	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
+
+	return 0; // success
+}
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_extend_file_lifetime
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srmv2_extend_file_lifetime)
+{
+	int i;
+	struct srm_extendfilelifetime_input input;
+	struct srmv2_pinfilestatus *status;
+	struct srm_context context;
+	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = TYPE_SRMv2;
+	context.srm_endpoint = "test";
+
+	input.pintime = 100;
+	input.nbfiles = 1;
+	input.surls = test_surls;
+	input.reqtoken = "test";
+
+	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test1;
+	result = srmv2_extend_file_lifetime(&context,&input,&status); //failure empty fs
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test2;
+	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test3;
+	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test4;
+	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	fail_if ((result  != -1),
+					"Expected Failure !\n");
+
+	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test5;
+	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	fail_if ((result  != 1),
+					"Expected Success!\n");
+
+}
+END_TEST
 
 Suite * test_suite (void)
 {
@@ -2627,63 +2895,14 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_1, test_srmv2_ping);
   tcase_add_test (tc_case_1, test_srmv2_set_permission);
   tcase_add_test (tc_case_1, test_srmv2_get_permission);
-
+  tcase_add_test (tc_case_1, test_srmv2_check_permission);
+  tcase_add_test (tc_case_1, test_srmv2_extend_file_lifetime);
 
   suite_add_tcase (s, tc_case_1);
 
   return s;
 }
-void TestGetPermission()
-{
-	int i;
-	struct srm_getpermission_input input;
-	struct srm_getpermission_output output;
-	struct srm_context context;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
 
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
-	context.srm_endpoint = "test";
-
-
-	input.nbfiles = 1;
-	input.surls =  test_surls;
-
-	//call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
-	//result = srmv2_get_permission(&context,&input,&output);
-//	fail_if ((result  != -1),
-//					"Expected Failure !\n");
-
-	//call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test2;
-	//result = srmv2_get_permission(&context,&input,&output);
-//	fail_if ((result  != -1),
-//					"Expected Failure !\n");
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test3;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != -1),
-	//				"Expected Failure !\n");
-
-//	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
-//	result = srmv2_get_permission(&context,&input,&output);
-//	fail_if ((result  != -1),
-//					"Expected Failure !\n");
-
-//	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
-//	result = srmv2_get_permission(&context,&input,&output);
-//	fail_if ((result  != 1),
-//					"Expected Success!\n");
-
-//	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
-//	result = srmv2_get_permission(&context,&input,&output);
-//	fail_if ((result  != -1),
-//					"Expected Failure !\n");
-}
 
 int main(void)
 {
@@ -2695,10 +2914,6 @@ int main(void)
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
-/*	for(i=0;i<10;i++)
-	{
-		TestGetPermission();
-	}*/
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -516,6 +516,50 @@ int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 	}
 	return n;
 }
+int copy_pinfilestatuses_extendlifetime(struct srm2__TReturnStatus *reqstatp,
+						struct srmv2_pinfilestatus **filestatuses,
+						struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs,
+						char *srmfunc)
+{
+	int n,i;
+	n = repfs->__sizestatusArray;
+	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+	{
+		errno = ENOMEM;
+		return (-1);
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
+		if (repfs->statusArray[i]->surl)
+		{
+			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->surl);
+		}
+		if (repfs->statusArray[i]->pinLifetime)
+		{
+			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->pinLifetime);
+		}
+		if (repfs->statusArray[i]->status)
+		{
+			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						repfs->statusArray[i]->status->explanation);
+			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+						reqstatp->explanation);
+			else if ((*filestatuses)[i].status != 0)
+				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] <none>",
+							 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+		}
+	}
+	return n;
+}
 int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_pinfilestatus **filestatuses,
 						struct srm2__ArrayOfTGetRequestFileStatus *repfs,
