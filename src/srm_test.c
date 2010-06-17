@@ -6,12 +6,12 @@
 #include "srm_ifce.h"
 
 
-char *test_srm_endpoint =  "httpg://lxb7993.cern.ch:8446/srm/managerv2";
+char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 char *source_file = "file:///etc/group";
-char *test_file1 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
-char *test_file2 = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
-char *test_unexisting = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting";
-char *test_dir = "srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test";
+char *test_file1 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
+char *test_file2 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
+char *test_unexisting = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting";
+char *test_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test";
 char *test_spacedescriptor = "srm_test_space";
 
 void PrintResult(struct srmv2_mdfilestatus* output);
@@ -24,9 +24,9 @@ int TestReleaseFiles(char **files,char *token);
 int TestPing(char *endpoint);
 int TestLs(char *surl);
 
-void SetCopyCommand(char **command)
+void SetCopyCommand(char **command,char *file)
 {
-	asprintf (command, "lcg-cr --verbose --nobdii -D srmv2 --vo dteam  %s -d %s ", source_file,test_file1);
+	asprintf (command, "lcg-cr --verbose --nobdii -D srmv2 --vo dteam  %s -d %s ", source_file,file);
 }
 void SetDelCommand(char **command,char *file)
 {
@@ -83,7 +83,7 @@ void TestDirectoryFunctions()
 	a = TestLs(test_dir);
 	// fail if a != -1
 
-	SetCopyCommand(&command);
+	SetCopyCommand(&command,test_file1);
 	system(command);
 
 	a = TestLs(test_dir);
@@ -132,8 +132,8 @@ void TestPrepareToPutPrepareToGet()
 {
 	int a,b,c;
 	char *command;
-	char *test_surls_get[] = {test_file1};
-	char *test_surls_put[] = {test_file2};
+	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1"};
+	char *test_surls_put[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2"};
 	char *test_surls_unexisting[] = {test_unexisting};
 
 
@@ -145,10 +145,12 @@ void TestPrepareToPutPrepareToGet()
     struct srm_preparetoput_output output_put,output_put2,output_put3;
 	struct srmv2_pinfilestatus *filestatuses;
 	long int filesizes[1] ={ 1024 };
+	struct srm_extendfilelifetime_input input_extend;
+
 
 	context.verbose = 1;
 	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	context.srm_endpoint = "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 	context.timeout = 3600;
 	context.version = TYPE_SRMv2;
 
@@ -166,26 +168,37 @@ void TestPrepareToPutPrepareToGet()
 	input_put.protocols = protocols;
 	input_put.spacetokendesc = NULL;
 
-	SetCopyCommand(&command);
+	SetCopyCommand(&command,test_surls_get[0]);
 	system(command);
 
 	// delete file2
-    SetRegisterFileCommand(&command,test_file2);
+    /*SetRegisterFileCommand(&command,test_file2);
     system(command);
     SetDelCommand(&command,test_file2);
-    system(command);;
+    system(command);*/
 
 	a = TestBringOnline(test_surls_get,protocols);
 	// fail if a != 1
 
-    b = TestBringOnline(test_surls_put,protocols);
+	input_extend.nbfiles = 1;
+	input_extend.pintime = 3333;
+	input_extend.surls = test_surls_get;
+	input_extend.reqtoken = NULL;
+
+	b = srmv2_extend_file_lifetime(&context,&input_extend,&filestatuses);
+
+	a = TestBringOnline(test_surls_get,protocols);
+	// fail if a != 1
+
+
+  //  b = TestBringOnline(test_surls_put,protocols);
     // fail if b != -1
 
     a = srm_prepeare_to_get(&context,&input_get,&output_get);
     // if a != 1 error
-//	PrintPinFileStatuses(output_get.filestatuses,a);
+	PrintPinFileStatuses(output_get.filestatuses,a);
 
-
+/*
     b = srm_prepeare_to_put(&context,&input_put,&output_put);
     // if b != 1 error
 
@@ -223,22 +236,22 @@ void TestPrepareToPutPrepareToGet()
 
 
 
-    /*	printf("Token Get: %s \nToken Put: %s\n",output_get.token,output_put.token);
+	   // printf("Token Get: %s \nToken Put: %s\n",output_get.token,output_put.token);
     	//TestPutDone(test_surls_put,output_put.token);
-        TestAbortRequest(output_put.token);
-     	TestAbortRequest(output_get.token);*/
+       // TestAbortRequest(output_put.token);
+     //	TestAbortRequest(output_get.token);
 
 
-    }
+    }*/
 
-    SetDelCommand(&command,test_file1);
+ /*   SetDelCommand(&command,test_file1);
     system(command);
     SetRegisterFileCommand(&command,test_file2);
     system(command);
     SetDelCommand(&command,test_file2);
     system(command);
     SetDelDirCommand(&command,test_dir);
-    system(command);
+    system(command);*/
 
 }
 //////////////////////////////////////////////////////////////////
@@ -295,7 +308,7 @@ START_TEST (test_directory_functions)
 	fail_if ((a != -1), "Expected Unexistent Folder!\n");
 	// fail if a != -1
 
-	SetCopyCommand(&command);
+	SetCopyCommand(&command,test_file1);
 	system(command);
 
 	a = TestLs(test_dir);
@@ -405,7 +418,7 @@ START_TEST (test_data_transfer_functions)
 	system(command);;
 
 
-	SetCopyCommand(&command);
+	SetCopyCommand(&command,test_file1);
 	system(command);
 
 
@@ -761,7 +774,8 @@ void TestPermissions()
 ///////////////////////////////////////////////
 int main(void)
 {
-	TestReserveSpace();
+	TestPrepareToPutPrepareToGet();
+	//TestReserveSpace();
 	//TestPermissions();
 	//TestDirectoryFunctions();
 
