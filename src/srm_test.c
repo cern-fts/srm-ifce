@@ -66,7 +66,7 @@ void TestDirectoryFunctions()
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	// delete file1
     SetDelCommand(&command,test_file1);
@@ -152,7 +152,7 @@ void TestPrepareToPutPrepareToGet()
 	context.errbufsz = 0;
 	context.srm_endpoint = "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input_get.nbfiles = 1;
 	input_get.desiredpintime = 1000;
@@ -283,7 +283,7 @@ START_TEST (test_directory_functions)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	// delete file1
 	SetRegisterFileCommand(&command,test_file1);
@@ -390,7 +390,7 @@ START_TEST (test_data_transfer_functions)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input_get.nbfiles = 1;
 	input_get.desiredpintime = 1000;
@@ -499,7 +499,7 @@ START_TEST (test_srm_ping)
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 
 	context.srm_endpoint = test_srm_endpoint;
@@ -542,7 +542,7 @@ START_TEST (test_srm_space_management)
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint =  test_srm_endpoint;
 
 	input_reserve.desired_lifetime = 100;
@@ -658,7 +658,7 @@ void TestReserveSpace()
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint = test_srm_endpoint;// "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 
 	input_reserve.desired_lifetime = 100;
@@ -740,7 +740,7 @@ void TestPermissions()
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
 
 	input.nbfiles = 1;
@@ -811,7 +811,7 @@ int TestLs(char *surl)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input_ls.nbfiles = 1;
 	input_ls.count = 0;
@@ -857,7 +857,7 @@ int TestPutDone(char** surls,char *token)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
    	input_putdone.nbfiles = 1;
 	input_putdone.surls = surls;
@@ -878,7 +878,7 @@ int TestAbortRequest(char *token)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 
 	c = srm_abort_request(&context,token);
@@ -904,7 +904,7 @@ int TestAbortFiles(char **files,char *token)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input.nbfiles = 1;
 	input.surls = files;
@@ -926,7 +926,7 @@ int TestReleaseFiles(char **files,char *token)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input.nbfiles = 1;
 	input.surls = files;
@@ -948,7 +948,7 @@ int TestBringOnline(char **files,char **protocols)
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input_bringonline.desiredpintime = 1000;
 	input_bringonline.nbfiles = 1;
@@ -984,7 +984,7 @@ void TestSpaceTokensSpaceMetadata()
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	input_space_tokens.spacetokendesc = "NULL";
 
@@ -1013,7 +1013,7 @@ int TestPing(char *endpoint)
 	context.errbufsz = 0;
 	context.srm_endpoint = endpoint;
 	context.timeout = 3600;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 
 	a = srm_ping(&context,&output);
 

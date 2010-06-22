@@ -95,22 +95,21 @@ enum TPermissionMode_
 
 typedef enum TPermissionMode_ TPermissionMode;
 
-enum se_type
+enum srm_version
 {
-	TYPE_NONE = 0,
-	TYPE_SRM,
-	TYPE_SRMv2,
-	TYPE_SE
+	VERSION_1,
+	VERSION_2_2,
 };
 
 enum srm_file_locality_
 {
-	srm_file_locality_ONLINE = 0,
-	srm_file_locality_NEARLINE = 1,
-	srm_file_locality_ONLINE_USCOREAND_USCORENEARLINE = 2,
-	srm_file_locality_LOST = 3,
-	srm_file_locality_NONE = 4,
-	srm_file_locality_UNAVAILABLE = 5
+	srm_file_locality_UNKNOWN = 0,
+	srm_file_locality_ONLINE,
+	srm_file_locality_NEARLINE,
+	srm_file_locality_ONLINE_USCOREAND_USCORENEARLINE,
+	srm_file_locality_LOST,
+	srm_file_locality_NONE,
+	srm_file_locality_UNAVAILABLE
 };
 
 typedef enum srm_file_locality_ srm_file_locality ;
@@ -125,6 +124,13 @@ enum srm_call_status_
 };
 
 typedef enum srm_call_status_ srm_call_status;
+
+struct srm_filestatus {
+	char	*surl;
+	char	*turl;
+	int		fileid;
+	int		status;
+};
 
 struct srmv2_pinfilestatus
 {
@@ -145,7 +151,7 @@ struct srmv2_filestatus
 
 typedef struct srm_context
 {
-	enum se_type		version;
+	enum srm_version    version;
 	char *				srm_endpoint;
 	char * 				errbuf;
 	int 				errbufsz;

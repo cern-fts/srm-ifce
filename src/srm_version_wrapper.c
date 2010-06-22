@@ -7,9 +7,9 @@ int srm_ls(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_ls_sync(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -21,9 +21,9 @@ int srm_ls_async(struct srm_context *context,struct srm_ls_input *input,struct s
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_ls_async(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -35,9 +35,9 @@ int srm_status_of_ls_async(struct srm_context *context,struct srm_ls_input *inpu
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_status_of_ls_async(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -48,9 +48,9 @@ int srm_bring_online(struct srm_context *context,struct srm_bringonline_input *i
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_bring_online_sync(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -61,9 +61,9 @@ int srm_bring_online_async(struct srm_context *context,struct srm_bringonline_in
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_bring_online_async(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -74,9 +74,9 @@ int srm_status_of_bring_online_async(struct srm_context *context,struct srm_brin
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_status_of_bring_online_async(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -89,9 +89,9 @@ int srm_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_rm(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -102,9 +102,9 @@ int srm_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct s
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_rmdir(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -115,9 +115,9 @@ int srm_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_mkdir(context,input);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -129,9 +129,9 @@ int srm_copy(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_copy(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -144,9 +144,9 @@ int srm_release_files(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_release_files(context,input,statuses);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -159,9 +159,9 @@ int srm_put_done(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_put_done(context,input,statuses);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -175,9 +175,9 @@ int srm_prepeare_to_get(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_prepeare_to_get_sync(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -191,9 +191,9 @@ int srm_prepeare_to_put(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_prepeare_to_put_sync(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -206,9 +206,9 @@ int srm_abort_files(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_abort_files(context,input,statuses);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -221,9 +221,9 @@ int srm_abort_request(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_abort_request(context,token);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -235,9 +235,9 @@ int srm_ping(struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_ping(context,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -249,9 +249,9 @@ char* srm_getbestspacetoken (struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_getbestspacetoken(context,input);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -263,9 +263,9 @@ int srm_getspacetokens (struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_getspacetokens(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -278,9 +278,9 @@ int srm_getspacemd (struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_getspacemd(context,input,spaces);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -292,9 +292,9 @@ int srm_getpermission (struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_get_permission(context,input,output);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:
@@ -306,9 +306,9 @@ int srm_setpermission (struct srm_context *context,
 {
 	switch (context->version)
 	{
-		case TYPE_SRMv2:
+		case VERSION_2_2:
 			return srmv2_set_permission(context,input);
-		case TYPE_SRM:
+		case VERSION_1:
 			// TODO
 			return (-1);
 		default:

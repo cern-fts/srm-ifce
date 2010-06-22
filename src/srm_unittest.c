@@ -2417,7 +2417,7 @@ START_TEST (test_srmv2_set_permission)
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint = "test";
 
 
@@ -2558,7 +2558,7 @@ START_TEST (test_srmv2_get_permission)
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint = "test";
 
 
@@ -2703,7 +2703,7 @@ START_TEST (test_srmv2_check_permission)
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint = "test";
 
 	input.amode = R_OK;
@@ -2830,7 +2830,7 @@ START_TEST (test_srmv2_extend_file_lifetime)
 	context.verbose = 0;
 	context.errbuf = NULL;
 	context.errbufsz = 0;
-	context.version = TYPE_SRMv2;
+	context.version = VERSION_2_2;
 	context.srm_endpoint = "test";
 
 	input.pintime = 100;

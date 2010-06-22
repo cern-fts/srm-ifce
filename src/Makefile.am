@@ -126,10 +126,8 @@ env.c:
 
 # distributed header files
 dist_include_HEADERS = 
-#	gfal_api.h \
-#	gfal_internals.h \
-#	gfal_types.h \
-#	gfal_constants.h
+	srm_ifce.h \
+	srm_types.h
 
 # executables
 bin_PROGRAMS = \
