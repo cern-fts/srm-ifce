@@ -222,12 +222,9 @@ libsrm_a_CFLAGS = \
 libsrm_la_SOURCES = $(SRM_SOURCE_FILES)
 
 libsrm_la_LIBADD = \
-	-luuid -lc -ldl \
+	-lc \
 	$(CGSI_GSOAP_LIBS) \
-	$(GLOBUS_GSS_NOTHR_LIBS) \
-	$(GLOBUS_FTP_CLIENT_NOTHR_LIBS) \
-	$(VOMS_NOTHR_LIBS) \
-	-lldap
+	$(GLOBUS_GSS_NOTHR_LIBS)
 
 libsrm_la_CFLAGS = \
 	$(GLOBUS_NOTHR_CFLAGS) \

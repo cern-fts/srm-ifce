@@ -3,6 +3,7 @@
 
 #include "srm_types.h"
 
+void srm_context_init(struct srm_context *context,char srm_endpoint);
 
 int srm_ls(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output);

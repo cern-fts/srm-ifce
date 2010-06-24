@@ -234,6 +234,7 @@ typedef struct srm_rmdir_input
 typedef struct srm_rmdir_output
 {
 	struct srm2__TReturnStatus  *retstatus; // status of the srm call
+	struct srmv2_filestatus 	*statuses;
 };
 
 typedef struct srm_mkdir_input
