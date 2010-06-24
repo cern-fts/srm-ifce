@@ -2902,7 +2902,35 @@ Suite * test_suite (void)
 
   return s;
 }
+void TestRm()
+{
+	struct srmv2_filestatus *filestatus;
+	struct srm_rm_input input;
+	struct srm_rm_output output;
+	struct srm_context context;
 
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.surls = test_strings;
+	input.nbfiles = 1;
+
+	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
+	result = srmv2_rm(&context,&input,&output);
+//	fail_if ((result  != -1),
+	//			   "Expected Failure 1!\n");
+
+	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
+	result = srmv2_rm(&context,&input,&output);
+	//fail_if ((result  != 1),
+		//		   "Expected Success!\n");
+}
 
 int main(void)
 {

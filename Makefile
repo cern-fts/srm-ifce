@@ -68,7 +68,8 @@ all: $(SOURCE_FOLDER)/stdsoap2.c  $(SOURCE_FOLDER)/srmv2C.c  $(SOURCE_FOLDER)/sr
 						$(BUILD_FOLDER)/srmv2_permission_functions.o \
 						$(BUILD_FOLDER)/srmv2_data_transfer_functions.o \
 					-o $(BUILD_FOLDER)/libsrm.so
-	$(CC) $(SOURCE_FOLDER)/srm_unittest.c -lcheck -lsrm -L$(BUILD_FOLDER)/ -o srm_unittest
+	$(CC) $(DEFINES) $(SOURCE_FOLDER)/srm_unittest.c -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_unittest
+	$(CC) $(DEFINES) $(SOURCE_FOLDER)/srm_test.c     -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_test
 
 #	$(CC) $(CFLAGS) -c database.c -o database.o
 #	$(CC) $(CFLAGS) -c modules/databases/file_fuzz/p_file_fuzz.c -c -o modules/databases/file_fuzz/p_file_fuzz.o

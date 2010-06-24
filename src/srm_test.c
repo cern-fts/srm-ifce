@@ -14,10 +14,11 @@ char *test_unexisting = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cer
 char *test_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test";
 char *test_spacedescriptor = "srm_test_space";
 
-void PrintResult(struct srmv2_mdfilestatus* output);
+void PrintResult(struct srmv2_mdfilestatus *print_output);
 void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
 void TestPrepareToPutPrepareToGet();
 
+void TestGlobusUrlCopy(char *sourceturl,char *destinationturl);
 int TestAbortFiles(char **files,char *token);
 int TestBringOnline(char **files,char **protocols);
 int TestReleaseFiles(char **files,char *token);
@@ -45,12 +46,10 @@ void TestDirectoryFunctions()
 	char *command;
 	int a;
 	struct srm_context context;
-	struct srm_ls_input input_ls;
-	struct srm_ls_output* output_ls;
 	struct srm_rm_input input_rm;
-	struct srm_rm_output* output_rm;
+	struct srm_rm_output output_rm;
 	struct srm_rmdir_input input_rmdir;
-	struct srm_rmdir_output* output_rmdir;
+	struct srm_rmdir_output output_rmdir;
 	struct srm_mkdir_input input_mkdir;
 	int j;
 
@@ -262,12 +261,10 @@ START_TEST (test_directory_functions)
 	char *command;
 	int a;
 	struct srm_context context;
-	struct srm_ls_input input_ls;
-	struct srm_ls_output* output_ls;
 	struct srm_rm_input input_rm;
-	struct srm_rm_output* output_rm;
+	struct srm_rm_output output_rm;
 	struct srm_rmdir_input input_rmdir;
-	struct srm_rmdir_output* output_rmdir;
+	struct srm_rmdir_output output_rmdir;
 	struct srm_mkdir_input input_mkdir;
 	int j;
 
@@ -827,28 +824,28 @@ int TestLs(char *surl)
 	if (i > 0)
 	{
 		PrintResult(output_ls.statuses);
-		return output_ls.statuses->nbsubpaths;
+		return ((output_ls.statuses)->nbsubpaths);
 	}
 	return i;
 
 }
-void PrintFilestatuses(struct srmv2_pinfilestatus* output)
+void PrintFilestatuses(struct srmv2_pinfilestatus *output)
 {
 
 }
-void PrintResult(struct srmv2_mdfilestatus* output)
+void PrintResult(struct srmv2_mdfilestatus *print_output)
 {
 	int i;
-	printf("Directory: %s \n",output->surl);
+	printf("Directory: %s \n",print_output->surl);
 	printf("Files:\n");
-	for(i=0;i<output->nbsubpaths;i++)
+	for(i=0;i<print_output->nbsubpaths;i++)
 	{
-		printf("%s \n",output->subpaths[i].surl);
+		printf("%s \n",print_output->subpaths[i].surl);
 	}
 }
 int TestPutDone(char** surls,char *token)
 {
-	struct srmv2_pinfilestatus *filestatuses;
+	struct srmv2_filestatus *filestatuses;
 	int c;
 	struct srm_putdone_input input_putdone;
 	struct srm_context context;
@@ -998,7 +995,7 @@ void TestSpaceTokensSpaceMetadata()
 
 	input_bestspacetokens.neededsize = 1000;
 	//input_bestspacetokens.spacetokendesc = ....;
-	a = srm_getbestspacetoken(&context,&input_bestspacetokens);
+	srm_getbestspacetoken(&context,&input_bestspacetokens);
 
 
 
