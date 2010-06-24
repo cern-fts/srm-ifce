@@ -149,7 +149,7 @@ struct srmv2_filestatus
 	char 	*explanation; // string for the status
 };
 
-typedef struct srm_context
+struct srm_context
 {
 	enum srm_version    version;
 	char *				srm_endpoint;
@@ -159,7 +159,7 @@ typedef struct srm_context
 	int 				timeout;
 };
 
-typedef struct srm_internal_context
+struct srm_internal_context
 {
 	srm_call_status 			current_status;
 	time_t 						end_time;
@@ -167,7 +167,7 @@ typedef struct srm_internal_context
 	int							estimated_wait_time;
 };
 
-typedef struct srm_ls_input
+struct srm_ls_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
@@ -176,7 +176,7 @@ typedef struct srm_ls_input
 	int count;
 };
 
-typedef struct srm_ping_output
+struct srm_ping_output
 {
 	char *versioninfo; // srm server version information
 };
@@ -206,43 +206,43 @@ struct srmv2_mdfilestatus
 };
 #endif
 
-typedef struct srm_ls_output
+struct srm_ls_output
 {
 	struct srmv2_mdfilestatus   *statuses;
 	char 						*token; // request token
 	struct srm2__TReturnStatus  *retstatus;
 };
 
-typedef struct srm_rm_input
+struct srm_rm_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 };
 
-typedef struct srm_rm_output
+struct srm_rm_output
 {
 	struct srm2__TReturnStatus  *retstatus; // status of the srm call
 	struct srmv2_filestatus 	*statuses; // returned file statuses
 };
 
-typedef struct srm_rmdir_input
+struct srm_rmdir_input
 {
 	int recursive; // recursive(1) or not(0)
 	char *surl; // directory surl
 };
 
-typedef struct srm_rmdir_output
+struct srm_rmdir_output
 {
 	struct srm2__TReturnStatus  *retstatus; // status of the srm call
 	struct srmv2_filestatus 	*statuses;
 };
 
-typedef struct srm_mkdir_input
+struct srm_mkdir_input
 {
 	char 	*dir_name; // directory surl
 };
 
-typedef struct srm_preparetoget_input
+struct srm_preparetoget_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
@@ -251,7 +251,7 @@ typedef struct srm_preparetoget_input
     char **protocols; // protocols used
 };
 
-typedef struct srm_preparetoput_input
+struct srm_preparetoput_input
 {
 	SRM_LONG64 *filesizes; // filesize
 	int nbfiles; // number of surls in the array
@@ -261,42 +261,42 @@ typedef struct srm_preparetoput_input
 	char **protocols;// protocols used
 };
 
-typedef struct srm_preparetoget_output
+struct srm_preparetoget_output
 {
 	char 						*token; // request token
 	struct srm2__TReturnStatus  *retstatus; // status of the srm call
 	struct srmv2_pinfilestatus *filestatuses; // returned statuses
 };
 
-typedef struct srm_preparetoput_output
+struct srm_preparetoput_output
 {
 	char 						*token;// request token
 	struct srm2__TReturnStatus  *retstatus; // status of the srm call
 	struct srmv2_pinfilestatus  *filestatuses;// returned statuses
 };
 
-typedef struct srm_putdone_input
+struct srm_putdone_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 	char *reqtoken; // request token
 };
 
-typedef struct srm_releasefiles_input
+struct srm_releasefiles_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 	char *reqtoken; // request token
 };
 
-typedef struct srm_abort_files_input
+struct srm_abort_files_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 	char *reqtoken; // request token
 };
 
-typedef struct srm_bringonline_input
+struct srm_bringonline_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
@@ -305,14 +305,14 @@ typedef struct srm_bringonline_input
 	char **protocols; // protocols used
 };
 
-typedef struct srm_bringonline_output
+struct srm_bringonline_output
 {
 	char 						*token;// request token
 	struct srm2__TReturnStatus  *retstatus;// status of the srm call
 	struct srmv2_pinfilestatus  *filestatuses;// returned statuses
 };
 
-typedef struct srm_getspacetokens_input
+struct srm_getspacetokens_input
 {
 	char *spacetokendesc; // space token descriptor
 };
@@ -322,24 +322,24 @@ struct srm_getspacetokens_output
 	char **spacetokens; // array of space tokens
 };
 
-typedef struct srm_getspacemd_input
+struct srm_getspacemd_input
 {
 	int nbtokens; // number of space tokens in the array
 	char **spacetokens; // array of space tokens
 };
 
-typedef struct srm_getbestspacetokens_input
+struct srm_getbestspacetokens_input
 {
 	char *spacetokendesc; // space token descriptor
 	SRM_LONG64 neededsize; // required space
 };
-typedef struct srm_permission
+struct srm_permission
 {
 	char *name_id; // name id string
 	TPermissionMode mode; // permission mode
 };
 
-typedef struct srm_setpermission_input
+struct srm_setpermission_input
 {
 	char *surl;  // surl to set the permission properties for
 	TPermissionType permission_type; // add/change/remove
@@ -351,19 +351,19 @@ typedef struct srm_setpermission_input
 	struct srm_permission *group_permissions; // array of group permissions
 };
 
-typedef struct srm_getpermission_input
+struct srm_getpermission_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 };
 
-typedef struct srm_checkpermission_input
+struct srm_checkpermission_input
 {
 	int amode; 
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 };
-typedef struct srm_extendfilelifetime_input
+struct srm_extendfilelifetime_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
@@ -371,7 +371,7 @@ typedef struct srm_extendfilelifetime_input
 	int pintime; // pin time 
 };
 
-typedef struct srm_filepermission
+struct srm_filepermission
 {
 	char 	*surl;
 	int 	status;
@@ -385,14 +385,14 @@ typedef struct srm_filepermission
 	struct srm_permission *group_permissions;
 };
 
-typedef struct srm_getpermission_output
+struct srm_getpermission_output
 {
 	struct srm2__TReturnStatus  *retstatus;// status of the srm call
 	struct srm_filepermission 	*permissions;// array of file permissions
 };
 
 
-typedef struct srm_spacemd
+struct srm_spacemd
 {
 	char *spacetoken; // space token string
 	char *owner; // name of the owner
@@ -405,14 +405,14 @@ typedef struct srm_spacemd
 	TAccessLatency accesslatency;
 };
 
-typedef struct srm_reservespace_input
+struct srm_reservespace_input
 {
 	char *spacetokendescriptor; // space token descriptor
 	int desired_lifetime; // desired lifetime
 	SRM_LONG64 desired_size; // desired size
 };
 
-typedef struct srm_reservespace_output
+struct srm_reservespace_output
 {
 	struct srm2__TReturnStatus  *retstatus;
 	char *spacetoken; // space token

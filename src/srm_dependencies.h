@@ -32,8 +32,8 @@ typedef int (*soap_call_srm2__srmLs_fv)(
 
 typedef int (*soap_call_srm2__srmStatusOfLsRequest_fv)(
     struct soap *, const char *, const char *,
-    struct srm2__srmStatusOfLsRequest *,
-    struct srm2__srmStatusOfLsResponse_ *);
+    struct srm2__srmStatusOfLsRequestRequest *,
+    struct srm2__srmStatusOfLsRequestResponse_ *);
 
 typedef int (*soap_call_srm2__srmAbortRequest_fv)(
     struct soap *, const char *, const char *,

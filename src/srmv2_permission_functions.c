@@ -10,6 +10,8 @@ int srmv2_set_permission(struct srm_context *context,
 	const char srmfunc[] = "SetPermission";
 	struct srm2__srmSetPermissionRequest req;
 	struct srm2__srmSetPermissionResponse_ rep;
+	enum srm2__TPermissionMode otherPermission;
+	enum srm2__TPermissionMode ownerPermission;
 	struct soap soap;
 	int result = 0,i;
 
@@ -63,8 +65,10 @@ int srmv2_set_permission(struct srm_context *context,
 	req.SURL = input->surl;
 	req.storageSystemInfo = NULL;
 	req.authorizationID = NULL;
-	req.otherPermission = &input->other_permission;
-	req.ownerPermission = &input->owner_permission;
+	otherPermission = (enum srm2__TPermissionMode)input->other_permission;
+	ownerPermission = (enum srm2__TPermissionMode)input->owner_permission;
+	req.otherPermission = &otherPermission;
+	req.ownerPermission = &ownerPermission;
 	req.permissionType =  input->permission_type;
 
 

@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <assert.h>
+#include "srm_ifce.h"
 #include "srm_soap.h"
 #include "srm_util.h"
 #include "srm_dependencies.h"
@@ -210,7 +211,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 
 			spacetokeninput.neededsize = totalsize;
 			spacetokeninput.spacetokendesc = input->spacetokendesc;
-			targetspacetoken = srmv2_getbestspacetoken (context,&spacetokeninput);
+			targetspacetoken = srm_getbestspacetoken (context,&spacetokeninput);
 			if (targetspacetoken != NULL)
 			{
 				req.targetSpaceToken = targetspacetoken;
@@ -345,7 +346,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	} else
 	{
 		spacetokeninput.spacetokendesc = input->spacetokendesc;
-		targetspacetoken = srmv2_getbestspacetoken (context,&spacetokeninput);
+		targetspacetoken = srm_getbestspacetoken (context,&spacetokeninput);
 		if (targetspacetoken != NULL)
 		{
 			req.targetSpaceToken = targetspacetoken;
@@ -713,7 +714,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	} else
 	{
 		spacetokeninput.spacetokendesc = input->spacetokendesc;
-		targetspacetoken = srmv2_getbestspacetoken (context,&spacetokeninput);
+		targetspacetoken = srm_getbestspacetoken (context,&spacetokeninput);
 		if (targetspacetoken != NULL)
 		{
 			req.targetSpaceToken = targetspacetoken;

@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-SOAP_NMAC struct Namespace namespaces_srmv2[];
-SOAP_NMAC struct Namespace namespaces[];
+extern struct Namespace namespaces_srmv2[];
+extern struct Namespace namespaces[];
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_ignore_element(struct soap*);
 #ifndef WITH_NOIDREF

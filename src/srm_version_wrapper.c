@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "srm_types.h"
 #include "srm_ifce.h"
 
@@ -253,9 +254,9 @@ char* srm_getbestspacetoken (struct srm_context *context,
 			return srmv2_getbestspacetoken(context,input);
 		case VERSION_1:
 			// TODO
-			return (-1);
+			return (NULL);
 		default:
-			return (-1);
+			return (NULL);
 	}
 }
 int srm_getspacetokens (struct srm_context *context,
