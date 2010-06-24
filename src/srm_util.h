@@ -7,7 +7,7 @@ void srm_soap_deinit(struct soap *soap);
 void srm_errmsg (struct srm_context *context, const char *format, ...);
 int srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
 int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,const char *srmfunc);
-int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,char *srmfunc);
+int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc);
 
 int statuscode2errno (int statuscode);
 const char * statuscode2errmsg (int statuscode);
@@ -33,7 +33,7 @@ int copy_string(char **dest,char *src);
 int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_filestatus **statuses,
 						struct srm2__ArrayOfTSURLPermissionReturn *repfs,
-						char *srmfunc,
+						const char *srmfunc,
 						int amode);
 
 int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
@@ -73,5 +73,6 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 		struct srm2__ArrayOfTPermissionReturn *repperm);
 
 void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time);
+
 
 #endif /* SRM_UTIL_H_ */

@@ -35,9 +35,9 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	req.fullDetailedList = &trueoption;
 	req.numOfLevels = &(input->numlevels);
 
-	if (&(input->offset) && (input->offset > 0))
+	if (input->offset && (*input->offset > 0))
 	{
-		req.offset = &(input->offset);
+		req.offset = input->offset;
 	}
 
 	if (input->count > 0)

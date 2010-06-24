@@ -3,7 +3,7 @@
 
 #include "srm_types.h"
 
-void srm_context_init(struct srm_context *context,char srm_endpoint);
+void srm_context_init(struct srm_context *context,char *srm_endpoint);
 
 int srm_ls(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output);
@@ -79,6 +79,9 @@ int srm_getpermission (struct srm_context *context,
 
 int srm_setpermission (struct srm_context *context,
 		struct srm_setpermission_input *input);
+
+char* srmv2_getbestspacetoken (struct srm_context *context,
+		struct srm_getbestspacetokens_input *input);
 
 // gsoap timeouts
 void srm_set_timeout_connect (int);

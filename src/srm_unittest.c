@@ -13,8 +13,8 @@
 #include "srm_dependencies.h"
 
 
-const char test_string[] = "test_string";
-const char* test_strings[3]= { "test_string1","test_string2",NULL};
+char test_string[] = "test_string";
+char* test_strings[3]= { "test_string1","test_string2",NULL};
 void PrintResult(struct srmv2_mdfilestatus* output);
 
 
@@ -235,8 +235,8 @@ int  soap_call_srm2__srmLs_test7(struct soap *soap, const char *soap_endpoint, c
 	_param_18->srmLsResponse = resp;
 	resp->details = (struct srm2__ArrayOfTMetaDataPathDetail*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail));
 	resp->details->__sizepathDetailArray = 1;
-	resp->details->pathDetailArray = (struct srm2__ArrayOfTMetaDataPathDetail**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail *));
-	resp->details->pathDetailArray[0] = (struct srm2__ArrayOfTMetaDataPathDetail*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail));
+	resp->details->pathDetailArray = (struct srm2__TMetaDataPathDetail **) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail *));
+	resp->details->pathDetailArray[0] = (struct srm2__TMetaDataPathDetail *) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail ));
 	resp->details->pathDetailArray[0] = NULL;
 	return 0; // success
 }
@@ -313,14 +313,14 @@ START_TEST (test_srmv2_ls_async)
 					"Expected Success!\n");
 }
 END_TEST
-int  soap_call_srm2__srmStatusOfLs_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequest *srmStatusOfLsRequest,
+int  soap_call_srm2__srmStatusOfLs_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
 						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfLsRequestResponse = NULL;
 	return 0; // success but return statuses are null
 }
 
-int  soap_call_srm2__srmStatusOfLs_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequest *srmStatusOfLsRequest,
+int  soap_call_srm2__srmStatusOfLs_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
 						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfLsRequestResponse *resp  = (struct srm2__srmStatusOfLsRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfLsRequestResponse));
@@ -332,7 +332,7 @@ int  soap_call_srm2__srmStatusOfLs_test2(struct soap *soap, const char *soap_end
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfLs_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequest *srmStatusOfLsRequest,
+int  soap_call_srm2__srmStatusOfLs_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
 						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfLsRequestResponse *resp  = (struct srm2__srmStatusOfLsRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfLsRequestResponse));
@@ -344,7 +344,7 @@ int  soap_call_srm2__srmStatusOfLs_test3(struct soap *soap, const char *soap_end
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfLs_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequest *srmStatusOfLsRequest,
+int  soap_call_srm2__srmStatusOfLs_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
 						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfLsRequestResponse *resp  = (struct srm2__srmStatusOfLsRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfLsRequestResponse));
@@ -354,8 +354,8 @@ int  soap_call_srm2__srmStatusOfLs_test4(struct soap *soap, const char *soap_end
 	resp->returnStatus = retstatus;
 	resp->details = (struct srm2__ArrayOfTMetaDataPathDetail*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail));
 	resp->details->__sizepathDetailArray = 1;
-	resp->details->pathDetailArray = (struct srm2__ArrayOfTMetaDataPathDetail**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail *));
-	resp->details->pathDetailArray[0] = (struct srm2__ArrayOfTMetaDataPathDetail*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail));
+	resp->details->pathDetailArray = (struct srm2__TMetaDataPathDetail **) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail  *));
+	resp->details->pathDetailArray[0] = (struct srm2__TMetaDataPathDetail *) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail ));
 	resp->details->pathDetailArray[0] = NULL;
 	_param_18->srmStatusOfLsRequestResponse = resp;
 
@@ -617,8 +617,8 @@ int  soap_call_srm2__srmRm_test2(struct soap *soap, const char *soap_endpoint, c
 
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
 	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
 
@@ -753,8 +753,8 @@ int  soap_call_srm2__srmAbortFiles_test2(struct soap *soap, const char *soap_end
 
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
 	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
 
@@ -821,8 +821,8 @@ int  soap_call_srm2__srmPutDone_test2(struct soap *soap, const char *soap_endpoi
 
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
 	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
 
@@ -843,8 +843,8 @@ int  soap_call_srm2__srmPutDone_test3(struct soap *soap, const char *soap_endpoi
 
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
 	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
 
@@ -956,8 +956,8 @@ int  soap_call_srm2__srmReleaseFiles_test2(struct soap *soap, const char *soap_e
 
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
 	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
 
@@ -978,8 +978,8 @@ int  soap_call_srm2__srmReleaseFiles_test3(struct soap *soap, const char *soap_e
 
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTSURLReturnStatus *)soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTSURLReturnStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
 	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
 
@@ -1145,8 +1145,8 @@ int  soap_call_srm2__srmBringOnline_test7(struct soap *soap, const char *soap_en
 	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTBringOnlineRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TBringOnlineRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__TBringOnlineRequestFileStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__TBringOnlineRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	return 0; // success
 }
@@ -1218,21 +1218,21 @@ START_TEST (test_srmv2_bring_online_async)
 					"Expected Queued!\n");
 
 
-	output.filestatuses= &filestatus;
+	output.filestatuses= filestatus;
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test7;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
 					"Expected Success!\n");
 }
 END_TEST
-int  soap_call_srm2__srmStatusOfBringOnline_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequest *srmStatusOfBringOnlineRequest,
+int  soap_call_srm2__srmStatusOfBringOnline_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
 						struct srm2__srmStatusOfBringOnlineRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfBringOnlineRequestResponse = NULL;
 	return 0; // success but return statuses are null
 }
 
-int  soap_call_srm2__srmStatusOfBringOnline_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequest *srmStatusOfBringOnlineRequest,
+int  soap_call_srm2__srmStatusOfBringOnline_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
 						struct srm2__srmStatusOfBringOnlineRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfBringOnlineRequestResponse *resp  = (struct srm2__srmStatusOfBringOnlineRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfBringOnlineRequestResponse));
@@ -1245,7 +1245,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test2(struct soap *soap, const char 
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfBringOnline_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequest *srmStatusOfBringOnlineRequest,
+int  soap_call_srm2__srmStatusOfBringOnline_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
 						struct srm2__srmStatusOfBringOnlineRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfBringOnlineRequestResponse *resp  = (struct srm2__srmStatusOfBringOnlineRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfBringOnlineRequestResponse));
@@ -1258,7 +1258,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test3(struct soap *soap, const char 
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfBringOnline_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequest *srmStatusOfBringOnlineRequest,
+int  soap_call_srm2__srmStatusOfBringOnline_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
 						struct srm2__srmStatusOfBringOnlineRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfBringOnlineRequestResponse *resp  = (struct srm2__srmStatusOfBringOnlineRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfBringOnlineRequestResponse));
@@ -1268,8 +1268,8 @@ int  soap_call_srm2__srmStatusOfBringOnline_test4(struct soap *soap, const char 
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTBringOnlineRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTBringOnlineRequestFileStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TBringOnlineRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__TBringOnlineRequestFileStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TBringOnlineRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__TBringOnlineRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
 	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
@@ -1278,7 +1278,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test4(struct soap *soap, const char 
 	return 0; // success
 }
 
-int  soap_call_srm2__srmStatusOfBringOnline_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequest *srmStatusOfBringOnlineRequest,
+int  soap_call_srm2__srmStatusOfBringOnline_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
 						struct srm2__srmStatusOfBringOnlineRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfBringOnlineRequestResponse *resp  = (struct srm2__srmStatusOfBringOnlineRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfBringOnlineRequestResponse));
@@ -1356,7 +1356,7 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= &filestatus;
+	output.filestatuses= filestatus;
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
@@ -1451,8 +1451,8 @@ int  soap_call_srm2__srmPrepareToGet_test7(struct soap *soap, const char *soap_e
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTGetRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TGetRequestFileStatus **) soap_malloc (soap,sizeof (struct srm2__TGetRequestFileStatus  *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TGetRequestFileStatus *) soap_malloc (soap,sizeof (struct srm2__TGetRequestFileStatus ));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	return 0; // success
 }
@@ -1524,21 +1524,21 @@ START_TEST (test_srmv2_prepare_to_get_async)
 					"Expected Queued!\n");
 
 
-	output.filestatuses= &filestatus;
+	output.filestatuses= filestatus;
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test7;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
 					"Expected Success!\n");
 }
 END_TEST
-int  soap_call_srm2__srmStatusOfGet_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequest *srmStatusOfGetRequest,
+int  soap_call_srm2__srmStatusOfGet_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
 						struct srm2__srmStatusOfGetRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfGetRequestResponse = NULL;
 	return 0; // success but return statuses are null
 }
 
-int  soap_call_srm2__srmStatusOfGet_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequest *srmStatusOfGetRequest,
+int  soap_call_srm2__srmStatusOfGet_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
 						struct srm2__srmStatusOfGetRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfGetRequestResponse *resp  = (struct srm2__srmStatusOfGetRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfGetRequestResponse));
@@ -1551,7 +1551,7 @@ int  soap_call_srm2__srmStatusOfGet_test2(struct soap *soap, const char *soap_en
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfGet_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequest *srmStatusOfGetRequest,
+int  soap_call_srm2__srmStatusOfGet_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
 						struct srm2__srmStatusOfGetRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfGetRequestResponse *resp  = (struct srm2__srmStatusOfGetRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfGetRequestResponse));
@@ -1564,7 +1564,7 @@ int  soap_call_srm2__srmStatusOfGet_test3(struct soap *soap, const char *soap_en
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfGet_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequest *srmStatusOfGetRequest,
+int  soap_call_srm2__srmStatusOfGet_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
 						struct srm2__srmStatusOfGetRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfGetRequestResponse *resp  = (struct srm2__srmStatusOfGetRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfGetRequestResponse));
@@ -1574,8 +1574,8 @@ int  soap_call_srm2__srmStatusOfGet_test4(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTGetRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTGetRequestFileStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TGetRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__TGetRequestFileStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TGetRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__TGetRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	_param_18->srmStatusOfGetRequestResponse = resp;
 	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
@@ -1584,7 +1584,7 @@ int  soap_call_srm2__srmStatusOfGet_test4(struct soap *soap, const char *soap_en
 	return 0; // success
 }
 
-int  soap_call_srm2__srmStatusOfGet_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequest *srmStatusOfGetRequest,
+int  soap_call_srm2__srmStatusOfGet_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
 						struct srm2__srmStatusOfGetRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfGetRequestResponse *resp  = (struct srm2__srmStatusOfGetRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfGetRequestResponse));
@@ -1661,7 +1661,7 @@ START_TEST (test_srmv2_status_of_get_request_async)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= &filestatus;
+	output.filestatuses= filestatus;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test4;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
@@ -1756,8 +1756,8 @@ int  soap_call_srm2__srmPrepareToPut_test7(struct soap *soap, const char *soap_e
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTPutRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TPutRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__TPutRequestFileStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__TPutRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	return 0; // success
 }
@@ -1844,14 +1844,14 @@ START_TEST (test_srmv2_prepare_to_put_async)
 					"Expected Success!\n");
 }
 END_TEST
-int  soap_call_srm2__srmStatusOfPut_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequest *srmStatusOfPutRequest,
+int  soap_call_srm2__srmStatusOfPut_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
 						struct srm2__srmStatusOfPutRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfPutRequestResponse = NULL;
 	return 0; // success but return statuses are null
 }
 
-int  soap_call_srm2__srmStatusOfPut_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequest *srmStatusOfPutRequest,
+int  soap_call_srm2__srmStatusOfPut_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
 						struct srm2__srmStatusOfPutRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfPutRequestResponse *resp  = (struct srm2__srmStatusOfPutRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfPutRequestResponse));
@@ -1863,7 +1863,7 @@ int  soap_call_srm2__srmStatusOfPut_test2(struct soap *soap, const char *soap_en
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfPut_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequest *srmStatusOfPutRequest,
+int  soap_call_srm2__srmStatusOfPut_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
 						struct srm2__srmStatusOfPutRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfPutRequestResponse *resp  = (struct srm2__srmStatusOfPutRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfPutRequestResponse));
@@ -1875,7 +1875,7 @@ int  soap_call_srm2__srmStatusOfPut_test3(struct soap *soap, const char *soap_en
 
 	return 0; // success
 }
-int  soap_call_srm2__srmStatusOfPut_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequest *srmStatusOfPutRequest,
+int  soap_call_srm2__srmStatusOfPut_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
 						struct srm2__srmStatusOfPutRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfPutRequestResponse *resp  = (struct srm2__srmStatusOfPutRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfPutRequestResponse));
@@ -1885,8 +1885,8 @@ int  soap_call_srm2__srmStatusOfPut_test4(struct soap *soap, const char *soap_en
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
-	resp->arrayOfFileStatuses->statusArray = (struct srm2__ArrayOfTPutRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus *));
-	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__ArrayOfTPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus));
+	resp->arrayOfFileStatuses->statusArray = (struct srm2__TPutRequestFileStatus**) soap_malloc (soap,sizeof (struct srm2__TPutRequestFileStatus *));
+	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__TPutRequestFileStatus));
 	resp->arrayOfFileStatuses->statusArray[0] = NULL;
 	_param_18->srmStatusOfPutRequestResponse = resp;
 
@@ -1894,7 +1894,7 @@ int  soap_call_srm2__srmStatusOfPut_test4(struct soap *soap, const char *soap_en
 	return 0; // success
 }
 
-int  soap_call_srm2__srmStatusOfPut_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequest *srmStatusOfPutRequest,
+int  soap_call_srm2__srmStatusOfPut_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
 						struct srm2__srmStatusOfPutRequestResponse_ *_param_18)
 {
 	struct srm2__srmStatusOfPutRequestResponse *resp  = (struct srm2__srmStatusOfPutRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfPutRequestResponse));
@@ -1971,7 +1971,7 @@ START_TEST (test_srmv2_status_of_put_request_async)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= &filestatus;
+	output.filestatuses= filestatus;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test4;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
@@ -2041,8 +2041,8 @@ int  soap_call_srm2__srmGetSpaceMetaData_test5(struct soap *soap, const char *so
 	resp->returnStatus = retstatus;
 	resp->arrayOfSpaceDetails = (struct srm2__ArrayOfTMetaDataSpace*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataSpace));
 	resp->arrayOfSpaceDetails->__sizespaceDataArray = 1;
-	resp->arrayOfSpaceDetails->spaceDataArray = (struct srm2__ArrayOfTMetaDataSpace**) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataSpace *));
-	resp->arrayOfSpaceDetails->spaceDataArray[0] = (struct srm2__ArrayOfTMetaDataSpace*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataSpace));
+	resp->arrayOfSpaceDetails->spaceDataArray = (struct srm2__TMetaDataSpace**) soap_malloc (soap,sizeof (struct srm2__TMetaDataSpace *));
+	resp->arrayOfSpaceDetails->spaceDataArray[0] = (struct srm2__TMetaDataSpace*) soap_malloc (soap,sizeof (struct srm2__TMetaDataSpace));
 	resp->arrayOfSpaceDetails->spaceDataArray[0] = NULL;
 	_param_18->srmGetSpaceMetaDataResponse = resp;
 
@@ -2185,8 +2185,8 @@ int  soap_call_srm2__srmGetSpaceTokens_test5(struct soap *soap, const char *soap
 	resp->returnStatus = retstatus;
 	resp->arrayOfSpaceTokens = (struct srm2__ArrayOfString*) soap_malloc (soap,sizeof (struct srm2__ArrayOfString));
 	resp->arrayOfSpaceTokens->__sizestringArray = 1;
-	resp->arrayOfSpaceTokens->stringArray = (struct srm2__ArrayOfString**) soap_malloc (soap,sizeof (struct srm2__ArrayOfString *));
-	resp->arrayOfSpaceTokens->stringArray[0] = (struct srm2__ArrayOfString*) soap_malloc (soap,sizeof (struct srm2__ArrayOfString));
+	resp->arrayOfSpaceTokens->stringArray = (char **) soap_malloc (soap,sizeof (char *));
+	resp->arrayOfSpaceTokens->stringArray[0] = (char *) soap_malloc (soap,sizeof (char));
 	resp->arrayOfSpaceTokens->stringArray[0] = test_string;
 	_param_18->srmGetSpaceTokensResponse = resp;
 
@@ -2520,7 +2520,7 @@ int  soap_call_srm2__srmGetPermission_test5(struct soap *soap, const char *soap_
 	resp->returnStatus = retstatus;
 
 
-	resp->arrayOfPermissionReturns = (struct srm2__ArrayOfString*) soap_malloc (soap,sizeof (struct srm2__ArrayOfString));
+	resp->arrayOfPermissionReturns = (struct srm2__ArrayOfTPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPermissionReturn));
 	resp->arrayOfPermissionReturns->__sizepermissionArray = 1;
 	resp->arrayOfPermissionReturns->permissionArray = (struct srm2__TPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TPermissionReturn *));
 	resp->arrayOfPermissionReturns->permissionArray[0] = (struct srm2__TPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TPermissionReturn));

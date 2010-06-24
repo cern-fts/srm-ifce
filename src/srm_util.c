@@ -71,7 +71,7 @@ void srm_set_timeout_sendreceive (int value)
 		srm_timeout_sendreceive = value;
 }
 
-void srm_context_init(struct srm_context *context,char srm_endpoint)
+void srm_context_init(struct srm_context *context,char *srm_endpoint)
 {
 	context->errbuf = NULL;
 	context->errbufsz = 0;
@@ -221,7 +221,7 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 	return result_errno;
 }
 // return error status
-int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,char *srmfunc)
+int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc)
 {
 
 	if (status->explanation && status->explanation[0])
