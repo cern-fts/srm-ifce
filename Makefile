@@ -9,7 +9,8 @@ LDFLAGS=-shared
 INCLUDE=-I $(GSOAP_LOCATION) \
 		-I $(GSOAP_LOCATION)/include \
 		-I $(GSOAP_LOCATION)/extras \
-		-I $(SOURCE_FOLDER)
+		-I $(SOURCE_FOLDER) \
+        -I /home/tmanev/workspace/gfal/build/src/
 
 DEFINES=-D_LARGEFILE64_SOURCE \
 		-D_GSOAP_VERSION=0x020706  \
@@ -37,39 +38,38 @@ CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES)
 #srm_unittest_LDADD = libsrm.so  
 #srm_unittest_CFLAGS = $(SRM_FLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) -D_LARGEFILE64_SOURCE
  
-
-all: $(SOURCE_FOLDER)/stdsoap2.c  $(SOURCE_FOLDER)/srmv2C.c  $(SOURCE_FOLDER)/srmSoapBinding.c  $(SOURCE_FOLDER)/srmv2Client.c $(SOURCE_FOLDER)/srm_dependencies.c $(SOURCE_FOLDER)/srm_version_wrapper.c $(SOURCE_FOLDER)/srm_util.c $(SOURCE_FOLDER)/srmv2_directory_functions.c $(SOURCE_FOLDER)/srmv2_sync_wrapper.c $(SOURCE_FOLDER)/srmv2_async_wrapper.c $(SOURCE_FOLDER)/srmv2_space_management_functions.c $(SOURCE_FOLDER)/srmv2_discovery_functions.c $(SOURCE_FOLDER)/srmv2_permission_functions.c $(SOURCE_FOLDER)/srmv2_data_transfer_functions.c
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/stdsoap2.c -o $(BUILD_FOLDER)/stdsoap2.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/stdsoap2.c -o $(BUILD_FOLDER)/stdsoap2.o
+all:
 	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2C.c -o $(BUILD_FOLDER)/srmv2C.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmSoapBinding.c -o $(BUILD_FOLDER)/srmSoapBinding.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2Client.c -o $(BUILD_FOLDER)/srmv2Client.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srm_dependencies.c -o $(BUILD_FOLDER)/srm_dependencies.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srm_version_wrapper.c -o $(BUILD_FOLDER)/srm_version_wrapper.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srm_util.c -o $(BUILD_FOLDER)/srm_util.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_directory_functions.c -o $(BUILD_FOLDER)/srmv2_directory_functions.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_sync_wrapper.c -o $(BUILD_FOLDER)/srmv2_sync_wrapper.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_async_wrapper.c -o $(BUILD_FOLDER)/srmv2_async_wrapper.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_space_management_functions.c -o $(BUILD_FOLDER)/srmv2_space_management_functions.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_discovery_functions.c -o $(BUILD_FOLDER)/srmv2_discovery_functions.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_permission_functions.c -o $(BUILD_FOLDER)/srmv2_permission_functions.o
-	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_data_transfer_functions.c -o $(BUILD_FOLDER)/srmv2_data_transfer_functions.o
-	$(LD) $(LDFLAGS)    $(BUILD_FOLDER)/stdsoap2.o \
-						$(BUILD_FOLDER)/srmv2C.o \
-						$(BUILD_FOLDER)/srmSoapBinding.o \
-						$(BUILD_FOLDER)/srmv2Client.o \
-						$(BUILD_FOLDER)/srm_dependencies.o \
-						$(BUILD_FOLDER)/srm_version_wrapper.o \
-						$(BUILD_FOLDER)/srm_util.o \
-						$(BUILD_FOLDER)/srmv2_directory_functions.o \
-						$(BUILD_FOLDER)/srmv2_sync_wrapper.o \
-						$(BUILD_FOLDER)/srmv2_async_wrapper.o \
-						$(BUILD_FOLDER)/srmv2_space_management_functions.o \
-						$(BUILD_FOLDER)/srmv2_discovery_functions.o \
-						$(BUILD_FOLDER)/srmv2_permission_functions.o \
-						$(BUILD_FOLDER)/srmv2_data_transfer_functions.o \
-					-o $(BUILD_FOLDER)/libsrm.so
-	$(CC) $(DEFINES) $(SOURCE_FOLDER)/srm_unittest.c -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_unittest
-	$(CC) $(DEFINES) $(SOURCE_FOLDER)/srm_test.c     -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_test
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmSoapBinding.c -o $(BUILD_FOLDER)/srmSoapBinding.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2Client.c -o $(BUILD_FOLDER)/srmv2Client.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srm_dependencies.c -o $(BUILD_FOLDER)/srm_dependencies.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srm_version_wrapper.c -o $(BUILD_FOLDER)/srm_version_wrapper.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srm_util.c -o $(BUILD_FOLDER)/srm_util.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_directory_functions.c -o $(BUILD_FOLDER)/srmv2_directory_functions.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_sync_wrapper.c -o $(BUILD_FOLDER)/srmv2_sync_wrapper.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_async_wrapper.c -o $(BUILD_FOLDER)/srmv2_async_wrapper.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_space_management_functions.c -o $(BUILD_FOLDER)/srmv2_space_management_functions.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_discovery_functions.c -o $(BUILD_FOLDER)/srmv2_discovery_functions.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_permission_functions.c -o $(BUILD_FOLDER)/srmv2_permission_functions.o
+#	$(CC) $(CFLAGS) -c $(SOURCE_FOLDER)/srmv2_data_transfer_functions.c -o $(BUILD_FOLDER)/srmv2_data_transfer_functions.o
+#	$(LD) $(LDFLAGS)    $(BUILD_FOLDER)/stdsoap2.o \
+#						$(BUILD_FOLDER)/srmv2C.o \
+#						$(BUILD_FOLDER)/srmSoapBinding.o \
+#						$(BUILD_FOLDER)/srmv2Client.o \
+#						$(BUILD_FOLDER)/srm_dependencies.o \
+#						$(BUILD_FOLDER)/srm_version_wrapper.o \
+#						$(BUILD_FOLDER)/srm_util.o \
+#						$(BUILD_FOLDER)/srmv2_directory_functions.o \
+#						$(BUILD_FOLDER)/srmv2_sync_wrapper.o \
+#						$(BUILD_FOLDER)/srmv2_async_wrapper.o \
+#						$(BUILD_FOLDER)/srmv2_space_management_functions.o \
+#						$(BUILD_FOLDER)/srmv2_discovery_functions.o \
+#						$(BUILD_FOLDER)/srmv2_permission_functions.o \
+#						$(BUILD_FOLDER)/srmv2_data_transfer_functions.o \
+#					-o $(BUILD_FOLDER)/libsrm.so
+#	$(CC) $(DEFINES) $(SOURCE_FOLDER)/srm_unittest.c -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_unittest
+#	$(CC) $(DEFINES) $(SOURCE_FOLDER)/srm_test.c     -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_test
 
 #	$(CC) $(CFLAGS) -c database.c -o database.o
 #	$(CC) $(CFLAGS) -c modules/databases/file_fuzz/p_file_fuzz.c -c -o modules/databases/file_fuzz/p_file_fuzz.o
