@@ -21,8 +21,24 @@ DEFINES=-D_LARGEFILE64_SOURCE \
 		-DUSEGSOAPWSDL2H_2_6 \
 		-DGFAL_SECURE
 
-LIBRARIES=-lcgsi_plugin_gsoap_2.7 -lglobus_gss_assist_gcc64dbg -lglobus_gssapi_gsi_gcc64dbg -lglobus_gsi_proxy_core_gcc64dbg -lglobus_gsi_proxy_core_gcc64dbg -lglobus_gsi_credential_gcc64dbg -lglobus_gsi_callback_gcc64dbg -lglobus_oldgaa_gcc64dbg -lglobus_gsi_sysconfig_gcc64dbg -lglobus_gsi_cert_utils_gcc64dbg -lglobus_proxy_ssl_gcc64dbg -lglobus_common_gcc64dbg -lltdl_gcc64dbg -lglobus_callout_gcc64dbg -lglobus_openssl_error_gcc64dbg -lglobus_openssl_gcc64dbg
-LIBRARIES_FOLDER=-L/home/tmanev/workspace/lcg_util/stage/lib64/ -L/home/tmanev/workspace/lcg_util/stage/lib64/ -L/home/tmanev/workspace/lcg_util/repository/vdt/globus/4.0.7-VDT-1.10.1/sl5_x86_64_gcc412/lib/
+LIBRARIES=	-lcgsi_plugin_gsoap_2.7 \
+			-lglobus_gss_assist_gcc64dbg \
+			-lglobus_gssapi_gsi_gcc64dbg \
+			-lglobus_gsi_proxy_core_gcc64dbg \
+			-lglobus_gsi_proxy_core_gcc64dbg \
+			-lglobus_gsi_credential_gcc64dbg \
+			-lglobus_gsi_callback_gcc64dbg \
+			-lglobus_oldgaa_gcc64dbg \
+			-lglobus_gsi_sysconfig_gcc64dbg \
+			-lglobus_gsi_cert_utils_gcc64dbg \
+			-lglobus_proxy_ssl_gcc64dbg \
+			-lglobus_common_gcc64dbg \
+			-lltdl_gcc64dbg \
+			-lglobus_callout_gcc64dbg \
+			-lglobus_openssl_error_gcc64dbg \
+			-lglobus_openssl_gcc64dbg
+LIBRARIES_FOLDER=-L/home/tmanev/workspace/lcg_util/stage/lib64/ \
+				 -L/home/tmanev/workspace/lcg_util/repository/vdt/globus/4.0.7-VDT-1.10.1/sl5_x86_64_gcc412/lib/
 CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES) # $(LIBRARIES) $(LIBRARIES_FOLDER)
 C2FLAGS=-ggdb $(INCLUDE) $(DEFINES) # $(LIBRARIES) $(LIBRARIES_FOLDER)
 #    stdsoap2.c \
