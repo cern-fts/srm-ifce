@@ -1,4 +1,6 @@
 GSOAP_LOCATION=/home/tmanev/workspace/lcg_util/repository/externals/gsoap/2.7.6b/sl5_x86_64_gcc412
+CGSI_LOCATION=/home/tmanev/workspace/lcg_util/org.glite.security.cgsi-gsoap-2.7/src
+#/home/tmanev/workspace/lcg_util/stage/include 
 
 SOURCE_FOLDER=src
 BUILD_FOLDER=build
@@ -9,16 +11,20 @@ LDFLAGS=-shared
 INCLUDE=-I $(GSOAP_LOCATION) \
 		-I $(GSOAP_LOCATION)/include \
 		-I $(GSOAP_LOCATION)/extras \
-		-I $(SOURCE_FOLDER) 
+		-I $(SOURCE_FOLDER) \
+		-I $(CGSI_LOCATION)
 
 DEFINES=-D_LARGEFILE64_SOURCE \
 		-D_GSOAP_VERSION=0x020706  \
 		-D_GSOAP_WSDL2H_VERSION=0x020706 \
 		-DUSEGSOAP_2_6 \
-		-DUSEGSOAPWSDL2H_2_6 
+		-DUSEGSOAPWSDL2H_2_6 \
+		-DGFAL_SECURE
 
-LIBRARIES=-lc
-CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES)
+LIBRARIES=-lcgsi_plugin_gsoap_2.7 -lglobus_gss_assist_gcc64dbg -lglobus_gssapi_gsi_gcc64dbg -lglobus_gsi_proxy_core_gcc64dbg -lglobus_gsi_proxy_core_gcc64dbg -lglobus_gsi_credential_gcc64dbg -lglobus_gsi_callback_gcc64dbg -lglobus_oldgaa_gcc64dbg -lglobus_gsi_sysconfig_gcc64dbg -lglobus_gsi_cert_utils_gcc64dbg -lglobus_proxy_ssl_gcc64dbg -lglobus_common_gcc64dbg -lltdl_gcc64dbg -lglobus_callout_gcc64dbg -lglobus_openssl_error_gcc64dbg -lglobus_openssl_gcc64dbg
+LIBRARIES_FOLDER=-L/home/tmanev/workspace/lcg_util/stage/lib64/ -L/home/tmanev/workspace/lcg_util/stage/lib64/ -L/home/tmanev/workspace/lcg_util/repository/vdt/globus/4.0.7-VDT-1.10.1/sl5_x86_64_gcc412/lib/
+CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES) # $(LIBRARIES) $(LIBRARIES_FOLDER)
+C2FLAGS=-ggdb $(INCLUDE) $(DEFINES) # $(LIBRARIES) $(LIBRARIES_FOLDER)
 #    stdsoap2.c \
 #    srmv2C.c \
 #    srmv2Client.c \
@@ -70,7 +76,7 @@ all:
 						$(BUILD_FOLDER)/srmv2_permission_functions.o \
 						$(BUILD_FOLDER)/srmv2_data_transfer_functions.o
 	ranlib $(BUILD_FOLDER)/libsrm.a
-	$(LD) -r $(BUILD_FOLDER)/stdsoap2.o \
+	$(LD) $(LIBRARIES_FOLDER) $(LIBRARIES) -r $(BUILD_FOLDER)/stdsoap2.o \
 						$(BUILD_FOLDER)/srmv2C.o \
 						$(BUILD_FOLDER)/srmSoapBinding.o \
 						$(BUILD_FOLDER)/srmv2Client.o \
@@ -85,7 +91,7 @@ all:
 						$(BUILD_FOLDER)/srmv2_permission_functions.o \
 						$(BUILD_FOLDER)/srmv2_data_transfer_functions.o \
  					 -o $(BUILD_FOLDER)/libsrm.o
-	$(CC) -shared        $(BUILD_FOLDER)/stdsoap2.o \
+	$(CC) -shared $(LIBRARIES_FOLDER) $(LIBRARIES) $(BUILD_FOLDER)/stdsoap2.o \
 						$(BUILD_FOLDER)/srmv2C.o \
 						$(BUILD_FOLDER)/srmSoapBinding.o \
 						$(BUILD_FOLDER)/srmv2Client.o \
@@ -101,9 +107,9 @@ all:
 						$(BUILD_FOLDER)/srmv2_data_transfer_functions.o \
  					 -o $(BUILD_FOLDER)/libsrm.so
    
-	$(CC) $(CFLAGS) $(SOURCE_FOLDER)/srm_unittest.c -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_unittest # -static -lpthread
-	$(CC) $(CFLAGS) $(SOURCE_FOLDER)/srm_test.c     -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_test # -static -lpthread
-	$(CC) $(CFLAGS) $(SOURCE_FOLDER)/srm_testunittest.c -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_test # -static -lpthread
+	$(CC) $(C2FLAGS) $(SOURCE_FOLDER)/srm_unittest.c $(LIBRARIES_FOLDER) $(LIBRARIES) -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_unittest # -static -lpthread
+	$(CC) $(C2FLAGS) $(SOURCE_FOLDER)/srm_test.c     $(LIBRARIES_FOLDER) $(LIBRARIES) -lcheck -lsrm -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_test # -static -lpthread
+	$(CC) $(C2FLAGS) $(SOURCE_FOLDER)/srm_testunittest.c -lsrm $(LIBRARIES_FOLDER) $(LIBRARIES) -L$(BUILD_FOLDER)/ -o $(BUILD_FOLDER)/srm_testunittest # -static -lpthread
 clean:
 	rm -f $(BUILD_FOLDER)/*.o
 	rm -f $(BUILD_FOLDER)/*.so
