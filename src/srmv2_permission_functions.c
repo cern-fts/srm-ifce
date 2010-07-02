@@ -7,14 +7,13 @@
 int srmv2_set_permission(struct srm_context *context,
 		struct srm_setpermission_input *input)
 {
+	int result = 0,i;
 	const char srmfunc[] = "SetPermission";
 	struct srm2__srmSetPermissionRequest req;
 	struct srm2__srmSetPermissionResponse_ rep;
 	enum srm2__TPermissionMode otherPermission;
 	enum srm2__TPermissionMode ownerPermission;
 	struct soap soap;
-	int result = 0,i;
-
 
 	srm_soap_init(&soap);
 

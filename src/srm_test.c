@@ -5,8 +5,8 @@
 #include "srm_types.h"
 #include "srm_ifce.h"
 
-
-char *test_srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+//srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/
+char *test_srm_endpoint =  "httpg://lxb7993.cern.ch:8446/srm/managerv2";
 char *source_file = "file:///etc/group";
 char *test_file1 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
 char *test_file2 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
@@ -613,7 +613,7 @@ Suite * test_suite (void)
 	TCase *tc_case_3 = tcase_create ("T3");
 	TCase *tc_case_4 = tcase_create ("T4");
 
-	/*tcase_add_checked_fixture (tc_case_1, NULL,NULL);
+	tcase_add_checked_fixture (tc_case_1, NULL,NULL);
 	tcase_add_test (tc_case_1, test_srm_ping);
 	suite_add_tcase (s, tc_case_1);
 
@@ -625,7 +625,7 @@ Suite * test_suite (void)
 	tcase_add_checked_fixture (tc_case_3, NULL,NULL);
 	tcase_add_test (tc_case_3, test_directory_functions);
 	tcase_set_timeout(tc_case_3, 60);
-	suite_add_tcase (s, tc_case_3);*/
+	suite_add_tcase (s, tc_case_3);
 
 	tcase_add_checked_fixture (tc_case_4, NULL,NULL);
 	tcase_add_test (tc_case_4, test_srm_space_management);
@@ -769,9 +769,11 @@ void TestPermissions()
 ///////////////////////////////////////////////
 // MAIN
 ///////////////////////////////////////////////
+
 int main(void)
 {
-	TestPrepareToPutPrepareToGet();
+	TestPing(test_srm_endpoint);
+	//TestPrepareToPutPrepareToGet();
 	//TestReserveSpace();
 	//TestPermissions();
 	//TestDirectoryFunctions();
