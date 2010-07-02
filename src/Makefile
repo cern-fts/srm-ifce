@@ -52,9 +52,11 @@ LIBRARIES=	-lcgsi_plugin_gsoap_2.7 \
 			-lglobus_callout_gcc64dbg \
 			-lglobus_openssl_error_gcc64dbg \
 			-lglobus_openssl_gcc64dbg 
-LIBRARIES_FOLDER=-L/home/tmanev/workspace/lcg_util/stage/lib64/ \
-				 -L$(GLOBUS_LOCATION) \
-				 -L$(BUILDDIR)/ 
+LIBRARIES_FOLDER=-L$(GLOBUS_LOCATION) \
+				 -L$(BUILDDIR)/ \
+				 -L$(VOMS_LOCATION)/lib64
+
+
 
 CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES)
 C2FLAGS=-ggdb $(INCLUDE) $(DEFINES) 
