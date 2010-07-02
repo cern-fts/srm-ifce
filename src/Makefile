@@ -1,9 +1,3 @@
-GSOAP_LOCATION=/home/tmanev/workspace/lcg_util/repository/externals/gsoap/2.7.6b/sl5_x86_64_gcc412
-GLOBUS_LOCATION=/home/tmanev/workspace/lcg_util/repository/vdt/globus/4.0.7-VDT-1.10.1/sl5_x86_64_gcc412/lib/
-CGSI_LOCATION=/home/tmanev/workspace/lcg_util/org.glite.security.cgsi-gsoap-2.7/src
-VOMS_LOCATION=/home/tmanev/workspace/lcg_util/stage
-#/home/tmanev/workspace/lcg_util/stage/include 
-
 CC=gcc
 LD=ld
 LDFLAGS=-shared
