@@ -122,7 +122,7 @@ typedef int (*soap_call_srm2__srmReserveSpace_fv)(
 
 typedef int (*soap_call_srm2__srmStatusOfReserveSpaceRequest_fv)(
     struct soap *, const char *, const char *,
-    struct srm2__srmStatusOfReserveSpaceRequest *,
+    struct srm2__srmStatusOfReserveSpaceRequestRequest *,
     struct srm2__srmStatusOfReserveSpaceRequestResponse_ *);
 
 typedef int (*soap_call_srm2__srmReleaseSpace_fv)(
