@@ -131,7 +131,7 @@ all:
 
 	$(CC) $(C2FLAGS) $(SRCDIR)/srm_unittest.c $(LIBRARIES_FOLDER) $(LIBRARIES) -lcheck -lsrm  -o $(BUILDDIR)/srm_unittest # -static -lpthread
 	$(CC) $(C2FLAGS) $(SRCDIR)/srm_test.c     $(LIBRARIES_FOLDER) $(LIBRARIES) -lcheck -lsrm  -o $(BUILDDIR)/srm_test # -static -lpthread
-	$(CC) $(C2FLAGS) $(SRCDIR)/srm_testunittest.c $(LIBRARIES_FOLDER) $(LIBRARIES) -lcheck -lsrm  -o $(BUILDDIR)/srm_testunittest # -static -lpthread
+#	$(CC) $(C2FLAGS) $(SRCDIR)/srm_testunittest.c $(LIBRARIES_FOLDER) $(LIBRARIES) -lcheck -lsrm  -o $(BUILDDIR)/srm_testunittest # -static -lpthread
 clean:
 	rm -f $(BUILDDIR)/*.o
 	rm -f $(BUILDDIR)/*.so
