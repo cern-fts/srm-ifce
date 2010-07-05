@@ -15,7 +15,7 @@ basedir=$(cd $(dirname $0); echo $PWD)
 
 USAGE="configure --with-version=...  --with-release=... --with-globus-location=...  --with-globus-thr-flavor=...  --with-globus-nothr-flavor=... --with-gsoap-location=... --with-gsoap-version=... --with-voms-location=... --with-cgsi-gsoap-location=... --with-ccheck-location=..."
 
-TEMP=$(getopt -o h --long help,with-version:,with-release:,with-globus-location:,with-globus-thr-flavor:,with-globus-nothr-flavor:,with-gsoap-location:,with-gsoap-version:,with-cgsi-gsoap-location:,with-voms-location: -- "$@")
+TEMP=$(getopt -o h --long help,with-version:,with-release:,with-globus-location:,with-globus-thr-flavor:,with-globus-nothr-flavor:,with-gsoap-location:,with-gsoap-version:,with-cgsi-gsoap-location:,with-voms-location;with-ccheck-location: -- "$@")
 eval set -- "$TEMP"
 
 echo "$@" >${basedir}/config.status
