@@ -13,7 +13,7 @@
 
 basedir=$(cd $(dirname $0); echo $PWD)
 
-USAGE="configure --with-version=...  --with-release=... --with-globus-location=...  --with-globus-thr-flavor=...  --with-globus-nothr-flavor=... --with-gsoap-location=... --with-gsoap-version=... --with-voms-location=... --with-cgsi-gsoap-location=..."
+USAGE="configure --with-version=...  --with-release=... --with-globus-location=...  --with-globus-thr-flavor=...  --with-globus-nothr-flavor=... --with-gsoap-location=... --with-gsoap-version=... --with-voms-location=... --with-cgsi-gsoap-location=... --with-ccheck-location=..."
 
 TEMP=$(getopt -o h --long help,with-version:,with-release:,with-globus-location:,with-globus-thr-flavor:,with-globus-nothr-flavor:,with-gsoap-location:,with-gsoap-version:,with-cgsi-gsoap-location:,with-voms-location: -- "$@")
 eval set -- "$TEMP"
@@ -78,7 +78,12 @@ while true; do
             shift
             CGSI_GSOAP_LOCATION="$1"
             shift
-            ;;  
+            ;;
+        --with-ccheck-location)
+            shift
+            CCHECK_LOCATION="$1"
+            shift
+            ;;    
         --)
             shift
             break
@@ -96,6 +101,7 @@ SRCDIR=${basedir}/src
 BUILDDIR=${basedir}/build
 include ${basedir}/VERSION
 
+CCHECK_LOCATION=${CCHECK_LOCATION}
 GLOBUS_LOCATION=${GLOBUS_LOCATION:-/opt/globus}/lib
 GLOBUS_FLAVOUR=${GLOBUS_FLAVOUR}
 GLOBUS_FLAVOUR_PTHR=${GLOBUS_FLAVOUR_PTHR}
