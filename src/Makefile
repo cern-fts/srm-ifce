@@ -9,16 +9,7 @@ ifeq ($(arch), x86_64)
 lib_m=lib64
 endif
 
-# link with woms library
-ifeq ($(VOMS_LOCATION), $(EMPTY))
-VOMS_LOCATION=/opt/glite
-endif
-VOMS_INCLUDES = -I$(VOMS_LOCATION)/include/ -DUSE_VOMS -DVIRTUAL_ID
-VOMS_LDFLAGS = -L$(VOMS_LOCATION)/lib -L$(VOMS_LOCATION)/$(lib_m)
-VOMS_LIBS = -lvomsc
-
 GLOBUS_LDFLAGS = -L$(GLOBUS_LOCATION)/lib
-
 CCHECK_INCLUDES = -I$(CCHECK_LOCATION)/include  
 CCHECK_LDFLAGS = -L$(CCHECK_LOCATION)/lib64
 
@@ -58,7 +49,7 @@ LIBRARIES=	-lcgsi_plugin_gsoap_2.7 \
 			-lglobus_openssl_gcc64dbg 
 LIBRARIES_FOLDER=-L$(GLOBUS_LOCATION) \
 				 -L$(BUILDDIR)/ \
-				 -L$(VOMS_LOCATION)/lib64 \
+				 -L$(STAGE_LOCATION)/lib64 \
 				 $(CCHECK_LDFLAGS)
 
 CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES)
