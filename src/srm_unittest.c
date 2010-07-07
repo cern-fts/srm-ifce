@@ -601,6 +601,7 @@ int  soap_call_srm2__srmRm_test1(struct soap *soap, const char *soap_endpoint, c
 	retstatus->statusCode = SRM_USCOREFAILURE;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmRmResponse = resp;
 	return 0;
 }
@@ -2476,6 +2477,7 @@ int  soap_call_srm2__srmGetPermission_test1(struct soap *soap, const char *soap_
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfPermissionReturns = NULL;
 	_param_18->srmGetPermissionResponse = resp;
 
 
@@ -2605,6 +2607,7 @@ int  soap_call_srm2__srmCheckPermission_test1(struct soap *soap, const char *soa
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfPermissions = NULL;
 	_param_18->srmCheckPermissionResponse = resp;
 
 
@@ -2755,6 +2758,7 @@ int  soap_call_srm2__srmExtendFileLifeTime_test1(struct soap *soap, const char *
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmExtendFileLifeTimeResponse = resp;
 
 
@@ -2764,7 +2768,10 @@ int  soap_call_srm2__srmExtendFileLifeTime_test1(struct soap *soap, const char *
 int  soap_call_srm2__srmExtendFileLifeTime_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
 						struct srm2__srmExtendFileLifeTimeResponse_ *_param_18)
 {
+	//struct srm2__srmExtendFileLifeTimeResponse *resp  = (struct srm2__srmExtendFileLifeTimeResponse *) soap_malloc (soap,sizeof (struct srm2__srmExtendFileLifeTimeResponse));
 	_param_18->srmExtendFileLifeTimeResponse = NULL; // FAILS
+	//resp->arrayOfFileStatuses = NULL;
+	//resp->returnStatus = NULL;
 	return 0; // success
 }
 int  soap_call_srm2__srmExtendFileLifeTime_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmExtendFileLifeTimeRequest *srmExtendFileLifeTimeRequest,
@@ -2772,6 +2779,7 @@ int  soap_call_srm2__srmExtendFileLifeTime_test3(struct soap *soap, const char *
 {
 	struct srm2__srmExtendFileLifeTimeResponse *resp  = (struct srm2__srmExtendFileLifeTimeResponse *) soap_malloc (soap,sizeof (struct srm2__srmExtendFileLifeTimeResponse));
 	resp->returnStatus = NULL;// FAILS
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmExtendFileLifeTimeResponse = resp;
 
 
@@ -2786,6 +2794,7 @@ int  soap_call_srm2__srmExtendFileLifeTime_test4(struct soap *soap, const char *
 	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	//resp->arrayOfFileStatuses = NULL;
 	_param_18->srmExtendFileLifeTimeResponse = resp;
 	return 0; // success
 }
@@ -2873,10 +2882,10 @@ Suite * test_suite (void)
   TCase *tc_case_1 = tcase_create ("T1");
 
   tcase_add_checked_fixture (tc_case_1, NULL,NULL);
-  //tcase_add_test (tc_case_1, test_srmv2_set_permission);
-  //tcase_add_test (tc_case_1, test_srmv2_extend_file_lifetime);
-  //tcase_add_test (tc_case_1, test_srmv2_get_permission);
-  //tcase_add_test (tc_case_1, test_srmv2_check_permission);
+  tcase_add_test (tc_case_1, test_srmv2_extend_file_lifetime);
+  tcase_add_test (tc_case_1, test_srmv2_set_permission);
+  tcase_add_test (tc_case_1, test_srmv2_get_permission);
+  tcase_add_test (tc_case_1, test_srmv2_check_permission);
   tcase_add_test (tc_case_1, test_wait_for_new_attempt);
   tcase_add_test (tc_case_1, test_back_off_logic);
   tcase_add_test (tc_case_1, test_srmv2_ls_async);
@@ -3164,10 +3173,10 @@ int main(void)
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
-	/*TestCheckPermission();
-	TestGetPermission();
-	TestSetPermission();
-	TestExtend();*/
+	//TestCheckPermission();
+	//TestGetPermission();
+	//TestSetPermission();
+	//TestExtend();
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -201,7 +201,7 @@ int srmv2_check_permission(struct srm_context *context,
 
 	repfs = rep.srmCheckPermissionResponse->arrayOfPermissions;
 
-	if (!repfs || repfs->__sizesurlPermissionArray < 1 || !repfs->surlPermissionArray)
+	if (reqstatp->statusCode != SRM_USCORESUCCESS ||  !repfs || repfs->__sizesurlPermissionArray < 1 || !repfs->surlPermissionArray)
 	{
 		errno = srm_soup_call_err(context,&soap,srmfunc);
 		srm_soap_deinit (&soap);

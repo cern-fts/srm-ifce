@@ -253,7 +253,7 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 
 	repfs = rep.srmRmResponse->arrayOfFileStatuses;
 
-	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
+	if (output->retstatus->statusCode != SRM_USCORESUCCESS || !repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
 		errno = srm_call_err(context,output->retstatus,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
@@ -522,7 +522,7 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	/* return file statuses */
 	repfs = rep.srmExtendFileLifeTimeResponse->arrayOfFileStatuses;
 
-	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+	if (reqstatp->statusCode != SRM_USCORESUCCESS || !repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,reqstatp,srmfunc);
 		srm_soap_deinit(&soap);
