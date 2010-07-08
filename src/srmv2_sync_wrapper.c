@@ -34,7 +34,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 	return result;
 }
 
-int srmv2_prepeare_to_put_sync(struct srm_context *context,
+int srmv2_prepare_to_put_sync(struct srm_context *context,
 		struct srm_preparetoput_input *input, struct srm_preparetoput_output *output)
 {
 	struct srm_internal_context internal_context;
@@ -66,7 +66,7 @@ int srmv2_prepeare_to_put_sync(struct srm_context *context,
 	return result;
 }
 
-int srmv2_prepeare_to_get_sync(struct srm_context *context,
+int srmv2_prepare_to_get_sync(struct srm_context *context,
 		struct srm_preparetoput_input *input, struct srm_preparetoput_output *output)
 {
 	struct srm_internal_context internal_context;

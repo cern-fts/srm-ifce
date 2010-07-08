@@ -193,15 +193,15 @@ void TestPrepareToPutPrepareToGet()
   //  b = TestBringOnline(test_surls_put,protocols);
     // fail if b != -1
 
-    a = srm_prepeare_to_get(&context,&input_get,&output_get);
+    a = srm_prepare_to_get(&context,&input_get,&output_get);
     // if a != 1 error
 	PrintPinFileStatuses(output_get.filestatuses,a);
 
 /*
-    b = srm_prepeare_to_put(&context,&input_put,&output_put);
+    b = srm_prepare_to_put(&context,&input_put,&output_put);
     // if b != 1 error
 
-    b = srm_prepeare_to_put(&context,&input_put,&output_put2);
+    b = srm_prepare_to_put(&context,&input_put,&output_put2);
     // if b != -1 error
     //PrintPinFileStatuses(output_put.filestatuses,b);
 
@@ -209,7 +209,7 @@ void TestPrepareToPutPrepareToGet()
 	// fail if  a != 1
 
 	// delete file
-    b = srm_prepeare_to_put(&context,&input_put,&output_put);
+    b = srm_prepare_to_put(&context,&input_put,&output_put);
     // if b != 1 error
    // PrintPinFileStatuses(output_put.filestatuses,b);
 
@@ -230,7 +230,7 @@ void TestPrepareToPutPrepareToGet()
     	// fail if b!=1
 
     	input_get.surls = test_surls_unexisting;
-    	a = srm_prepeare_to_get(&context,&input_get,&output_get);
+    	a = srm_prepare_to_get(&context,&input_get,&output_get);
     	// fail if a!=-1
 
 
@@ -428,17 +428,17 @@ START_TEST (test_data_transfer_functions)
 	fail_if ((b != -1), "Expected Failure !\n");
 	// fail if b != -1
 
-	a = srm_prepeare_to_get(&context,&input_get,&output_get);
+	a = srm_prepare_to_get(&context,&input_get,&output_get);
 	fail_if ((a != 1), "Expected Success !\n");
 	// if a != 1 error
 //	PrintPinFileStatuses(output_get.filestatuses,a);
 
 
-	b = srm_prepeare_to_put(&context,&input_put,&output_put);
+	b = srm_prepare_to_put(&context,&input_put,&output_put);
 	fail_if ((b != 1), "Expected Success !\n");
 	// if b != 1 error
 
-	b = srm_prepeare_to_put(&context,&input_put,&output_put2);
+	b = srm_prepare_to_put(&context,&input_put,&output_put2);
 	fail_if ((b != -1), "Expected Failure !\n");
 	// if b != -1 error
 	//PrintPinFileStatuses(output_put.filestatuses,b);
@@ -448,7 +448,7 @@ START_TEST (test_data_transfer_functions)
 	// fail if  a != 1
 
 	// delete file
-	b = srm_prepeare_to_put(&context,&input_put,&output_put);
+	b = srm_prepare_to_put(&context,&input_put,&output_put);
 	fail_if ((b != 1), "Expected Success !\n");
 	// if b != 1 error
    // PrintPinFileStatuses(output_put.filestatuses,b);
@@ -469,7 +469,7 @@ START_TEST (test_data_transfer_functions)
 		// fail if b!=1
 
 		input_get.surls = test_surls_unexisting;
-		a = srm_prepeare_to_get(&context,&input_get,&output_get);
+		a = srm_prepare_to_get(&context,&input_get,&output_get);
 		fail_if ((a != -1), "Expected Failure !\n");
 		// fail if a!=-1
 	}

@@ -23,7 +23,7 @@ int srm_bring_online_async(struct srm_context *context,
 int srm_status_of_bring_online_async(struct srm_context *context,
 		struct srm_bringonline_input *input,struct srm_bringonline_output *output);
 
-int srm_prepeare_to_put(struct srm_context *context,
+int srm_prepare_to_put(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
 int srm_prepare_to_put_async(struct srm_context *context,
@@ -32,7 +32,7 @@ int srm_prepare_to_put_async(struct srm_context *context,
 int srm_status_of_put_request_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
-int srm_prepeare_to_get(struct srm_context *context,
+int srm_prepare_to_get(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
 int srm_prepare_to_get_async(struct srm_context *context,
@@ -86,13 +86,13 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 int srm_status_of_put_request(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
-int srm_prepeare_to_put_async(struct srm_context *context,
+int srm_prepare_to_put_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,struct srm_preparetoput_output *output);
 
 int srm_status_of_get_request(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
-int srm_prepeare_to_get_async(struct srm_context *context,
+int srm_prepare_to_get_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,struct srm_preparetoget_output *output);
 
 
