@@ -186,6 +186,37 @@ int srm_prepeare_to_get(struct srm_context *context,
 	}
 }
 
+int srm_prepeare_to_get_async(struct srm_context *context,
+		struct srm_preparetoget_input *input,
+		struct srm_preparetoget_output *output)
+{
+	switch (context->version)
+	{
+		case VERSION_2_2:
+			return srmv2_prepeare_to_get_async(context,input,output);
+		case VERSION_1:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+int srm_status_of_get_request(struct srm_context *context,
+		struct srm_preparetoget_input *input,
+		struct srm_preparetoget_output *output)
+{
+	switch (context->version)
+	{
+		case VERSION_2_2:
+			return srmv2_status_of_get_request_async(context,input,output);
+		case VERSION_1:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+
 int srm_prepeare_to_put(struct srm_context *context,
 		struct srm_preparetoput_input *input,
 		struct srm_preparetoput_output *output)
@@ -201,6 +232,38 @@ int srm_prepeare_to_put(struct srm_context *context,
 			return (-1);
 	}
 }
+
+int srm_prepeare_to_put_async(struct srm_context *context,
+		struct srm_preparetoput_input *input,
+		struct srm_preparetoput_output *output)
+{
+	switch (context->version)
+	{
+		case VERSION_2_2:
+			return srmv2_prepare_to_put_async(context,input,output);
+		case VERSION_1:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+int srm_status_of_put_request(struct srm_context *context,
+		struct srm_preparetoput_input *input,
+		struct srm_preparetoput_output *output)
+{
+	switch (context->version)
+	{
+		case VERSION_2_2:
+			return srmv2_status_of_put_request_async(context,input,output);
+		case VERSION_1:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+
 
 int srm_abort_files(struct srm_context *context,
 		struct srm_abort_files_input *input,struct srmv2_filestatus **statuses)
