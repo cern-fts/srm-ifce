@@ -201,7 +201,7 @@ int srm_prepare_to_get_async(struct srm_context *context,
 			return (-1);
 	}
 }
-int srm_status_of_get_request(struct srm_context *context,
+int srm_status_of_get_request_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,
 		struct srm_preparetoget_output *output)
 {
@@ -248,7 +248,7 @@ int srm_prepare_to_put_async(struct srm_context *context,
 			return (-1);
 	}
 }
-int srm_status_of_put_request(struct srm_context *context,
+int srm_status_of_put_request_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,
 		struct srm_preparetoput_output *output)
 {
