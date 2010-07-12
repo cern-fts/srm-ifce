@@ -2,6 +2,7 @@ CC=gcc
 LD=ld
 LDFLAGS=-shared
 
+arch=$(shell uname -m)
 
 # handling x86_64's lib64 directory
 lib_m=lib
@@ -9,9 +10,10 @@ ifeq ($(arch), x86_64)
 lib_m=lib64
 endif
 
+
 GLOBUS_LDFLAGS = -L$(GLOBUS_LOCATION)/lib
 CCHECK_INCLUDES = -I$(CCHECK_LOCATION)/include  
-CCHECK_LDFLAGS = -L$(CCHECK_LOCATION)/lib64
+CCHECK_LDFLAGS = -L$(CCHECK_LOCATION)/$(lib_m)
 
 
 
@@ -32,24 +34,25 @@ DEFINES=-D_LARGEFILE64_SOURCE \
 		-DGFAL_SECURE
 
 LIBRARIES=	-lcgsi_plugin_gsoap_2.7 \
-			-lglobus_gss_assist_gcc64dbg \
-			-lglobus_gssapi_gsi_gcc64dbg \
-			-lglobus_gsi_proxy_core_gcc64dbg \
-			-lglobus_gsi_proxy_core_gcc64dbg \
-			-lglobus_gsi_credential_gcc64dbg \
-			-lglobus_gsi_callback_gcc64dbg \
-			-lglobus_oldgaa_gcc64dbg \
-			-lglobus_gsi_sysconfig_gcc64dbg \
-			-lglobus_gsi_cert_utils_gcc64dbg \
-			-lglobus_proxy_ssl_gcc64dbg \
-			-lglobus_common_gcc64dbg \
-			-lltdl_gcc64dbg \
-			-lglobus_callout_gcc64dbg \
-			-lglobus_openssl_error_gcc64dbg \
-			-lglobus_openssl_gcc64dbg 
+			-lglobus_gss_assist_$(GLOBUS_FLAVOUR) \
+			-lglobus_gssapi_gsi_$(GLOBUS_FLAVOUR) \
+			-lglobus_gsi_proxy_core_$(GLOBUS_FLAVOUR) \
+			-lglobus_gsi_proxy_core_$(GLOBUS_FLAVOUR) \
+			-lglobus_gsi_credential_$(GLOBUS_FLAVOUR) \
+			-lglobus_gsi_callback_$(GLOBUS_FLAVOUR) \
+			-lglobus_oldgaa_$(GLOBUS_FLAVOUR) \
+			-lglobus_gsi_sysconfig_$(GLOBUS_FLAVOUR) \
+			-lglobus_gsi_cert_utils_$(GLOBUS_FLAVOUR) \
+			-lglobus_proxy_ssl_$(GLOBUS_FLAVOUR) \
+			-lglobus_common_$(GLOBUS_FLAVOUR) \
+			-lltdl_$(GLOBUS_FLAVOUR) \
+			-lglobus_callout_$(GLOBUS_FLAVOUR) \
+			-lglobus_openssl_error_$(GLOBUS_FLAVOUR) \
+			-lglobus_openssl_$(GLOBUS_FLAVOUR) 
 LIBRARIES_FOLDER=-L$(GLOBUS_LOCATION) \
 				 -L$(BUILDDIR)/ \
-				 -L$(STAGE_LOCATION)/lib64 \
+				 -L$(STAGE_LOCATION)/lib \
+				 -L$(STAGE_LOCATION)/$(lib_m) \
 				 $(CCHECK_LDFLAGS)
 
 CFLAGS=-ggdb -fPIC $(INCLUDE) $(DEFINES)
