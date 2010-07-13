@@ -143,7 +143,7 @@ void TestPrepareToPutPrepareToGet()
 	struct srm_preparetoput_input input_put;
     struct srm_preparetoput_output output_put,output_put2,output_put3;
 	struct srmv2_pinfilestatus *filestatuses;
-	long int filesizes[1] ={ 1024 };
+	SRM_LONG64 filesizes[1] ={ 1024 };
 	struct srm_extendfilelifetime_input input_extend;
 
 
@@ -381,7 +381,7 @@ START_TEST (test_data_transfer_functions)
 	struct srm_preparetoput_input input_put;
 	struct srm_preparetoput_output output_put,output_put2,output_put3;
 	struct srmv2_pinfilestatus *filestatuses;
-	long int filesizes[1] ={ 1024 };
+	SRM_LONG64 filesizes[1] ={ 1024 };
 
 	context.verbose = 1;
 	context.errbufsz = 0;
