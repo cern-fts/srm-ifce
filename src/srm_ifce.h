@@ -80,6 +80,9 @@ int srm_getpermission (struct srm_context *context,
 int srm_setpermission (struct srm_context *context,
 		struct srm_setpermission_input *input);
 
+int srm_check_permission(struct srm_context *context,
+		struct srm_checkpermission_input *input,struct srmv2_filestatus **statuses);
+
 char* srmv2_getbestspacetoken (struct srm_context *context,
 		struct srm_getbestspacetokens_input *input);
 
