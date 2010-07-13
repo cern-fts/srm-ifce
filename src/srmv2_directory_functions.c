@@ -472,7 +472,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 }
 int srmv2_extend_file_lifetime(struct srm_context *context,
 		struct srm_extendfilelifetime_input *input,
-		struct srmv2_pinfilestatus **filestatuses)
+		struct srm_extendfilelifetime_output *output)
 {
 	int ret;
 	struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs;
@@ -510,8 +510,8 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
-
-	if (rep.srmExtendFileLifeTimeResponse == NULL || (reqstatp = rep.srmExtendFileLifeTimeResponse->returnStatus) == NULL)
+	if ((rep.srmExtendFileLifeTimeResponse == NULL)||(ret!=0)||
+			copy_returnstatus(&output->retstatus,rep.srmExtendFileLifeTimeResponse->returnStatus))
 	{
 		srm_errmsg (context, "[SE][%s][] %s: <empty response>", srmfunc, context->srm_endpoint);
 		srm_soap_deinit(&soap);
@@ -522,15 +522,15 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	/* return file statuses */
 	repfs = rep.srmExtendFileLifeTimeResponse->arrayOfFileStatuses;
 
-	if (reqstatp->statusCode != SRM_USCORESUCCESS || !repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+	if (output->retstatus->statusCode != SRM_USCORESUCCESS || !repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
-		errno = srm_call_err(context,reqstatp,srmfunc);
+		errno = srm_call_err(context,output->retstatus,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
-	ret = copy_pinfilestatuses_extendlifetime(reqstatp,
-							filestatuses,
+	ret = copy_pinfilestatuses_extendlifetime(output->retstatus,
+							&output->filestatuses,
 							repfs,
 							srmfunc);
 

@@ -2829,6 +2829,7 @@ START_TEST (test_srmv2_extend_file_lifetime)
 {
 	int i;
 	struct srm_extendfilelifetime_input input;
+	struct srm_extendfilelifetime_output output;
 	struct srmv2_pinfilestatus *status;
 	struct srm_context context;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
@@ -2847,28 +2848,29 @@ START_TEST (test_srmv2_extend_file_lifetime)
 	input.surls = test_surls;
 	input.reqtoken = "test";
 
+
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test1;
-	result = srmv2_extend_file_lifetime(&context,&input,&status); //failure empty fs
+	result = srmv2_extend_file_lifetime(&context,&input,&output); //failure empty fs
 	fail_if ((result  != -1),
 					"Expected Failure !\n");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test2;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != -1),
 					"Expected Failure !\n");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test3;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != -1),
 					"Expected Failure !\n");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test4;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != -1),
 					"Expected Failure !\n");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test5;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
+	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != 1),
 					"Expected Success!\n");
 

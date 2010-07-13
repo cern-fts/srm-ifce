@@ -371,6 +371,12 @@ struct srm_extendfilelifetime_input
 	int pintime; // pin time 
 };
 
+struct srm_extendfilelifetime_output
+{
+	struct srm2__TReturnStatus  *retstatus;// status of the srm call
+	struct srmv2_pinfilestatus  *filestatuses;// returned statuses
+};
+
 struct srm_filepermission
 {
 	char 	*surl;

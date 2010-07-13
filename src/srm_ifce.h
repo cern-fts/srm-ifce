@@ -83,6 +83,9 @@ int srm_setpermission (struct srm_context *context,
 char* srmv2_getbestspacetoken (struct srm_context *context,
 		struct srm_getbestspacetokens_input *input);
 
+int srm_extend_file_lifetime (struct srm_context *context,
+		struct srm_extendfilelifetime_input *input,struct srm_extendfilelifetime_output *output);
+
 
 // gsoap timeouts
 void srm_set_timeout_connect (int);

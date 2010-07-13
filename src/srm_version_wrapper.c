@@ -379,5 +379,21 @@ int srm_setpermission (struct srm_context *context,
 			return (-1);
 	}
 }
+int srm_extend_file_lifetime (struct srm_context *context,
+		struct srm_extendfilelifetime_input *input,
+		struct srm_extendfilelifetime_output *output)
+{
+	switch (context->version)
+	{
+		case VERSION_2_2:
+			return srmv2_extend_file_lifetime(context,input,output);
+		case VERSION_1:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}
+
 
 
