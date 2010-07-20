@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "srm_types.h"
 #include "srm_ifce.h"
 
@@ -10,6 +11,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 	back_off_logic_init(context,&internal_context);
 
 	// Call srm ls
+	output->token = NULL;
 	result = srmv2_ls_async_internal(context,input,output,&internal_context);
 
 	internal_context.attempt = 1;
@@ -44,6 +46,7 @@ int srmv2_prepare_to_put_sync(struct srm_context *context,
 	back_off_logic_init(context,&internal_context);
 
 	// request
+	output->token = NULL;
 	result = srmv2_prepare_to_put_async_internal(context,input,output,&internal_context);
 
 	internal_context.attempt = 1;
@@ -76,6 +79,7 @@ int srmv2_prepare_to_get_sync(struct srm_context *context,
 	back_off_logic_init(context,&internal_context);
 
 	// request
+	output->token = NULL;
 	result = srmv2_prepare_to_get_async_internal(context,input,output,&internal_context);
 
 	internal_context.attempt = 1;
@@ -107,6 +111,7 @@ int srmv2_bring_online_sync(struct srm_context *context,
 	back_off_logic_init(context,&internal_context);
 
 	// request
+	output->token = NULL;
 	result = srmv2_bring_online_async_internal(context,input,output,&internal_context);
 
 	internal_context.attempt = 1;
