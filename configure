@@ -13,9 +13,9 @@
 
 basedir=$(cd $(dirname $0); echo $PWD)
 
-USAGE="configure --with-version=...  --with-release=... --with-globus-location=...  --with-globus-thr-flavor=...  --with-globus-nothr-flavor=... --with-gsoap-location=... --with-gsoap-version=... --with-stage-location=... --with-cgsi-gsoap-location=... --with-ccheck-location=..."
+USAGE="configure --with-version=...  --with-release=... --with-globus-location=...  --with-globus-thr-flavor=...  --with-globus-nothr-flavor=... --with-gsoap-location=... --with-gsoap-version=... --with-stage-location=... --with-cgsi-gsoap-location=... --with-ccheck-location=... --with-glib-location=..."
 
-TEMP=$(getopt -o h --long help,with-version:,with-release:,with-globus-location:,with-globus-thr-flavor:,with-globus-nothr-flavor:,with-gsoap-location:,with-gsoap-version:,with-cgsi-gsoap-location:,with-stage-location:,with-ccheck-location: -- "$@")
+TEMP=$(getopt -o h --long help,with-version:,with-release:,with-globus-location:,with-globus-thr-flavor:,with-globus-nothr-flavor:,with-gsoap-location:,with-gsoap-version:,with-cgsi-gsoap-location:,with-stage-location:,with-glib2-devel-prefix:,with-ccheck-location: -- "$@")
 eval set -- "$TEMP"
 
 echo "$@" >${basedir}/config.status
@@ -79,6 +79,11 @@ while true; do
             CGSI_GSOAP_LOCATION="$1"
             shift
             ;;
+        --with-glib2-devel-prefix)
+            shift
+            GLIB_LOCATION="$1"
+            shift
+            ;;
         --with-ccheck-location)
             shift
             CCHECK_LOCATION="$1"
@@ -101,6 +106,7 @@ SRCDIR=${basedir}/src
 BUILDDIR=${basedir}/build
 include ${basedir}/VERSION
 
+
 CCHECK_LOCATION=${CCHECK_LOCATION}
 GLOBUS_LOCATION=${GLOBUS_LOCATION:-/opt/globus}/lib
 GLOBUS_FLAVOUR=${GLOBUS_FLAVOUR}
@@ -108,7 +114,7 @@ GLOBUS_FLAVOUR_PTHR=${GLOBUS_FLAVOUR_PTHR}
 GSOAP_LOCATION=${GSOAP_LOCATION}
 CGSI_LOCATION=${CGSI_GSOAP_LOCATION}
 STAGE_LOCATION=${STAGE_LOCATION:-/opt/glite}
-
+GLIB_LOCATION=${GLIB_LOCATION}
 
 include \$(SRCDIR)/Makefile
 EOF
