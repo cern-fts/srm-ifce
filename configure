@@ -1,0 +1,115 @@
+#!/bin/bash
+#
+# Copyright (c) Members of the EGEE Collaboration. 2006-2007.
+# See http://public.eu-egee.org/partners/ for details on
+# the copyright holders.
+# For license conditions see the license file or
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Authors:
+#      Akos Frohner <Akos.Frohner@cern.ch>
+#
+# Poor man's adapter to work around ETICS newline and backslash handling problems.
+
+basedir=$(cd $(dirname $0); echo $PWD)
+
+USAGE="configure --with-version=...  --with-release=... --with-globus-location=...  --with-globus-thr-flavor=...  --with-globus-nothr-flavor=... --with-gsoap-location=... --with-gsoap-version=... --with-stage-location=... --with-cgsi-gsoap-location=... --with-ccheck-location=..."
+
+TEMP=$(getopt -o h --long help,with-version:,with-release:,with-globus-location:,with-globus-thr-flavor:,with-globus-nothr-flavor:,with-gsoap-location:,with-gsoap-version:,with-cgsi-gsoap-location:,with-stage-location:,with-ccheck-location: -- "$@")
+eval set -- "$TEMP"
+
+echo "$@" >${basedir}/config.status
+
+if [ $(uname -m) = 'x86_64' ]; then
+    GLOBUS_FLAVOUR=gcc64dbg
+    GLOBUS_FLAVOUR_PTHR=gcc64dbgpthr
+else
+    GLOBUS_FLAVOUR=gcc32dbg
+    GLOBUS_FLAVOUR_PTHR=gcc32dbgpthr
+fi
+
+while true; do
+    case "$1" in
+        -h|--help)
+            echo $USAGE
+            exit
+            ;;
+        --with-version)
+            shift
+            VERSION="$1"
+            shift
+            ;;  
+        --with-release)
+            shift
+            RELEASE="$1"
+            shift
+            ;;  
+        --with-globus-location)
+            shift
+            GLOBUS_LOCATION="$1"
+            shift
+            ;;  
+        --with-globus-thr-flavor)
+            shift
+            GLOBUS_FLAVOUR_PTHR="$1"
+            shift
+            ;;  
+        --with-globus-nothr-flavor)
+            shift
+            GLOBUS_FLAVOUR="$1"
+            shift
+            ;; 
+        --with-stage-location)
+            shift
+            STAGE_LOCATION="$1"
+            shift
+            ;;  
+        --with-gsoap-location)
+            shift
+            GSOAP_LOCATION="$1"
+            shift
+            ;;  
+        --with-gsoap-version)
+            shift
+            GSOAP_VERSION="$1"
+            shift
+            ;;  
+        --with-cgsi-gsoap-location)
+            shift
+            CGSI_GSOAP_LOCATION="$1"
+            shift
+            ;;
+        --with-ccheck-location)
+            shift
+            CCHECK_LOCATION="$1"
+            shift
+            ;;    
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Unknown option '$1'"
+            exit 2
+            ;;
+    esac
+done
+
+mkdir ${basedir}/build -p
+cat >build/Makefile <<EOF
+SRCDIR=${basedir}/src
+BUILDDIR=${basedir}/build
+include ${basedir}/VERSION
+
+CCHECK_LOCATION=${CCHECK_LOCATION}
+GLOBUS_LOCATION=${GLOBUS_LOCATION:-/opt/globus}/lib
+GLOBUS_FLAVOUR=${GLOBUS_FLAVOUR}
+GLOBUS_FLAVOUR_PTHR=${GLOBUS_FLAVOUR_PTHR}
+GSOAP_LOCATION=${GSOAP_LOCATION}
+CGSI_LOCATION=${CGSI_GSOAP_LOCATION}
+STAGE_LOCATION=${STAGE_LOCATION:-/opt/glite}
+
+
+include \$(SRCDIR)/Makefile
+EOF
+
