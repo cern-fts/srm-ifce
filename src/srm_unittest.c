@@ -14,6 +14,7 @@
 
 
 char test_string[] = "test_string";
+char test_dir[] = "/test/1/2/3/4";
 char* test_strings[3]= { "test_string1","test_string2",NULL};
 void PrintResult(struct srmv2_mdfilestatus* output);
 
@@ -697,8 +698,39 @@ int  soap_call_srm2__srmMkdir_test3(struct soap *soap, const char *soap_endpoint
 
 	return 0;
 }
+int mkdir_test_ok = 0;
+int  soap_call_srm2__srmMkdir_test_last_level(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmMkdirRequest *srmMkdirRequest,
+						struct srm2__srmMkdirResponse_ *_param_18)
+{
+	int i,n;
+	struct srm2__srmMkdirResponse *resp  = (struct srm2__srmMkdirResponse *) soap_malloc (soap,sizeof (struct srm2__srmMkdirResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmMkdirResponse = resp;
+
+	mkdir_test_ok = 0;
+	n = strlen(test_dir);
+	// Check if we create the full directory not using strcmp because of last slash char
+	for(i=0;i<n && i<strlen(srmMkdirRequest->SURL);i++)
+	{
+		if (srmMkdirRequest->SURL[i] != test_dir[i])
+		{
+			break;
+		}
+	}
+	if ((i == n) ||
+			(i == (n-1) && test_dir[n-1] == '/'))
+	{
+		mkdir_test_ok = 1;
+	}
+
+	return 0;
+}
 //////////////////////////////////////////////////////////////////
-// test test_srmv2_rm
+// test test_srmv2_mkdir
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_mkdir)
 {
@@ -713,7 +745,7 @@ START_TEST (test_srmv2_mkdir)
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
-	input.dir_name = "/dpm/cern.ch/home/dteam/1/2/3/4";
+	input.dir_name = test_dir;
 
 	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test1;
 	result = srmv2_mkdir(&context,&input);
@@ -724,6 +756,19 @@ START_TEST (test_srmv2_mkdir)
 	result = srmv2_mkdir(&context,&input);
 	fail_if ((result  != 0),
 				   "Expected Success!\n");
+
+	/*call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test3;
+	result = srmv2_mkdir(&context,&input);
+	fail_if ((result  != -1),
+				   "Expected Failure 1!\n");
+*/
+	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test_last_level;
+	result = srmv2_mkdir(&context,&input);
+	fail_if ((result  != 0),
+				   "Expected Success!\n");
+	fail_if ((mkdir_test_ok  != 1),
+				   "Expected Success!\n");
+
 }
 END_TEST
 
@@ -3164,6 +3209,59 @@ void TestSetPermission()
 //	fail_if ((result  != -1),
 	//				"Expected Failure !\n");
 }
+/*
+int mkdir_test_ok = 0;
+int  soap_call_srm2__srmMkdir_test_last_level(struct soap *soap, const char *soap_endpoint, const char *soap_action,
+						struct srm2__srmMkdirRequest *srmMkdirRequest,
+						struct srm2__srmMkdirResponse_ *_param_18)
+{
+	int i,n;
+	struct srm2__srmMkdirResponse *resp  = (struct srm2__srmMkdirResponse *) soap_malloc (soap,sizeof (struct srm2__srmMkdirResponse));
+	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
+	retstatus->statusCode = SRM_USCORESUCCESS;
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	_param_18->srmMkdirResponse = resp;
+
+	mkdir_test_ok = 0;
+	n = strlen(test_dir);
+	for(i=0;i<n && i<strlen(srmMkdirRequest->SURL);i++)
+	{
+		if (srmMkdirRequest->SURL[i] != test_dir[i])
+		{
+			break;
+		}
+	}
+	if ((i == n) ||
+			(i == (n-1) && test_dir[n-1] == '/'))
+	{
+		mkdir_test_ok = 1;
+	}
+
+	return 0;
+}*/
+
+//////////////////////////////////////////////////////////////////
+// test test_srmv2_mkdir
+//////////////////////////////////////////////////////////////////
+void TestMkdir()
+{
+	struct srm_mkdir_input input;
+	struct srm_context context;
+	int result;
+
+	call_function.call_sleep = mock_sleep; // set mock sleep function
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.srm_endpoint = "test";
+
+	input.dir_name = test_dir;
+
+	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test_last_level;
+	result = srmv2_mkdir(&context,&input);
+}
 
 int main(void)
 {
@@ -3179,6 +3277,7 @@ int main(void)
 	//TestGetPermission();
 	//TestSetPermission();
 	//TestExtend();
+	//TestMkdir();
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
