@@ -425,7 +425,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 	// 2nd cycle, creating directories descendingly as of the one created by previous cycle
 	*p = '/';
 	sav_errno = 0;
-	while (sav_errno == 0 && p < endp && (p = strchr (p + 1, 0)) != NULL)
+	while (sav_errno == 0 && p <= endp && (p = strchr (p + 1, 0)) != NULL)
 	{
 		req.SURL = file;
 
