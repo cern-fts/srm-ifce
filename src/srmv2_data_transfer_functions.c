@@ -532,7 +532,6 @@ int srmv2_put_done(struct srm_context *context,
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
-
 	req.requestToken = (char *) input->reqtoken;
 
 	// NOTE: only one SURL in the array
@@ -606,7 +605,6 @@ int srmv2_release_files(struct srm_context *context,
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
-
 	req.requestToken = (char *) input->reqtoken;
 
 	// NOTE: only one SURL in the array
@@ -965,6 +963,7 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 	int result;
 	srm_soap_init(&soap);
 
+	memset (&abortreq, 0, sizeof(abortreq));
 
 	if (token == NULL)
 	{

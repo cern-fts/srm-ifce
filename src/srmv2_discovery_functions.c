@@ -14,6 +14,7 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 
 	srm_soap_init(&soap);
 
+	memset (&req, 0, sizeof(req));
 
 	result = call_function.call_srm2__srmPing (&soap, context->srm_endpoint, srmfunc, &req, &rep);
 
