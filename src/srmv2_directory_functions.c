@@ -22,6 +22,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 
 	srm_soap_init(&soap);
 
+	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
 	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
@@ -220,6 +221,8 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
+	memset(output,0,sizeof(*output));
+
 
 	// NOTE: only one file in the array
 	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL) {
@@ -301,6 +304,8 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
+	memset(output,0,sizeof(*output));
+
 	req.SURL = (char *) input->surl;
 	if (input->recursive)
 	{
@@ -488,6 +493,7 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	/* issue "extendfilelifetime" request */
 
 	memset (&req, 0, sizeof(req));
+	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{

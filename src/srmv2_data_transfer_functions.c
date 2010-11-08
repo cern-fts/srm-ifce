@@ -133,6 +133,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
+	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfFileRequests =
 				soap_malloc (&soap, sizeof(struct srm2__ArrayOfTPutFileRequest))) == NULL ||
@@ -323,6 +324,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 
 	/* issue "get" request */
 	memset (&req, 0, sizeof(req));
+	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfFileRequests =
 				soap_malloc (&soap, sizeof(struct srm2__ArrayOfTGetFileRequest))) == NULL ||
@@ -688,6 +690,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	srm_soap_init(&soap);
 
 	// issue "bringonline" request
+	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
 	if ((req.arrayOfFileRequests =

@@ -110,6 +110,7 @@ int srmv2_get_permission(struct srm_context *context,
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
+	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{

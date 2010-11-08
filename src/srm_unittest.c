@@ -2298,13 +2298,13 @@ START_TEST (test_srmv2_getspacetokens)
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != 0),
 					"Expected Success!\n");
+	fail_if ((strcmp(output.spacetokens[0],test_string)  != 0),
+						"Expected the same string !\n");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
 					"Expected Failure !\n");
-	fail_if ((strcmp(output.spacetokens[0],test_string)  != 0),
-						"Expected the same string !\n");
 
 }
 END_TEST

@@ -194,10 +194,9 @@ int srmv2_getspacetokens (struct srm_context *context,
 		errno = EINVAL;
 		return (-1);
 	}
-	output->nbtokens = 0;
-
 	srm_soap_init(&soap);
 
+	memset(output,0,sizeof(*output));
 	memset (&tknreq, 0, sizeof(tknreq));
 
 	tknreq.userSpaceTokenDescription = (char *) input->spacetokendesc;
@@ -357,6 +356,7 @@ int srmv2_reservespace_test_function(struct srm_context *context,
 
 	srm_soap_init(&soap);
 
+	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
 	req.userSpaceTokenDescription = input->spacetokendescriptor;
