@@ -663,12 +663,6 @@ int srmv2_release_files(struct srm_context *context,
 }
 
 
-int srmv2_copy(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output **output)
-{
-	return 0;
-}
-
-
 int srmv2_bring_online_async_internal (struct srm_context *context,
 		struct srm_bringonline_input *input,
 		struct srm_bringonline_output *output,
