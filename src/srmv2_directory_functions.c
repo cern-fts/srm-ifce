@@ -350,7 +350,7 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 		}
 		srm_soap_deinit(&soap);
 		errno = 0;
-		return (0);
+		return (1); //deleted one folder
 	}else
 	{
 		srm_soap_deinit(&soap);
