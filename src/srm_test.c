@@ -11,7 +11,7 @@ char *source_file = "file:///etc/group";
 char *test_file1 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
 char *test_file2 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
 char *test_unexisting = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting";
-char *test_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test";
+char *test_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/";
 char *test_spacedescriptor = "srm_test_space";
 
 void PrintResult(struct srmv2_mdfilestatus *print_output);
@@ -27,19 +27,44 @@ int TestLs(char *surl);
 
 void SetCopyCommand(char **command,char *file)
 {
-	asprintf (command, "lcg-cr --verbose --nobdii -D srmv2 --vo dteam  %s -d %s ", source_file,file);
+	asprintf (command, "lcg-cp --nobdii -D srmv2 --vo dteam  %s %s ", source_file,file);
 }
-void SetDelCommand(char **command,char *file)
+/*void SetDelCommand(char **command,char *file)
 {
-	asprintf (command, "lcg-del --verbose --nobdii -D srmv2 --vo dteam %s", file);
+	asprintf (command, "lcg-del --nobdii -D srmv2 --vo dteam %s", file);
 }
 void SetRegisterFileCommand(char **command,char *file)
 {
-	asprintf (command, "lcg-rf --verbose --nobdii -D srmv2 --vo dteam %s", file);
+	asprintf (command, "lcg-rf  --nobdii -D srmv2 --vo dteam %s", file);
 }
 void SetDelDirCommand(char **command,char *file)
 {
-	asprintf (command, "lcg-del --dir --verbose --nobdii -D srmv2 --vo dteam %s", file);
+	asprintf (command, "lcg-del --dir --nobdii -D srmv2 --vo dteam %s", file);
+}*/
+int DelDir(char *dir)
+{
+	struct srm_context context;
+	struct srm_rmdir_input input_rmdir;
+	struct srm_rmdir_output output_rmdir;
+
+	srm_context_init(&context,test_srm_endpoint);
+
+	input_rmdir.recursive = 1;
+	input_rmdir.surl = dir;
+
+	return srm_rmdir(&context,&input_rmdir,&output_rmdir);
+}
+int DelSurl(int nbfiles,char **surls)
+{
+	struct srm_context context;
+	struct srm_rm_input rm_input;
+	struct srm_rm_output rm_output;
+
+	srm_context_init(&context,test_srm_endpoint);
+	rm_input.nbfiles = nbfiles;
+	rm_input.surls = surls;
+
+	return srm_rm(&context,&rm_input,&rm_output);
 }
 int MkDir(char *directory)
 {
@@ -71,132 +96,6 @@ int MkDir(char *directory)
 	return srm_mkdir(&context,&input_mkdir);
 }
 
-void TestPrepareToPutPrepareToGet()
-{
-	int a,b,c;
-	char *command;
-	char *test_surls_get[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1"};
-	char *test_surls_put[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2"};
-	char *test_surls_unexisting[] = {test_unexisting};
-
-
-	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
-	struct srm_context context;
-	struct srm_preparetoget_input input_get;
-	struct srm_preparetoget_output output_get;
-	struct srm_preparetoput_input input_put;
-    struct srm_preparetoput_output output_put,output_put2,output_put3;
-	struct srmv2_pinfilestatus *filestatuses;
-	SRM_LONG64 filesizes[1] ={ 1024 };
-	struct srm_extendfilelifetime_input input_extend;
-
-
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-	context.timeout = 3600;
-	context.version = VERSION_2_2;
-
-	input_get.nbfiles = 1;
-	input_get.desiredpintime = 1000;
-	input_get.surls = test_surls_get;
-	input_get.protocols = protocols;
-	input_get.spacetokendesc = NULL;
-
-
-	input_put.filesizes = filesizes;
-	input_put.nbfiles = 1;
-	input_put.desiredpintime = 1000;
-	input_put.surls = test_surls_put;
-	input_put.protocols = protocols;
-	input_put.spacetokendesc = NULL;
-
-	SetCopyCommand(&command,test_surls_get[0]);
-	system(command);
-
-	// delete file2
-    /*SetRegisterFileCommand(&command,test_file2);
-    system(command);
-    SetDelCommand(&command,test_file2);
-    system(command);*/
-
-	a = TestBringOnline(test_surls_get,protocols);
-	// fail if a != 1
-
-	input_extend.nbfiles = 1;
-	input_extend.pintime = 3333;
-	input_extend.surls = test_surls_get;
-	input_extend.reqtoken = NULL;
-
-	b = srmv2_extend_file_lifetime(&context,&input_extend,&filestatuses);
-
-	a = TestBringOnline(test_surls_get,protocols);
-	// fail if a != 1
-
-
-  //  b = TestBringOnline(test_surls_put,protocols);
-    // fail if b != -1
-
-    a = srm_prepare_to_get(&context,&input_get,&output_get);
-    // if a != 1 error
-	PrintPinFileStatuses(output_get.filestatuses,a);
-
-/*
-    b = srm_prepare_to_put(&context,&input_put,&output_put);
-    // if b != 1 error
-
-    b = srm_prepare_to_put(&context,&input_put,&output_put2);
-    // if b != -1 error
-    //PrintPinFileStatuses(output_put.filestatuses,b);
-
-	a = TestAbortFiles(test_surls_put,output_put.token);
-	// fail if  a != 1
-
-	// delete file
-    b = srm_prepare_to_put(&context,&input_put,&output_put);
-    // if b != 1 error
-   // PrintPinFileStatuses(output_put.filestatuses,b);
-
-    if (b>0)
-    {
-
-
-    	//TestAbortFiles(test_surls_put,output_put.token);
-    	if (a>0 && b>0)
-    	{
-    		TestGlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
-    	}
-
-    	a = TestReleaseFiles(test_surls_get,output_get.token);
-    	// fail if a!=1
-
-    	b = TestPutDone(test_surls_put,output_put.token);
-    	// fail if b!=1
-
-    	input_get.surls = test_surls_unexisting;
-    	a = srm_prepare_to_get(&context,&input_get,&output_get);
-    	// fail if a!=-1
-
-
-
-	   // printf("Token Get: %s \nToken Put: %s\n",output_get.token,output_put.token);
-    	//TestPutDone(test_surls_put,output_put.token);
-       // TestAbortRequest(output_put.token);
-     //	TestAbortRequest(output_get.token);
-
-
-    }*/
-
- /*   SetDelCommand(&command,test_file1);
-    system(command);
-    SetRegisterFileCommand(&command,test_file2);
-    system(command);
-    SetDelCommand(&command,test_file2);
-    system(command);
-    SetDelDirCommand(&command,test_dir);
-    system(command);*/
-
-}
 //////////////////////////////////////////////////////////////////
 // test test_directory_functions
 //////////////////////////////////////////////////////////////////
@@ -214,6 +113,7 @@ START_TEST (test_directory_functions)
 
 	char *test_surls_rm[] = {test_file1};
 
+	char *test_surls_cleanup[] = {test_file1,test_file2};
 
 	char *test_surl_mkdir;
 	char *test_surl_rmdir;
@@ -226,21 +126,9 @@ START_TEST (test_directory_functions)
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
-	// delete file1
-	SetRegisterFileCommand(&command,test_file1);
-	system(command);
-	SetDelCommand(&command,test_file1);
-	system(command);;
-	// delete file2
-	SetRegisterFileCommand(&command,test_file2);
-	system(command);
-	SetDelCommand(&command,test_file2);
-	system(command);;
-
-	// delete folder
-	input_rmdir.recursive = 1;
-	input_rmdir.surl = test_dir;
-	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
+	// clean up files and folders
+	DelSurl(2,test_surls_cleanup);
+	a = DelDir(test_dir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
 
 
@@ -275,15 +163,12 @@ START_TEST (test_directory_functions)
 	input_rmdir.surl = test_surl_rmdir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
-	fail_if ((a != 0), "Expected Success!\n");
-	// fail if a != 0
+	fail_if ((a != 1), "Expected Success!\n");
+	// fail if a != 1
 
 	a = TestLs(test_dir);
 	fail_if ((a != 1), "Expected 1 File in this folder!\n");
 	// fail if a != 1
-
-	SetDelCommand(&command,test_file1);
-	system(command);;
 
 	input_rm.nbfiles = 1;
 	input_rm.surls = test_surls_rm;
@@ -302,8 +187,8 @@ START_TEST (test_directory_functions)
 	input_rmdir.surl = test_dir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
-	fail_if ((a != 0), "Expected Success!\n");
-	// fail if a != 0
+	fail_if ((a != 1), "Expected Success!\n");
+	// fail if a != 1
 }
 END_TEST
 
@@ -348,16 +233,9 @@ START_TEST (test_data_transfer_functions)
 	input_put.protocols = protocols;
 	input_put.spacetokendesc = NULL;
 
-	// delete file1
-	SetRegisterFileCommand(&command,test_file1);
-	system(command);
-	SetDelCommand(&command,test_file1);
-	system(command);;
-	// delete file2
-	SetRegisterFileCommand(&command,test_file2);
-	system(command);
-	SetDelCommand(&command,test_file2);
-	system(command);;
+	// cleanup files
+	DelSurl(1,test_surls_get);
+	DelSurl(1,test_surls_put);
 
 	a = MkDir(test_dir); // create dir srm_test if not created before
 
@@ -420,14 +298,9 @@ START_TEST (test_data_transfer_functions)
 		// fail if a!=-1
 	}
 
-	SetDelCommand(&command,test_file1);
-	system(command);
-	SetRegisterFileCommand(&command,test_file2);
-	system(command);
-	SetDelCommand(&command,test_file2);
-	system(command);
-	SetDelDirCommand(&command,test_dir);
-	system(command);
+	DelSurl(1,test_surls_get);
+	DelSurl(1,test_surls_put);
+	DelDir(test_dir);
 }
 END_TEST
 //////////////////////////////////////////////////////////////////
@@ -753,17 +626,9 @@ void TestDataTransferFunctions()
 	input_put.protocols = protocols;
 	input_put.spacetokendesc = NULL;
 
-	// delete file1
-	SetRegisterFileCommand(&command,test_file1);
-	system(command);
-	SetDelCommand(&command,test_file1);
-	system(command);;
-	// delete file2
-	SetRegisterFileCommand(&command,test_file2);
-	system(command);
-	SetDelCommand(&command,test_file2);
-	system(command);;
-
+	// cleanup files
+	DelSurl(1,test_surls_get);
+	DelSurl(1,test_surls_put);
 
 	a = MkDir(test_dir); // create dir
 
@@ -825,14 +690,15 @@ void TestDataTransferFunctions()
 		// fail if a!=-1
 	}
 
-	SetDelCommand(&command,test_file1);
+	/*SetDelCommand(&command,test_file1);
 	system(command);
 	SetRegisterFileCommand(&command,test_file2);
 	system(command);
 	SetDelCommand(&command,test_file2);
-	system(command);
-	SetDelDirCommand(&command,test_dir);
-	system(command);
+	system(command);*/
+	DelSurl(1,test_surls_get);
+	DelSurl(1,test_surls_put);
+	DelDir(test_dir);
 }
 void TestDirectoryFunctions()
 {
@@ -847,7 +713,7 @@ void TestDirectoryFunctions()
 	int j;
 
 	char *test_surls_rm[] = {test_file1};
-
+	char *test_surls_cleanup[] = {test_file1,test_file2};
 
 	char *test_surl_mkdir;
 	char *test_surl_rmdir;
@@ -861,7 +727,7 @@ void TestDirectoryFunctions()
 	context.version = VERSION_2_2;
 
 	// delete file1
-	SetRegisterFileCommand(&command,test_file1);
+	/*SetRegisterFileCommand(&command,test_file1);
 	system(command);
 	SetDelCommand(&command,test_file1);
 	system(command);;
@@ -869,7 +735,9 @@ void TestDirectoryFunctions()
 	SetRegisterFileCommand(&command,test_file2);
 	system(command);
 	SetDelCommand(&command,test_file2);
-	system(command);;
+	system(command);;*/
+
+	DelSurl(2,test_surls_cleanup);
 
 	// delete folder
 	input_rmdir.recursive = 1;
@@ -883,9 +751,10 @@ void TestDirectoryFunctions()
 	//fail_if ((a != -1), "Expected Unexistent Folder!\n");
 	// fail if a != -1
 
-	SetCopyCommand(&command,test_file1);
-	system(command);
+	//SetCopyCommand(&command,test_file1);
+	//system(command);
 
+	printf("HERE\n");
 	a = TestLs(test_dir);
 	//fail_if ((a != 1), "Expected One File!\n");
 	// fail if a != 1
@@ -915,8 +784,6 @@ void TestDirectoryFunctions()
 	//fail_if ((a != 1), "Expected 1 File in this folder!\n");
 	// fail if a != 1
 
-	SetDelCommand(&command,test_file1);
-	system(command);;
 
 	input_rm.nbfiles = 1;
 	input_rm.surls = test_surls_rm;
@@ -945,12 +812,16 @@ void TestDirectoryFunctions()
 
 int main(void)
 {
+	/*char* dir = srm_strip_string("dasaswsd", '/');
+	printf("Input: %s \n",test_dir);
+	printf("Result: %s \n",dir);*/
 	//TestPing(test_srm_endpoint);
 	//TestPrepareToPutPrepareToGet();
 	//TestReserveSpace();
 	//TestPermissions();
 	//TestDirectoryFunctions();
 	//TestDataTransferFunctions();
+	//TestDirectoryFunctions();
 	//TestDirectoryFunctions();
 	return DoTests();
 	//return 0;
