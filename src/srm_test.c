@@ -5,7 +5,6 @@
 #include "srm_types.h"
 #include "srm_ifce.h"
 
-//srm://lxb7993.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/
 char *test_srm_endpoint =  "srm://lxbra1910.cern.ch:8446/srm/managerv2";
 char *source_file = "file:///etc/group";
 char *test_file1 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
@@ -18,29 +17,65 @@ void PrintResult(struct srmv2_mdfilestatus *print_output);
 void PrintPinFileStatuses(struct srmv2_pinfilestatus *statuses, int count);
 void TestPrepareToPutPrepareToGet();
 
-void TestGlobusUrlCopy(char *sourceturl,char *destinationturl);
+void GlobusUrlCopy(char *sourceturl,char *destinationturl);
+int TestPutDone(char** surls,char *token);
 int TestAbortFiles(char **files,char *token);
 int TestBringOnline(char **files,char **protocols);
 int TestReleaseFiles(char **files,char *token);
 int TestPing(char *endpoint);
 int TestLs(char *surl);
+int DelSurl(int nbfiles,char **surls);
+int MkDir(char *directory);
 
-void SetCopyCommand(char **command,char *file)
+void CopyFile(char *file)
 {
-	asprintf (command, "lcg-cp --nobdii -D srmv2 --vo dteam  %s %s ", source_file,file);
+	char *command;
+	asprintf (&command, "lcg-cp --nobdii -D srmv2 --vo dteam  %s %s ", source_file,file);
+	printf("%s \n",command);
+	system(command);
 }
-/*void SetDelCommand(char **command,char *file)
+void GlobusUrlCopy(char *sourceturl,char *destinationturl)
 {
-	asprintf (command, "lcg-del --nobdii -D srmv2 --vo dteam %s", file);
+	char* globus_url_copy;
+	asprintf(&globus_url_copy,"globus-url-copy %s %s ",sourceturl,destinationturl);
+	printf("%s \n",globus_url_copy);
+	system(globus_url_copy);
 }
-void SetRegisterFileCommand(char **command,char *file)
+
+int FakeCopy(char *surl) // does prepare to put and put done without copying a single byte
 {
-	asprintf (command, "lcg-rf  --nobdii -D srmv2 --vo dteam %s", file);
+	char *surls[] = {surl};
+	int ret;
+	char *protocols[] = {"file","gsiftp",NULL}; //"rfio","dcap","gsidcap","kdcap",""
+	struct srm_context context;
+	struct srm_preparetoput_input input_put;
+	struct srm_preparetoput_output output_put;
+	SRM_LONG64 filesizes[1] ={ 0 };
+
+	context.verbose = 1;
+	context.errbufsz = 0;
+	context.srm_endpoint = test_srm_endpoint;
+	context.timeout = 3600;
+	context.version = VERSION_2_2;
+
+	input_put.filesizes = filesizes;
+	input_put.nbfiles = 1;
+	input_put.desiredpintime = 1000;
+	input_put.surls = surls;
+	input_put.protocols = protocols;
+	input_put.spacetokendesc = NULL;
+
+
+	MkDir(test_dir);
+
+	ret = srm_prepare_to_put(&context,&input_put,&output_put);
+
+	if (ret!= -1)
+	{
+		ret = TestPutDone(surls,output_put.token);
+	}
+	return ret;
 }
-void SetDelDirCommand(char **command,char *file)
-{
-	asprintf (command, "lcg-del --dir --nobdii -D srmv2 --vo dteam %s", file);
-}*/
 int DelDir(char *dir)
 {
 	struct srm_context context;
@@ -135,40 +170,31 @@ START_TEST (test_directory_functions)
 
 	a = TestLs(test_dir);
 	fail_if ((a != -1), "Expected Unexistent Folder!\n");
-	// fail if a != -1
 
-	a = MkDir(test_dir); // TODO check if lcg-cp must create the directory!!!
-	SetCopyCommand(&command,test_file1);
-	system(command);
+	CopyFile(test_file1);
 
 	a = TestLs(test_dir);
 	fail_if ((a != 1), "Expected One File!\n");
-	// fail if a != 1
 
 	input_mkdir.dir_name = test_surl_mkdir;
 	a = srm_mkdir(&context,&input_mkdir);
 	printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
 	fail_if ((a != 0), "Expected Success!\n");
-	// fail if a != 0
 
 	a = TestLs(test_surl_rmdir);
 	fail_if ((a != 1), "Expected 1 File in this folder!\n");
-	// fail if a != 1
 
 	a = TestLs(test_dir);
 	fail_if ((a != 2), "Expected 2 Files in this folder!\n");
-	// fail if a != 2
 
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = test_surl_rmdir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
 	fail_if ((a != 1), "Expected Success!\n");
-	// fail if a != 1
 
 	a = TestLs(test_dir);
 	fail_if ((a != 1), "Expected 1 File in this folder!\n");
-	// fail if a != 1
 
 	input_rm.nbfiles = 1;
 	input_rm.surls = test_surls_rm;
@@ -180,7 +206,6 @@ START_TEST (test_directory_functions)
 
 	a = TestLs(test_dir);
 	fail_if ((a != 0), "Expected Empty Folder!\n");
-	// fail if a != 0
 
 
 	input_rmdir.recursive = 1;
@@ -188,7 +213,6 @@ START_TEST (test_directory_functions)
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
 	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
 	fail_if ((a != 1), "Expected Success!\n");
-	// fail if a != 1
 }
 END_TEST
 
@@ -198,7 +222,6 @@ END_TEST
 START_TEST (test_data_transfer_functions)
 {
 	int a,b,c;
-	char *command;
 	char *test_surls_get[] = {test_file1};
 	char *test_surls_put[] = {test_file2};
 	char *test_surls_unexisting[] = {test_unexisting};
@@ -237,65 +260,45 @@ START_TEST (test_data_transfer_functions)
 	DelSurl(1,test_surls_get);
 	DelSurl(1,test_surls_put);
 
-	a = MkDir(test_dir); // create dir srm_test if not created before
-
-	SetCopyCommand(&command,test_file1);
-	system(command);
-
-
+	CopyFile(test_file1);
 
 	a = TestBringOnline(test_surls_get,protocols);
 	fail_if ((a != 1), "Expected Success !\n");
-	// fail if a != 1
 
 	b = TestBringOnline(test_surls_put,protocols);
 	fail_if ((b != -1), "Expected Failure !\n");
-	// fail if b != -1
 
 	a = srm_prepare_to_get(&context,&input_get,&output_get);
 	fail_if ((a != 1), "Expected Success !\n");
-	// if a != 1 error
-//	PrintPinFileStatuses(output_get.filestatuses,a);
-
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
 	fail_if ((b != 1), "Expected Success !\n");
-	// if b != 1 error
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put2);
 	fail_if ((b != -1), "Expected Failure !\n");
-	// if b != -1 error
-	//PrintPinFileStatuses(output_put.filestatuses,b);
 
 	a = TestAbortFiles(test_surls_put,output_put.token);
 	fail_if ((a != 1), "Expected Success !\n");
-	// fail if  a != 1
 
-	// delete file
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
 	fail_if ((b != 1), "Expected Success !\n");
-	// if b != 1 error
-   // PrintPinFileStatuses(output_put.filestatuses,b);
 
 	if (b>0)
 	{
 		if (a>0 && b>0)
 		{
-			TestGlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
+			GlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
 		}
 
 		a = TestReleaseFiles(test_surls_get,output_get.token);
 		fail_if ((a != 1), "Expected Success !\n");
-		// fail if a!=1
 
 		b = TestPutDone(test_surls_put,output_put.token);
 		fail_if ((b != 1), "Expected Success !\n");
-		// fail if b!=1
 
 		input_get.surls = test_surls_unexisting;
 		a = srm_prepare_to_get(&context,&input_get,&output_get);
 		fail_if ((a != -1), "Expected Failure !\n");
-		// fail if a!=-1
 	}
 
 	DelSurl(1,test_surls_get);
@@ -425,6 +428,85 @@ START_TEST (test_srm_space_management)
 }
 END_TEST
 
+
+
+//////////////////////////////////////////////////////////////////
+// test test_srm_permissions
+//////////////////////////////////////////////////////////////////
+START_TEST (test_srm_permissions)
+{
+	char *surls[] = {test_file1};
+
+	struct srm_getpermission_input input;
+	struct srm_getpermission_output output;
+
+	struct srm_checkpermission_input input_checkpermission;
+	struct srmv2_filestatus *filestatuses;
+
+	struct srm_setpermission_input input_set;
+	struct srm_permission user_perm;
+
+	struct srm_context context;
+
+	int result;
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = VERSION_2_2;
+	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+
+	input.nbfiles = 1;
+	input.surls =  surls;
+
+	input_checkpermission.nbfiles = 1;
+	input_checkpermission.surls = surls;
+	input_checkpermission.amode = SRM_PERMISSION_X;
+
+	CopyFile(test_file1);
+
+	result = srmv2_get_permission(&context,&input,&output); // fail if result != 1
+	fail_if ((result != 1), "Expected Success !\n");
+
+	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
+	fail_if ((result != 1), "Expected Success !\n");
+
+
+	input_set.surl = surls[0];
+	input_set.owner_permission = SRM_PERMISSION_RWX;
+	input_set.other_permission = SRM_PERMISSION_RW;
+	input_set.group_permissions_count = 0;
+	input_set.group_permissions = NULL;
+
+	input_set.user_permissions_count = 0;
+    input_set.user_permissions = NULL;
+	input_set.permission_type = SRM_PERMISSION_CHANGE;
+
+	result = srmv2_set_permission(&context,&input_set); // fiail if result != 0
+	fail_if ((result != 0), "Expected Success !\n");
+
+	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
+	fail_if ((result != 1), "Expected Success !\n");
+
+
+	user_perm.mode = SRM_PERMISSION_RW;
+	user_perm.name_id = "tmanev";
+
+	input_set.user_permissions_count = 1;
+	input_set.user_permissions = &user_perm;
+	input_set.permission_type = SRM_PERMISSION_ADD;
+
+	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
+//TODO
+
+
+	result = srmv2_get_permission(&context,&input,&output); // fail if owner_permission != RWX and other permission RW
+	fail_if ((result != 1)||(output.permissions->owner_permission != SRM_PERMISSION_RWX) , "Expected Success !\n");
+
+	DelSurl(1,surls);
+}
+END_TEST
+
 Suite * test_suite (void)
 {
 	Suite *s = suite_create ("New srm interface communication with real endpoint test suit");
@@ -433,6 +515,7 @@ Suite * test_suite (void)
 	TCase *tc_case_2 = tcase_create ("T2");
 	TCase *tc_case_3 = tcase_create ("T3");
 	TCase *tc_case_4 = tcase_create ("T4");
+	TCase *tc_case_5 = tcase_create ("T5");
 
 	tcase_add_checked_fixture (tc_case_1, NULL,NULL);
 	tcase_add_test (tc_case_1, test_srm_ping);
@@ -453,7 +536,93 @@ Suite * test_suite (void)
 	tcase_set_timeout(tc_case_4, 60);
 	suite_add_tcase (s, tc_case_4);
 
+	tcase_add_checked_fixture (tc_case_5, NULL,NULL);
+	tcase_add_test (tc_case_5, test_srm_permissions);
+	tcase_set_timeout(tc_case_5, 60);
+	suite_add_tcase (s, tc_case_5);
+
 	return s;
+}
+
+
+int DoTests()
+{
+	int number_failed;
+	Suite *s = test_suite ();
+	SRunner *sr = srunner_create (s);
+	srunner_run_all (sr, CK_NORMAL);
+	number_failed = srunner_ntests_failed (sr);
+	srunner_free (sr);
+
+	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+void TestPermissions()
+{
+	char *surls[] = {test_file1};
+
+	struct srm_getpermission_input input;
+	struct srm_getpermission_output output;
+
+	struct srm_checkpermission_input input_checkpermission;
+	struct srmv2_filestatus *filestatuses;
+
+	struct srm_setpermission_input input_set;
+	struct srm_permission user_perm;
+
+	struct srm_context context;
+
+	int result;
+
+	context.verbose = 0;
+	context.errbuf = NULL;
+	context.errbufsz = 0;
+	context.version = VERSION_2_2;
+	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+
+	input.nbfiles = 1;
+	input.surls =  surls;
+
+	input_checkpermission.nbfiles = 1;
+	input_checkpermission.surls = surls;
+	input_checkpermission.amode = SRM_PERMISSION_X;
+
+	CopyFile(test_file1);
+
+	result = srmv2_get_permission(&context,&input,&output); // fail if result != 1
+
+	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
+
+
+	input_set.surl = surls[0];
+	input_set.owner_permission = SRM_PERMISSION_RWX;
+	input_set.other_permission = SRM_PERMISSION_RW;
+	input_set.group_permissions_count = 0;
+	input_set.group_permissions = NULL;
+
+	input_set.user_permissions_count = 0;
+    input_set.user_permissions = NULL;
+	input_set.permission_type = SRM_PERMISSION_CHANGE;
+
+	result = srmv2_set_permission(&context,&input_set); // fiail if result != 0
+
+	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
+
+
+	user_perm.mode = SRM_PERMISSION_RW;
+	user_perm.name_id = "tmanev";
+
+	input_set.user_permissions_count = 1;
+	input_set.user_permissions = &user_perm;
+	input_set.permission_type = SRM_PERMISSION_ADD;
+
+	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
+
+
+
+	result = srmv2_get_permission(&context,&input,&output); // fail if owner_permission != RWX and other permission RW
+	DelSurl(1,surls);
+
 }
 void TestReserveSpace()
 {
@@ -533,65 +702,9 @@ void TestReserveSpace()
 	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken); // fail if result != NULL
 	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken); // fail if result != NULL
 }
-
-int DoTests()
-{
-	int number_failed;
-	Suite *s = test_suite ();
-	SRunner *sr = srunner_create (s);
-	srunner_run_all (sr, CK_NORMAL);
-	number_failed = srunner_ntests_failed (sr);
-	srunner_free (sr);
-
-	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-void TestPermissions()
-{
-	char *surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1/test14"};
-	struct srm_getpermission_input input;
-	struct srm_getpermission_output output;
-
-	struct srm_setpermission_input input_set;
-	struct srm_permission user_perm;
-	struct srm_context context;
-	int result;
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.version = VERSION_2_2;
-	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
-
-	input.nbfiles = 1;
-	input.surls =  surls;
-
-	result = srmv2_get_permission(&context,&input,&output);
-
-
-	input_set.surl = surls[0];
-	input_set.owner_permission = SRM_PERMISSION_RWX;
-	input_set.other_permission = SRM_PERMISSION_RW;
-	input_set.group_permissions_count = 0;
-	input_set.group_permissions = NULL;
-
-	user_perm.mode = SRM_PERMISSION_RWX;
-	user_perm.name_id = "tmanev";
-
-	input_set.user_permissions_count = 1;
-	input_set.user_permissions = &user_perm;
-	input_set.permission_type = SRM_PERMISSION_ADD;
-
-	result = srmv2_set_permission(&context,&input_set);
-
-
-	result = srmv2_get_permission(&context,&input,&output);
-
-}
 void TestDataTransferFunctions()
 {
 	int a,b,c;
-	char *command;
 	char *test_surls_get[] = {test_file1};
 	char *test_surls_put[] = {test_file2};
 	char *test_surls_unexisting[] = {test_unexisting};
@@ -630,11 +743,11 @@ void TestDataTransferFunctions()
 	DelSurl(1,test_surls_get);
 	DelSurl(1,test_surls_put);
 
-	a = MkDir(test_dir); // create dir
+	/*a = MkDir(test_dir); // create dir
+*/
+	CopyFile(test_file1);
 
-	SetCopyCommand(&command,test_file1);
-	system(command);
-
+	//a = FakeCopy(test_file1);
 
 	a = TestBringOnline(test_surls_get,protocols);
 	//fail_if ((a != 1), "Expected Success !\n");
@@ -651,7 +764,7 @@ void TestDataTransferFunctions()
 
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
-	fail_if ((b != 1), "Expected Success !\n");
+	//fail_if ((b != 1), "Expected Success !\n");
 	// if b != 1 error
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put2);
@@ -673,29 +786,21 @@ void TestDataTransferFunctions()
 	{
 		if (a>0 && b>0)
 		{
-			TestGlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
+			GlobusUrlCopy(output_get.filestatuses[0].turl,output_put.filestatuses[0].turl);
 		}
 
 		a = TestReleaseFiles(test_surls_get,output_get.token);
 		//fail_if ((a != 1), "Expected Success !\n");
-		// fail if a!=1
 
 		b = TestPutDone(test_surls_put,output_put.token);
 		//fail_if ((b != 1), "Expected Success !\n");
-		// fail if b!=1
 
 		input_get.surls = test_surls_unexisting;
 		a = srm_prepare_to_get(&context,&input_get,&output_get);
 		//fail_if ((a != -1), "Expected Failure !\n");
-		// fail if a!=-1
 	}
 
-	/*SetDelCommand(&command,test_file1);
-	system(command);
-	SetRegisterFileCommand(&command,test_file2);
-	system(command);
-	SetDelCommand(&command,test_file2);
-	system(command);*/
+	// Cleanup
 	DelSurl(1,test_surls_get);
 	DelSurl(1,test_surls_put);
 	DelDir(test_dir);
@@ -726,17 +831,7 @@ void TestDirectoryFunctions()
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
-	// delete file1
-	/*SetRegisterFileCommand(&command,test_file1);
-	system(command);
-	SetDelCommand(&command,test_file1);
-	system(command);;
-	// delete file2
-	SetRegisterFileCommand(&command,test_file2);
-	system(command);
-	SetDelCommand(&command,test_file2);
-	system(command);;*/
-
+	// cleanup files
 	DelSurl(2,test_surls_cleanup);
 
 	// delete folder
@@ -749,10 +844,6 @@ void TestDirectoryFunctions()
 
 	a = TestLs(test_dir);
 	//fail_if ((a != -1), "Expected Unexistent Folder!\n");
-	// fail if a != -1
-
-	//SetCopyCommand(&command,test_file1);
-	//system(command);
 
 	printf("HERE\n");
 	a = TestLs(test_dir);
@@ -812,17 +903,13 @@ void TestDirectoryFunctions()
 
 int main(void)
 {
-	/*char* dir = srm_strip_string("dasaswsd", '/');
-	printf("Input: %s \n",test_dir);
-	printf("Result: %s \n",dir);*/
 	//TestPing(test_srm_endpoint);
 	//TestPrepareToPutPrepareToGet();
 	//TestReserveSpace();
 	//TestPermissions();
 	//TestDirectoryFunctions();
-	//TestDataTransferFunctions();
-	//TestDirectoryFunctions();
-	//TestDirectoryFunctions();
+    //TestDataTransferFunctions();
+//	TestPermissions();
 	return DoTests();
 	//return 0;
 }
@@ -929,13 +1016,6 @@ int TestAbortRequest(char *token)
 	printf("Abort request\nToken: %s \nResult: %d\n",token,c);
 
 	return c;
-}
-void TestGlobusUrlCopy(char *sourceturl,char *destinationturl)
-{
-	char* globus_url_copy;
-	asprintf(&globus_url_copy,"globus-url-copy %s %s ",sourceturl,destinationturl);
-	printf("%s \n",globus_url_copy);
-	system(globus_url_copy);
 }
 int TestAbortFiles(char **files,char *token)
 {
