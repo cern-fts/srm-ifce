@@ -444,7 +444,7 @@ START_TEST (test_srm_permissions)
 	struct srmv2_filestatus *filestatuses;
 
 	struct srm_setpermission_input input_set;
-	struct srm_permission user_perm;
+	struct srm_permission group_perm;
 
 	struct srm_context context;
 
@@ -470,6 +470,7 @@ START_TEST (test_srm_permissions)
 
 	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
 	fail_if ((result != 1), "Expected Success !\n");
+	fail_if ((filestatuses[0].status != EACCES), "Expected permission error !\n");
 
 
 	input_set.surl = surls[0];
@@ -482,26 +483,28 @@ START_TEST (test_srm_permissions)
     input_set.user_permissions = NULL;
 	input_set.permission_type = SRM_PERMISSION_CHANGE;
 
-	result = srmv2_set_permission(&context,&input_set); // fiail if result != 0
+	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
 	fail_if ((result != 0), "Expected Success !\n");
 
 	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
 	fail_if ((result != 1), "Expected Success !\n");
+	fail_if ((filestatuses[0].status == EACCES), "Expected permission ok !\n");
 
 
-	user_perm.mode = SRM_PERMISSION_RW;
-	user_perm.name_id = "tmanev";
+	group_perm.mode = SRM_PERMISSION_RW;
+	group_perm.name_id = "-";
 
-	input_set.user_permissions_count = 1;
-	input_set.user_permissions = &user_perm;
+	input_set.group_permissions_count = 1;
+	input_set.group_permissions = &group_perm;
 	input_set.permission_type = SRM_PERMISSION_ADD;
 
 	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
-//TODO
+	fail_if ((result != 0), "Expected Success !\n");
 
 
 	result = srmv2_get_permission(&context,&input,&output); // fail if owner_permission != RWX and other permission RW
 	fail_if ((result != 1)||(output.permissions->owner_permission != SRM_PERMISSION_RWX) , "Expected Success !\n");
+	fail_if ((output.permissions->group_permissions_count != 1) , "Expected Success !\n");
 
 	DelSurl(1,surls);
 }
@@ -568,7 +571,7 @@ void TestPermissions()
 	struct srmv2_filestatus *filestatuses;
 
 	struct srm_setpermission_input input_set;
-	struct srm_permission user_perm;
+	struct srm_permission group_perm;
 
 	struct srm_context context;
 
@@ -608,12 +611,11 @@ void TestPermissions()
 
 	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
 
+	group_perm.mode = SRM_PERMISSION_RW;
+	group_perm.name_id = "test";
 
-	user_perm.mode = SRM_PERMISSION_RW;
-	user_perm.name_id = "tmanev";
-
-	input_set.user_permissions_count = 1;
-	input_set.user_permissions = &user_perm;
+	input_set.group_permissions_count = 1;
+	input_set.group_permissions = &group_perm;
 	input_set.permission_type = SRM_PERMISSION_ADD;
 
 	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
@@ -621,6 +623,7 @@ void TestPermissions()
 
 
 	result = srmv2_get_permission(&context,&input,&output); // fail if owner_permission != RWX and other permission RW
+	// fail if output.permissions->group_permissions_count != 1
 	DelSurl(1,surls);
 
 }
@@ -909,7 +912,7 @@ int main(void)
 	//TestPermissions();
 	//TestDirectoryFunctions();
     //TestDataTransferFunctions();
-//	TestPermissions();
+	//TestPermissions();
 	return DoTests();
 	//return 0;
 }
