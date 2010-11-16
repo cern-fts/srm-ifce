@@ -383,7 +383,7 @@ int srmv2_reservespace_test_function(struct srm_context *context,
 
 	if (output->spacetoken != NULL)
 	{
-		printf("Reserved Space token: %s \n",output->spacetoken);
+		//printf("Reserved Space token: %s \n",output->spacetoken);
 	}
 	srm_soap_deinit(&soap);
     errno = 0;

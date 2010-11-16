@@ -37,39 +37,39 @@ START_TEST (test_wait_for_new_attempt)
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 11;
 	fail_if (wait_for_new_attempt(&internal_context) != -1,
-		   "Wait for new attempt does not return timeout error for 11 attempts!\n");
+		   "Wait for new attempt does not return timeout error for 11 attempts!");
 
 	internal_context.attempt = 5;
 	internal_context.end_time = time(NULL)-1;
 	fail_if (wait_for_new_attempt(&internal_context) != -1,
-		   "Timeout error not received!\n");
+		   "Timeout error not received!");
 
 	call_function.call_sleep = mock_sleep;
 	internal_context.attempt = 1; // be careful changing this number
 	internal_context.end_time = time(NULL)+100;
 	fail_if (wait_for_new_attempt(&internal_context) != 0,
-		   "Timeout should not occur!\n");
+		   "Timeout should not occur!");
 	fail_if (mock_sleep_time > 1, // be careful changing this number
-		  "Random sleep time exceeded expected value !!!\n");
+		  "Random sleep time exceeded expected value !!!");
 
 
 	internal_context.attempt = 1; // be careful changing this number
 	internal_context.end_time = time(NULL)+100;
 	internal_context.estimated_wait_time = 0;
 	fail_if (wait_for_new_attempt(&internal_context) != -1,
-		   "Timeout should occur!\n");
+		   "Timeout should occur!");
 
 
 	internal_context.attempt = 1; // be careful changing this number
 	internal_context.end_time = time(NULL)+100;
 	internal_context.estimated_wait_time = -10;
 	fail_if (mock_sleep_time > 1, // be careful changing this number
-			  "Random sleep time exceeded expected value !!!\n");
+			  "Random sleep time exceeded expected value !!!");
 
 	internal_context.estimated_wait_time = 10;
 	wait_for_new_attempt(&internal_context);
 	fail_if (mock_sleep_time != 10,
-			  "Sleep time estimated wait time not equal to sleep time!\n");
+			  "Sleep time estimated wait time not equal to sleep time!");
 }
 END_TEST
 
@@ -97,64 +97,64 @@ START_TEST (test_back_off_logic)
 
 	result = back_off_logic(&context,srmfunc,&internal_context,NULL);
 	fail_if ((result  != srm_call_status_FAILURE)||(errno != ECOMM),
-			   "if internal_context->retstatus is null the function must return FAILURE!\n");
+			   "if internal_context->retstatus is null the function must return FAILURE!");
 
 	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 	fail_if ((internal_context.attempt   != 2),
-				   "Wait new attempt!\n");
+				   "Wait new attempt!");
 
 	fail_if ((result  != srm_call_status_INTERNAL_ERROR),
-				   "Expected Internal Error!\n");
+				   "Expected Internal Error!");
 
 	internal_context.attempt = 11;
 	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_TIMEOUT),
-					   "Expected Timeout 1!\n");
+					   "Expected Timeout 1!");
 
 	internal_context.attempt = 11;
 	retstatus.statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_TIMEOUT),
-					   "Expected Timeout 2!\n");
+					   "Expected Timeout 2!");
 
 	internal_context.attempt = 11;
 	retstatus.statusCode = SRM_USCOREREQUEST_USCOREINPROGRESS;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_TIMEOUT),
-					   "Expected Timeout 3!\n");
+					   "Expected Timeout 3!");
 
 	internal_context.attempt = 1;
 	retstatus.statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_QUEUED),
-					   "Expected Queued 1!\n");
+					   "Expected Queued 1!");
 
 	internal_context.attempt = 1;
 	retstatus.statusCode = SRM_USCOREREQUEST_USCOREINPROGRESS;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_QUEUED),
-					   "Expected Queued 2!\n");
+					   "Expected Queued 2!");
 
 	internal_context.attempt = 1;
 	retstatus.statusCode = SRM_USCORESUCCESS;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_SUCCESS),
-					   "Expected Success!\n");
+					   "Expected Success!");
 
 	internal_context.attempt = 1;
 	retstatus.statusCode = SRM_USCOREFAILURE;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
 
 	fail_if ((result  != srm_call_status_FAILURE),
-					   "Expected Failure!\n");
+					   "Expected Failure!");
 }
 END_TEST
 
@@ -276,28 +276,28 @@ START_TEST (test_srmv2_ls_async)
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test1;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	internal_context.attempt = 1;
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test2;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 2!\n");
+					"Expected Failure 2!");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test3;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 3!\n");
+					"Expected Failure 3!");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test4;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 4!\n");
+					"Expected Failure 4!");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test5;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-					"Expected Timeout!\n");
+					"Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -306,12 +306,12 @@ START_TEST (test_srmv2_ls_async)
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test6;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-					"Expected Queued!\n");
+					"Expected Queued!");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test7;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-					"Expected Success!\n");
+					"Expected Success!");
 }
 END_TEST
 int  soap_call_srm2__srmStatusOfLs_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
@@ -396,36 +396,36 @@ START_TEST (test_srmv2_status_of_ls_request)
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test1;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				    "Expected Failure 1!\n");
+				    "Expected Failure 1!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test2;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-				   "Expected Queued in first call!\n");
+				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{
 		result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-					   "Do not fail/succeed if queued,expected timeout after 10 calls!\n");
+					   "Do not fail/succeed if queued,expected timeout after 10 calls!");
 	}
 	fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test3;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  != 1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 
 }
@@ -498,32 +498,32 @@ START_TEST (test_srmv2_abort_request)
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
 	result = srmv2_abort_request(&context,NULL);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
 	result = srmv2_abort_request(&context,token);
 	fail_if ((result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test2;
 	result = srmv2_abort_request(&context,token);
 	fail_if ((result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test3;
 	result = srmv2_abort_request(&context,token);
 	fail_if ((result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test4;
 	result = srmv2_abort_request(&context,token);
 	fail_if ((result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test5;
 	result = srmv2_abort_request(&context,token);
 	fail_if ((result  != 0),
-				   "Expected Success!\n");
+				   "Expected Success!");
 }
 END_TEST
 int  soap_call_srm2__srmRmDir_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
@@ -580,17 +580,17 @@ START_TEST (test_srmv2_rmdir)
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test1;
 	result = srmv2_rmdir(&context,&input,&output);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test2;
 	result = srmv2_rmdir(&context,&input,&output);
 	fail_if ((result  != -1),
-				   "Expected Failure 2!\n");
+				   "Expected Failure 2!");
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test3;
 	result = srmv2_rmdir(&context,&input,&output);
 	fail_if ((result  != 1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 }
 END_TEST
 int  soap_call_srm2__srmRm_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
@@ -651,12 +651,12 @@ START_TEST (test_srmv2_rm)
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
 	result = srmv2_rm(&context,&input,&output);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
 	result = srmv2_rm(&context,&input,&output);
 	fail_if ((result  != 1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 }
 END_TEST
 
@@ -750,24 +750,24 @@ START_TEST (test_srmv2_mkdir)
 	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test1;
 	result = srmv2_mkdir(&context,&input);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test2;
 	result = srmv2_mkdir(&context,&input);
 	fail_if ((result  != 0),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 	/*call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test3;
 	result = srmv2_mkdir(&context,&input);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 */
 	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test_last_level;
 	result = srmv2_mkdir(&context,&input);
 	fail_if ((result  != 0),
-				   "Expected Success!\n");
+				   "Expected Success!");
 	fail_if ((mkdir_test_ok  != 1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 }
 END_TEST
@@ -832,12 +832,12 @@ START_TEST (test_srmv2_abort_files)
 	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test1;
 	result = srmv2_abort_files(&context,&input,&statuses);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmAbortFiles = soap_call_srm2__srmAbortFiles_test2;
 	result = srmv2_abort_files(&context,&input,&statuses);
 	fail_if ((result == -1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 }
 END_TEST
 
@@ -953,27 +953,27 @@ START_TEST (test_srmv2_put_done)
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test1;
 	result = srmv2_put_done(&context,&input,&statuses);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test2;
 	result = srmv2_put_done(&context,&input,&statuses);
 	fail_if ((result == -1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test3;
 	result = srmv2_put_done(&context,&input,&statuses);
 	fail_if ((result != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test4;
 	result = srmv2_put_done(&context,&input,&statuses);
 	fail_if ((result != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test5;
 	result = srmv2_put_done(&context,&input,&statuses);
 	fail_if ((result != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 }
 END_TEST
 int  soap_call_srm2__srmReleaseFiles_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
@@ -1088,27 +1088,27 @@ START_TEST (test_srmv2_release_files)
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test1;
 	result = srmv2_release_files(&context,&input,&statuses);
 	fail_if ((result  != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test2;
 	result = srmv2_release_files(&context,&input,&statuses);
 	fail_if ((result == -1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test3;
 	result = srmv2_release_files(&context,&input,&statuses);
 	fail_if ((result != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test4;
 	result = srmv2_release_files(&context,&input,&statuses);
 	fail_if ((result != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test5;
 	result = srmv2_release_files(&context,&input,&statuses);
 	fail_if ((result != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 }
 END_TEST
 int  soap_call_srm2__srmBringOnline_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmBringOnlineRequest *srmBringOnlineRequest, struct srm2__srmBringOnlineResponse_ *_param_18)
@@ -1232,27 +1232,27 @@ START_TEST (test_srmv2_bring_online_async)
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test1;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test2;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 2!\n");
+					"Expected Failure 2!");
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test3;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 3!\n");
+					"Expected Failure 3!");
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test4;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 4!\n");
+					"Expected Failure 4!");
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test5;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-					"Expected Timeout!\n");
+					"Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -1261,14 +1261,14 @@ START_TEST (test_srmv2_bring_online_async)
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test6;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-					"Expected Queued!\n");
+					"Expected Queued!");
 
 
 	output.filestatuses= filestatus;
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test7;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-					"Expected Success!\n");
+					"Expected Success!");
 }
 END_TEST
 int  soap_call_srm2__srmStatusOfBringOnline_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
@@ -1376,29 +1376,29 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test1;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				    "Expected Failure 1!\n");
+				    "Expected Failure 1!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test2;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-				   "Expected Queued in first call!\n");
+				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{
 		result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-					   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
+					   "Do not fail/succeed if queued,expected timeout after 10 calls.!");
 	}
 	fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test3;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -1406,13 +1406,13 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test5;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 }
 END_TEST
 
@@ -1538,27 +1538,27 @@ START_TEST (test_srmv2_prepare_to_get_async)
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test1;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test2;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 2!\n");
+					"Expected Failure 2!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test3;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 3!\n");
+					"Expected Failure 3!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test4;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 4!\n");
+					"Expected Failure 4!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test5;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-					"Expected Timeout!\n");
+					"Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -1567,14 +1567,14 @@ START_TEST (test_srmv2_prepare_to_get_async)
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test6;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-					"Expected Queued!\n");
+					"Expected Queued!");
 
 
 	output.filestatuses= filestatus;
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test7;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-					"Expected Success!\n");
+					"Expected Success!");
 }
 END_TEST
 int  soap_call_srm2__srmStatusOfGet_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
@@ -1681,29 +1681,29 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test1;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				    "Expected Failure 1!\n");
+				    "Expected Failure 1!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test2;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-				   "Expected Queued in first call!\n");
+				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{
 		result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-					   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
+					   "Do not fail/succeed if queued,expected timeout after 10 calls.!");
 	}
 	fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test3;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -1711,13 +1711,13 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test4;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test5;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 }
 END_TEST
 int  soap_call_srm2__srmPrepareToPut_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPrepareToPutRequest *srmPrepareToPutRequest, struct srm2__srmPrepareToPutResponse_ *_param_18)
@@ -1845,27 +1845,27 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test1;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-				   "Expected Failure 1!\n");
+				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test2;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 2!\n");
+					"Expected Failure 2!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test3;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 3!\n");
+					"Expected Failure 3!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test4;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 4!\n");
+					"Expected Failure 4!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test5;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-					"Expected Timeout!\n");
+					"Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -1874,20 +1874,20 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test6;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-					"Expected Queued!\n");
+					"Expected Queued!");
 
 
 	input.filesizes = NULL;
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((result != -1),
-					"Expected Failure 4!\n");
+					"Expected Failure 4!");
 
 	input.filesizes = filesizes_test;
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-					"Expected Success!\n");
+					"Expected Success!");
 }
 END_TEST
 int  soap_call_srm2__srmStatusOfPut_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
@@ -1991,29 +1991,29 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test1;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				    "Expected Failure 1!\n");
+				    "Expected Failure 1!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test2;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-				   "Expected Queued in first call!\n");
+				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{
 		result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-					   "Do not fail/succeed if queued,expected timeout after 10 calls.!\n");
+					   "Do not fail/succeed if queued,expected timeout after 10 calls.!");
 	}
 	fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test3;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!\n");
+				   "Expected Timeout!");
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
@@ -2021,13 +2021,13 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test4;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
-				   "Expected Success!\n");
+				   "Expected Success!");
 
 
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test5;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				   "Expected Failure!\n");
+				   "Expected Failure!");
 }
 END_TEST
 
@@ -2127,42 +2127,42 @@ START_TEST (test_srmv2_getspacemd)
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-				    "Expected Failure !\n");
+				    "Expected Failure !");
 
 	input.nbtokens = 1;
 	input.spacetokens = NULL;
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-				    "Expected Failure !\n");
+				    "Expected Failure !");
 
 	input.nbtokens = 1; // FAILS wrong count
 	input.spacetokens = test_tokens2;
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	input.nbtokens = 2;
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test1;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test2;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test3;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test4;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 
 	input.nbtokens = 1;
@@ -2170,7 +2170,7 @@ START_TEST (test_srmv2_getspacemd)
 	call_function.call_srm2__srmGetSpaceMetaData = soap_call_srm2__srmGetSpaceMetaData_test5;
 	result = srmv2_getspacemd(&context,&input,&spaces);
 	fail_if ((result  != 0),
-					"Expected Success!\n");
+					"Expected Success!");
 }
 END_TEST
 
@@ -2270,41 +2270,41 @@ START_TEST (test_srmv2_getspacetokens)
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	input.spacetokendesc = "MySpaceTokens";
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test2;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test3;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test4;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test5;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != 0),
-					"Expected Success!\n");
+					"Expected Success!");
 	fail_if ((strcmp(output.spacetokens[0],test_string)  != 0),
-						"Expected the same string !\n");
+						"Expected the same string !");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 }
 END_TEST
@@ -2367,22 +2367,22 @@ START_TEST (test_srmv2_ping)
 	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test1;
 	result = srmv2_ping(&context,&output);
 	fail_if ((result  != 0),
-					"Expected Success !\n");
+					"Expected Success !");
 
 	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test2;
 	result = srmv2_ping(&context,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test3;
 	result = srmv2_ping(&context,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test4;
 	result = srmv2_ping(&context,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 }
 END_TEST
 
@@ -2485,32 +2485,32 @@ START_TEST (test_srmv2_set_permission)
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test1;
 	result = srmv2_set_permission(&context,&input);
 	fail_if ((result  != 0),
-					"Expected Success !\n");
+					"Expected Success !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test2;
 	result = srmv2_set_permission(&context,&input);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test3;
 	result = srmv2_set_permission(&context,&input);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test4;
 	result = srmv2_set_permission(&context,&input);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test5;
 	result = srmv2_set_permission(&context,&input);
 	fail_if ((result  != 0),
-					"Expected Success!\n");
+					"Expected Success!");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test6;
 	result = srmv2_set_permission(&context,&input);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 }
 END_TEST
 
@@ -2616,32 +2616,32 @@ START_TEST (test_srmv2_get_permission)
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
 	result = srmv2_get_permission(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test2;
 	result = srmv2_get_permission(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test3;
 	result = srmv2_get_permission(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
 	result = srmv2_get_permission(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
 	result = srmv2_get_permission(&context,&input,&output);
 	fail_if ((result  != 1),
-					"Expected Success!\n");
+					"Expected Success!");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
 	result = srmv2_get_permission(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 }
 END_TEST
 int  soap_call_srm2__srmCheckPermission_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmCheckPermissionRequest *srmCheckPermissionRequest,
@@ -2761,36 +2761,36 @@ START_TEST (test_srmv2_check_permission)
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test1;
 	result = srmv2_check_permission(&context,&input,&status); //failure empty fs
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test2;
 	result = srmv2_check_permission(&context,&input,&status);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test3;
 	result = srmv2_check_permission(&context,&input,&status);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test4;
 	result = srmv2_check_permission(&context,&input,&status);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test5;
 	result = srmv2_check_permission(&context,&input,&status);
 	fail_if ((result  != 1),
-					"Expected Success!\n");
+					"Expected Success!");
 	fail_if ((status[0].status != 0),
-						"Expected Status 0!\n");
+						"Expected Status 0!");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test6;
 	result = srmv2_check_permission(&context,&input,&status);
 	fail_if ((result  != 1),
-					"Expected Success!\n");
+					"Expected Success!");
 	fail_if ((status[0].status == 0),
-						"Expected Status EACCESS!\n");
+						"Expected Status EACCESS!");
 
 }
 END_TEST
@@ -2897,27 +2897,27 @@ START_TEST (test_srmv2_extend_file_lifetime)
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test1;
 	result = srmv2_extend_file_lifetime(&context,&input,&output); //failure empty fs
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test2;
 	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test3;
 	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test4;
 	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != -1),
-					"Expected Failure !\n");
+					"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test5;
 	result = srmv2_extend_file_lifetime(&context,&input,&output);
 	fail_if ((result  != 1),
-					"Expected Success!\n");
+					"Expected Success!");
 
 }
 END_TEST
@@ -2983,27 +2983,27 @@ void TestExtend()
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test1;
 	result = srmv2_extend_file_lifetime(&context,&input,&status); //failure empty fs
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test2;
 	result = srmv2_extend_file_lifetime(&context,&input,&status);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test3;
 	result = srmv2_extend_file_lifetime(&context,&input,&status);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test4;
 	result = srmv2_extend_file_lifetime(&context,&input,&status);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test5;
 	result = srmv2_extend_file_lifetime(&context,&input,&status);
 	//fail_if ((result  != 1),
-		//			"Expected Success!\n");
+		//			"Expected Success!");
 }
 void TestRm()
 {
@@ -3027,12 +3027,12 @@ void TestRm()
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
 	result = srmv2_rm(&context,&input,&output);
 //	fail_if ((result  != -1),
-	//			   "Expected Failure 1!\n");
+	//			   "Expected Failure 1!");
 
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
 	result = srmv2_rm(&context,&input,&output);
 	//fail_if ((result  != 1),
-		//		   "Expected Success!\n");
+		//		   "Expected Success!");
 }
 void TestCheckPermission()
 {
@@ -3058,36 +3058,36 @@ void TestCheckPermission()
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test1;
 	result = srmv2_check_permission(&context,&input,&status); //failure empty fs
 	///fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test2;
 	result = srmv2_check_permission(&context,&input,&status);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test3;
 	result = srmv2_check_permission(&context,&input,&status);
 //	fail_if ((result  != -1),
-	//				"Expected Failure !\n");
+	//				"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test4;
 	result = srmv2_check_permission(&context,&input,&status);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test5;
 	result = srmv2_check_permission(&context,&input,&status);
 	//fail_if ((result  != 1),
-		//			"Expected Success!\n");
+		//			"Expected Success!");
 	//fail_if ((status[0].status != 0),
-		//				"Expected Status 0!\n");
+		//				"Expected Status 0!");
 
 	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test6;
 	result = srmv2_check_permission(&context,&input,&status);
 	//fail_if ((result  != 1),
-		//			"Expected Success!\n");
+		//			"Expected Success!");
 	//fail_if ((status[0].status == 0),
-		//				"Expected Status EACCESS!\n");
+		//				"Expected Status EACCESS!");
 
 }
 void TestGetPermission()
@@ -3115,32 +3115,32 @@ void TestGetPermission()
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
 	result = srmv2_get_permission(&context,&input,&output);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test2;
 	result = srmv2_get_permission(&context,&input,&output);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test3;
 	result = srmv2_get_permission(&context,&input,&output);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
 	result = srmv2_get_permission(&context,&input,&output);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
 	result = srmv2_get_permission(&context,&input,&output);
 	//fail_if ((result  != 1),
-		//			"Expected Success!\n");
+		//			"Expected Success!");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
 	result = srmv2_get_permission(&context,&input,&output);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 }
 
 //////////////////////////////////////////////////////////////////
@@ -3182,32 +3182,32 @@ void TestSetPermission()
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test1;
 	result = srmv2_set_permission(&context,&input);
 	//fail_if ((result  != 0),
-		//			"Expected Success !\n");
+		//			"Expected Success !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test2;
 	result = srmv2_set_permission(&context,&input);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test3;
 	result = srmv2_set_permission(&context,&input);
 //	fail_if ((result  != -1),
-	//				"Expected Failure !\n");
+	//				"Expected Failure !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test4;
 	result = srmv2_set_permission(&context,&input);
 	//fail_if ((result  != -1),
-		//			"Expected Failure !\n");
+		//			"Expected Failure !");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test5;
 	result = srmv2_set_permission(&context,&input);
 	//fail_if ((result  != 0),
-		//			"Expected Success!\n");
+		//			"Expected Success!");
 
 	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test6;
 	result = srmv2_set_permission(&context,&input);
 //	fail_if ((result  != -1),
-	//				"Expected Failure !\n");
+	//				"Expected Failure !");
 }
 /*
 int mkdir_test_ok = 0;
@@ -3270,7 +3270,7 @@ int main(void)
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-	srunner_run_all (sr, CK_NORMAL);
+	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 	//TestCheckPermission();

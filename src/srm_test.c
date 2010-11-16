@@ -31,14 +31,14 @@ void CopyFile(char *file)
 {
 	char *command;
 	asprintf (&command, "lcg-cp --nobdii -D srmv2 --vo dteam  %s %s ", source_file,file);
-	printf("%s \n",command);
+	//printf("%s \n",command);
 	system(command);
 }
 void GlobusUrlCopy(char *sourceturl,char *destinationturl)
 {
 	char* globus_url_copy;
 	asprintf(&globus_url_copy,"globus-url-copy %s %s ",sourceturl,destinationturl);
-	printf("%s \n",globus_url_copy);
+	//printf("%s \n",globus_url_copy);
 	system(globus_url_copy);
 }
 
@@ -164,55 +164,55 @@ START_TEST (test_directory_functions)
 	// clean up files and folders
 	DelSurl(2,test_surls_cleanup);
 	a = DelDir(test_dir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	//printf("Remove dir:%s %d\n",input_rmdir.surl,a);
 
 
 
 	a = TestLs(test_dir);
-	fail_if ((a != -1), "Expected Unexistent Folder!\n");
+	fail_if ((a != -1), "Expected Unexistent Folder!");
 
 	CopyFile(test_file1);
 
 	a = TestLs(test_dir);
-	fail_if ((a != 1), "Expected One File!\n");
+	fail_if ((a != 1), "Expected One File!");
 
 	input_mkdir.dir_name = test_surl_mkdir;
 	a = srm_mkdir(&context,&input_mkdir);
-	printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
-	fail_if ((a != 0), "Expected Success!\n");
+	//printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
+	fail_if ((a != 0), "Expected Success!");
 
 	a = TestLs(test_surl_rmdir);
-	fail_if ((a != 1), "Expected 1 File in this folder!\n");
+	fail_if ((a != 1), "Expected 1 File in this folder!");
 
 	a = TestLs(test_dir);
-	fail_if ((a != 2), "Expected 2 Files in this folder!\n");
+	fail_if ((a != 2), "Expected 2 Files in this folder!");
 
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = test_surl_rmdir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
-	fail_if ((a != 1), "Expected Success!\n");
+	//printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	fail_if ((a != 1), "Expected Success!");
 
 	a = TestLs(test_dir);
-	fail_if ((a != 1), "Expected 1 File in this folder!\n");
+	fail_if ((a != 1), "Expected 1 File in this folder!");
 
 	input_rm.nbfiles = 1;
 	input_rm.surls = test_surls_rm;
 	a = srm_rm(&context,&input_rm,&output_rm);
 	for(j=0;j<a;j++)
 	{
-		printf("Remove files:%s\n",input_rm.surls[j],a);
+		//printf("Remove files:%s\n",input_rm.surls[j],a);
 	}
 
 	a = TestLs(test_dir);
-	fail_if ((a != 0), "Expected Empty Folder!\n");
+	fail_if ((a != 0), "Expected Empty Folder!");
 
 
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = test_dir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
-	fail_if ((a != 1), "Expected Success!\n");
+	//printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	fail_if ((a != 1), "Expected Success!");
 }
 END_TEST
 
@@ -263,25 +263,25 @@ START_TEST (test_data_transfer_functions)
 	CopyFile(test_file1);
 
 	a = TestBringOnline(test_surls_get,protocols);
-	fail_if ((a != 1), "Expected Success !\n");
+	fail_if ((a != 1), "Expected Success !");
 
 	b = TestBringOnline(test_surls_put,protocols);
-	fail_if ((b != -1), "Expected Failure !\n");
+	fail_if ((b != -1), "Expected Failure !");
 
 	a = srm_prepare_to_get(&context,&input_get,&output_get);
-	fail_if ((a != 1), "Expected Success !\n");
+	fail_if ((a != 1), "Expected Success !");
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
-	fail_if ((b != 1), "Expected Success !\n");
+	fail_if ((b != 1), "Expected Success !");
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put2);
-	fail_if ((b != -1), "Expected Failure !\n");
+	fail_if ((b != -1), "Expected Failure !");
 
 	a = TestAbortFiles(test_surls_put,output_put.token);
-	fail_if ((a != 1), "Expected Success !\n");
+	fail_if ((a != 1), "Expected Success !");
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
-	fail_if ((b != 1), "Expected Success !\n");
+	fail_if ((b != 1), "Expected Success !");
 
 	if (b>0)
 	{
@@ -291,14 +291,14 @@ START_TEST (test_data_transfer_functions)
 		}
 
 		a = TestReleaseFiles(test_surls_get,output_get.token);
-		fail_if ((a != 1), "Expected Success !\n");
+		fail_if ((a != 1), "Expected Success !");
 
 		b = TestPutDone(test_surls_put,output_put.token);
-		fail_if ((b != 1), "Expected Success !\n");
+		fail_if ((b != 1), "Expected Success !");
 
 		input_get.surls = test_surls_unexisting;
 		a = srm_prepare_to_get(&context,&input_get,&output_get);
-		fail_if ((a != -1), "Expected Failure !\n");
+		fail_if ((a != -1), "Expected Failure !");
 	}
 
 	DelSurl(1,test_surls_get);
@@ -324,14 +324,14 @@ START_TEST (test_srm_ping)
 	context.srm_endpoint = test_srm_endpoint;
 	result = srm_ping(&context,&output);
 	fail_if ((result  != 0),
-					"Expected Success !\n");
+					"Expected Success !");
 
 
 	srm_set_timeout_connect(1);
 	context.srm_endpoint = "test";
 	result = srm_ping(&context,&output); // returns 12?
 	fail_if ((result  == 0),
-					"Expected Failure !\n");
+					"Expected Failure !");
 	srm_set_timeout_connect(60);
 
 }
@@ -377,54 +377,54 @@ START_TEST (test_srm_space_management)
 
 	for(i=0;i<output_get.nbtokens;i++)
 	{
-		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		//printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
 		result = srmv2_releasespace_test_function(&context,output_get.spacetokens[i]);
 	}
 
 	result = srmv2_reservespace_test_function(&context,
 			&input_reserve,
 			&output_reserve1); // fail if result != 0
-	fail_if ((result != 0), "Expected Success !\n");
+	fail_if ((result != 0), "Expected Success !");
 
 	result = srmv2_reservespace_test_function(&context,
 			&input_reserve,
 			&output_reserve2); // fail if result != 0
-	fail_if ((result != 0), "Expected Success !\n");
+	fail_if ((result != 0), "Expected Success !");
 
 	input_get.spacetokendesc = "srm_test_space";
 
 	result = srmv2_getspacetokens (&context,
 			&input_get,
 			&output_get); // fail if output_get.nbtokens != 2 || result != 0
-	fail_if ((result != 0 || output_get.nbtokens != 2), "Expected Success !\n");
+	fail_if ((result != 0 || output_get.nbtokens != 2), "Expected Success !");
 
 
 	for(i=0;i<output_get.nbtokens;i++)
 	{
-		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
-		fail_if ((output_get.spacetokens[i] == NULL), "Expected token !\n");
+		//printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		fail_if ((output_get.spacetokens[i] == NULL), "Expected token !");
 	}
 
 	input_bestspacetoken.neededsize = 10;
 	input_bestspacetoken.spacetokendesc = "srm_test_space";
 	best_spacetoken = srmv2_getbestspacetoken (&context,&input_bestspacetoken);
-	printf("GetBestSpaceToken : %s\n",best_spacetoken); // fail if best_spacetoken == NULL
+	//printf("GetBestSpaceToken : %s\n",best_spacetoken); // fail if best_spacetoken == NULL
 
 	input_metadata.nbtokens = output_get.nbtokens;
 	input_metadata.spacetokens = output_get.spacetokens;
 	result = srmv2_getspacemd (&context,&input_metadata,&spaces);
 	for(i=0;i<input_metadata.nbtokens;i++)
 	{
-		printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken); // fail if  == NULL
-		printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner); // fail if  == NULL
-		fail_if ((spaces[i].owner == NULL), "Expected owner not null !\n");
-		fail_if ((spaces[i].spacetoken == NULL), "Expected spacetoken not null !\n");
+		//printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken); // fail if  == NULL
+		//printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner); // fail if  == NULL
+		fail_if ((spaces[i].owner == NULL), "Expected owner not null !");
+		fail_if ((spaces[i].spacetoken == NULL), "Expected spacetoken not null !");
 	}
 
 	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken); // fail if result != 0
-	fail_if ((result != 0), "Expected Success !\n");
+	fail_if ((result != 0), "Expected Success !");
 	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken); // fail if result != 0
-	fail_if ((result != 0), "Expected Success !\n");
+	fail_if ((result != 0), "Expected Success !");
 }
 END_TEST
 
@@ -466,11 +466,11 @@ START_TEST (test_srm_permissions)
 	CopyFile(test_file1);
 
 	result = srmv2_get_permission(&context,&input,&output); // fail if result != 1
-	fail_if ((result != 1), "Expected Success !\n");
+	fail_if ((result != 1), "Expected Success !");
 
 	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
-	fail_if ((result != 1), "Expected Success !\n");
-	fail_if ((filestatuses[0].status != EACCES), "Expected permission error !\n");
+	fail_if ((result != 1), "Expected Success !");
+	fail_if ((filestatuses[0].status != EACCES), "Expected permission error !");
 
 
 	input_set.surl = surls[0];
@@ -484,11 +484,11 @@ START_TEST (test_srm_permissions)
 	input_set.permission_type = SRM_PERMISSION_CHANGE;
 
 	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
-	fail_if ((result != 0), "Expected Success !\n");
+	fail_if ((result != 0), "Expected Success !");
 
 	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
-	fail_if ((result != 1), "Expected Success !\n");
-	fail_if ((filestatuses[0].status == EACCES), "Expected permission ok !\n");
+	fail_if ((result != 1), "Expected Success !");
+	fail_if ((filestatuses[0].status == EACCES), "Expected permission ok !");
 
 
 	group_perm.mode = SRM_PERMISSION_RW;
@@ -499,12 +499,12 @@ START_TEST (test_srm_permissions)
 	input_set.permission_type = SRM_PERMISSION_ADD;
 
 	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
-	fail_if ((result != 0), "Expected Success !\n");
+	fail_if ((result != 0), "Expected Success !");
 
 
 	result = srmv2_get_permission(&context,&input,&output); // fail if owner_permission != RWX and other permission RW
-	fail_if ((result != 1)||(output.permissions->owner_permission != SRM_PERMISSION_RWX) , "Expected Success !\n");
-	fail_if ((output.permissions->group_permissions_count != 1) , "Expected Success !\n");
+	fail_if ((result != 1)||(output.permissions->owner_permission != SRM_PERMISSION_RWX) , "Expected Success !");
+	fail_if ((output.permissions->group_permissions_count != 1) , "Expected Success !");
 
 	DelSurl(1,surls);
 }
@@ -553,7 +553,7 @@ int DoTests()
 	int number_failed;
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-	srunner_run_all (sr, CK_NORMAL);
+	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 
@@ -664,7 +664,7 @@ void TestReserveSpace()
 
 	for(i=0;i<output_get.nbtokens;i++)
 	{
-		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		//printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
 		result = srmv2_releasespace_test_function(&context,output_get.spacetokens[i]);
 	}
 
@@ -685,13 +685,13 @@ void TestReserveSpace()
 
 	for(i=0;i<output_get.nbtokens;i++)
 	{
-		printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
+		//printf("GetSpaceTokenResult[%d] : %s\n",i,output_get.spacetokens[i]);
 	}
 
 	input_bestspacetoken.neededsize = 10;
 	input_bestspacetoken.spacetokendesc = test_spacetoken_descriptor;
 	best_spacetoken = srmv2_getbestspacetoken (&context,&input_bestspacetoken);
-	printf("GetBestSpaceToken : %s\n",best_spacetoken); // fail if best_spacetoken == NULL
+	//printf("GetBestSpaceToken : %s\n",best_spacetoken); // fail if best_spacetoken == NULL
 
 	input_metadata.nbtokens = output_get.nbtokens;
 	input_metadata.spacetokens = output_get.spacetokens;
@@ -699,8 +699,8 @@ void TestReserveSpace()
 
 	for(i=0;i<input_metadata.nbtokens;i++)
 	{
-		printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken); // fail if  == NULL
-		printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner); // fail if  == NULL
+		//printf("GetSpaceMetadata[%d].token : %s\n",i,spaces[i].spacetoken); // fail if  == NULL
+		//printf("GetSpaceMetadata[%d].owner : %s\n",i,spaces[i].owner); // fail if  == NULL
 	}
 	result = srmv2_releasespace_test_function(&context,output_reserve1.spacetoken); // fail if result != NULL
 	result = srmv2_releasespace_test_function(&context,output_reserve2.spacetoken); // fail if result != NULL
@@ -753,35 +753,35 @@ void TestDataTransferFunctions()
 	//a = FakeCopy(test_file1);
 
 	a = TestBringOnline(test_surls_get,protocols);
-	//fail_if ((a != 1), "Expected Success !\n");
+	//fail_if ((a != 1), "Expected Success !");
 	// fail if a != 1
 
 	b = TestBringOnline(test_surls_put,protocols);
-	//fail_if ((b != -1), "Expected Failure !\n");
+	//fail_if ((b != -1), "Expected Failure !");
 	// fail if b != -1
 
 	a = srm_prepare_to_get(&context,&input_get,&output_get);
-	//fail_if ((a != 1), "Expected Success !\n");
+	//fail_if ((a != 1), "Expected Success !");
 	// if a != 1 error
 //	PrintPinFileStatuses(output_get.filestatuses,a);
 
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
-	//fail_if ((b != 1), "Expected Success !\n");
+	//fail_if ((b != 1), "Expected Success !");
 	// if b != 1 error
 
 	b = srm_prepare_to_put(&context,&input_put,&output_put2);
-	//fail_if ((b != -1), "Expected Failure !\n");
+	//fail_if ((b != -1), "Expected Failure !");
 	// if b != -1 error
 	//PrintPinFileStatuses(output_put.filestatuses,b);
 
 	a = TestAbortFiles(test_surls_put,output_put.token);
-	//fail_if ((a != 1), "Expected Success !\n");
+	//fail_if ((a != 1), "Expected Success !");
 	// fail if  a != 1
 
 	// delete file
 	b = srm_prepare_to_put(&context,&input_put,&output_put);
-	//fail_if ((b != 1), "Expected Success !\n");
+	//fail_if ((b != 1), "Expected Success !");
 	// if b != 1 error
    // PrintPinFileStatuses(output_put.filestatuses,b);
 
@@ -793,14 +793,14 @@ void TestDataTransferFunctions()
 		}
 
 		a = TestReleaseFiles(test_surls_get,output_get.token);
-		//fail_if ((a != 1), "Expected Success !\n");
+		//fail_if ((a != 1), "Expected Success !");
 
 		b = TestPutDone(test_surls_put,output_put.token);
-		//fail_if ((b != 1), "Expected Success !\n");
+		//fail_if ((b != 1), "Expected Success !");
 
 		input_get.surls = test_surls_unexisting;
 		a = srm_prepare_to_get(&context,&input_get,&output_get);
-		//fail_if ((a != -1), "Expected Failure !\n");
+		//fail_if ((a != -1), "Expected Failure !");
 	}
 
 	// Cleanup
@@ -841,41 +841,40 @@ void TestDirectoryFunctions()
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = test_dir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	//printf("Remove dir:%s %d\n",input_rmdir.surl,a);
 
 
 
 	a = TestLs(test_dir);
-	//fail_if ((a != -1), "Expected Unexistent Folder!\n");
+	//fail_if ((a != -1), "Expected Unexistent Folder!");
 
-	printf("HERE\n");
 	a = TestLs(test_dir);
-	//fail_if ((a != 1), "Expected One File!\n");
+	//fail_if ((a != 1), "Expected One File!");
 	// fail if a != 1
 
 	input_mkdir.dir_name = test_surl_mkdir;
 	a = srm_mkdir(&context,&input_mkdir);
-	printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
-	//fail_if ((a != 0), "Expected Success!\n");
+	//printf("Mkdir:%s %d \n",input_mkdir.dir_name,a);
+	//fail_if ((a != 0), "Expected Success!");
 	// fail if a != 0
 
 	a = TestLs(test_surl_rmdir);
-	//fail_if ((a != 1), "Expected 1 File in this folder!\n");
+	//fail_if ((a != 1), "Expected 1 File in this folder!");
 	// fail if a != 1
 
 	a = TestLs(test_dir);
-	//fail_if ((a != 2), "Expected 2 Files in this folder!\n");
+	//fail_if ((a != 2), "Expected 2 Files in this folder!");
 	// fail if a != 2
 
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = test_surl_rmdir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
-	//fail_if ((a != 0), "Expected Success!\n");
+	//printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	//fail_if ((a != 0), "Expected Success!");
 	// fail if a != 0
 
 	a = TestLs(test_dir);
-	//fail_if ((a != 1), "Expected 1 File in this folder!\n");
+	//fail_if ((a != 1), "Expected 1 File in this folder!");
 	// fail if a != 1
 
 
@@ -884,19 +883,19 @@ void TestDirectoryFunctions()
 	a = srm_rm(&context,&input_rm,&output_rm);
 	for(j=0;j<a;j++)
 	{
-		printf("Remove files:%s\n",input_rm.surls[j],a);
+		//printf("Remove files:%s\n",input_rm.surls[j],a);
 	}
 
 	a = TestLs(test_dir);
-	//fail_if ((a != 0), "Expected Empty Folder!\n");
+	//fail_if ((a != 0), "Expected Empty Folder!");
 	// fail if a != 0
 
 
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = test_dir;
 	a = srm_rmdir(&context,&input_rmdir,&output_rmdir);
-	printf("Remove dir:%s %d\n",input_rmdir.surl,a);
-	//fail_if ((a != 0), "Expected Success!\n");
+	//printf("Remove dir:%s %d\n",input_rmdir.surl,a);
+	//fail_if ((a != 0), "Expected Success!");
 	// fail if a != 0
 }
 
@@ -960,14 +959,10 @@ int TestLs(char *surl)
 
 	if (i > 0)
 	{
-		PrintResult(output_ls.statuses);
+		//PrintResult(output_ls.statuses);
 		return ((output_ls.statuses)->nbsubpaths);
 	}
 	return i;
-
-}
-void PrintFilestatuses(struct srmv2_pinfilestatus *output)
-{
 
 }
 void PrintResult(struct srmv2_mdfilestatus *print_output)
@@ -997,7 +992,7 @@ int TestPutDone(char** surls,char *token)
 	input_putdone.surls = surls;
 	input_putdone.reqtoken = token;
 	c = srm_put_done(&context,&input_putdone,&filestatuses);
-	printf("Put Done\nToken: %s \nSurl: %s\nResult: %d\n",token,surls[0],c);
+	//printf("Put Done\nToken: %s \nSurl: %s\nResult: %d\n",token,surls[0],c);
 
 	return c;
 }
@@ -1016,7 +1011,7 @@ int TestAbortRequest(char *token)
 
 
 	c = srm_abort_request(&context,token);
-	printf("Abort request\nToken: %s \nResult: %d\n",token,c);
+	//printf("Abort request\nToken: %s \nResult: %d\n",token,c);
 
 	return c;
 }
@@ -1038,7 +1033,7 @@ int TestAbortFiles(char **files,char *token)
 	input.reqtoken = token;
 
 	c = srm_abort_files(&context,&input,&filestatuses);
-	printf("Abort files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,c);
+	//printf("Abort files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,c);
 
 	return c;
 }
@@ -1060,7 +1055,7 @@ int TestReleaseFiles(char **files,char *token)
 	input.reqtoken = token;
 
 	a = srm_release_files(&context,&input,&filestatuses);
-	printf("Release files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,a);
+	//printf("Release files\nFile: %s\nToken: %s \nResult: %d\n",files[0],token,a);
 
 	return a;
 }
@@ -1086,8 +1081,8 @@ int TestBringOnline(char **files,char **protocols)
 
 
 	a = srm_bring_online(&context,&input_bringonline,&output_bringonline);
-	printf("BRING ONLINE \n");
-	PrintPinFileStatuses(output_bringonline.filestatuses,a);
+	//printf("BRING ONLINE \n");
+	//PrintPinFileStatuses(output_bringonline.filestatuses,a);
 
 	return a;
 }
@@ -1146,10 +1141,10 @@ int TestPing(char *endpoint)
 
 	if (a == 0)
 	{
-		printf("Ping result: %s\n",output.versioninfo);
+		//printf("Ping result: %s\n",output.versioninfo);
 	}else
 	{
-		printf("Ping error \n",output.versioninfo);
+		//printf("Ping error \n",output.versioninfo);
 	}
 	return a;
 }
