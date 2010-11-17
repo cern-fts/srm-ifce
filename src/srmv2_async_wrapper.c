@@ -20,7 +20,7 @@ int srmv2_status_of_ls_async(struct srm_context *context,
 
 	back_off_logic_init(context,&internal_context);
 
-	return srmv2_ls_async_internal(context,input,output,&internal_context);
+	return srmv2_status_of_ls_request_async_internal(context,input,output,&internal_context);
 }
 int srmv2_prepare_to_get_async(struct srm_context *context,
 		struct srm_preparetoget_input *input,
@@ -50,7 +50,7 @@ int srmv2_prepare_to_put_async(struct srm_context *context,
 
 	back_off_logic_init(context,&internal_context);
 
-	return srmv2_prepare_to_get_async_internal(context,input,output,&internal_context);
+	return srmv2_prepare_to_put_async_internal(context,input,output,&internal_context);
 }
 int srmv2_status_of_put_request_async(struct srm_context *context,
 		struct srm_preparetoput_input *input,
