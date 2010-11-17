@@ -606,6 +606,13 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 		}
 		if (repfs->statusArray[i]->remainingPinTime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+		if (repfs->statusArray[i]->estimatedWaitTime)
+		{
+			(*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
+		}else
+		{
+			(*filestatuses)[i].estimated_wait_time = -1;
+		}
 	}
 	return n;
 }
@@ -648,6 +655,13 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 		}
 		if (repfs->statusArray[i]->remainingPinTime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+		if (repfs->statusArray[i]->estimatedWaitTime)
+		{
+			(*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
+		}else
+		{
+			(*filestatuses)[i].estimated_wait_time = -1;
+		}
 	}
 	return n;
 }
@@ -692,6 +706,13 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 		}
 		if (repfs->statusArray[i]->remainingPinLifetime)
 			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
+		if (repfs->statusArray[i]->estimatedWaitTime)
+		{
+			(*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
+		}else
+		{
+			(*filestatuses)[i].estimated_wait_time = -1;
+		}
 	}
 	return n;
 }

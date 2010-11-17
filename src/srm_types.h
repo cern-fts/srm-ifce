@@ -139,6 +139,7 @@ struct srmv2_pinfilestatus
 	int 	status; // status code
 	char 	*explanation; // string for the status
 	int 	pinlifetime; // pin lifetime
+	int		estimated_wait_time;
 };
 
 struct srmv2_filestatus
@@ -164,7 +165,7 @@ struct srm_internal_context
 	srm_call_status 			current_status;
 	time_t 						end_time;
 	int 						attempt;
-	int							estimated_wait_time;
+	int							estimated_wait_time; //remainingTotalRequestTime in srm documentation
 };
 
 struct srm_ls_input

@@ -66,7 +66,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		//set_estimated_wait_time(internal_context, srep.srmStatusOfPutRequestResponse->remainingTotalRequestTime);
+		set_estimated_wait_time(internal_context, srep.srmStatusOfPutRequestResponse->remainingTotalRequestTime);
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -259,7 +259,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		//set_estimated_wait_time(internal_context, rep.srmPrepareToPutResponse->remainingTotalRequestTime);
+		set_estimated_wait_time(internal_context, rep.srmPrepareToPutResponse->remainingTotalRequestTime);
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -410,7 +410,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		//set_estimated_wait_time(internal_context, rep.srmPrepareToGetResponse->remainingTotalRequestTime);
+		set_estimated_wait_time(internal_context, rep.srmPrepareToGetResponse->remainingTotalRequestTime);
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -479,7 +479,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		//set_estimated_wait_time(internal_context, srep.srmStatusOfGetRequestResponse->remainingTotalRequestTime);
+		set_estimated_wait_time(internal_context, srep.srmStatusOfGetRequestResponse->remainingTotalRequestTime);
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -766,7 +766,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			return -1;
 		}
 
-		//set_estimated_wait_time(internal_context, rep.srmBringOnlineResponse->remainingTotalRequestTime);
+		set_estimated_wait_time(internal_context, rep.srmBringOnlineResponse->remainingTotalRequestTime);
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus );
 
@@ -839,7 +839,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 			srm_soap_deinit(&soap);
 			return -1;
 		}
-		//set_estimated_wait_time(internal_context, srep.srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime);
+		set_estimated_wait_time(internal_context, srep.srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime);
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
