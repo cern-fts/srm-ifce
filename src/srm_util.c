@@ -251,8 +251,10 @@ void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqsta
 // Returns  0 for wait finished
 int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or Timeout
 {
+	const int last_chance_sec_before_end = 2; // 2 seconds before the end
 	int random_limit;
 	int random_wait;
+	int wait_till_end;
 	time_t after_sleep;
 	after_sleep = time(NULL) ;
 	srand( time(NULL) ); // new seed
@@ -266,13 +268,21 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 			random_wait = (rand() % random_limit);
 			internal_context->attempt++;
 			after_sleep += random_wait;
-			if (after_sleep > internal_context->end_time)
+			if (after_sleep >= internal_context->end_time)
 			{
-				// Timeout
-				return -1;
+				wait_till_end = internal_context->end_time - (time(NULL)+last_chance_sec_before_end);
+				if (wait_till_end>0)
+				{
+					call_function.call_sleep(wait_till_end);
+				}else
+				{
+					// Timeout
+					return -1;
+				}
+			}else
+			{
+				call_function.call_sleep(random_wait);
 			}
-			call_function.call_sleep(random_wait);
-			//call_function.call_sleep(random_wait);
 		}else
 		{
 			// Timeout, attempts exceeded
@@ -286,14 +296,22 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 	}else
 	{
 		after_sleep += internal_context->estimated_wait_time ;
-		if (after_sleep > internal_context->end_time)
+		if (after_sleep >= internal_context->end_time)
 		{
-			// Timeout
-			return -1;
+			wait_till_end = internal_context->end_time - (time(NULL)+last_chance_sec_before_end);
+			if (wait_till_end>0)
+			{
+				call_function.call_sleep(wait_till_end);
+			}else
+			{
+				// Timeout
+				return -1;
+			}
+		}else
+		{
+			call_function.call_sleep(internal_context->estimated_wait_time );
 		}
-		call_function.call_sleep(internal_context->estimated_wait_time );
 	}
-
 
 	return 0;
 }

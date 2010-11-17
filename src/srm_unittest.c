@@ -1906,7 +1906,7 @@ int  soap_call_srm2__srmStatusOfPut_test2(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmStatusOfPutRequestResponse = resp;
-
+	resp->remainingTotalRequestTime = NULL;
 	return 0; // success
 }
 int  soap_call_srm2__srmStatusOfPut_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
@@ -1917,6 +1917,7 @@ int  soap_call_srm2__srmStatusOfPut_test3(struct soap *soap, const char *soap_en
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->remainingTotalRequestTime = NULL;
 	_param_18->srmStatusOfPutRequestResponse = resp;
 
 	return 0; // success
@@ -1928,6 +1929,7 @@ int  soap_call_srm2__srmStatusOfPut_test4(struct soap *soap, const char *soap_en
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
+	resp->remainingTotalRequestTime = NULL;
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = (struct srm2__ArrayOfTPutRequestFileStatus*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTPutRequestFileStatus));
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
@@ -1949,6 +1951,7 @@ int  soap_call_srm2__srmStatusOfPut_test5(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = NULL; // FAILS
+	resp->remainingTotalRequestTime = NULL;
 	_param_18->srmStatusOfPutRequestResponse = resp;
 
 
@@ -3262,7 +3265,6 @@ void TestMkdir()
 	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test_last_level;
 	result = srmv2_mkdir(&context,&input);
 }
-
 int main(void)
 {
 	int number_failed;
@@ -3273,6 +3275,8 @@ int main(void)
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
+
+	//TestFunc();
 	//TestCheckPermission();
 	//TestGetPermission();
 	//TestSetPermission();
