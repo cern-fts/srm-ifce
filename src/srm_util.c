@@ -170,7 +170,7 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 
 	free (actual_format);
 }
-int srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
+int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
 {
 	if (soap->fault != NULL && soap->fault->faultstring != NULL)
 	{

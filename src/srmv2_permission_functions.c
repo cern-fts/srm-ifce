@@ -78,7 +78,7 @@ int srmv2_set_permission(struct srm_context *context,
 			rep.srmSetPermissionResponse->returnStatus == NULL)
 	{
 		// Soap call failure
-		errno = srm_soup_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		result = -1;
 	}else
 	{
@@ -134,7 +134,7 @@ int srmv2_get_permission(struct srm_context *context,
 		copy_returnstatus(&output->retstatus,rep.srmGetPermissionResponse->returnStatus))
 	{
 		// Soap call failure
-		errno = srm_soup_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		result = -1;
 	}else
 	{
@@ -187,7 +187,7 @@ int srmv2_check_permission(struct srm_context *context,
 
 	if ((ret = call_function.call_srm2__srmCheckPermission (&soap, context->srm_endpoint, srmfunc, &req, &rep)))
 	{
-		errno = srm_soup_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		srm_soap_deinit (&soap);
 		return (-1);
 	}
@@ -204,7 +204,7 @@ int srmv2_check_permission(struct srm_context *context,
 
 	if (reqstatp->statusCode != SRM_USCORESUCCESS ||  !repfs || repfs->__sizesurlPermissionArray < 1 || !repfs->surlPermissionArray)
 	{
-		errno = srm_soup_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		srm_soap_deinit (&soap);
 		return (-1);
 	}

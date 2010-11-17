@@ -21,7 +21,7 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 	if (result != 0)
 	{
 		// Soap call failure
-		errno = srm_soup_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 	}else
 	{
 		if (rep.srmPingResponse == NULL ||

@@ -5,7 +5,7 @@ void srm_soap_init(struct soap *soap);
 void srm_soap_deinit(struct soap *soap);
 
 void srm_errmsg (struct srm_context *context, const char *format, ...);
-int srm_soup_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
+int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
 int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,const char *srmfunc);
 int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc);
 

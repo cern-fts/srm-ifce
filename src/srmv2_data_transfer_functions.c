@@ -61,7 +61,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 		if ((srep.srmStatusOfPutRequestResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfPutRequestResponse->returnStatus))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -254,7 +254,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 		if ((rep.srmPrepareToPutResponse== NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmPrepareToPutResponse->returnStatus))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -405,7 +405,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 		if ((rep.srmPrepareToGetResponse== NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmPrepareToGetResponse->returnStatus))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -474,7 +474,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 		if ((srep.srmStatusOfGetRequestResponse == NULL)||(ret!=0) ||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfGetRequestResponse->returnStatus))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -555,7 +555,7 @@ int srmv2_put_done(struct srm_context *context,
 		// If no response break with failure
 		if ((rep.srmPutDoneResponse == NULL)||(ret!=0))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -627,7 +627,7 @@ int srmv2_release_files(struct srm_context *context,
 		// If no response break with failure
 		if ((rep.srmReleaseFilesResponse == NULL)||(ret!=0))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -760,7 +760,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 		if ((rep.srmBringOnlineResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmBringOnlineResponse->returnStatus))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -834,7 +834,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 		if ((srep.srmStatusOfBringOnlineRequestResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfBringOnlineRequestResponse->returnStatus))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -918,7 +918,7 @@ int srmv2_abort_files(struct srm_context *context,
 		// If no response break with failure
 		if ((rep.srmAbortFilesResponse == NULL)||(ret!=0))
 		{
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
 			srm_soap_deinit(&soap);
 			return -1;
@@ -976,7 +976,7 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 		if (result != 0)
 		{
 			// Soap call failure
-			errno = srm_soup_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,&soap,srmfunc);
 		}else
 		{
 			if (abortrep.srmAbortRequestResponse == NULL ||
