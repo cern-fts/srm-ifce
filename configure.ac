@@ -77,6 +77,9 @@ AC_SUBST([INTERFACE_LIBTOOL_CURRENT])
 AC_SUBST([INTERFACE_LIBTOOL_REVISION])
 AC_SUBST([INTERFACE_LIBTOOL_AGE])
 
+# ccheck
+AC_CCHECK
+
 # gsoap
 AC_GSOAP
 
@@ -147,14 +150,6 @@ AC_ARG_WITH([release],
     [RELEASE=0])
 AC_MSG_RESULT([RELEASE is ${RELEASE}])
 AC_SUBST(RELEASE)
-
-# ccheck-location
-AC_ARG_WITH([ccheck-location],
-    [AS_HELP_STRING([--with-ccheck-location=VAL],[ccheck location])],
-    [CCHECK_LOCATION=${withval}],
-    [CCHECK_LOCATION="/opt/lcg"])
-AC_MSG_RESULT([CCHECK_LOCATION is ${CCHECK_LOCATION}])
-AC_SUBST(CCHECK_LOCATION)
 
 # Checks for header files.
 AC_HEADER_DIRENT

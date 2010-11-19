@@ -161,9 +161,10 @@ GFAL_SRM_IFCE_SOURCE_FILES = \
 GFAL_SRM_IFCE_CFLAGS = \
 	-DGFAL_SECURE \
 	-DVERSION=\"$(VERSION)-$(RELEASE)\" \
-	-D_LARGEFILE64_SOURCE \
-	-I$(CCHECK_LOCATION)/include
+	-D_LARGEFILE64_SOURCE \ 
 	$(SOAPCPP2_FLAGS)
+	
+ 
 
 # libgfal.a
 #-------------------------------------------------------------------------------
@@ -204,10 +205,10 @@ gfal_srm_ifce_version_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS)
 # test programs
 #-------------------------------------------------------------------------------
 gfal_srm_ifce_unittest_SOURCES = gfal_srm_ifce_unittest.c
-gfal_srm_ifce_unittest_LDADD = -lgfal_srm_ifce  -lcheck
+gfal_srm_ifce_unittest_LDADD = -lgfal_srm_ifce $(CCHECK_LIBS)
 gfal_srm_ifce_unittest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
 
 gfal_srm_ifce_systemtest_SOURCES = gfal_srm_ifce_systemtest.c
-gfal_srm_ifce_systemtest_LDADD = -lgfal_srm_ifce -lcheck 
-gfal_srm_ifce_systemtest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
+gfal_srm_ifce_systemtest_LDADD = -lgfal_srm_ifce $(CCHECK_LIBS)
+gfal_srm_ifce_systemtest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(CCHECK_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
 
