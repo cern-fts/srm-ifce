@@ -1,6 +1,6 @@
 #include <errno.h>
 #include <assert.h>
-#include "srm_ifce.h"
+#include "gfal_srm_ifce.h"
 #include "srm_soap.h"
 #include "srm_util.h"
 #include "srm_dependencies.h"

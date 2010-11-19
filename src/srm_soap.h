@@ -3,7 +3,7 @@
 
 
 #include "srm_dependencies.h"
-#include "srm_types.h"
+#include "gfal_srm_ifce_types.h"
 
 
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "srm_types.h"
-#include "srm_ifce.h"
+#include "gfal_srm_ifce_types.h"
+#include "gfal_srm_ifce.h"
 
 
 

@@ -13,6 +13,10 @@
 #include "cgsi_plugin.h"
 #endif // #ifdef GFAL_SECURE
 
+#ifndef SRMSOAPBINDING_NSMAP
+#define SRMSOAPBINDING_NSMAP
+#include "srmSoapBinding+.nsmap"
+#endif
 
 /* Function types of the appropriate SOAP calls */
 typedef int (*soap_call_srm2__srmGetSpaceMetaData_fv)(

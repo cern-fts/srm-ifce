@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <assert.h>
 #include "srm_soap.h"
-#include "srm_types.h"
+#include "gfal_srm_ifce_types.h"
 #include "srmv2H.h"
 #include "srm_dependencies.h"
 

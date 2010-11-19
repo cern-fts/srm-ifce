@@ -1,7 +1,7 @@
 #ifndef _SRM_IFCE_H
 #define _SRM_IFCE_H
 
-#include "srm_types.h"
+#include "gfal_srm_ifce_types.h"
 
 void srm_context_init(struct srm_context *context,char *srm_endpoint);
 
