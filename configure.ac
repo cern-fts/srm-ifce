@@ -148,6 +148,14 @@ AC_ARG_WITH([release],
 AC_MSG_RESULT([RELEASE is ${RELEASE}])
 AC_SUBST(RELEASE)
 
+# ccheck-location
+AC_ARG_WITH([ccheck-location],
+    [AS_HELP_STRING([--with-ccheck-location=VAL],[ccheck location])],
+    [CCHECK_LOCATION=${withval}],
+    [CCHECK_LOCATION="/opt/lcg"])
+AC_MSG_RESULT([CCHECK_LOCATION is ${CCHECK_LOCATION}])
+AC_SUBST(CCHECK_LOCATION)
+
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
