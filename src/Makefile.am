@@ -120,9 +120,9 @@ dist_include_HEADERS = \
     gfal_srm_ifce_types.h
 
 # executables
-bin_PROGRAMS = \
-    gfal_srm_ifce_unittest \
-	gfal_srm_ifce_version
+#bin_PROGRAMS = \
+#    gfal_srm_ifce_unittest \
+#	gfal_srm_ifce_version
 
 # libraries
 lib_LIBRARIES = \
@@ -154,6 +154,7 @@ GFAL_SRM_IFCE_SOURCE_FILES = \
     srmv2_space_management_functions.c \
     srmv2_discovery_functions.c \
     srmv2_permission_functions.c \
+    srmSoapBinding+.nsmap \
     srmv2_data_transfer_functions.c
 
 GFAL_SRM_IFCE_CFLAGS = \
