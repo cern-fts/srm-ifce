@@ -171,6 +171,7 @@ GFAL_SRM_IFCE_CFLAGS = \
 libgfal_srm_ifce_a_SOURCES = $(GFAL_SRM_IFCE_SOURCE_FILES)
 
 libgfal_srm_ifce_a_CFLAGS = \
+	$(GLOBUS_NOTHR_CFLAGS) \
 	$(GLITE_CFLAGS) \
 	$(GFAL_SRM_IFCE_CFLAGS) \
 	$(GSOAP_CFLAGS) \
@@ -181,9 +182,12 @@ libgfal_srm_ifce_a_CFLAGS = \
 libgfal_srm_ifce_la_SOURCES = $(GFAL_SRM_IFCE_SOURCE_FILES)
 
 libgfal_srm_ifce_la_LIBADD = \
+	$(GLOBUS_GSS_NOTHR_LIBS) \
+	$(GLOBUS_FTP_CLIENT_NOTHR_LIBS) \
 	$(CGSI_GSOAP_LIBS) 
 
 libgfal_srm_ifce_la_CFLAGS = \
+	$(GLOBUS_NOTHR_CFLAGS) \
 	$(GLITE_CFLAGS) \
 	$(GFAL_SRM_IFCE_CFLAGS) \
 	$(GSOAP_CFLAGS) \
