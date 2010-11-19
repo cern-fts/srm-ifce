@@ -2,8 +2,8 @@
 #include <check.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "srm_types.h"
-#include "srm_ifce.h"
+#include "gfal_srm_ifce_types.h"
+#include "gfal_srm_ifce.h"
 
 char *test_srm_endpoint =  "srm://lxbra1910.cern.ch:8446/srm/managerv2";
 char *source_file = "file:///etc/group";

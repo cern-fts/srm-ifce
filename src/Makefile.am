@@ -122,6 +122,7 @@ dist_include_HEADERS = \
 # executables
 bin_PROGRAMS = \
     gfal_srm_ifce_unittest \
+    gfal_srm_ifce_systemtest \
 	gfal_srm_ifce_version
 
 # libraries
@@ -196,9 +197,16 @@ gfal_srm_ifce_version_SOURCES = gfal_srm_ifce_version.c
 gfal_srm_ifce_version_LDADD = libgfal_srm_ifce.la
 gfal_srm_ifce_version_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS)
 
+# TODO REMOVE NEXT LINE
+# $(top_builddir)/src/libgfal_srm_ifce.la
+
 # test programs
 #-------------------------------------------------------------------------------
 gfal_srm_ifce_unittest_SOURCES = gfal_srm_ifce_unittest.c
-gfal_srm_ifce_unittest_LDADD = $(top_builddir)/src/libgfal_srm_ifce.la -lcheck
+gfal_srm_ifce_unittest_LDADD = -lgfal_srm_ifce  -lcheck
 gfal_srm_ifce_unittest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
+
+gfal_srm_ifce_systemtest_SOURCES = gfal_srm_ifce_systemtest.c
+gfal_srm_ifce_systemtest_LDADD = -lgfal_srm_ifce -lcheck 
+gfal_srm_ifce_systemtest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
 
