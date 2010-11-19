@@ -6,8 +6,8 @@
 #include <check.h>
 #include <errno.h>
 #include "srmv2H.h"
-#include "srm_types.h"
-#include "srm_ifce.h"
+#include "gfal_srm_ifce_types.h"
+#include "gfal_srm_ifce.h"
 #include "srm_util.h"
 #include "srm_soap.h"
 #include "srm_dependencies.h"

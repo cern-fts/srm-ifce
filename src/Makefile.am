@@ -120,9 +120,9 @@ dist_include_HEADERS = \
     gfal_srm_ifce_types.h
 
 # executables
-#bin_PROGRAMS = \
-#    gfal_srm_ifce_unittest \
-#	gfal_srm_ifce_version
+bin_PROGRAMS = \
+    gfal_srm_ifce_unittest \
+	gfal_srm_ifce_version
 
 # libraries
 lib_LIBRARIES = \
@@ -192,19 +192,13 @@ libgfal_srm_ifce_la_LDFLAGS = \
 
 # gfal_version
 #-------------------------------------------------------------------------------
-gfal_srm_ifce_version_SOURCES = \
-	gfal_srm_ifce_version.c
-
+gfal_srm_ifce_version_SOURCES = gfal_srm_ifce_version.c
 gfal_srm_ifce_version_LDADD = libgfal_srm_ifce.la
-
-gfal_srm_ifce_version_CFLAGS = -D_LARGEFILE64_SOURCE
+gfal_srm_ifce_version_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS)
 
 # test programs
 #-------------------------------------------------------------------------------
-gfal_srm_ifce_unittest_SOURCES = \
-    gfal_srm_ifce_unittest.c
-
+gfal_srm_ifce_unittest_SOURCES = gfal_srm_ifce_unittest.c
 gfal_srm_ifce_unittest_LDADD = $(top_builddir)/src/libgfal_srm_ifce.la -lcheck
-
 gfal_srm_ifce_unittest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
 
