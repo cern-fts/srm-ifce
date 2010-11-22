@@ -80,6 +80,9 @@ AC_SUBST([INTERFACE_LIBTOOL_AGE])
 # ccheck
 AC_CCHECK
 
+# globus 
+AC_GLOBUS
+
 # gsoap
 AC_GSOAP
 
