@@ -25,37 +25,42 @@
 #endif
 #endif
 
-/*
-// used to check wether there is enough space on the SE
-#define GFAL_NEWFILE_SIZE         1024
 
-#define GFAL_OPEN_MAX             1024
-#define GFAL_DEFAULT_CATALOG_TYPE "lfc"
-#define GFAL_FQAN_MAX             64
-#define GFAL_GUID_LEN             37
-#define GFAL_VO_MAXLEN            255
-#define GFAL_FQAN_MAXLEN          511
-#define GFAL_HOSTNAME_MAXLEN      255
-#define GFAL_PATH_MAXLEN          1024
-#define GFAL_ERRMSG_LEN           1024
-#define GFAL_BDII_TIMEOUT         60*/
 #define SRM_SIZE_MARGIN          1048576     // 1MB
-/*#define GFAL_SRM_MAXRETRIES       10
 
-// GFAL error level for gfal_errmsg
-#define GFAL_ERRLEVEL_ERROR       0
-#define GFAL_ERRLEVEL_WARN        1
-#define GFAL_ERRLEVEL_INFO        2
-
-#define GFAL_VERBOSE_QUIET       -1    // API-mode, no messages is printed
-#define GFAL_VERBOSE_NORMAL       0    // only errors are printed
-#define GFAL_VERBOSE_VERBOSE      1    // a bit more verbose information is printed
-#define GFAL_VERBOSE_DEBUG        2    // extra information is printed
-
-#define GFAL_CKSM_DEFAULT         GFAL_CKSM_ADLER32   // MD5 is the default algo
-*/
+enum TFileLocality_
+{
+	GFAL_LOCALITY_UNKNOWN = 0,
+	GFAL_LOCALITY_ONLINE_,	///< xs:string value="ONLINE"
+	GFAL_LOCALITY_NEARLINE_,	///< xs:string value="NEARLINE"
+	GFAL_LOCALITY_ONLINE_USCOREAND_USCORENEARLINE,	///< xs:string value="ONLINE_AND_NEARLINE"
+	GFAL_LOCALITY_LOST,	///< xs:string value="LOST"
+	GFAL_LOCALITY_NONE_,	///< xs:string value="NONE"
+	GFAL_LOCALITY_UNAVAILABLE	///< xs:string value="UNAVAILABLE"
+};
+/// Typedef synonym for enum ns1__TFileLocality.
+typedef enum TFileLocality_ TFileLocality;
 
 enum TRetentionPolicy_
+{
+	GFAL_POLICY_UNKNOWN = 0,
+	GFAL_POLICY_REPLICA,
+	GFAL_POLICY_OUTPUT,
+	GFAL_POLICY_CUSTODIAL
+};
+/// Typedef synonym for enum ns1__TRetentionPolicy.
+typedef enum TRetentionPolicy_ TRetentionPolicy;
+
+enum TAccessLatency_
+{
+	GFAL_LATENCY_UNKNOWN = 0,
+	GFAL_LATENCY_ONLINE,
+	GFAL_LATENCY_NEARLINE
+};
+/// Typedef synonym for enum ns1__TAccessLatency.
+typedef enum TAccessLatency_ TAccessLatency;
+
+/*enum TRetentionPolicy_
 {
 	SRM_POLICY_UNKNOWN = 0,
 	SRM_POLICY_REPLICA,
@@ -71,7 +76,7 @@ enum TAccessLatency_
 	SRM_LATENCY_NEARLINE
 };
 typedef enum TAccessLatency_ TAccessLatency;
-
+*/
 enum TPermissionType_
 {
 	SRM_PERMISSION_ADD = 0,
@@ -100,7 +105,7 @@ enum srm_version
 	VERSION_1,
 	VERSION_2_2,
 };
-
+/*
 enum srm_file_locality_
 {
 	srm_file_locality_UNKNOWN = 0,
@@ -110,9 +115,9 @@ enum srm_file_locality_
 	srm_file_locality_LOST,
 	srm_file_locality_NONE,
 	srm_file_locality_UNAVAILABLE
-};
+};*/
 
-typedef enum srm_file_locality_ srm_file_locality ;
+//typedef enum srm_file_locality_ srm_file_locality ;
 
 enum srm_call_status_
 {
@@ -199,7 +204,7 @@ struct srmv2_mdfilestatus
 	char 	*explanation;
 	struct srmv2_mdfilestatus *subpaths;
 	int nbsubpaths;
-	srm_file_locality locality;
+	TFileLocality locality;
 	char *checksumtype;
 	char *checksum;
     char **spacetokens;

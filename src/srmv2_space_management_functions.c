@@ -140,29 +140,29 @@ int srmv2_getspacemd (struct srm_context *context,
 		if (tknrepp->spaceDataArray[i]->retentionPolicyInfo) {
 			switch (tknrepp->spaceDataArray[i]->retentionPolicyInfo->retentionPolicy) {
 				case REPLICA:
-					(*spaces)[i].retentionpolicy = SRM_POLICY_REPLICA;
+					(*spaces)[i].retentionpolicy = GFAL_POLICY_REPLICA;
 					break;
 				case OUTPUT:
-					(*spaces)[i].retentionpolicy = SRM_POLICY_OUTPUT;
+					(*spaces)[i].retentionpolicy = GFAL_POLICY_OUTPUT;
 					break;
 				case CUSTODIAL:
-					(*spaces)[i].retentionpolicy = SRM_POLICY_CUSTODIAL;
+					(*spaces)[i].retentionpolicy = GFAL_POLICY_CUSTODIAL;
 					break;
 				default:
-					(*spaces)[i].retentionpolicy = SRM_POLICY_UNKNOWN;
+					(*spaces)[i].retentionpolicy = GFAL_POLICY_UNKNOWN;
 			}
 
 			if (tknrepp->spaceDataArray[i]->retentionPolicyInfo->accessLatency)
 			{
 				switch (*(tknrepp->spaceDataArray[i]->retentionPolicyInfo->accessLatency)) {
 					case ONLINE:
-						(*spaces)[i].accesslatency = SRM_LATENCY_ONLINE;
+						(*spaces)[i].accesslatency = GFAL_LATENCY_ONLINE;
 						break;
 					case NEARLINE:
-						(*spaces)[i].accesslatency = SRM_LATENCY_NEARLINE;
+						(*spaces)[i].accesslatency = GFAL_LATENCY_NEARLINE;
 						break;
 					default:
-						(*spaces)[i].accesslatency = SRM_LATENCY_UNKNOWN;
+						(*spaces)[i].accesslatency = GFAL_LATENCY_UNKNOWN;
 				}
 			}
 		}
