@@ -37,26 +37,6 @@ endif
 # WDSLs, nsmap files
 #-------------------------------------------------------------------------------
 
-# edg-local-replica-catalog.wsdl
-#-------------------------------------------------------------------------------
-EDG_LOCAL_REPLICA_CATALOG_SOAP_FILES = lrcH.h lrcStub.h urcC.c lrcClient.c edg_local_replica_catalogSoapBinding.nsmap
-
-$(EDG_LOCAL_REPLICA_CATALOG_SOAP_FILES): edg-local-replica-catalog.h
-	$(SOAPCPP2) $(SOAPCPP2FLAGS) -p lrc edg-local-replica-catalog.h
-
-edg-local-replica-catalog.h: edg-local-replica-catalog.wsdl
-	$(WSDL2H) $(WSDL2HFLAGS) -w -t $(top_srcdir)/src/typemap-lrc.dat $< -o $@
-
-# edg-replica-metadata-catalog.wsdl
-#-------------------------------------------------------------------------------
-EDG_REPLICA_METADATA_CATALOG_SOAP_FILES = rmcH.h rmcStub.h rmcC.c rmcClient.c edg_replica_metadata_catalogSoapBinding.nsmap
-
-$(EDG_REPLICA_METADATA_CATALOG_SOAP_FILES): edg-replica-metadata-catalog.h
-	$(SOAPCPP2) $(SOAPCPP2FLAGS) -p rmc edg-replica-metadata-catalog.h
-
-edg-replica-metadata-catalog.h: edg-replica-metadata-catalog.wsdl
-	$(WSDL2H) $(WSDL2HFLAGS) -w -t $(top_srcdir)/src/typemap-rmc.dat $< -o $@
-
 # srm.v1.1.wsdl
 #-------------------------------------------------------------------------------
 SRM_V1_1_SOAP_FILES = srmH.h srmStub.h srmC.c srmClient.c ISRM.nsmap
@@ -80,15 +60,7 @@ srm.v2.2.h: srm.v2.2.wsdl
 # fixed nsmap files
 #-------------------------------------------------------------------------------
 FIXED_NSMAP_FILES = \
-	edg_local_replica_catalogSoapBinding+.nsmap \
-	edg_replica_metadata_catalogSoapBinding+.nsmap \
 	srmSoapBinding+.nsmap
-
-edg_local_replica_catalogSoapBinding+.nsmap: edg_local_replica_catalogSoapBinding.nsmap
-	sed 's/struct Namespace namespaces/struct Namespace namespaces_lrc/' $? > $@
-
-edg_replica_metadata_catalogSoapBinding+.nsmap: edg_replica_metadata_catalogSoapBinding.nsmap
-	sed 's/struct Namespace namespaces/struct Namespace namespaces_rmc/' $? > $@
 
 srmSoapBinding+.nsmap: srmSoapBinding.nsmap
 	sed 's/struct Namespace namespaces/struct Namespace namespaces_srmv2/' $? > $@
@@ -135,8 +107,6 @@ lib_LTLIBRARIES = \
 
 # generated source files (to build before other programs and libraries)
 BUILT_SOURCES = \
-	$(EDG_LOCAL_REPLICA_CATALOG_SOAP_FILES) \
-	$(EDG_REPLICA_METADATA_CATALOG_SOAP_FILES) \
 	$(SRM_V1_1_SOAP_FILES) \
 	$(SRM_V2_2_SOAP_FILES) \
 	$(FIXED_NSMAP_FILES) 
