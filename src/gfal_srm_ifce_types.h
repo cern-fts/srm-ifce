@@ -78,23 +78,6 @@ enum TAccessLatency_
 /// Typedef synonym for enum ns1__TAccessLatency.
 typedef enum TAccessLatency_ TAccessLatency;
 
-/*enum TRetentionPolicy_
-{
-	SRM_POLICY_UNKNOWN = 0,
-	SRM_POLICY_REPLICA,
-	SRM_POLICY_OUTPUT,
-	SRM_POLICY_CUSTODIAL
-};
-typedef enum TRetentionPolicy_ TRetentionPolicy;
-
-enum TAccessLatency_
-{
-	SRM_LATENCY_UNKNOWN = 0,
-	SRM_LATENCY_ONLINE,
-	SRM_LATENCY_NEARLINE
-};
-typedef enum TAccessLatency_ TAccessLatency;
-*/
 enum TPermissionType_
 {
 	SRM_PERMISSION_ADD = 0,
@@ -123,19 +106,6 @@ enum srm_version
 	VERSION_1,
 	VERSION_2_2,
 };
-/*
-enum srm_file_locality_
-{
-	srm_file_locality_UNKNOWN = 0,
-	srm_file_locality_ONLINE,
-	srm_file_locality_NEARLINE,
-	srm_file_locality_ONLINE_USCOREAND_USCORENEARLINE,
-	srm_file_locality_LOST,
-	srm_file_locality_NONE,
-	srm_file_locality_UNAVAILABLE
-};*/
-
-//typedef enum srm_file_locality_ srm_file_locality ;
 
 enum srm_call_status_
 {
