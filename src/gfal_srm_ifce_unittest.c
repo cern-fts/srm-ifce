@@ -434,6 +434,7 @@ int soap_call_srm2__abort_request_test1(struct soap *soap, const char *soap_endp
 		struct srm2__srmAbortRequestRequest *request,
 	    struct srm2__srmAbortRequestResponse_ *_param_18)
 {
+	_param_18 = NULL;
 	return 0;
 }
 int soap_call_srm2__abort_request_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action,
@@ -499,11 +500,6 @@ START_TEST (test_srmv2_abort_request)
 	result = srmv2_abort_request(&context,NULL);
 	fail_if ((result  != -1),
 				   "Expected Failure 1!");
-
-	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
-	result = srmv2_abort_request(&context,token);
-	fail_if ((result  != -1),
-				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test2;
 	result = srmv2_abort_request(&context,token);
@@ -1113,7 +1109,11 @@ START_TEST (test_srmv2_release_files)
 END_TEST
 int  soap_call_srm2__srmBringOnline_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmBringOnlineRequest *srmBringOnlineRequest, struct srm2__srmBringOnlineResponse_ *_param_18)
 {
-	_param_18->srmBringOnlineResponse = NULL;
+/*	_param_18->srmBringOnlineResponse = NULL;
+	return 0;*/
+	struct srm2__srmBringOnlineResponse *resp  = (struct srm2__srmBringOnlineResponse *) soap_malloc (soap,sizeof (struct srm2__srmBringOnlineResponse));
+	resp->returnStatus = NULL;
+	_param_18->srmBringOnlineResponse = resp;
 	return 0; // success but return statuses are null
 }
 
@@ -1121,10 +1121,13 @@ int  soap_call_srm2__srmBringOnline_test2(struct soap *soap, const char *soap_en
 {
 	struct srm2__srmBringOnlineResponse *resp  = (struct srm2__srmBringOnlineResponse *) soap_malloc (soap,sizeof (struct srm2__srmBringOnlineResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	resp->returnStatus = retstatus;
-	_param_18->srmBringOnlineResponse = resp;
 	retstatus->statusCode = SRM_USCOREFAILURE;
-
+	retstatus->explanation = NULL;
+	resp->returnStatus = retstatus;
+	resp->remainingTotalRequestTime = NULL;
+	resp->requestToken = NULL;
+	resp->arrayOfFileStatuses = NULL;
+	_param_18->srmBringOnlineResponse = resp;
 	return -1; // failure
 }
 
@@ -1137,7 +1140,7 @@ int  soap_call_srm2__srmBringOnline_test3(struct soap *soap, const char *soap_en
 	_param_18->srmBringOnlineResponse->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
-
+	retstatus->explanation = NULL;
 	return 0; // success
 }
 
@@ -1209,7 +1212,7 @@ START_TEST (test_srmv2_bring_online_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
+	char *test_protocols[] = {"protocol1","protocol2", NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
@@ -1430,7 +1433,7 @@ int  soap_call_srm2__srmPrepareToGet_test2(struct soap *soap, const char *soap_e
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREFAILURE;
-
+	retstatus->explanation = NULL;
 	return -1; // failure
 }
 
@@ -1443,7 +1446,7 @@ int  soap_call_srm2__srmPrepareToGet_test3(struct soap *soap, const char *soap_e
 	_param_18->srmPrepareToGetResponse->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
-
+	retstatus->explanation = NULL;
 	return 0; // success
 }
 
@@ -2961,310 +2964,7 @@ Suite * test_suite (void)
 
   return s;
 }
-void TestExtend()
-{
-	int i;
-	struct srm_extendfilelifetime_input input;
-	struct srmv2_pinfilestatus *status;
-	struct srm_context context;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
 
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
-
-	input.pintime = 100;
-	input.nbfiles = 1;
-	input.surls = test_surls;
-	input.reqtoken = "test";
-
-	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test1;
-	result = srmv2_extend_file_lifetime(&context,&input,&status); //failure empty fs
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test2;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test3;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test4;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test5;
-	result = srmv2_extend_file_lifetime(&context,&input,&status);
-	//fail_if ((result  != 1),
-		//			"Expected Success!");
-}
-void TestRm()
-{
-	struct srmv2_filestatus *filestatus;
-	struct srm_rm_input input;
-	struct srm_rm_output output;
-	struct srm_context context;
-
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.surls = test_strings;
-	input.nbfiles = 1;
-
-	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
-	result = srmv2_rm(&context,&input,&output);
-//	fail_if ((result  != -1),
-	//			   "Expected Failure 1!");
-
-	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
-	result = srmv2_rm(&context,&input,&output);
-	//fail_if ((result  != 1),
-		//		   "Expected Success!");
-}
-void TestCheckPermission()
-{
-	int i;
-	struct srm_checkpermission_input input;
-	struct srmv2_filestatus *status;
-	struct srm_context context;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
-
-	input.amode = R_OK;
-	input.nbfiles = 1;
-	input.surls = test_surls;
-
-	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test1;
-	result = srmv2_check_permission(&context,&input,&status); //failure empty fs
-	///fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test2;
-	result = srmv2_check_permission(&context,&input,&status);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test3;
-	result = srmv2_check_permission(&context,&input,&status);
-//	fail_if ((result  != -1),
-	//				"Expected Failure !");
-
-	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test4;
-	result = srmv2_check_permission(&context,&input,&status);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test5;
-	result = srmv2_check_permission(&context,&input,&status);
-	//fail_if ((result  != 1),
-		//			"Expected Success!");
-	//fail_if ((status[0].status != 0),
-		//				"Expected Status 0!");
-
-	call_function.call_srm2__srmCheckPermission = soap_call_srm2__srmCheckPermission_test6;
-	result = srmv2_check_permission(&context,&input,&status);
-	//fail_if ((result  != 1),
-		//			"Expected Success!");
-	//fail_if ((status[0].status == 0),
-		//				"Expected Status EACCESS!");
-
-}
-void TestGetPermission()
-{
-	int i;
-	struct srm_getpermission_input input;
-	struct srm_getpermission_output output;
-	struct srm_context context;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
-
-
-	input.nbfiles = 1;
-	input.surls =  test_surls;
-
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test2;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test3;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != 1),
-		//			"Expected Success!");
-
-	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test6;
-	result = srmv2_get_permission(&context,&input,&output);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-}
-
-//////////////////////////////////////////////////////////////////
-// test test_srmv2_set_permission
-//////////////////////////////////////////////////////////////////
-void TestSetPermission()
-{
-	int i;
-	struct srm_setpermission_input input;
-	struct srm_permission user_perm;
-	struct srm_context context;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
-
-
-	input.surl = test_surls[0];
-	input.owner_permission = SRM_PERMISSION_RWX;
-	input.other_permission = SRM_PERMISSION_RW;
-	input.group_permissions_count = 0;
-	input.group_permissions = NULL;
-
-	user_perm.mode = SRM_PERMISSION_RWX;
-	user_perm.name_id = "tmanev";
-
-	input.user_permissions_count = 1;
-	input.user_permissions = &user_perm;
-	input.permission_type = SRM_PERMISSION_ADD;
-
-
-
-	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test1;
-	result = srmv2_set_permission(&context,&input);
-	//fail_if ((result  != 0),
-		//			"Expected Success !");
-
-	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test2;
-	result = srmv2_set_permission(&context,&input);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test3;
-	result = srmv2_set_permission(&context,&input);
-//	fail_if ((result  != -1),
-	//				"Expected Failure !");
-
-	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test4;
-	result = srmv2_set_permission(&context,&input);
-	//fail_if ((result  != -1),
-		//			"Expected Failure !");
-
-	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test5;
-	result = srmv2_set_permission(&context,&input);
-	//fail_if ((result  != 0),
-		//			"Expected Success!");
-
-	call_function.call_srm2__srmSetPermission = soap_call_srm2__srmSetPermission_test6;
-	result = srmv2_set_permission(&context,&input);
-//	fail_if ((result  != -1),
-	//				"Expected Failure !");
-}
-/*
-int mkdir_test_ok = 0;
-int  soap_call_srm2__srmMkdir_test_last_level(struct soap *soap, const char *soap_endpoint, const char *soap_action,
-						struct srm2__srmMkdirRequest *srmMkdirRequest,
-						struct srm2__srmMkdirResponse_ *_param_18)
-{
-	int i,n;
-	struct srm2__srmMkdirResponse *resp  = (struct srm2__srmMkdirResponse *) soap_malloc (soap,sizeof (struct srm2__srmMkdirResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCORESUCCESS;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	_param_18->srmMkdirResponse = resp;
-
-	mkdir_test_ok = 0;
-	n = strlen(test_dir);
-	for(i=0;i<n && i<strlen(srmMkdirRequest->SURL);i++)
-	{
-		if (srmMkdirRequest->SURL[i] != test_dir[i])
-		{
-			break;
-		}
-	}
-	if ((i == n) ||
-			(i == (n-1) && test_dir[n-1] == '/'))
-	{
-		mkdir_test_ok = 1;
-	}
-
-	return 0;
-}*/
-
-//////////////////////////////////////////////////////////////////
-// test test_srmv2_mkdir
-//////////////////////////////////////////////////////////////////
-void TestMkdir()
-{
-	struct srm_mkdir_input input;
-	struct srm_context context;
-	int result;
-
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.dir_name = test_dir;
-
-	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test_last_level;
-	result = srmv2_mkdir(&context,&input);
-}
 int main(void)
 {
 	int number_failed;
@@ -3272,16 +2972,10 @@ int main(void)
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-	srunner_run_all (sr, CK_VERBOSE);
+//srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
+	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
-
-	//TestFunc();
-	//TestCheckPermission();
-	//TestGetPermission();
-	//TestSetPermission();
-	//TestExtend();
-	//TestMkdir();
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
