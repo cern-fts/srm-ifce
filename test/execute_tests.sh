@@ -19,21 +19,16 @@
 SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
 
-if [ $(uname -m) == "x86_64" ]; then
-	LIB_FOLDER_TYPE=lib64
-else
-	LIB_FOLDER_TYPE=lib
-fi
+#if [ $(uname -m) == "x86_64" ]; then
+#	LIB_FOLDER_TYPE=lib64
+#else
+#	LIB_FOLDER_TYPE=lib
+#fi
 
-#goto  workspace folder (../../)
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SCRIPTPATH/../../stage/$LIB_FOLDER_TYPE
-echo $LD_LIBRARY_PATH
-echo $LIBDIR
 if [ -n "$1" ]; then
 	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$1
 fi
 echo $LD_LIBRARY_PATH
-echo $LIBDIR
 
 function execute_test {
 
