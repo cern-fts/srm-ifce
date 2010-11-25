@@ -26,7 +26,7 @@ else
 fi
 
 #goto  workspace folder (../../)
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SCRIPTPATH/../../stage/$LIB_FOLDER_TYPE
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SCRIPTPATH/../../stage/$LIB_FOLDER_TYPE
 echo $LD_LIBRARY_PATH
 
 function execute_test {
