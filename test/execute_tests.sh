@@ -19,6 +19,16 @@
 SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
 
+if [ $(uname -m) == "x86_64" ]; then
+	LIB_FOLDER_TYPE=lib64
+else
+	LIB_FOLDER_TYPE=lib
+fi
+
+#goto  workspace folder (../../)
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SCRIPTPATH/../../stage/$LIB_FOLDER_TYPE
+echo $LD_LIBRARY_PATH
+
 function execute_test {
 
     local testdir=$SCRIPTPATH/$1
