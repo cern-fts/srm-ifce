@@ -29,6 +29,11 @@ fi
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SCRIPTPATH/../../stage/$LIB_FOLDER_TYPE
 echo $LD_LIBRARY_PATH
 echo $LIBDIR
+if [ -n "$1" ]; then
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$1/$LIB_FOLDER_TYPE
+fi
+echo $LD_LIBRARY_PATH
+echo $LIBDIR
 
 function execute_test {
 
