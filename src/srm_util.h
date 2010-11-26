@@ -22,10 +22,12 @@
 void srm_soap_init(struct soap *soap);
 void srm_soap_deinit(struct soap *soap);
 
+extern const char *err_msg_begin;
 void srm_errmsg (struct srm_context *context, const char *format, ...);
 int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
 int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,const char *srmfunc);
 int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc);
+int srm_print_error_status_additional(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc,char *additional_info);
 
 int statuscode2errno (int statuscode);
 const char * statuscode2errmsg (int statuscode);

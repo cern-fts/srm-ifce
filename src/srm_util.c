@@ -28,6 +28,8 @@
 #include "srmv2H.h"
 #include "srm_dependencies.h"
 
+const char *err_msg_begin = "SE";
+
 const char *srmv2_errmsg[] = {
 	"SRM_SUCCESS",
 	"SRM_FAILURE",
@@ -193,16 +195,16 @@ int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *
 {
 	if (soap->fault != NULL && soap->fault->faultstring != NULL)
 	{
-		srm_errmsg (context, "[SE][%s][] %s: %s",
+		srm_errmsg (context, "[%s][%s][] %s: %s",err_msg_begin,
 				 srmfunc, context->srm_endpoint, soap->fault->faultstring);
 	}else if (soap->error == SOAP_EOF)
 	{
-		srm_errmsg (context, "[SE][%s][] %s: Connection fails or timeout",
-				 srmfunc,context->srm_endpoint);
+		srm_errmsg (context, "[%s][%s][] %s: Connection fails or timeout",
+				err_msg_begin,srmfunc,context->srm_endpoint);
 	}else
 	{
-		srm_errmsg (context, "[SE][%s][] %s: Unknown SOAP error (%d)",
-				 srmfunc,context->srm_endpoint, soap->error);
+		srm_errmsg (context, "[%s][%s][] %s: Unknown SOAP error (%d)",
+				err_msg_begin,srmfunc,context->srm_endpoint, soap->error);
 	}
 	return ECOMM;
 }
@@ -212,6 +214,8 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 	int result_errno;
 	if (retstatus == NULL)
 	{
+		srm_errmsg (context, "[%s][%s][] %s: <empty response>",err_msg_begin,
+				srmfunc,context->srm_endpoint);
 		return ECOMM;
 	}
 	if (retstatus->statusCode != SRM_USCORESUCCESS &&
@@ -222,19 +226,21 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 		result_errno = statuscode2errno (retstatus->statusCode);
 		if (retstatus->explanation && retstatus->explanation[0])
 		{
-			srm_errmsg (context, "[SE][%s][%s] %s: %s",
+			srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
 					srmfunc, statuscode2errmsg (retstatus->statusCode),
 					context->srm_endpoint, retstatus->explanation);
 		}else
 		{
-			srm_errmsg (context, "[SE][%s][%s] %s: <none>",
-					srmfunc, statuscode2errmsg (retstatus->statusCode), context->srm_endpoint);
+			srm_errmsg (context, "[%s][%s][%s] %s: <none>",err_msg_begin,
+					srmfunc, statuscode2errmsg (retstatus->statusCode),
+					context->srm_endpoint);
 		}
 	}
 	else
 	{
-		srm_errmsg (context, "[SE][%s][%s] %s: <empty response>",
-				srmfunc, statuscode2errmsg (retstatus->statusCode), context->srm_endpoint);
+		srm_errmsg (context, "[%s][%s][%s] %s: <empty response>",err_msg_begin,
+				srmfunc, statuscode2errmsg (retstatus->statusCode),
+				context->srm_endpoint);
 		result_errno = ECOMM;
 	}
 	return result_errno;
@@ -245,24 +251,39 @@ int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatu
 
 	if (status->explanation && status->explanation[0])
 	{
-		srm_errmsg (context, "[SE][%s][%s] %s: %s",
+		srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
 				 srmfunc, statuscode2errmsg (status->statusCode),
 				 context->srm_endpoint, status->explanation);
 	}else
-	{	srm_errmsg (context, "[SE][%s][%s] %s: <none>",
+	{	srm_errmsg (context, "[%s][%s][%s] %s: <none>",err_msg_begin,
 				 srmfunc, statuscode2errmsg (status->statusCode),
 				 context->srm_endpoint);
+	}
+	return statuscode2errno (status->statusCode);
+}
+int srm_print_error_status_additional(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc,char *additional_info)
+{
+
+	if (status->explanation && status->explanation[0])
+	{
+		srm_errmsg (context, "[%s][%s][%s] %s: %s: %s",err_msg_begin,
+				 srmfunc, statuscode2errmsg (status->statusCode),
+				 context->srm_endpoint,additional_info, status->explanation);
+	}else
+	{	srm_errmsg (context, "[%s][%s][%s] %s: %s: <none>",err_msg_begin,
+				 srmfunc, statuscode2errmsg (status->statusCode),
+				 context->srm_endpoint,additional_info);
 	}
 	return statuscode2errno (status->statusCode);
 }
 void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqstatp,const char *srmfunc)
 {
 	if (reqstatp->explanation != NULL && reqstatp->explanation[0])
-		asprintf(explanation, "[SE][%s][%s] %s",
+		asprintf(explanation, "[%s][%s][%s] %s",err_msg_begin,
 				srmfunc, statuscode2errmsg(
 						reqstatp->statusCode), reqstatp->explanation);
 	else
-		asprintf(explanation, "[SE][%s][%s] <none>",
+		asprintf(explanation, "[%s][%s][%s] <none>",err_msg_begin,
 				srmfunc, statuscode2errmsg(
 						reqstatp->statusCode));
 }
@@ -341,7 +362,7 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 
 	if (retstatus == NULL)
 	{
-		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
+		srm_errmsg (context, "[%s][%s][] %s: <empty response>",err_msg_begin,
 				srmfunc, context->srm_endpoint);
 		errno = ECOMM;
 		// No response status
@@ -353,8 +374,8 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 			case SRM_USCOREINTERNAL_USCOREERROR:
 				if (wait_for_new_attempt(internal_context) != 0)
 				{
-					srm_errmsg (context, "[SE][%s][ETIMEDOUT] %s: User timeout over",
-							srmfunc, context->srm_endpoint);
+					srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
+							err_msg_begin,srmfunc, context->srm_endpoint);
 					errno = ETIMEDOUT;
 					// Timeout
 					return srm_call_status_TIMEOUT;
@@ -364,8 +385,8 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 			case SRM_USCOREREQUEST_USCOREINPROGRESS:
 				if (wait_for_new_attempt(internal_context) != 0)
 				{
-					srm_errmsg (context, "[SE][%s][ETIMEDOUT] %s: User timeout over",
-								srmfunc, context->srm_endpoint);
+					srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
+							err_msg_begin,srmfunc, context->srm_endpoint);
 					errno = ETIMEDOUT;
 					// Timeout
 					return srm_call_status_TIMEOUT;
@@ -495,15 +516,15 @@ int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		if (repfs->surlPermissionArray[i]->status) {
 			(*statuses)[i].status = statuscode2errno (repfs->surlPermissionArray[i]->status->statusCode);
 			if (repfs->surlPermissionArray[i]->status->explanation && repfs->surlPermissionArray[i]->status->explanation[0])
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
 						repfs->surlPermissionArray[i]->status->explanation);
 			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
 						reqstatp->explanation);
 			else
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode));
 		} else
 			(*statuses)[i].status = ENOMEM;
@@ -547,15 +568,15 @@ int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
 		if (repfs->statusArray[i]->status) {
 			(*statuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						repfs->statusArray[i]->status->explanation);
 			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						reqstatp->explanation);
 			else
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
 		}
 	}
@@ -591,15 +612,15 @@ int copy_pinfilestatuses_extendlifetime(struct srm2__TReturnStatus *reqstatp,
 		{
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						repfs->statusArray[i]->status->explanation);
 			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						reqstatp->explanation);
 			else if ((*filestatuses)[i].status != 0)
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 							 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
 		}
 	}
@@ -630,15 +651,15 @@ int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
 		   if (repfs->statusArray[i]->status) {
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						repfs->statusArray[i]->status->explanation);
 			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						reqstatp->explanation);
 			else if ((*filestatuses)[i].status != 0)
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
 		}
 		if (repfs->statusArray[i]->remainingPinTime)
@@ -679,15 +700,15 @@ int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
 		{
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						repfs->statusArray[i]->status->explanation);
 			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						reqstatp->explanation);
 			else if ((*filestatuses)[i].status != 0)
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
 		}
 		if (repfs->statusArray[i]->remainingPinTime)
@@ -730,15 +751,15 @@ int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
 		{
 			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
 			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						repfs->statusArray[i]->status->explanation);
 			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
 						reqstatp->explanation);
 			else if ((*filestatuses)[i].status != 0)
-				asprintf (&((*filestatuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
 		}
 		if (repfs->statusArray[i]->remainingPinLifetime)
@@ -791,17 +812,17 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 			(*permissions)[i].status = statuscode2errno(repperm->permissionArray[i]->status->statusCode);
 			if (repperm->permissionArray[i]->status->explanation && repperm->permissionArray[i]->status->explanation[0])
 			{
-				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
 						repperm->permissionArray[i]->status->explanation);
 			}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
 			{
-				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
 						reqstatp->explanation);
 			}else
 			{
-				asprintf (&((*permissions)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode));
 			}
 			//continue;
@@ -895,17 +916,17 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		if ((*statuses)[i].status) {
 			if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
 			{
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
 						repfs->pathDetailArray[i]->status->explanation);
 			}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
 			{
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] %s",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
 						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
 						reqstatp->explanation);
 			}else
 			{
-				asprintf (&((*statuses)[i].explanation), "[SE][%s][%s] <none>",
+				asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
 						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode));
 			}
 

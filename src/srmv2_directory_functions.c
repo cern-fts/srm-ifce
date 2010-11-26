@@ -361,13 +361,9 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 		}
 		output->statuses[0].surl = strdup (input->surl);
 		output->statuses[0].status = statuscode2errno (output->retstatus->statusCode);
-		if (output->statuses[0].status) {
-			if (output->retstatus->explanation != NULL && output->retstatus->explanation[0])
-				asprintf (&(output->statuses[0].explanation), "[SE][%s][%s] %s", srmfunc,
-						statuscode2errmsg (output->retstatus->statusCode), output->retstatus->explanation);
-			else
-				asprintf (&(output->statuses[0].explanation), "[SE][%s][%s] <none>", srmfunc,
-						statuscode2errmsg (output->retstatus->statusCode));
+		if (output->statuses[0].status)
+		{
+			srm_print_explanation(&((output->statuses)[0].explanation),output->retstatus,srmfunc);
 		}
 		srm_soap_deinit(&soap);
 		errno = 0;
@@ -423,17 +419,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 		if (sav_errno != 0 && sav_errno != EEXIST && sav_errno != EACCES && sav_errno != ENOENT)
 		{
-			if (repstatp->explanation && repstatp->explanation[0])
-			{
-				srm_errmsg (context, "[SE][%s][%s] %s: %s: %s",
-						srmfunc, statuscode2errmsg(repstatp->statusCode),
-						context->srm_endpoint, input->dir_name, repstatp->explanation);
-			}else
-			{
-				srm_errmsg (context, "[SE][%s][%s] %s: %s: <none>",
-						srmfunc, statuscode2errmsg(repstatp->statusCode),
-						context->srm_endpoint, input->dir_name);
-			}
+			srm_print_error_status_additional(context,repstatp,srmfunc,input->dir_name);
 			srm_soap_deinit(&soap);
 			errno = sav_errno;
 			return (-1);
@@ -463,28 +449,13 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 			return (-1);
 		}
 
-		if (rep.srmMkdirResponse == NULL || (repstatp = rep.srmMkdirResponse->returnStatus) == NULL)
+		repstatp = NULL;
+		if (rep.srmMkdirResponse == NULL || (repstatp = rep.srmMkdirResponse->returnStatus) == NULL
+				|| statuscode2errno (repstatp->statusCode) != 0)
+
 		{
-			srm_errmsg (context, "[SE][%s][] %s: <empty response>",
-					srmfunc, context->srm_endpoint);
+			errno = srm_call_err(context,repstatp,srmfunc);
 			srm_soap_deinit(&soap);
-			errno = ECOMM;
-			return (-1);
-		}
-
-		sav_errno = statuscode2errno (repstatp->statusCode);
-
-		if (sav_errno != 0) {
-			if (repstatp->explanation && repstatp->explanation[0])
-				srm_errmsg (context , "[SE][%s][%s] %s: %s",
-						srmfunc, statuscode2errmsg(repstatp->statusCode),
-						file, repstatp->explanation);
-			else
-				srm_errmsg (context,  "[SE][%s][%s] %s: <none>",
-						srmfunc, statuscode2errmsg(repstatp->statusCode), file);
-
-			srm_soap_deinit(&soap);
-			errno = sav_errno;
 			return (-1);
 		}
 
@@ -540,9 +511,8 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	if ((rep.srmExtendFileLifeTimeResponse == NULL)||(ret!=0)||
 			copy_returnstatus(&output->retstatus,rep.srmExtendFileLifeTimeResponse->returnStatus))
 	{
-		srm_errmsg (context, "[SE][%s][] %s: <empty response>", srmfunc, context->srm_endpoint);
+		errno = srm_call_err(context,output->retstatus,srmfunc);
 		srm_soap_deinit(&soap);
-		errno = ECOMM;
 		return (-1);
 	}
 

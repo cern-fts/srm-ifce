@@ -30,7 +30,7 @@ int srmv2_getspacemd (struct srm_context *context,
 	struct soap soap;
 	struct srm2__srmGetSpaceMetaDataResponse_ tknrep;
 	struct srm2__srmGetSpaceMetaDataRequest tknreq;
-	struct srm2__TReturnStatus *tknrepstatp;
+	struct srm2__TReturnStatus *tknrepstatp = NULL;
 	struct srm2__ArrayOfTMetaDataSpace *tknrepp;
 	const char srmfunc[] = "GetSpaceMetaData";
 
@@ -57,8 +57,7 @@ int srmv2_getspacemd (struct srm_context *context,
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		soap_end (&soap);
-		soap_done (&soap);
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
@@ -68,53 +67,45 @@ int srmv2_getspacemd (struct srm_context *context,
 	if ((ret = call_function.call_srm2__srmGetSpaceMetaData(&soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep)))
 	{
 		errno = srm_soap_call_err(context,&soap,srmfunc);
-		soap_end (&soap);
-		soap_done (&soap);
-		errno = ECOMM;
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
 	if (tknrep.srmGetSpaceMetaDataResponse == NULL ||
 			(tknrepstatp = tknrep.srmGetSpaceMetaDataResponse->returnStatus) == NULL) {
-		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
-				srmfunc, context->srm_endpoint);
-		soap_end (&soap);
-		soap_done (&soap);
-		errno = ECOMM;
+		errno = srm_call_err(context,tknrepstatp,srmfunc);
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
 	if (tknrepstatp->statusCode != SRM_USCORESUCCESS)
 	{
 		errno = srm_print_error_status(context,tknrepstatp,srmfunc);
-		soap_end (&soap);
-		soap_done (&soap);
+		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
 	tknrepp = tknrep.srmGetSpaceMetaDataResponse->arrayOfSpaceDetails;
 
-	if (! tknrepp)
+	if (!tknrepp)
 	{
-		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
-				 srmfunc, context->srm_endpoint);
+		srm_errmsg (context, "[%s][%s][] %s: <empty response>",
+				err_msg_begin,srmfunc, context->srm_endpoint);
 		soap_end (&soap);
 		soap_done (&soap);
 		errno = ECOMM;
 		return (-1);
 	}
 	if (tknrepp->__sizespaceDataArray < 1 || !tknrepp->spaceDataArray) {
-		srm_errmsg (context, "[SE][%s][] %s: no valid space tokens",
-			srmfunc, context->srm_endpoint);
-		soap_end (&soap);
-		soap_done (&soap);
+		srm_errmsg (context, "[%s][%s][] %s: no valid space tokens",
+				err_msg_begin,srmfunc, context->srm_endpoint);
+		srm_soap_deinit(&soap);
 		errno = EINVAL;
 		return (-1);
 	}
 
 	if ((*spaces = (struct srm_spacemd *) calloc (input->nbtokens, sizeof (struct srm_spacemd))) == NULL) {
-		soap_end (&soap);
-		soap_done (&soap);
+		srm_soap_deinit(&soap);
 		errno = ENOMEM;
 		return (-1);
 	}
@@ -125,21 +116,8 @@ int srmv2_getspacemd (struct srm_context *context,
 			continue;
 		if (tknrepp->spaceDataArray[i]->status &&
 				tknrepp->spaceDataArray[i]->status->statusCode != SRM_USCORESUCCESS) {
-			int sav_errno = statuscode2errno (tknrepp->spaceDataArray[i]->status->statusCode);
-			if (tknrepp->spaceDataArray[i]->status->explanation && tknrepp->spaceDataArray[i]->status->explanation[0])
-			{
-				srm_errmsg (context, "[SE][%s][%s] %s: %s",
-						srmfunc, statuscode2errmsg (tknrepp->spaceDataArray[i]->status->statusCode),
-						context->srm_endpoint, tknrepp->spaceDataArray[i]->status->explanation);
-			}else
-			{
-				srm_errmsg (context, "[%s][%s][%s] %s: <none>",
-						context->srm_endpoint, statuscode2errmsg (tknrepp->spaceDataArray[i]->status->statusCode));
-			}
-
-			soap_end (&soap);
-			soap_done (&soap);
-			errno = sav_errno;
+			errno = srm_call_err(context,tknrepp->spaceDataArray[i]->status,srmfunc);
+			srm_soap_deinit(&soap);
 			return (-1);
 		}
 		(*spaces)[i].spacetoken = strdup (tknrepp->spaceDataArray[i]->spaceToken);
@@ -186,8 +164,7 @@ int srmv2_getspacemd (struct srm_context *context,
 		}
 	}
 
-	soap_end (&soap);
-	soap_done (&soap);
+	srm_soap_deinit(&soap);
     errno = 0;
 	return (0);
 }
@@ -202,7 +179,7 @@ int srmv2_getspacetokens (struct srm_context *context,
 	struct soap soap;
 	struct srm2__srmGetSpaceTokensResponse_ tknrep;
 	struct srm2__srmGetSpaceTokensRequest tknreq;
-	struct srm2__TReturnStatus *tknrepstatp;
+	struct srm2__TReturnStatus *tknrepstatp = NULL;
 	struct srm2__ArrayOfString *tknrepp;
 	const char srmfunc[] = "GetSpaceTokens";
 
@@ -228,10 +205,8 @@ int srmv2_getspacetokens (struct srm_context *context,
 
 	if (tknrep.srmGetSpaceTokensResponse == NULL ||
 			(tknrepstatp = tknrep.srmGetSpaceTokensResponse->returnStatus) == NULL) {
-		srm_errmsg (context, "[SE][%s][] %s: <empty response>",
-				srmfunc, context->srm_endpoint);
+		errno = srm_call_err(context,tknrepstatp,srmfunc);
 		srm_soap_deinit(&soap);
-		errno = ECOMM;
 		return (-1);
 	}
 
@@ -255,8 +230,8 @@ int srmv2_getspacetokens (struct srm_context *context,
 
 	output->nbtokens = tknrepp->__sizestringArray;
 	if (output->nbtokens < 1 || !tknrepp->stringArray) {
-		srm_errmsg (context, "[SE][%s][%s] %s: %s: No such space token descriptor",
-				 srmfunc, statuscode2errmsg (tknrepstatp->statusCode),
+		srm_errmsg (context, "[%s][%s][%s] %s: %s: No such space token descriptor",
+				err_msg_begin,srmfunc, statuscode2errmsg (tknrepstatp->statusCode),
 				context->srm_endpoint,input->spacetokendesc);
 		srm_soap_deinit(&soap);
 		errno = EINVAL;
