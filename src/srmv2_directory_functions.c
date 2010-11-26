@@ -106,6 +106,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			{
 				// file list empty error
 				internal_context->current_status  = srm_call_status_FAILURE;
+				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
 			}else
 			{
@@ -130,6 +131,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			}
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -213,6 +215,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		case srm_call_status_QUEUED:
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}

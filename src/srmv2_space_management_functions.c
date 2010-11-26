@@ -387,14 +387,14 @@ int srmv2_reservespace_test_function(struct srm_context *context,
 
 	if ((ret = call_function.call_srm2__srmReserveSpace(&soap, context->srm_endpoint, srmfunc, &req, &rep)))
 	{
-		srm_soap_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
 
 	if (copy_string(&output->spacetoken,rep.srmReserveSpaceResponse->spaceToken))
 	{
-		srm_soap_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}
@@ -435,7 +435,7 @@ int srmv2_releasespace_test_function(struct srm_context *context,
 
 	if ((ret = call_function.call_srm2__srmReleaseSpace(&soap, context->srm_endpoint, srmfunc, &req, &rep)))
 	{
-		srm_soap_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,&soap,srmfunc);
 		srm_soap_deinit(&soap);
 		return (-1);
 	}

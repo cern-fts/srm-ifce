@@ -165,6 +165,7 @@ int srmv2_get_permission(struct srm_context *context,
 					repperm);
 		}else
 		{
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			result = -1;
 		}
 	}

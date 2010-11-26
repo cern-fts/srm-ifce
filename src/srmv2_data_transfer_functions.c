@@ -119,6 +119,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 			}
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -291,6 +292,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			if (copy_string(&output->token,rep.srmPrepareToPutResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
+				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
 			}
 			break;
@@ -309,6 +311,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			}
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -442,6 +445,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			if (copy_string(&output->token,rep.srmPrepareToGetResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
+				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
 			}
 			break;
@@ -460,6 +464,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			}
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -525,6 +530,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 			}
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -599,6 +605,7 @@ int srmv2_put_done(struct srm_context *context,
 		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
 	}else
 	{
+		errno = srm_call_err(context,reqstatp,srmfunc);
 		ret = -1;
 	}
 
@@ -673,6 +680,7 @@ int srmv2_release_files(struct srm_context *context,
 		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
 	}else
 	{
+		errno = srm_call_err(context,reqstatp,srmfunc);
 		ret = -1;
 	}
 
@@ -798,6 +806,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			if (copy_string(&output->token,rep.srmBringOnlineResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
+				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
 			}
 			break;
@@ -816,6 +825,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			}
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -889,6 +899,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 		case srm_call_status_QUEUED:
 			break;
 		default:
+			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
 			break;
 	}
@@ -983,6 +994,7 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 	if (token == NULL)
 	{
 		// No token supplied
+		errno = EINVAL;
 		srm_soap_deinit(&soap);
 		return (-1);
 	}else
