@@ -90,14 +90,14 @@ void srm_set_timeout_sendreceive (int value)
 		srm_timeout_sendreceive = value;
 }
 
-void srm_context_init(struct srm_context *context,char *srm_endpoint)
+void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose)
 {
-	context->errbuf = NULL;
-	context->errbufsz = 0;
+	context->errbuf = errbuf;
+	context->errbufsz = errbufsz;
 	context->version = VERSION_2_2;
 	context->srm_endpoint = srm_endpoint;
 	context->timeout  = 60;
-	context->verbose = 0;
+	context->verbose = verbose;
 }
 
 void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context)

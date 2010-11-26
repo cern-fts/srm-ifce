@@ -21,7 +21,7 @@
 
 #include "gfal_srm_ifce_types.h"
 
-void srm_context_init(struct srm_context *context,char *srm_endpoint);
+void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose);
 
 int srm_ls(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output);

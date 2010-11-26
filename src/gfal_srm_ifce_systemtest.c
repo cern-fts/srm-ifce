@@ -101,7 +101,7 @@ int DelDir(char *dir)
 	struct srm_rmdir_input input_rmdir;
 	struct srm_rmdir_output output_rmdir;
 
-	srm_context_init(&context,test_srm_endpoint);
+	srm_context_init(&context,test_srm_endpoint,NULL,0,0);
 
 	input_rmdir.recursive = 1;
 	input_rmdir.surl = dir;
@@ -114,7 +114,7 @@ int DelSurl(int nbfiles,char **surls)
 	struct srm_rm_input rm_input;
 	struct srm_rm_output rm_output;
 
-	srm_context_init(&context,test_srm_endpoint);
+	srm_context_init(&context,test_srm_endpoint,NULL,0,0);
 	rm_input.nbfiles = nbfiles;
 	rm_input.surls = surls;
 
