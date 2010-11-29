@@ -325,7 +325,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 }
 
 // returns space tokens associated to the space description
-int srmv2_reservespace_test_function(struct srm_context *context,
+int srmv2_reservespace(struct srm_context *context,
 		struct srm_reservespace_input *input,
 		struct srm_reservespace_output *output)
 {
@@ -383,7 +383,7 @@ int srmv2_reservespace_test_function(struct srm_context *context,
 	return (0);
 }
 
-int srmv2_releasespace_test_function(struct srm_context *context,
+int srmv2_releasespace(struct srm_context *context,
 		char *spacetoken)
 {
 	int flags;
@@ -417,4 +417,93 @@ int srmv2_releasespace_test_function(struct srm_context *context,
 	srm_soap_deinit(&soap);
     errno = 0;
 	return (0);
+}
+
+// returns space tokens associated to the space description
+int srmv2_purgefromspace(struct srm_context *context,
+		struct srm_purgefromspace_input *input,
+		struct srm_purgefromspace_output *output)
+{
+	int n,i,ret;
+	struct soap soap;
+	struct srm2__srmPurgeFromSpaceResponse_ rep;
+	struct srm2__srmPurgeFromSpaceRequest req;
+	struct srm2__TReturnStatus *repstatp;
+	struct srm2__ArrayOfTSURLReturnStatus *repfs;
+
+	const char srmfunc[] = "PurgeFromSpace";
+
+	if (input->spacetoken == NULL)
+	{
+		srm_errmsg( context, "[SRM][%s][EINVAL] Invalid arguments",srmfunc);
+		errno = EINVAL;
+		return (-1);
+	}
+
+	srm_soap_init(&soap);
+
+	memset(output,0,sizeof(*output));
+	memset (&req, 0, sizeof(req));
+
+	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	{
+		srm_errmsg (context, "[SRM][soap_malloc][] error");
+		errno = ENOMEM;
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
+	req.arrayOfSURLs->urlArray = (char **)input->surls;
+	req.spaceToken = input->spacetoken;
+
+	if ((ret = call_function.call_srm2__srmPurgeFromSpace(&soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	{
+		errno = srm_soap_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	if ((rep.srmPurgeFromSpaceResponse == NULL)||(ret!=0)||
+					copy_returnstatus(&output->retstatus,rep.srmPurgeFromSpaceResponse->returnStatus))
+	{
+		errno = srm_soap_call_err(context,&soap,srmfunc);
+		srm_soap_deinit(&soap);
+		return -1;
+	}
+
+
+	repfs = rep.srmPurgeFromSpaceResponse->arrayOfFileStatuses;
+
+	if (output->retstatus->statusCode != SRM_USCORESUCCESS || !repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+	{
+		errno = srm_call_err(context,output->retstatus,srmfunc);
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	n = repfs->__sizestatusArray;
+
+	if ((output->statuses = (struct srmv2_filestatus*) calloc (n, sizeof (struct srmv2_filestatus))) == NULL)
+	{
+		errno = ENOMEM;
+		srm_soap_deinit(&soap);
+		return (-1);
+	}
+
+	for (i = 0; i < n; ++i)
+	{
+		if (!repfs->statusArray[i])
+			continue;
+		if (repfs->statusArray[i]->surl)
+			(output->statuses)[i].surl = strdup (repfs->statusArray[i]->surl);
+		if (repfs->statusArray[i]->status)
+		{
+			(output->statuses)[i].status = statuscode2errno(repfs->statusArray[i]->status->statusCode);
+			srm_print_explanation(&((output->statuses)[i].explanation), repfs->statusArray[i]->status,srmfunc);
+		}
+	}
+
+	srm_soap_deinit(&soap);
+    errno = 0;
+	return (n);
 }

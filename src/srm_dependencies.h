@@ -162,6 +162,12 @@ typedef int (*soap_call_srm2__srmExtendFileLifeTime_fv)(
     struct srm2__srmExtendFileLifeTimeRequest *,
     struct srm2__srmExtendFileLifeTimeResponse_ *);
 
+typedef int (*soap_call_srm2__srmPurgeFromSpace_fv)(
+    struct soap *, const char *, const char *,
+    struct srm2__srmPurgeFromSpaceRequest *,
+    struct srm2__srmPurgeFromSpaceResponse_ *);
+
+
 
 typedef unsigned int (*sleep_fv)(
     unsigned int);
@@ -169,6 +175,7 @@ typedef unsigned int (*sleep_fv)(
 /* The collection of SOAP service calls. The pointers may be replaced with test
  * functions (dependency injection) */
 typedef struct misc_callers {
+	soap_call_srm2__srmPurgeFromSpace_fv 		call_srm2__srmPurgeFromSpace;
 	soap_call_srm2__srmExtendFileLifeTime_fv	call_srm2__srmExtendFileLifeTime;
 	soap_call_srm2__srmCheckPermission_fv		call_srm2__srmCheckPermission;
 	soap_call_srm2__srmReleaseSpace_fv			call_srm2__srmReleaseSpace;

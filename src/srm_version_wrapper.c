@@ -405,7 +405,7 @@ int srm_check_permission(struct srm_context *context,
 	switch (context->version)
 	{
 		case VERSION_2_2:
-			return srm_check_permission(context,input,statuses);
+			return srmv2_check_permission(context,input,statuses);
 		case VERSION_1:
 			// TODO
 			return (-1);
@@ -413,4 +413,18 @@ int srm_check_permission(struct srm_context *context,
 			return (-1);
 	}
 }
-
+int srm_purgefromspace(struct srm_context *context,
+		struct srm_purgefromspace_input *input,
+		struct srm_purgefromspace_output *output)
+{
+	switch (context->version)
+	{
+		case VERSION_2_2:
+			return srmv2_purgefromspace(context,input,output);
+		case VERSION_1:
+			// TODO
+			return (-1);
+		default:
+			return (-1);
+	}
+}

@@ -421,6 +421,19 @@ struct srm_reservespace_output
 	SRM_LONG64 size_guaranteed; // guaranteed size of the space
 };
 
+struct srm_purgefromspace_input
+{
+	int nbfiles; // number of surls in the array
+	char **surls; // array of surls
+	char *spacetoken; // space token
+};
+
+struct srm_purgefromspace_output
+{
+	struct srm2__TReturnStatus  *retstatus; // status of the srm call
+	struct srmv2_filestatus 	*statuses;
+};
+
 #endif /* _SRM_TYPES_H */
 
 

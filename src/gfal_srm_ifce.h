@@ -107,6 +107,9 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 int srm_extend_file_lifetime (struct srm_context *context,
 		struct srm_extendfilelifetime_input *input,struct srm_extendfilelifetime_output *output);
 
+int srm_purgefromspace(struct srm_context *context,
+		struct srm_purgefromspace_input *input,struct srm_purgefromspace_output *output);
+
 
 // gsoap timeouts
 void srm_set_timeout_connect (int);
