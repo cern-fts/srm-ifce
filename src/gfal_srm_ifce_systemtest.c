@@ -460,6 +460,7 @@ END_TEST
 START_TEST (test_srm_permissions)
 {
 	char *surls[] = {test_file1};
+	char *surls_unexisting[] = {test_unexisting};
 
 	struct srm_getpermission_input input;
 	struct srm_getpermission_output output;
@@ -496,6 +497,10 @@ START_TEST (test_srm_permissions)
 	fail_if ((result != 1), "Expected Success !");
 	fail_if ((filestatuses[0].status != EACCES), "Expected permission error !");
 
+	input_checkpermission.surls = surls_unexisting;
+	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
+	fail_if ((result != 1), "Expected Success !");
+	fail_if ((filestatuses[0].status != ENOENT), "Expected SRM_USCOREINVALID_USCOREPATH(ENOENT)!");
 
 	input_set.surl = surls[0];
 	input_set.owner_permission = SRM_PERMISSION_RWX;
@@ -510,6 +515,7 @@ START_TEST (test_srm_permissions)
 	result = srmv2_set_permission(&context,&input_set); // fail if result != 0
 	fail_if ((result != 0), "Expected Success !");
 
+    input_checkpermission.surls = surls;
 	result = srmv2_check_permission(&context,&input_checkpermission,&filestatuses); // fail if result != 1
 	fail_if ((result != 1), "Expected Success !");
 	fail_if ((filestatuses[0].status == EACCES), "Expected permission ok !");
@@ -577,7 +583,7 @@ int DoTests()
 	int number_failed;
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-//srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
+    //srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
