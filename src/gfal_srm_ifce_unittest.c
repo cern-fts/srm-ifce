@@ -864,6 +864,7 @@ int  soap_call_srm2__srmPutDone_test1(struct soap *soap, const char *soap_endpoi
 	retstatus->statusCode = SRM_USCOREINVALID_USCOREREQUEST;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPutDoneResponse = resp;
 
 	return 0;
@@ -935,6 +936,7 @@ int  soap_call_srm2__srmPutDone_test5(struct soap *soap, const char *soap_endpoi
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = NULL;// THIS FAILS
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPutDoneResponse = resp;
 
 
@@ -976,8 +978,8 @@ START_TEST (test_srmv2_put_done)
 
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test3;
 	result = srmv2_put_done(&context,&input,&statuses);
-	fail_if ((result != -1),
-				   "Expected Failure!");
+	fail_if ((result == -1),
+				   "Expected Success!");
 
 	call_function.call_srm2__srmPutDone = soap_call_srm2__srmPutDone_test4;
 	result = srmv2_put_done(&context,&input,&statuses);
@@ -1056,6 +1058,7 @@ int  soap_call_srm2__srmReleaseFiles_test4(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmReleaseFilesResponse = NULL; // THIS FAILS
 
 
@@ -1070,6 +1073,7 @@ int  soap_call_srm2__srmReleaseFiles_test5(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = NULL;// THIS FAILS
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmReleaseFilesResponse = resp;
 
 
@@ -1111,8 +1115,8 @@ START_TEST (test_srmv2_release_files)
 
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test3;
 	result = srmv2_release_files(&context,&input,&statuses);
-	fail_if ((result != -1),
-				   "Expected Failure!");
+	fail_if ((result == -1),
+				   "Expected Success!");
 
 	call_function.call_srm2__srmReleaseFiles = soap_call_srm2__srmReleaseFiles_test4;
 	result = srmv2_release_files(&context,&input,&statuses);
@@ -2864,7 +2868,7 @@ int  soap_call_srm2__srmExtendFileLifeTime_test4(struct soap *soap, const char *
 	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
-	//resp->arrayOfFileStatuses = NULL;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmExtendFileLifeTimeResponse = resp;
 	return 0; // success
 }
@@ -2991,7 +2995,7 @@ int main(void)
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-    //srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
+   // srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);

@@ -99,6 +99,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			}
 			break;
 		case srm_call_status_SUCCESS:
+		case srm_call_status_FAILURE:
 			// Copy file structure to another pointer for easier manipulation
 			repfs = rep.srmLsResponse->details;
 			// Check if file structure ok
@@ -110,6 +111,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				internal_context->current_status = srm_call_status_SUCCESS;
 				// Everything is fine copy file structure and check if copy went ok
 				ret = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs);
 				if (ret == -1)
@@ -183,6 +185,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_SUCCESS:
+		case srm_call_status_FAILURE:
 			// Check if file structure ok
 			if (!repfs || repfs->__sizepathDetailArray <= 0 || !repfs->pathDetailArray)
 			{
@@ -192,6 +195,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				internal_context->current_status = srm_call_status_SUCCESS;
 				// Everything is fine copy file structure and check if copy went ok
 				ret = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs );
 				if (ret == -1)
