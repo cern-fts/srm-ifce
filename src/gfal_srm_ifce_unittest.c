@@ -2694,8 +2694,8 @@ int  soap_call_srm2__srmCheckPermission_test3(struct soap *soap, const char *soa
 {
 	struct srm2__srmCheckPermissionResponse *resp  = (struct srm2__srmCheckPermissionResponse *) soap_malloc (soap,sizeof (struct srm2__srmCheckPermissionResponse));
 	resp->returnStatus = NULL;// FAILS
+	resp->arrayOfPermissions = NULL;
 	_param_18->srmCheckPermissionResponse = resp;
-
 
 	return 0; // success
 }
@@ -2708,6 +2708,7 @@ int  soap_call_srm2__srmCheckPermission_test4(struct soap *soap, const char *soa
 	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfPermissions = NULL;
 	_param_18->srmCheckPermissionResponse = resp;
 	return 0; // success
 }
@@ -2990,7 +2991,7 @@ int main(void)
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-//srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
+    //srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);

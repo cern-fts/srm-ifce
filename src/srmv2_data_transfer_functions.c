@@ -516,6 +516,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 		case srm_call_status_QUEUED:
 			break;
 		case srm_call_status_SUCCESS:
+		case srm_call_status_FAILURE:
 			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
@@ -523,6 +524,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				internal_context->current_status = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_get(output->retstatus,
 											&output->filestatuses,
 											repfs,

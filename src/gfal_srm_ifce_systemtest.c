@@ -280,6 +280,10 @@ START_TEST (test_data_transfer_functions)
 	DelSurl(1,test_surls_get);
 	DelSurl(1,test_surls_put);
 
+	a = srm_prepare_to_get(&context,&input_get,&output_get);
+	fail_if ((a != 1), "Expected Success !");
+	fail_if ((output_get.filestatuses[0].status != ENOENT), "Expected no such file or directory error!");
+
 	CopyFile(test_file1);
 
 	a = TestBringOnline(test_surls_get,protocols);
@@ -583,7 +587,7 @@ int DoTests()
 	int number_failed;
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-    //srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
+    srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
