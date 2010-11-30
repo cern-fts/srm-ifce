@@ -219,6 +219,10 @@ START_TEST (test_directory_functions)
 	input_rm.nbfiles = 1;
 	input_rm.surls = test_surls_rm;
 	a = srm_rm(&context,&input_rm,&output_rm);
+	fail_if ((a != 1), "Expected 1 File deleted!");
+	a = srm_rm(&context,&input_rm,&output_rm);
+	fail_if ((a != 1), "Expected 1 File deleted!");
+	fail_if ((output_rm.statuses[0].status != ENOENT), "Expected no such file error!");
 	for(j=0;j<a;j++)
 	{
 		//printf("Remove files:%s\n",input_rm.surls[j],a);
@@ -256,7 +260,7 @@ START_TEST (test_data_transfer_functions)
 	struct srmv2_pinfilestatus *filestatuses;
 	SRM_LONG64 filesizes[1] ={ 1024 };
 
-	context.verbose = 1;
+	context.verbose = 0;
 	context.errbufsz = 0;
 	context.srm_endpoint = test_srm_endpoint;
 	context.timeout = 3600;
@@ -322,7 +326,8 @@ START_TEST (test_data_transfer_functions)
 
 		input_get.surls = test_surls_unexisting;
 		a = srm_prepare_to_get(&context,&input_get,&output_get);
-		fail_if ((a != -1), "Expected Failure !");
+		fail_if ((a != 1), "Expected Success !");
+		fail_if ((output_get.filestatuses[0].status != ENOENT), "Expected no such file or directory error!");
 	}
 
 	DelSurl(1,test_surls_get);
