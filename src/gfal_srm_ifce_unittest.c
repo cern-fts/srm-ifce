@@ -593,8 +593,8 @@ START_TEST (test_srmv2_rmdir)
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test1;
 	result = srmv2_rmdir(&context,&input,&output);
-	fail_if ((result  != -1),
-				   "Expected Failure 1!");
+	fail_if ((result  != 1),
+				   "Expected Success!");
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test2;
 	result = srmv2_rmdir(&context,&input,&output);

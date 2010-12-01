@@ -113,6 +113,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_put(output->retstatus,
 											&output->filestatuses,
@@ -307,6 +308,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_put(output->retstatus,
 											&output->filestatuses,
@@ -462,6 +464,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_get(output->retstatus,
 											&output->filestatuses,
@@ -530,6 +533,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_get(output->retstatus,
 											&output->filestatuses,
@@ -608,6 +612,7 @@ int srmv2_put_done(struct srm_context *context,
 		return (-1);
 	}else
 	{
+		errno = 0;
 		internal_context.current_status = srm_call_status_SUCCESS;
 		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
 	}
@@ -677,6 +682,7 @@ int srmv2_release_files(struct srm_context *context,
 		return (-1);
 	}else
 	{
+		errno = 0;
 		internal_context.current_status = srm_call_status_SUCCESS;
 		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
 	}
@@ -817,6 +823,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_bringonline(output->retstatus,
 											&output->filestatuses,
@@ -887,6 +894,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 				ret = -1;
 			}else
 			{
+				errno = 0;
 				internal_context->current_status  = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_bringonline(output->retstatus,
 												&output->filestatuses,
@@ -969,6 +977,7 @@ int srmv2_abort_files(struct srm_context *context,
 				return (-1);
 			}else
 			{
+				errno = 0;
 				internal_context.current_status = srm_call_status_SUCCESS;
 				ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
 			}

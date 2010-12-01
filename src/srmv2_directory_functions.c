@@ -356,28 +356,20 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
-	if (internal_context.current_status == srm_call_status_SUCCESS)
-	{
-		if ((output->statuses = (struct srmv2_filestatus*) calloc (1, sizeof (struct srmv2_filestatus))) == NULL) {
-			errno = ENOMEM;
-			srm_soap_deinit(&soap);
-			return (-1);
-		}
-		output->statuses[0].surl = strdup (input->surl);
-		output->statuses[0].status = statuscode2errno (output->retstatus->statusCode);
-		if (output->statuses[0].status)
-		{
-			srm_print_explanation(&((output->statuses)[0].explanation),output->retstatus,srmfunc);
-		}
+	if ((output->statuses = (struct srmv2_filestatus*) calloc (1, sizeof (struct srmv2_filestatus))) == NULL) {
+		errno = ENOMEM;
 		srm_soap_deinit(&soap);
-		errno = 0;
-		return (1); //deleted one folder
-	}else
-	{
-		srm_soap_deinit(&soap);
-		errno = ECOMM;
 		return (-1);
 	}
+	output->statuses[0].surl = strdup (input->surl);
+	output->statuses[0].status = statuscode2errno (output->retstatus->statusCode);
+	if (output->statuses[0].status)
+	{
+		srm_print_explanation(&((output->statuses)[0].explanation),output->retstatus,srmfunc);
+	}
+	srm_soap_deinit(&soap);
+	errno = 0;
+	return (1); //deleted one folder
 }
 
 /* tries to create all directories in 'dest_file' */
@@ -530,6 +522,7 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 		return (-1);
 	}
 
+	errno = 0;
 	ret = copy_pinfilestatuses_extendlifetime(output->retstatus,
 							&output->filestatuses,
 							repfs,
