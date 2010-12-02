@@ -160,6 +160,9 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
+	output->retstatus = NULL;
+	output->statuses = NULL;
+
 	internal_context->current_status = srm_call_status_FAILURE;
 
 	do

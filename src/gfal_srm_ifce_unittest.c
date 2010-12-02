@@ -189,8 +189,9 @@ int  soap_call_srm2__srmLs_test2(struct soap *soap, const char *soap_endpoint, c
 	retstatus->statusCode = SRM_USCOREFAILURE;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->requestToken = NULL;
+	resp->details = NULL;
 	_param_18->srmLsResponse = resp;
-	_param_18->srmLsResponse->details = NULL;
 
 	return -1; // failure
 }
@@ -201,9 +202,10 @@ int  soap_call_srm2__srmLs_test3(struct soap *soap, const char *soap_endpoint, c
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 	retstatus->explanation = NULL;
+	resp->requestToken = NULL;
+	resp->details = NULL;
 	resp->returnStatus = retstatus;
 	_param_18->srmLsResponse = resp;
-	_param_18->srmLsResponse->details = NULL;
 
 	return 0; // success
 }
@@ -216,6 +218,7 @@ int  soap_call_srm2__srmLs_test4(struct soap *soap, const char *soap_endpoint, c
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
+	resp->details = NULL;
 	_param_18->srmLsResponse = resp;
 
 	return 0; // success
@@ -227,6 +230,7 @@ int  soap_call_srm2__srmLs_test5(struct soap *soap, const char *soap_endpoint, c
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->details = NULL;
 	resp->requestToken = NULL;
 	_param_18->srmLsResponse = resp;
 
@@ -239,6 +243,7 @@ int  soap_call_srm2__srmLs_test6(struct soap *soap, const char *soap_endpoint, c
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->details = NULL;
 	resp->requestToken = test_string;
 	_param_18->srmLsResponse = resp;
 
@@ -347,6 +352,7 @@ int  soap_call_srm2__srmStatusOfLs_test2(struct soap *soap, const char *soap_end
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->details = NULL;
 	_param_18->srmStatusOfLsRequestResponse = resp;
 
 	return 0; // success
@@ -359,6 +365,7 @@ int  soap_call_srm2__srmStatusOfLs_test3(struct soap *soap, const char *soap_end
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->details = NULL;
 	_param_18->srmStatusOfLsRequestResponse = resp;
 
 	return 0; // success
@@ -923,6 +930,7 @@ int  soap_call_srm2__srmPutDone_test4(struct soap *soap, const char *soap_endpoi
 	retstatus->statusCode = SRM_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPutDoneResponse = NULL; // THIS FAILS
 
 
@@ -1133,10 +1141,11 @@ START_TEST (test_srmv2_release_files)
 END_TEST
 int  soap_call_srm2__srmBringOnline_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmBringOnlineRequest *srmBringOnlineRequest, struct srm2__srmBringOnlineResponse_ *_param_18)
 {
-/*	_param_18->srmBringOnlineResponse = NULL;
-	return 0;*/
 	struct srm2__srmBringOnlineResponse *resp  = (struct srm2__srmBringOnlineResponse *) soap_malloc (soap,sizeof (struct srm2__srmBringOnlineResponse));
 	resp->returnStatus = NULL;
+	resp->remainingTotalRequestTime = NULL;
+	resp->requestToken = NULL;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
 	return 0; // success but return statuses are null
 }
@@ -1160,9 +1169,10 @@ int  soap_call_srm2__srmBringOnline_test3(struct soap *soap, const char *soap_en
 	struct srm2__srmBringOnlineResponse *resp  = (struct srm2__srmBringOnlineResponse *) soap_malloc (soap,sizeof (struct srm2__srmBringOnlineResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
+	resp->remainingTotalRequestTime = NULL;
+	resp->requestToken = NULL;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
-	_param_18->srmBringOnlineResponse->arrayOfFileStatuses = NULL;
-	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 	retstatus->explanation = NULL;
 	return 0; // success
@@ -1176,6 +1186,7 @@ int  soap_call_srm2__srmBringOnline_test4(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
 	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 
@@ -1189,6 +1200,7 @@ int  soap_call_srm2__srmBringOnline_test5(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->requestToken = NULL;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
 	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 
@@ -1202,6 +1214,7 @@ int  soap_call_srm2__srmBringOnline_test6(struct soap *soap, const char *soap_en
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->requestToken = test_string;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
 	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
 
@@ -1313,6 +1326,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test2(struct soap *soap, const char 
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
 	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
 
@@ -1326,6 +1340,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test3(struct soap *soap, const char 
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmStatusOfBringOnlineRequestResponse = resp;
 	_param_18->srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime = NULL;
 
@@ -1454,6 +1469,7 @@ int  soap_call_srm2__srmPrepareToGet_test2(struct soap *soap, const char *soap_e
 	struct srm2__srmPrepareToGetResponse *resp  = (struct srm2__srmPrepareToGetResponse *) soap_malloc (soap,sizeof (struct srm2__srmPrepareToGetResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREFAILURE;
@@ -1466,8 +1482,8 @@ int  soap_call_srm2__srmPrepareToGet_test3(struct soap *soap, const char *soap_e
 	struct srm2__srmPrepareToGetResponse *resp  = (struct srm2__srmPrepareToGetResponse *) soap_malloc (soap,sizeof (struct srm2__srmPrepareToGetResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToGetResponse = resp;
-	_param_18->srmPrepareToGetResponse->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 	retstatus->explanation = NULL;
@@ -1481,6 +1497,7 @@ int  soap_call_srm2__srmPrepareToGet_test4(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
@@ -1494,6 +1511,7 @@ int  soap_call_srm2__srmPrepareToGet_test5(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
@@ -1507,6 +1525,7 @@ int  soap_call_srm2__srmPrepareToGet_test6(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = test_string;
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
@@ -1619,6 +1638,7 @@ int  soap_call_srm2__srmStatusOfGet_test2(struct soap *soap, const char *soap_en
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmStatusOfGetRequestResponse = resp;
 	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
 
@@ -1632,6 +1652,7 @@ int  soap_call_srm2__srmStatusOfGet_test3(struct soap *soap, const char *soap_en
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmStatusOfGetRequestResponse = resp;
 	_param_18->srmStatusOfGetRequestResponse->remainingTotalRequestTime = NULL;
 
@@ -1758,6 +1779,7 @@ int  soap_call_srm2__srmPrepareToPut_test2(struct soap *soap, const char *soap_e
 	struct srm2__srmPrepareToPutResponse *resp  = (struct srm2__srmPrepareToPutResponse *) soap_malloc (soap,sizeof (struct srm2__srmPrepareToPutResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToPutResponse = resp;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREFAILURE;
@@ -1771,8 +1793,8 @@ int  soap_call_srm2__srmPrepareToPut_test3(struct soap *soap, const char *soap_e
 	struct srm2__srmPrepareToPutResponse *resp  = (struct srm2__srmPrepareToPutResponse *) soap_malloc (soap,sizeof (struct srm2__srmPrepareToPutResponse));
 	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToPutResponse = resp;
-	_param_18->srmPrepareToPutResponse->arrayOfFileStatuses = NULL;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
 	retstatus->explanation = NULL;
@@ -1787,6 +1809,7 @@ int  soap_call_srm2__srmPrepareToPut_test4(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToPutResponse = resp;
 
@@ -1799,6 +1822,7 @@ int  soap_call_srm2__srmPrepareToPut_test5(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToPutResponse = resp;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
@@ -1812,6 +1836,7 @@ int  soap_call_srm2__srmPrepareToPut_test6(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = test_string;
 	_param_18->srmPrepareToPutResponse = resp;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
@@ -1932,6 +1957,7 @@ int  soap_call_srm2__srmStatusOfPut_test2(struct soap *soap, const char *soap_en
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmStatusOfPutRequestResponse = resp;
 	resp->remainingTotalRequestTime = NULL;
 	return 0; // success
@@ -1944,6 +1970,7 @@ int  soap_call_srm2__srmStatusOfPut_test3(struct soap *soap, const char *soap_en
 	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	resp->remainingTotalRequestTime = NULL;
 	_param_18->srmStatusOfPutRequestResponse = resp;
 
@@ -2583,6 +2610,7 @@ int  soap_call_srm2__srmGetPermission_test4(struct soap *soap, const char *soap_
 	retstatus->statusCode = SRM_USCOREFAILURE;  // FAILS
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfPermissionReturns = NULL;
 	_param_18->srmGetPermissionResponse = resp;
 	return 0; // success
 }

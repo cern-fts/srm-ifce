@@ -71,6 +71,8 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
+	output->retstatus = NULL;
+	output->filestatuses = NULL;
 
 	do
 	{
@@ -452,6 +454,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
+				break;
 			}
 			if  (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
@@ -508,6 +511,8 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
+	output->retstatus = NULL;
+	output->filestatuses = NULL;
 
 	do
 	{
@@ -832,8 +837,20 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
+				break;
 			}
-
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+			{
+				break;
+			}else
+			{
+				errno = 0;
+				internal_context->current_status  = srm_call_status_SUCCESS;
+				ret = copy_pinfilestatuses_bringonline(output->retstatus,
+												&output->filestatuses,
+												repfs,
+												srmfunc);
+			}
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
@@ -881,6 +898,8 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = (char *) output->token;
+	output->retstatus = NULL;
+	output->filestatuses = NULL;
 
 
 	do
@@ -924,6 +943,18 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 			}
 			break;
 		case srm_call_status_QUEUED:
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+			{
+				break;
+			}else
+			{
+				errno = 0;
+				internal_context->current_status  = srm_call_status_SUCCESS;
+				ret = copy_pinfilestatuses_bringonline(output->retstatus,
+												&output->filestatuses,
+												repfs,
+												srmfunc);
+			}
 			break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
