@@ -108,7 +108,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
@@ -552,7 +552,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
@@ -927,7 +927,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
 			// Check if file structure ok
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				internal_context->current_status  = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
