@@ -346,7 +346,6 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	const char srmfunc[] = "PrepareToGet";
 
-
 	srm_soap_init(&soap);
 
 	/* issue "get" request */
@@ -454,6 +453,17 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 				errno = srm_call_err(context,output->retstatus,srmfunc);
 				ret = -1;
 			}
+			if  (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+			{
+				break;
+			}else
+			{
+				errno = 0;
+				ret = copy_pinfilestatuses_get(output->retstatus,
+											&output->filestatuses,
+											repfs,
+											srmfunc);
+			}
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
@@ -523,6 +533,17 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 	switch (internal_context->current_status)
 	{
 		case srm_call_status_QUEUED:
+			if  (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+			{
+				break;
+			}else
+			{
+				errno = 0;
+				ret = copy_pinfilestatuses_get(output->retstatus,
+											&output->filestatuses,
+											repfs,
+											srmfunc);
+			}
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:

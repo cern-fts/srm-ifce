@@ -795,6 +795,7 @@ int  soap_call_srm2__srmAbortFiles_test1(struct soap *soap, const char *soap_end
 	retstatus->statusCode = SRM_USCOREINVALID_USCOREREQUEST; // token empty
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmAbortFilesResponse = resp;
 
 	return 0;
@@ -1001,6 +1002,7 @@ int  soap_call_srm2__srmReleaseFiles_test1(struct soap *soap, const char *soap_e
 	retstatus->statusCode = SRM_USCOREINVALID_USCOREREQUEST;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
+	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmReleaseFilesResponse = resp;
 
 	return 0;
@@ -1712,7 +1714,7 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test2;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
+	fail_if ((internal_context.current_status   != srm_call_status_QUEUED),
 				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{

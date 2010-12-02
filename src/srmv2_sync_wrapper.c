@@ -35,7 +35,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 	internal_context.attempt = 1;
 
 	// if ls was queued start polling statusOfLsRequest
-	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
+	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
 		result = srmv2_status_of_ls_request_async_internal(context,input,output,&internal_context);
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
@@ -70,7 +70,7 @@ int srmv2_prepare_to_put_sync(struct srm_context *context,
 	internal_context.attempt = 1;
 
 	// if put was queued start polling statusOfPutRequest
-	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
+	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
 		result = srmv2_status_of_put_request_async_internal(context,input,output,&internal_context);
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
@@ -103,7 +103,7 @@ int srmv2_prepare_to_get_sync(struct srm_context *context,
 	internal_context.attempt = 1;
 
 	// if put was queued start polling statusOfPutRequest
-	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
+	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
 		result = srmv2_status_of_get_request_async_internal(context,input,output,&internal_context);
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
@@ -135,7 +135,7 @@ int srmv2_bring_online_sync(struct srm_context *context,
 	internal_context.attempt = 1;
 
 	// if put was queued start polling statusOfPutRequest
-	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result == 0))
+	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
 		result = srmv2_status_of_bring_online_async_internal(context,input,output,&internal_context);
 		if ((internal_context.current_status != srm_call_status_SUCCESS)

@@ -1020,6 +1020,7 @@ int copy_returnstatus(struct srm2__TReturnStatus **destination,struct srm2__TRet
 		*destination = (struct srm2__TReturnStatus *) malloc (sizeof (struct srm2__TReturnStatus));
 		if ((*destination) != NULL)
 		{
+			(**destination).explanation = NULL;
 			if (returnStatus->explanation)
 			{
 				if (((**destination).explanation = strdup(returnStatus->explanation)) == NULL)
