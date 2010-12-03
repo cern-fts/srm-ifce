@@ -140,7 +140,7 @@ int srmv2_bring_online_sync(struct srm_context *context,
 		result = srmv2_status_of_bring_online_async_internal(context,input,output,&internal_context);
 		if ((internal_context.current_status != srm_call_status_SUCCESS)
 				&&(internal_context.current_status != srm_call_status_QUEUED)
-				&&(result!=0))
+				&&(result<0))
 		{
 			srmv2_abort_request(context,output->token);
 			return -1;
