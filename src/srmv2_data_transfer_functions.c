@@ -845,7 +845,6 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			}else
 			{
 				errno = 0;
-				internal_context->current_status  = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_bringonline(output->retstatus,
 												&output->filestatuses,
 												repfs,
@@ -949,7 +948,6 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 			}else
 			{
 				errno = 0;
-				internal_context->current_status  = srm_call_status_SUCCESS;
 				ret = copy_pinfilestatuses_bringonline(output->retstatus,
 												&output->filestatuses,
 												repfs,
