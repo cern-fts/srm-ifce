@@ -303,7 +303,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
@@ -470,7 +470,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
@@ -631,7 +631,7 @@ int srmv2_put_done(struct srm_context *context,
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
 
-	if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,reqstatp,srmfunc);
 		srm_soap_deinit (&soap);
@@ -701,7 +701,7 @@ int srmv2_release_files(struct srm_context *context,
 
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
-	if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,reqstatp,srmfunc);
 		srm_soap_deinit (&soap);
@@ -854,7 +854,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
 				errno = srm_call_err(context,output->retstatus,srmfunc);
@@ -1022,7 +1022,7 @@ int srmv2_abort_files(struct srm_context *context,
 	{
 		case  srm_call_status_SUCCESS:
 		case  srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < input->nbfiles || !repfs->statusArray)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 				errno = srm_call_err(context,reqstatp,srmfunc);
 				srm_soap_deinit (&soap);
