@@ -38,8 +38,22 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	struct srm2__srmLsResponse_ rep;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
 
-	srm_soap_init(&soap);
+    /* Basic sanity checks */
+    if (input->offset && *input->offset < 0)
+    {
+        errno = EINVAL;
+        srm_errmsg (context, "[SRM][srmv2_ls_async_internal][] Negative offset value is illegal.");
+        return -1;
+    }
 
+    if (input->count < 0)
+    {
+        errno = EINVAL;
+        srm_errmsg (context, "[SRM][srmv2_ls_async_internal][] Negative count value is illegal.");
+        return -1;
+    }
+
+	srm_soap_init(&soap);
 	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
@@ -54,21 +68,21 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	req.fullDetailedList = &trueoption;
 	req.numOfLevels = &(input->numlevels);
 
-	if (input->offset && (*input->offset > 0))
-	{
+	if (*input->offset > 0) 
+    {
 		req.offset = input->offset;
 	}
 
-	if (input->count > 0)
-	{
-		req.count = &(input->count);
-	}
+    if (input->count > 0)
+    {
+        req.count = &(input->count);
+    }
+
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
 	req.arrayOfSURLs->urlArray = (char **)input->surls;
 
 	do
 	{
-
 		// Gsoap call soap_call_srm2__srmLs
 		ret = call_function.call_srm2__srmLs(&soap,context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
