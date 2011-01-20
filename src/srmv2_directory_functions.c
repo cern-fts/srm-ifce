@@ -25,7 +25,6 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output *output);
 int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 
-
 // Asynchronous srm ls call
 int srmv2_ls_async_internal(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output,struct srm_internal_context *internal_context)
@@ -392,7 +391,8 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 /* tries to create all directories in 'dest_file' */
 int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 {
-	char file[1024];
+	char* file = NULL;
+    int ret = -1;
 	int flags;
 	int sav_errno = 0;
 	char *p, *endp;
@@ -403,17 +403,10 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 	const char srmfunc[] = "Mkdir";
 
 	srm_soap_init(&soap);
-
 	memset (&req, 0, sizeof (struct srm2__srmMkdirRequest));
-
-	strncpy (file, input->dir_name, 1023);
-
-	if ((p = endp = strrchr (file, '/')) == NULL) {
-		srm_errmsg (context, "[SRM][srmv2_makedirp][EINVAL] %s: Invalid SURL",  input->dir_name);
-		srm_soap_deinit(&soap);
-		errno = EINVAL;
-		return (-1);
-	}
+	memset (&rep, 0, sizeof (struct srm2__srmMkdirResponse_));
+    file = srm_util_normalize_surl(input->dir_name);
+    p = endp = strrchr (file, '/');
 
 	// 1st cycle, trying to create directories ascendingly, until success
 	do {
@@ -423,8 +416,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 		if (call_function.call_srm2__srmMkdir (&soap, context->srm_endpoint, srmfunc, &req, &rep))
 		{
 			errno = srm_soap_call_err(context,&soap,srmfunc);
-			srm_soap_deinit(&soap);
-			return (-1);
+            goto CLEANUP_AND_RETURN; 
 		}
 
 		repstatp = rep.srmMkdirResponse->returnStatus;
@@ -433,33 +425,30 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 		if (sav_errno != 0 && sav_errno != EEXIST && sav_errno != EACCES && sav_errno != ENOENT)
 		{
 			srm_print_error_status_additional(context,repstatp,srmfunc,input->dir_name);
-			srm_soap_deinit(&soap);
 			errno = sav_errno;
-			return (-1);
+            goto CLEANUP_AND_RETURN; 
 		}
 	} while (sav_errno == ENOENT && (p = strrchr (file, '/')) != NULL);
 
 	if (p == NULL) {
 		// should never happen, failure must appear in soap call
 		srm_errmsg (context, "[SRM][srmv2_makedirp][EINVAL] %s: Invalid SURL", input->dir_name);
-		srm_soap_deinit(&soap);
 		errno = EINVAL;
-		return (-1);
+	    goto CLEANUP_AND_RETURN; 
 	}
 
 	// 2nd cycle, creating directories descendingly as of the one created by previous cycle
 	*p = '/';
 	sav_errno = 0;
-	while (sav_errno == 0 && p <= endp && (p = strchr (p + 1, 0)) != NULL)
+	while (sav_errno == 0 && p < endp && (p = strchr (p + 1, 0)) != NULL)
 	{
 		req.SURL = file;
 
 		if (call_function.call_srm2__srmMkdir(&soap, context->srm_endpoint, srmfunc, &req, &rep))
 		{
 			errno = srm_soap_call_err(context,&soap,srmfunc);
-			srm_soap_deinit(&soap);
 			errno = ECOMM;
-			return (-1);
+            goto CLEANUP_AND_RETURN;
 		}
 
 		repstatp = NULL;
@@ -468,18 +457,21 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 		{
 			errno = srm_call_err(context,repstatp,srmfunc);
-			srm_soap_deinit(&soap);
-			return (-1);
+            goto CLEANUP_AND_RETURN; 
 		}
 
 		*p = '/';
 	}
 
-	srm_soap_deinit(&soap);
-	//strncpy (lastcreated_dir, dest_file, 1024);
     errno = 0;
-	return (0);
+    ret = 0;
+
+CLEANUP_AND_RETURN:
+    free(file);
+    srm_soap_deinit(&soap);
+    return ret;
 }
+
 int srmv2_extend_file_lifetime(struct srm_context *context,
 		struct srm_extendfilelifetime_input *input,
 		struct srm_extendfilelifetime_output *output)

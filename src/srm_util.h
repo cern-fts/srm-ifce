@@ -94,5 +94,52 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 
 void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time);
 
+/* General utility functions */
+
+/**
+ * Normalize a SURL: remove multiple slashes (exept for "srm://"), and add a single slash 
+ * to the end of the SURL. For example, SURL
+ *
+ * srm://server:port/dir1//dir2
+ *
+ * will be
+ *
+ * srm://server:port/dir1/dir2/
+ *
+ * @param surl The SURL to be normalized
+ *
+ * @return The dyamically allocated normalized SURL.
+*/
+char* srm_util_normalize_surl(const char* surl);
+
+
+/**
+ * Remove multiple, subsequent characters from a string. For instance:
+ *
+ * srm_util_consolidate_multiple_characters("charrrrrstring, 'r');
+ *
+ * returns "charstring".
+ *
+ * The returned string is dynamically allocated, free it!
+ *
+ * @param s the string to be consolidated. 
+ * @param c the character to look for
+ * @param start consolidating starts from this index. Before this index, all the characters
+ *              are copied.
+ *
+ * @return the consolidated string, dynamically allocated, or NULL if s was NULL.
+ */
+char* srm_util_consolidate_multiple_characters(const char* s, const char c, const int start);
+
+
+/**
+  * Add (concatenate) two strings into a dynamically allocated new string.
+  *
+  * @param s1 First string
+  * @param s2 Second string (will be added after s2)
+  *
+  * @return The dynamically allocated concatenation.
+  */
+char* srm_util_add_strings(const char* s1, const char* s2);
 
 #endif /* SRM_UTIL_H_ */

@@ -2982,11 +2982,69 @@ START_TEST (test_srmv2_extend_file_lifetime)
 }
 END_TEST
 
+START_TEST (test_srm_util_add_strings)
+{
+    const char* s1 = "s1";
+    const char* s2 = "s2";
+
+    fail_unless(strcmp("s1s2", srm_util_add_strings(s1, s2)) == 0, "Expected equality");
+    fail_unless(strcmp(s2, srm_util_add_strings("", s2)) == 0, "Expected equality");
+    fail_unless(strcmp(s1, srm_util_add_strings(s1, "")) == 0, "Expected equality");
+    fail_unless(strcmp("", srm_util_add_strings("", "")) == 0, "Expected equality");
+}
+END_TEST
+
+
+START_TEST (test_srm_util_consolidate_multiple_characters)
+{
+    fail_unless(NULL == srm_util_consolidate_multiple_characters(NULL, 'x', 0));
+    fail_unless(0 == strcmp("abcd", srm_util_consolidate_multiple_characters("abcd", 'a', 0)));
+    fail_unless(0 == strcmp("abcd", srm_util_consolidate_multiple_characters("abcd", 'x', 0)));
+    fail_unless(0 == strcmp("abcd", srm_util_consolidate_multiple_characters("abcd", '0', 0)));
+    fail_unless(0 == strcmp("", srm_util_consolidate_multiple_characters("", '0', 0)));
+    fail_unless(0 == strcmp("", srm_util_consolidate_multiple_characters("", 'a', 0)));
+    fail_unless(0 == strcmp("a", srm_util_consolidate_multiple_characters("a", 'a', 0)));
+    fail_unless(0 == strcmp("a", srm_util_consolidate_multiple_characters("aa", 'a', 0)));
+    fail_unless(0 == strcmp("a", srm_util_consolidate_multiple_characters("aaa", 'a', 0)));
+    fail_unless(0 == strcmp("aaa", srm_util_consolidate_multiple_characters("aaa", 'x', 0)));
+    fail_unless(0 == strcmp("xa", srm_util_consolidate_multiple_characters("xaaa", 'a', 0)));
+    fail_unless(0 == strcmp("xay", srm_util_consolidate_multiple_characters("xaaay", 'a', 0)));
+    fail_unless(0 == strcmp("ay", srm_util_consolidate_multiple_characters("aaay", 'a', 0)));
+    fail_unless(0 == strcmp("aaaxay", srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 3)));
+    fail_unless(0 == strcmp("aaxay", srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 1)));
+    fail_unless(0 == strcmp("aaaxaaay", srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 100)));
+}
+END_TEST
+
+
+START_TEST (test_srm_util_normalize_surl)
+{
+    char* surl_1 = "srm://server:port/";
+    char* surl_2 = "srm://server:port/dir1";
+    char* surl_3 = "srm://server:port/dir1/";
+    char* surl_4 = "srm://server:port/dir1//";
+    char* surl_5 = "srm://server:port/dir1/dir2/";
+    char* surl_6 = "srm://server:port/dir1/dir2";
+    char* surl_7 = "srm://server:port/dir1//dir2/";
+    char* surl_8 = "srm://server:port/dir1//dir2//";
+
+    fail_unless(strcmp(surl_1, srm_util_normalize_surl(surl_1)) == 0);   
+    fail_unless(strcmp(surl_3, srm_util_normalize_surl(surl_2)) == 0);   
+    fail_unless(strcmp(surl_3, srm_util_normalize_surl(surl_3)) == 0);   
+    fail_unless(strcmp(surl_3, srm_util_normalize_surl(surl_4)) == 0);   
+    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_5)) == 0);   
+    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_6)) == 0);   
+    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_7)) == 0);   
+    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_8)) == 0);   
+}
+END_TEST
+
+
 Suite * test_suite (void)
 {
   Suite *s = suite_create ("New srm interface unit test suit");
 
-  TCase *tc_case_1 = tcase_create ("T1");
+  TCase *tc_case_1 = tcase_create ("SRM function tests");
 
   tcase_add_checked_fixture (tc_case_1, NULL,NULL);
   tcase_add_test (tc_case_1, test_srmv2_extend_file_lifetime);
@@ -3015,6 +3073,15 @@ Suite * test_suite (void)
   tcase_add_test (tc_case_1, test_srmv2_ping);
 
   suite_add_tcase (s, tc_case_1);
+
+
+  TCase *tc_case_2 = tcase_create ("Utility function tests");
+  tcase_add_checked_fixture (tc_case_2, NULL,NULL);
+  tcase_add_test (tc_case_2, test_srm_util_add_strings);
+  tcase_add_test (tc_case_2, test_srm_util_normalize_surl);
+  tcase_add_test (tc_case_2, test_srm_util_consolidate_multiple_characters);
+
+  suite_add_tcase (s, tc_case_2);
 
   return s;
 }

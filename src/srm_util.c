@@ -1042,3 +1042,75 @@ int copy_returnstatus(struct srm2__TReturnStatus **destination,struct srm2__TRet
 	}
 	return 0;
 }
+
+char* srm_util_consolidate_multiple_characters(const char* s, const char c, const int start)
+{
+    char *tmp = 0;
+    char *ret = 0;
+    int i = 0;
+    int tmp_i = 0;
+
+    if (s == 0) {
+        return 0;
+    }    
+
+    tmp = (char*) malloc (strlen(s) + 1);
+
+    for (; s[i] != 0; ++i) {
+        // Copy the characters unless we find c. If the index + 1 also stores c, do not copy,
+        if (i < start || s[i] != c || s[i + 1] != c) {
+            tmp[tmp_i] = s[i];
+            ++tmp_i;
+        } 
+    } 
+    
+    tmp[tmp_i] = 0;
+    // strdup the string, to shrink to the real size
+    ret = strdup(tmp);    
+    free(tmp);
+    return ret;
+}
+
+
+char* srm_util_add_strings(const char* s1, const char* s2)
+{
+    char* ret = 0;
+    unsigned int len_s1 = 0;
+
+    assert(s1);
+    assert(s2);
+   
+    if (!s1 || !s2) {
+        return 0;
+    }
+
+    len_s1 = strlen(s1);
+    ret = malloc(len_s1 + strlen(s2) + 1);
+    assert(ret);
+   
+    if (ret) {
+        strcpy(ret, s1);
+        strcat(ret + len_s1, s2);
+    }
+
+    return ret;
+}
+
+
+char* srm_util_normalize_surl(const char* surl)
+{
+    char *consolidated_file = NULL;
+    char *with_trailing_slash = NULL;
+    /* We put a trailing "/" to the end of each directory, fo fix the algorithm in srmv2_makedirp
+       (Savannah bug #52502) */
+    with_trailing_slash = srm_util_add_strings(surl, "/");
+    assert(with_trailing_slash);
+    /* do not consolidate the "//" after the protocol part... (srm://...) */
+    consolidated_file = srm_util_consolidate_multiple_characters(
+        with_trailing_slash, '/', strlen("srm://") + 1);
+    assert(consolidated_file);
+    free(with_trailing_slash);
+
+    return consolidated_file;
+}
+
