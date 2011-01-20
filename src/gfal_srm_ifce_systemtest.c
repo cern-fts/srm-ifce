@@ -21,15 +21,20 @@
 #include <check.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <assert.h>
 #include "gfal_srm_ifce_types.h"
 #include "gfal_srm_ifce.h"
 
-char *test_srm_endpoint =  "srm://lxbra1910.cern.ch:8446/srm/managerv2";
+
+#define MAX_PATH_LEN 1024
+#define MAX_FILE_NAME_LEN 100
+char test_srm_endpoint[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
+char test_file1[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
+char test_file2[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
+char test_unexisting[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
+char test_dir[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
+
 char *source_file = "file:///etc/group";
-char *test_file1 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file1";
-char *test_file2 = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/test_file2";
-char *test_unexisting = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/unexisting";
-char *test_dir = "srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/srm_test/";
 char *test_spacedescriptor = "srm_test_space";
 
 void PrintResult(struct srmv2_mdfilestatus *print_output);
@@ -222,7 +227,7 @@ START_TEST (test_directory_functions)
 	fail_if ((a != 1), "Expected 1 File deleted!");
 	a = srm_rm(&context,&input_rm,&output_rm);
 	fail_if ((a != 1), "Expected 1 File deleted!");
-	fail_if ((output_rm.statuses[0].status != ENOENT), "Expected no such file error!");
+	fail_if (( !output_rm.statuses || output_rm.statuses[0].status != ENOENT), "Expected no such file error!");
 	for(j=0;j<a;j++)
 	{
 		//printf("Remove files:%s\n",input_rm.surls[j],a);
@@ -286,7 +291,7 @@ START_TEST (test_data_transfer_functions)
 
 	a = srm_prepare_to_get(&context,&input_get,&output_get);
 	fail_if ((a != 1), "Expected Success !");
-	fail_if ((output_get.filestatuses[0].status != ENOENT), "Expected no such file or directory error!");
+	fail_if ((!output_get.filestatuses || output_get.filestatuses[0].status != ENOENT), "Expected no such file or directory error!");
 
 	CopyFile(test_file1);
 
@@ -488,7 +493,7 @@ START_TEST (test_srm_permissions)
 	context.errbuf = NULL;
 	context.errbufsz = 0;
 	context.version = VERSION_2_2;
-	context.srm_endpoint =  "httpg://lxbra1910.cern.ch:8446/srm/managerv2";
+	context.srm_endpoint = test_srm_endpoint;
 
 	input.nbfiles = 1;
 	input.surls =  surls;
@@ -543,7 +548,7 @@ START_TEST (test_srm_permissions)
 
 	result = srmv2_get_permission(&context,&input,&output); // fail if owner_permission != RWX and other permission RW
 	fail_if ((result != 1)||(output.permissions->owner_permission != SRM_PERMISSION_RWX) , "Expected Success !");
-	fail_if ((output.permissions->group_permissions_count != 1) , "Expected Success !");
+	fail_if ((!output.permissions || output.permissions->group_permissions_count != 1) , "Expected Success !");
 
 	DelSurl(1,surls);
 }
@@ -600,12 +605,45 @@ int DoTests()
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
+void SetUp()
+{
+    char* srm_host = getenv("SE_HOST_1");
+    
+    if (! srm_host) 
+    {
+        printf("\033[91mSE_HOST_1 environment variable not set!\033[0m");
+        exit(-1);
+    }
+
+    char* srm_path = getenv("SE_SRM_PATH_1");
+
+    if (! srm_path) 
+    {
+        printf("\033[91mSE_SRM_PATH_1 environment variable not set!\033[0m");
+        exit(-1);
+    }
+
+    assert(strlen(srm_path) < MAX_PATH_LEN);
+    assert(strlen(srm_host) < MAX_PATH_LEN);
+
+    sprintf(test_srm_endpoint, "%s:8446/srm/managerv2", srm_host);
+    sprintf(test_dir, "%s/srm_test", srm_path);
+    sprintf(test_file1, "%s/test_file1", test_dir);
+    sprintf(test_file2, "%s/test_file2", test_dir);
+    sprintf(test_unexisting, "%s/unexisting", test_dir);
+
+    printf("\nTest setup:\n\n");
+    printf("SRM host: %s\n", srm_host);
+    printf("Test path: %s\n\n", test_dir);
+}
+
 ///////////////////////////////////////////////
 // MAIN
 ///////////////////////////////////////////////
 
 int main(void)
 {
+    SetUp();
 	return DoTests();
 }
 
@@ -645,9 +683,6 @@ int TestLs(char *surl)
 	input_ls.surls = test_surls_ls;
 	input_ls.offset = 0;
 
-	//	system("lcg-ls --verbose --nobdii -D srmv2 srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/1");
-	//int srm_ls_async(struct srm_context *context,
-	//	struct srm_ls_input *input,struct srm_ls_output *output)
     i = srm_ls(&context,&input_ls,&output_ls);
 
 	if (i > 0)
