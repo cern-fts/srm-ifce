@@ -1812,6 +1812,7 @@ int  soap_call_srm2__srmPrepareToPut_test4(struct soap *soap, const char *soap_e
 	resp->arrayOfFileStatuses = NULL;
 	resp->requestToken = NULL;
 	_param_18->srmPrepareToPutResponse = resp;
+	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 
 	return 0; // success
 }

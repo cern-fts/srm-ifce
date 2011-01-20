@@ -157,6 +157,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
+	memset (&rep, 0, sizeof(rep));
 	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfFileRequests =
