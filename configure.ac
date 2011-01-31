@@ -80,8 +80,24 @@ AC_SUBST([INTERFACE_LIBTOOL_AGE])
 # ccheck
 AC_CCHECK
 
-# globus 
-AC_GLOBUS
+
+m4_pattern_allow([AC_EMI_LTDL])
+m4_pattern_allow([AC_GLOBUS_EMI])
+
+
+WITH_EMI=no
+AC_ARG_WITH(emi,
+  [  --with-emi        check for --with-emi ],
+  [  WITH_EMI=yes ])
+  
+if test "$WITH_EMI" = yes; then
+	export GSOAP_LOCATION="/usr"
+	export GLOBUS_LOCATION="/usr"
+	AC_EMI_LTDL
+	GSOAP_LIBS_EMI="-L/usr/lib64 -lgsoap"
+	AC_SUBST(GSOAP_LIBS_EMI)
+fi
+  
 
 # gsoap
 AC_GSOAP
@@ -91,6 +107,16 @@ AC_GSOAP_FIX
 
 # Set CGSI GSOAP Plugin Properties
 AC_CGSI_GSOAP
+
+
+# Set Globus Properties
+if test "$WITH_EMI" = yes; then
+AC_GLOBUS_EMI
+else
+AC_GLOBUS
+fi
+
+
 
 # Set template config.h (required by stdsoap)
 # This part should probably go in a macron in gsoap.m4 (something like AC_GSOAP_SRC)
@@ -135,6 +161,9 @@ AC_DEFINE(WITH_IPV6)
 #Conditions for Gsoap on-the-fly paches
 AM_CONDITIONAL(USE_GSOAP_2_7_9, [test "x$GSOAP_VERSION_NUM" = "x020709"])
 AC_MSG_RESULT(["USE_GSOAP_2_7_9 is [$USE_GSOAP_2_7_9]"])
+
+AM_CONDITIONAL(USE_GSOAP_2_7_13, [test "x$GSOAP_VERSION_NUM" = "x020713"])
+AC_SUBST(USE_GSOAP_2_7_13)
 
 #Conditions for Gsoap on-the-fly paches
 AC_MSG_NOTICE([GSOAP_VERSION is $GSOAP_VERSION])

@@ -22,12 +22,16 @@ SOAPCPP2=$(GSOAP_LOCATION)/bin/soapcpp2
 SOAPCPP2FLAGS=-c  
 #	-c = generate c code
 
-#WSDL2H=$(GSOAP_LOCATION)/bin/wsdl2h
-WSDL2H=$(GSOAP_WSDL2H_LOCATION)/bin/wsdl2h
+WSDL2H=$(GSOAP_LOCATION)/bin/wsdl2h
+#WSDL2H=$(GSOAP_WSDL2H_LOCATION)/bin/wsdl2h
 if USE_GSOAP_2_7_10
 WSDL2HFLAGS=-c -e -y -I$(GSOAP_LOCATION)/include -z
 else
+if USE_GSOAP_2_7_13
+WSDL2HFLAGS=-c -e -y -I$(GSOAP_LOCATION)/include -I$(GSOAP_LOCATION)/share/gsoap/import  -z
+else
 WSDL2HFLAGS=-c -e -y
+endif
 endif
 #	-c      generate C source code
 #	-e      don't qualify enum names
@@ -71,10 +75,17 @@ else
 STDSOAP2_C_FIX=@echo 'No patch needed for stdsoap2.c'
 endif
 
+
+if USE_GSOAP_2_7_13
+LDFLAGS += -L$(GLITE_LOCATION)/lib64
+LDFLAGS += -L/usr/lib64
+else
 # Copy gsoap file
 stdsoap2.c: 
 	cp -f $(GSOAP_LOCATION)/src/$@ $@
 	$(STDSOAP2_C_FIX)
+endif
+
 	
 # Common Files
 soapdefs.h:
@@ -111,6 +122,23 @@ BUILT_SOURCES = \
 	$(SRM_V2_2_SOAP_FILES) \
 	$(FIXED_NSMAP_FILES) 
 
+if USE_GSOAP_2_7_13
+GFAL_SRM_IFCE_SOURCE_FILES = \
+    srm_util.c \
+    srmv2C.c \
+    srmSoapBinding.c \
+    srmv2Client.c \
+    srm_dependencies.c \
+    srm_version_wrapper.c \
+    srmv2_directory_functions.c \
+    srmv2_sync_wrapper.c \
+    srmv2_async_wrapper.c \
+    srmv2_space_management_functions.c \
+    srmv2_discovery_functions.c \
+    srmv2_permission_functions.c \
+    srmSoapBinding+.nsmap \
+    srmv2_data_transfer_functions.c
+else
 GFAL_SRM_IFCE_SOURCE_FILES = \
     srm_util.c \
 	stdsoap2.c \
@@ -127,6 +155,8 @@ GFAL_SRM_IFCE_SOURCE_FILES = \
     srmv2_permission_functions.c \
     srmSoapBinding+.nsmap \
     srmv2_data_transfer_functions.c
+endif
+
 
 GFAL_SRM_IFCE_CFLAGS = \
 	-DGFAL_SECURE \
@@ -151,10 +181,21 @@ libgfal_srm_ifce_a_CFLAGS = \
 #-------------------------------------------------------------------------------
 libgfal_srm_ifce_la_SOURCES = $(GFAL_SRM_IFCE_SOURCE_FILES)
 
+
+if USE_GSOAP_2_7_13
 libgfal_srm_ifce_la_LIBADD = \
 	$(GLOBUS_GSS_NOTHR_LIBS) \
 	$(GLOBUS_FTP_CLIENT_NOTHR_LIBS) \
-	$(CGSI_GSOAP_LIBS) 
+	$(CGSI_GSOAP_LIBS) \
+	$(GSOAP_LIBS_EMI)
+else
+libgfal_srm_ifce_la_LIBADD = \
+	$(GLOBUS_GSS_NOTHR_LIBS) \
+	$(GLOBUS_FTP_CLIENT_NOTHR_LIBS) \
+	$(CGSI_GSOAP_LIBS) \
+	$(GSOAP_LIBS)
+endif
+
 
 libgfal_srm_ifce_la_CFLAGS = \
 	$(GLOBUS_NOTHR_CFLAGS) \
