@@ -1,0 +1,8 @@
+srm1 = "http://tempuri.org/diskCacheV111.srm.server.SRMServerV1"
+srmNs = "http://srm.1.0.ns"
+srmDiskCache = "http://www.themindelectric.com/package/diskCacheV111.srm/"
+srmWrappers = "http://www.themindelectric.com/wrappers/"
+srmJava = "http://www.themindelectric.com/package/java.lang/"
+srmPackage = "http://www.themindelectric.com/package/"
+xsd__dateTime = | char * | char *
+
