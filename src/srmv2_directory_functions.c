@@ -17,9 +17,14 @@
  * Authors: Todor Manev  IT-GT CERN
  */
 #include <errno.h>
+#include <regex.h>
+#include <assert.h>
 #include "srm_soap.h"
 #include "srm_util.h"
 #include "srm_dependencies.h"
+
+// Utility functions
+int srmv2_check_srm_root(const char* surl);
 
 int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_rm_output *output);
 int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output *output);
@@ -410,6 +415,11 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 	// 1st cycle, trying to create directories ascendingly, until success
 	do {
+        /* Do not try to create the root directory... */
+        if (srmv2_check_srm_root(file)) {
+            break;
+        }   
+
 		*p = 0;
 		req.SURL = file;
 
@@ -422,7 +432,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 		repstatp = rep.srmMkdirResponse->returnStatus;
 		sav_errno = statuscode2errno (repstatp->statusCode);
 
-		if (sav_errno != 0 && sav_errno != EEXIST && sav_errno != EACCES && sav_errno != ENOENT)
+		if (sav_errno != 0 && sav_errno != EEXIST && sav_errno != ENOENT)
 		{
 			srm_print_error_status_additional(context,repstatp,srmfunc,input->dir_name);
 			errno = sav_errno;
@@ -540,3 +550,31 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	srm_soap_deinit(&soap);
 	return (ret);
 }
+
+int srmv2_check_srm_root(const char* surl)
+{
+    int ret = 0;
+    static regex_t re;
+    static is_compiled = 0;
+    static const char* regexp = "^srm\://[^/]*/$";
+    #define SRMV1_CHECK_SRM_ROOT_NMATCH 1
+    regmatch_t match[SRMV1_CHECK_SRM_ROOT_NMATCH];
+
+    if (surl == NULL) {
+        return 0;
+    }
+
+    if (!is_compiled) {
+        int comp_res = regcomp(&re, regexp, REG_ICASE);
+        assert(comp_res == 0);
+        is_compiled = 1;
+    }
+   
+    if (0 == regexec(&re, surl, SRMV1_CHECK_SRM_ROOT_NMATCH, match, 0)) {
+        ret = 1;
+    }
+
+    return ret;
+    #undef SRMV1_CHECK_SRM_ROOT_NMATCH
+}
+
