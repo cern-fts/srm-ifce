@@ -49,7 +49,7 @@ AC_PROG_MAKE_SET
 AC_ARG_ENABLE(
 	[debug],
 	[AS_HELP_STRING([--enable-debug],[Produce binaries with debugging symbols.])],
-	[CFLAGS="$CFLAGS -g -DDEBUG -D_DEBUG -O0 -ggdb"])
+	[CFLAGS="$CFLAGS -g  -D_DEBUG -O0 -ggdb"])
 
 AC_ARG_ENABLE(
 	[wall],
