@@ -137,7 +137,9 @@ GFAL_SRM_IFCE_SOURCE_FILES = \
     srmv2_discovery_functions.c \
     srmv2_permission_functions.c \
     srmSoapBinding+.nsmap \
-    srmv2_data_transfer_functions.c
+    srmv2_data_transfer_functions.c \
+    gfal_srm_ifce_memory_functions.c 
+    
 else
 GFAL_SRM_IFCE_SOURCE_FILES = \
     srm_util.c \
@@ -154,7 +156,9 @@ GFAL_SRM_IFCE_SOURCE_FILES = \
     srmv2_discovery_functions.c \
     srmv2_permission_functions.c \
     srmSoapBinding+.nsmap \
-    srmv2_data_transfer_functions.c
+    srmv2_data_transfer_functions.c \
+    gfal_srm_ifce_memory_functions.c 
+    
 endif
 
 

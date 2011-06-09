@@ -110,6 +110,11 @@ int srm_extend_file_lifetime (struct srm_context *context,
 int srm_purgefromspace(struct srm_context *context,
 		struct srm_purgefromspace_input *input,struct srm_purgefromspace_output *output);
 
+// memory management
+void srm_srmv2_pinfilestatus_delete(struct srmv2_pinfilestatus*  srmv2_pinstatuses, int n);
+void srm_srmv2_mdfilestatus_delete(struct srmv2_mdfilestatus* mdfilestatus, int n);
+void srm_srmv2_filestatus_delete(struct srmv2_filestatus*  srmv2_statuses, int n);
+void srm_srm2__TReturnStatus_delete(struct srm2__TReturnStatus* status);
 
 // gsoap timeouts
 void srm_set_timeout_connect (int);
