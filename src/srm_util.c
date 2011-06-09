@@ -312,15 +312,8 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 			after_sleep += random_wait;
 			if (after_sleep >= internal_context->end_time)
 			{
-				wait_till_end = internal_context->end_time - (time(NULL)+last_chance_sec_before_end);
-				if (wait_till_end>0)
-				{
-					call_function.call_sleep(wait_till_end);
-				}else
-				{
-					// Timeout
+					// simply return in timeout
 					return -1;
-				}
 			}else
 			{
 				call_function.call_sleep(random_wait);
