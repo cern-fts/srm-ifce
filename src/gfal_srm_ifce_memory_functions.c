@@ -32,6 +32,7 @@
  * @file file for the memory management help functions
  * @version 0.0.1
  * @date 09/06/2011
+ * @author Adrien Devresse
  */
 
 
@@ -65,7 +66,8 @@ void srm_srmv2_mdfilestatus_delete(struct srmv2_mdfilestatus* mdfilestatus, int 
 			free(mdfilestatus[i].checksumtype);	
 			for(j=0; j < mdfilestatus[i].nbspacetokens;++j){
 				free(mdfilestatus[i].spacetokens[i]);
-			}	
+			}
+			srm_srmv2_mdfilestatus_delete(mdfilestatus[i].subpaths, mdfilestatus[i].nbsubpaths);	
 		}
 		free(mdfilestatus);
 	}
