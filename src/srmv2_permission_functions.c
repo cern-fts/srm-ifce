@@ -103,7 +103,7 @@ int srmv2_set_permission(struct srm_context *context,
 		// check response
 		if (rep.srmSetPermissionResponse->returnStatus->statusCode != SRM_USCORESUCCESS)
 		{
-			errno = EINVAL;
+			errno = statuscode2errno(rep.srmSetPermissionResponse->returnStatus->statusCode);
 			srm_soap_deinit(&soap);
 			return (-1);
 		}
