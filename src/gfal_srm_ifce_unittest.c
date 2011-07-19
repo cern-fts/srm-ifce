@@ -21,32 +21,17 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <check.h>
 #include <errno.h>
 #include "srmv2H.h"
 #include "gfal_srm_ifce_types.h"
-#include "gfal_srm_ifce.h"
 #include "srm_util.h"
 #include "srm_soap.h"
-#include "srm_dependencies.h"
 
+#include "gfal_srm_ifce_unittest.h"
 
-char test_string[] = "test_string";
 char test_dir[] = "/test/1/2/3/4";
-char* test_strings[3]= { "test_string1","test_string2",NULL};
+char* fixture_test_strings[3]= { "fixture_test_string1","fixture_test_string2",NULL};
 void PrintResult(struct srmv2_mdfilestatus* output);
-
-
-
-//////////////////////////////////////////////////////////////////
-// test wait_for_new_attempt function
-//////////////////////////////////////////////////////////////////
-unsigned int mock_sleep_time = 0;
-unsigned int mock_sleep(unsigned int time)
-{
-	mock_sleep_time = time;
-	return 0;
-}
 
 START_TEST (test_wait_for_new_attempt)
 {
@@ -115,7 +100,7 @@ START_TEST (test_back_off_logic)
 
 	result = back_off_logic(&context,srmfunc,&internal_context,NULL);
 	fail_if ((result  != srm_call_status_FAILURE)||(errno != ECOMM),
-			   "if internal_context->retstatus is null the function must return FAILURE!");
+			   "if internal_context->retstatus is NULL the function must return FAILURE!");
 
 	retstatus.statusCode = SRM_USCOREINTERNAL_USCOREERROR;
 	result = back_off_logic(&context,srmfunc,&internal_context,&retstatus);
@@ -176,285 +161,6 @@ START_TEST (test_back_off_logic)
 }
 END_TEST
 
-int  soap_call_srm2__srmLs_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	_param_18->srmLsResponse = NULL;
-	return 0; // success but return statuses are null
-}
-
-int  soap_call_srm2__srmLs_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREFAILURE;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->requestToken = NULL;
-	resp->details = NULL;
-	_param_18->srmLsResponse = resp;
-
-	return -1; // failure
-}
-
-int  soap_call_srm2__srmLs_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREPARTIAL_USCORESUCCESS;
-	retstatus->explanation = NULL;
-	resp->requestToken = NULL;
-	resp->details = NULL;
-	resp->returnStatus = retstatus;
-	_param_18->srmLsResponse = resp;
-
-	return 0; // success
-}
-
-int  soap_call_srm2__srmLs_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->requestToken = NULL;
-	resp->details = NULL;
-	_param_18->srmLsResponse = resp;
-
-	return 0; // success
-}
-int  soap_call_srm2__srmLs_test5(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->details = NULL;
-	resp->requestToken = NULL;
-	_param_18->srmLsResponse = resp;
-
-	return 0; // success
-}
-int  soap_call_srm2__srmLs_test6(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->details = NULL;
-	resp->requestToken = test_string;
-	_param_18->srmLsResponse = resp;
-
-	return 0; // success
-}
-int  soap_call_srm2__srmLs_test7(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmLsRequest *srmLsRequest, struct srm2__srmLsResponse_ *_param_18)
-{
-	struct srm2__srmLsResponse *resp  = (struct srm2__srmLsResponse *) soap_malloc (soap,sizeof (struct srm2__srmLsResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCORESUCCESS;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	_param_18->srmLsResponse = resp;
-	resp->details = (struct srm2__ArrayOfTMetaDataPathDetail*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail));
-	resp->details->__sizepathDetailArray = 1;
-	resp->details->pathDetailArray = (struct srm2__TMetaDataPathDetail **) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail *));
-	resp->details->pathDetailArray[0] = (struct srm2__TMetaDataPathDetail *) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail ));
-	resp->details->pathDetailArray[0] = NULL;
-	return 0; // success
-}
-//////////////////////////////////////////////////////////////////
-// test test_srmv2_ls_async
-//////////////////////////////////////////////////////////////////
-START_TEST (test_srmv2_ls_async)
-{
-	struct srm_ls_output output;
-	struct srm_mdfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	struct srm_ls_input input;
-	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	int result;
-
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	input.offset = NULL;
-	input.nbfiles = 1;
-	input.count = 0;
-	input.numlevels  = 1;
-	input.surls = test_surls_ls;
-	input.offset = 0;
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test1;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-				   "Expected Failure 1!");
-
-	internal_context.attempt = 1;
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test2;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 2!");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test3;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 3!");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test4;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
-					"Expected Failure 4!");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test5;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
-					"Expected Timeout!");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test6;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
-					"Expected Queued!");
-
-	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test7;
-	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
-					"Expected Success!");
-}
-END_TEST
-int  soap_call_srm2__srmStatusOfLs_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
-						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
-{
-	_param_18->srmStatusOfLsRequestResponse = NULL;
-	return 0; // success but return statuses are null
-}
-
-int  soap_call_srm2__srmStatusOfLs_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
-						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
-{
-	struct srm2__srmStatusOfLsRequestResponse *resp  = (struct srm2__srmStatusOfLsRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfLsRequestResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->details = NULL;
-	_param_18->srmStatusOfLsRequestResponse = resp;
-
-	return 0; // success
-}
-int  soap_call_srm2__srmStatusOfLs_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
-						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
-{
-	struct srm2__srmStatusOfLsRequestResponse *resp  = (struct srm2__srmStatusOfLsRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfLsRequestResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCOREINTERNAL_USCOREERROR;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->details = NULL;
-	_param_18->srmStatusOfLsRequestResponse = resp;
-
-	return 0; // success
-}
-int  soap_call_srm2__srmStatusOfLs_test4(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfLsRequestRequest *srmStatusOfLsRequest,
-						struct srm2__srmStatusOfLsRequestResponse_ *_param_18)
-{
-	struct srm2__srmStatusOfLsRequestResponse *resp  = (struct srm2__srmStatusOfLsRequestResponse *) soap_malloc (soap,sizeof (struct srm2__srmStatusOfLsRequestResponse));
-	struct srm2__TReturnStatus *retstatus = (struct srm2__TReturnStatus *) soap_malloc (soap,sizeof (struct srm2__TReturnStatus));
-	retstatus->statusCode = SRM_USCORESUCCESS;
-	retstatus->explanation = NULL;
-	resp->returnStatus = retstatus;
-	resp->details = (struct srm2__ArrayOfTMetaDataPathDetail*) soap_malloc (soap,sizeof (struct srm2__ArrayOfTMetaDataPathDetail));
-	resp->details->__sizepathDetailArray = 1;
-	resp->details->pathDetailArray = (struct srm2__TMetaDataPathDetail **) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail  *));
-	resp->details->pathDetailArray[0] = (struct srm2__TMetaDataPathDetail *) soap_malloc (soap,sizeof (struct srm2__TMetaDataPathDetail ));
-	resp->details->pathDetailArray[0] = NULL;
-	_param_18->srmStatusOfLsRequestResponse = resp;
-
-
-	return 0; // success
-}
-//////////////////////////////////////////////////////////////////
-// test test_srmv2_Rm_async
-//////////////////////////////////////////////////////////////////
-START_TEST (test_srmv2_status_of_ls_request)
-{
-	int i;
-	struct srm_mdfilestatus *filestatus;
-	struct srm_ls_input input;
-	struct srm_ls_output output;
-	const char *srmfunc = "testfunc";
-	struct srm_context context;
-	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
-	int result;
-
-
-	input.offset = NULL;
-
-	internal_context.estimated_wait_time = -1;
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	output.token = "test";
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test1;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
-				    "Expected Failure 1!");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test2;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
-				   "Expected Queued in first call!");
-	for (i=0;i<15;i++)
-	{
-		result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
-					   "Do not fail/succeed if queued,expected timeout after 10 calls!");
-	}
-	fail_if ((internal_context.current_status   != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test3;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
-				   "Expected Timeout!");
-
-	internal_context.attempt = 1;
-	internal_context.end_time = time(NULL)+10000;
-	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
-	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  != 1),
-				   "Expected Success!");
-
-
-}
-END_TEST
 int soap_call_srm2__abort_request_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action,
 		struct srm2__srmAbortRequestRequest *request,
 	    struct srm2__srmAbortRequestResponse_ *_param_18)
@@ -595,7 +301,7 @@ START_TEST (test_srmv2_rmdir)
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
-	input.surl = test_string;
+	input.surl = fixture_test_string;
 	input.recursive = 0;
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test1;
@@ -643,7 +349,7 @@ int  soap_call_srm2__srmRm_test2(struct soap *soap, const char *soap_endpoint, c
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 
 	return 0;
 }
@@ -666,7 +372,7 @@ START_TEST (test_srmv2_rm)
 	context.errbufsz = 0;
 	context.srm_endpoint = "test";
 
-	input.surls = test_strings;
+	input.surls = fixture_test_strings;
 	input.nbfiles = 1;
 
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
@@ -824,7 +530,7 @@ int  soap_call_srm2__srmAbortFiles_test2(struct soap *soap, const char *soap_end
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 
 	return 0;
 }
@@ -893,7 +599,7 @@ int  soap_call_srm2__srmPutDone_test2(struct soap *soap, const char *soap_endpoi
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 
 
 	return 0;
@@ -915,7 +621,7 @@ int  soap_call_srm2__srmPutDone_test3(struct soap *soap, const char *soap_endpoi
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 
 
 	return 0;
@@ -1031,7 +737,7 @@ int  soap_call_srm2__srmReleaseFiles_test2(struct soap *soap, const char *soap_e
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 
 
 	return 0;
@@ -1053,7 +759,7 @@ int  soap_call_srm2__srmReleaseFiles_test3(struct soap *soap, const char *soap_e
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLReturnStatus));
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 
 
 	return 0;
@@ -1147,7 +853,7 @@ int  soap_call_srm2__srmBringOnline_test1(struct soap *soap, const char *soap_en
 	resp->requestToken = NULL;
 	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
-	return 0; // success but return statuses are null
+	return 0; // success but return statuses are NULL
 }
 
 int  soap_call_srm2__srmBringOnline_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmBringOnlineRequest *srmBringOnlineRequest, struct srm2__srmBringOnlineResponse_ *_param_18)
@@ -1213,7 +919,7 @@ int  soap_call_srm2__srmBringOnline_test6(struct soap *soap, const char *soap_en
 	retstatus->statusCode = SRM_USCOREREQUEST_USCOREQUEUED;
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
-	resp->requestToken = test_string;
+	resp->requestToken = fixture_test_string;
 	resp->arrayOfFileStatuses = NULL;
 	_param_18->srmBringOnlineResponse = resp;
 	_param_18->srmBringOnlineResponse->remainingTotalRequestTime = NULL;
@@ -1315,7 +1021,7 @@ int  soap_call_srm2__srmStatusOfBringOnline_test1(struct soap *soap, const char 
 						struct srm2__srmStatusOfBringOnlineRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfBringOnlineRequestResponse = NULL;
-	return 0; // success but return statuses are null
+	return 0; // success but return statuses are NULL
 }
 
 int  soap_call_srm2__srmStatusOfBringOnline_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfBringOnlineRequestRequest *srmStatusOfBringOnlineRequest,
@@ -1461,7 +1167,7 @@ END_TEST
 int  soap_call_srm2__srmPrepareToGet_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPrepareToGetRequest *srmPrepareToGetRequest, struct srm2__srmPrepareToGetResponse_ *_param_18)
 {
 	_param_18->srmPrepareToGetResponse = NULL;
-	return 0; // success but return statuses are null
+	return 0; // success but return statuses are NULL
 }
 
 int  soap_call_srm2__srmPrepareToGet_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPrepareToGetRequest *srmBringOnlineRequest, struct srm2__srmPrepareToGetResponse_ *_param_18)
@@ -1526,7 +1232,7 @@ int  soap_call_srm2__srmPrepareToGet_test6(struct soap *soap, const char *soap_e
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = NULL;
-	resp->requestToken = test_string;
+	resp->requestToken = fixture_test_string;
 	_param_18->srmPrepareToGetResponse = resp;
 	_param_18->srmPrepareToGetResponse->remainingTotalRequestTime = NULL;
 
@@ -1627,7 +1333,7 @@ int  soap_call_srm2__srmStatusOfGet_test1(struct soap *soap, const char *soap_en
 						struct srm2__srmStatusOfGetRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfGetRequestResponse = NULL;
-	return 0; // success but return statuses are null
+	return 0; // success but return statuses are NULL
 }
 
 int  soap_call_srm2__srmStatusOfGet_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfGetRequestRequest *srmStatusOfGetRequest,
@@ -1771,7 +1477,7 @@ END_TEST
 int  soap_call_srm2__srmPrepareToPut_test1(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPrepareToPutRequest *srmPrepareToPutRequest, struct srm2__srmPrepareToPutResponse_ *_param_18)
 {
 	_param_18->srmPrepareToPutResponse = NULL;
-	return 0; // success but return statuses are null
+	return 0; // success but return statuses are NULL
 }
 
 int  soap_call_srm2__srmPrepareToPut_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmPrepareToPutRequest *srmBringOnlineRequest, struct srm2__srmPrepareToPutResponse_ *_param_18)
@@ -1838,7 +1544,7 @@ int  soap_call_srm2__srmPrepareToPut_test6(struct soap *soap, const char *soap_e
 	retstatus->explanation = NULL;
 	resp->returnStatus = retstatus;
 	resp->arrayOfFileStatuses = NULL;
-	resp->requestToken = test_string;
+	resp->requestToken = fixture_test_string;
 	_param_18->srmPrepareToPutResponse = resp;
 	_param_18->srmPrepareToPutResponse->remainingTotalRequestTime = NULL;
 
@@ -1947,7 +1653,7 @@ int  soap_call_srm2__srmStatusOfPut_test1(struct soap *soap, const char *soap_en
 						struct srm2__srmStatusOfPutRequestResponse_ *_param_18)
 {
 	_param_18->srmStatusOfPutRequestResponse = NULL;
-	return 0; // success but return statuses are null
+	return 0; // success but return statuses are NULL
 }
 
 int  soap_call_srm2__srmStatusOfPut_test2(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct srm2__srmStatusOfPutRequestRequest *srmStatusOfPutRequest,
@@ -2291,7 +1997,7 @@ int  soap_call_srm2__srmGetSpaceTokens_test5(struct soap *soap, const char *soap
 	resp->arrayOfSpaceTokens->__sizestringArray = 1;
 	resp->arrayOfSpaceTokens->stringArray = (char **) soap_malloc (soap,sizeof (char *));
 	resp->arrayOfSpaceTokens->stringArray[0] = (char *) soap_malloc (soap,sizeof (char));
-	resp->arrayOfSpaceTokens->stringArray[0] = test_string;
+	resp->arrayOfSpaceTokens->stringArray[0] = fixture_test_string;
 	_param_18->srmGetSpaceTokensResponse = resp;
 
 	return 0; // success
@@ -2356,7 +2062,7 @@ START_TEST (test_srmv2_getspacetokens)
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != 0),
 					"Expected Success!");
-	fail_if ((strcmp(output.spacetokens[0],test_string)  != 0),
+	fail_if ((strcmp(output.spacetokens[0],fixture_test_string)  != 0),
 						"Expected the same string !");
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
@@ -2371,7 +2077,7 @@ int  soap_call_srm2__srmPing_test1(struct soap *soap, const char *soap_endpoint,
 						struct srm2__srmPingResponse_ *_param_18)
 {
 	struct srm2__srmPingResponse *resp  = (struct srm2__srmPingResponse *) soap_malloc (soap,sizeof (struct srm2__srmPingResponse));
-	resp->versionInfo = test_string;
+	resp->versionInfo = fixture_test_string;
 	_param_18->srmPingResponse = resp;
 
 
@@ -2397,7 +2103,7 @@ int  soap_call_srm2__srmPing_test4(struct soap *soap, const char *soap_endpoint,
 						struct srm2__srmPingResponse_ *_param_18)
 {
 	struct srm2__srmPingResponse *resp  = (struct srm2__srmPingResponse *) soap_malloc (soap,sizeof (struct srm2__srmPingResponse));
-	resp->versionInfo = test_string;
+	resp->versionInfo = fixture_test_string;
 	_param_18->srmPingResponse = resp;
 
 	return -1; // fail
@@ -2630,8 +2336,8 @@ int  soap_call_srm2__srmGetPermission_test5(struct soap *soap, const char *soap_
 	resp->arrayOfPermissionReturns->__sizepermissionArray = 1;
 	resp->arrayOfPermissionReturns->permissionArray = (struct srm2__TPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TPermissionReturn *));
 	resp->arrayOfPermissionReturns->permissionArray[0] = (struct srm2__TPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TPermissionReturn));
-	resp->arrayOfPermissionReturns->permissionArray[0]->surl = test_string;
-	resp->arrayOfPermissionReturns->permissionArray[0]->owner = test_string;
+	resp->arrayOfPermissionReturns->permissionArray[0]->surl = fixture_test_string;
+	resp->arrayOfPermissionReturns->permissionArray[0]->owner = fixture_test_string;
 	resp->arrayOfPermissionReturns->permissionArray[0]->ownerPermission = NULL;
 	resp->arrayOfPermissionReturns->permissionArray[0]->arrayOfGroupPermissions = NULL;
 	resp->arrayOfPermissionReturns->permissionArray[0]->arrayOfUserPermissions = NULL;
@@ -2764,7 +2470,7 @@ int  soap_call_srm2__srmCheckPermission_test5(struct soap *soap, const char *soa
 	resp->arrayOfPermissions->__sizesurlPermissionArray = 1;
 	resp->arrayOfPermissions->surlPermissionArray = (struct srm2__TSURLPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn *));
 	resp->arrayOfPermissions->surlPermissionArray[0] = (struct srm2__TSURLPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn));
-	resp->arrayOfPermissions->surlPermissionArray[0]->surl = test_string;
+	resp->arrayOfPermissions->surlPermissionArray[0]->surl = fixture_test_string;
 	resp->arrayOfPermissions->surlPermissionArray[0]->permission = cur_permission;
 	resp->arrayOfPermissions->surlPermissionArray[0]->status = retstatus;
 
@@ -2787,7 +2493,7 @@ int  soap_call_srm2__srmCheckPermission_test6(struct soap *soap, const char *soa
 	resp->arrayOfPermissions->__sizesurlPermissionArray = 1;
 	resp->arrayOfPermissions->surlPermissionArray = (struct srm2__TSURLPermissionReturn**) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn *));
 	resp->arrayOfPermissions->surlPermissionArray[0] = (struct srm2__TSURLPermissionReturn*) soap_malloc (soap,sizeof (struct srm2__TSURLPermissionReturn));
-	resp->arrayOfPermissions->surlPermissionArray[0]->surl = test_string;
+	resp->arrayOfPermissions->surlPermissionArray[0]->surl = fixture_test_string;
 	resp->arrayOfPermissions->surlPermissionArray[0]->permission = cur_permission;
 	resp->arrayOfPermissions->surlPermissionArray[0]->status = retstatus;
 
@@ -2920,7 +2626,7 @@ int  soap_call_srm2__srmExtendFileLifeTime_test5(struct soap *soap, const char *
 	resp->arrayOfFileStatuses->__sizestatusArray = 1;
 	resp->arrayOfFileStatuses->statusArray = (struct srm2__TSURLLifetimeReturnStatus**) soap_malloc (soap,sizeof (struct srm2__TSURLLifetimeReturnStatus *));
 	resp->arrayOfFileStatuses->statusArray[0] = (struct srm2__TSURLLifetimeReturnStatus*) soap_malloc (soap,sizeof (struct srm2__TSURLLifetimeReturnStatus));
-	resp->arrayOfFileStatuses->statusArray[0]->surl = test_string;
+	resp->arrayOfFileStatuses->statusArray[0]->surl = fixture_test_string;
 	resp->arrayOfFileStatuses->statusArray[0]->fileLifetime = pinlifetime;
 	resp->arrayOfFileStatuses->statusArray[0]->pinLifetime = pinlifetime;
 	resp->arrayOfFileStatuses->statusArray[0]->status = retstatus;
@@ -3064,49 +2770,48 @@ END_TEST
 
 Suite * test_suite (void)
 {
-  Suite *s = suite_create ("New srm interface unit test suit");
+    Suite *s = suite_create ("new srm interface unit test suit");
 
-  TCase *tc_case_1 = tcase_create ("SRM function tests");
+    gfal_unittest_srmls_test_suite(s);
 
-  tcase_add_checked_fixture (tc_case_1, NULL,NULL);
-  tcase_add_test (tc_case_1, test_srmv2_extend_file_lifetime);
-  tcase_add_test (tc_case_1, test_srmv2_set_permission);
-  tcase_add_test (tc_case_1, test_srmv2_get_permission);
-  tcase_add_test (tc_case_1, test_srmv2_check_permission);
-  tcase_add_test (tc_case_1, test_wait_for_new_attempt);
-  tcase_add_test (tc_case_1, test_back_off_logic);
-  tcase_add_test (tc_case_1, test_srmv2_ls_async);
-  tcase_add_test (tc_case_1, test_srmv2_status_of_ls_request);
-  tcase_add_test (tc_case_1, test_srmv2_abort_request);
-  tcase_add_test (tc_case_1, test_srmv2_rmdir);
-  tcase_add_test (tc_case_1, test_srmv2_rm);
-  tcase_add_test (tc_case_1, test_srmv2_mkdir);
-  tcase_add_test (tc_case_1, test_srmv2_abort_files);
-  tcase_add_test (tc_case_1, test_srmv2_put_done);
-  tcase_add_test (tc_case_1, test_srmv2_release_files);
-  tcase_add_test (tc_case_1, test_srmv2_bring_online_async);
-  tcase_add_test (tc_case_1, test_srmv2_status_of_bring_online_async);
-  tcase_add_test (tc_case_1, test_srmv2_prepare_to_get_async);
-  tcase_add_test (tc_case_1, test_srmv2_status_of_get_request_async);
-  tcase_add_test (tc_case_1, test_srmv2_prepare_to_put_async);
-  tcase_add_test (tc_case_1, test_srmv2_status_of_put_request_async);
-  tcase_add_test (tc_case_1, test_srmv2_getspacemd);
-  tcase_add_test (tc_case_1, test_srmv2_getspacetokens);
-  tcase_add_test (tc_case_1, test_srmv2_ping);
+    TCase *tc_case_1 = tcase_create ("srm function tests");
 
-  suite_add_tcase (s, tc_case_1);
+    tcase_add_checked_fixture (tc_case_1, NULL,NULL);
+    tcase_add_test (tc_case_1, test_srmv2_extend_file_lifetime);
+    tcase_add_test (tc_case_1, test_srmv2_set_permission);
+    tcase_add_test (tc_case_1, test_srmv2_get_permission);
+    tcase_add_test (tc_case_1, test_srmv2_check_permission);
+    tcase_add_test (tc_case_1, test_wait_for_new_attempt);
+    tcase_add_test (tc_case_1, test_back_off_logic);
+    tcase_add_test (tc_case_1, test_srmv2_abort_request);
+    tcase_add_test (tc_case_1, test_srmv2_rmdir);
+    tcase_add_test (tc_case_1, test_srmv2_rm);
+    tcase_add_test (tc_case_1, test_srmv2_mkdir);
+    tcase_add_test (tc_case_1, test_srmv2_abort_files);
+    tcase_add_test (tc_case_1, test_srmv2_put_done);
+    tcase_add_test (tc_case_1, test_srmv2_release_files);
+    tcase_add_test (tc_case_1, test_srmv2_bring_online_async);
+    tcase_add_test (tc_case_1, test_srmv2_status_of_bring_online_async);
+    tcase_add_test (tc_case_1, test_srmv2_prepare_to_get_async);
+    tcase_add_test (tc_case_1, test_srmv2_status_of_get_request_async);
+    tcase_add_test (tc_case_1, test_srmv2_prepare_to_put_async);
+    tcase_add_test (tc_case_1, test_srmv2_status_of_put_request_async);
+    tcase_add_test (tc_case_1, test_srmv2_getspacemd);
+    tcase_add_test (tc_case_1, test_srmv2_getspacetokens);
+    tcase_add_test (tc_case_1, test_srmv2_ping);
 
+    suite_add_tcase (s, tc_case_1);
 
-  TCase *tc_case_2 = tcase_create ("Utility function tests");
-  tcase_add_checked_fixture (tc_case_2, NULL,NULL);
-  tcase_add_test (tc_case_2, test_srm_util_add_strings);
-  tcase_add_test (tc_case_2, test_srm_util_normalize_surl);
-  tcase_add_test (tc_case_2, test_srm_util_consolidate_multiple_characters);
-  tcase_add_test (tc_case_2, test_srmv2_check_srm_root);
+    TCase *tc_case_2 = tcase_create ("utility function tests");
+    tcase_add_checked_fixture (tc_case_2, NULL,NULL);
+    tcase_add_test (tc_case_2, test_srm_util_add_strings);
+    tcase_add_test (tc_case_2, test_srm_util_normalize_surl);
+    tcase_add_test (tc_case_2, test_srm_util_consolidate_multiple_characters);
+    tcase_add_test (tc_case_2, test_srmv2_check_srm_root);
 
-  suite_add_tcase (s, tc_case_2);
+    suite_add_tcase (s, tc_case_2);
 
-  return s;
+    return s;
 }
 
 int main(void)
@@ -3116,7 +2821,7 @@ int main(void)
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);
-        srunner_set_fork_status (sr,CK_NOFORK); // FOR EASIER DEBUG
+    srunner_set_fork_status (sr, CK_NOFORK); // for easier debug
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
