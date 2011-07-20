@@ -296,7 +296,7 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 	const int last_chance_sec_before_end = 2; // 2 seconds before the end
 	int random_limit;
 	int random_wait;
-	int wait_till_end;
+	int wait_till_end=0;
 	time_t after_sleep;
 	after_sleep = time(NULL) ;
 	srand( time(NULL) ); // new seed
@@ -312,8 +312,11 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 			after_sleep += random_wait;
 			if (after_sleep >= internal_context->end_time)
 			{
-					// simply return in timeout
-					return -1;
+				wait_till_end = internal_context->end_time - time(NULL) -last_chance_sec_before_end; //try the last hope before the end
+				if (wait_till_end>0) 
+					call_function.call_sleep(wait_till_end); 
+				else // deadline outdated, also..
+					return -1; 					// simply return in timeout
 			}else
 			{
 				call_function.call_sleep(random_wait);
