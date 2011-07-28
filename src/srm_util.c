@@ -27,6 +27,7 @@
 #include "gfal_srm_ifce_types.h"
 #include "srmv2H.h"
 #include "srm_dependencies.h"
+#include "gfal_srm_ifce_internal.h"
 
 const char *err_msg_begin = "SE";
 
@@ -94,6 +95,7 @@ void srm_set_timeout_sendreceive (int value)
 
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose)
 {
+    GFAL_SRM_IFCE_ASSERT(context);
 	context->errbuf = errbuf;
 	context->errbufsz = errbufsz;
 	context->version = VERSION_2_2;
@@ -104,7 +106,10 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
 
 void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context)
 {
-	if (context->timeout > 0)
+    GFAL_SRM_IFCE_ASSERT(context);
+    GFAL_SRM_IFCE_ASSERT(internal_context);
+
+    if (context->timeout > 0)
 	{
 		internal_context->end_time = (time(NULL) + context->timeout);
 	}
@@ -124,7 +129,9 @@ void set_estimated_wait_time(struct srm_internal_context *internal_context, int 
 
 void srm_soap_init(struct soap *soap)
 {
+	#ifdef GFAL_SECURE
 	int flags;
+	#endif
 	soap_init (soap);
 	soap->namespaces = namespaces_srmv2;
 
@@ -468,23 +475,28 @@ char* srm_strip_string(const char* str, const char chr)
 int srm_count_elements_of_string_array(char** a)
 {
     int ret = -1;
-    assert(a);
+    GFAL_SRM_IFCE_ASSERT(a);
     for (ret = 0; a[ret] != 0; ++ret) ;
     return ret;
 }
 
 int copy_string(char **dest,char *src)
 {
+    GFAL_SRM_IFCE_ASSERT(dest);
 	if (src)
 	{
-		if ((*dest	 = strdup (src)) == NULL)
+        *dest = strdup(src);
+
+		if (*dest == NULL)
 		{
 			errno = ENOMEM;
 			return (-1);
 		}
-	}else
+	}
+    else
 	{
-		errno = EINVAL;
+        *dest = NULL;
+        errno = EINVAL;
 		// queued but empty token
 		return (-1);
 	}
@@ -1015,6 +1027,7 @@ int copy_returnstatus(struct srm2__TReturnStatus **destination,struct srm2__TRet
 {
 	if (returnStatus)
 	{
+        GFAL_SRM_IFCE_ASSERT(destination);
 		*destination = (struct srm2__TReturnStatus *) malloc (sizeof (struct srm2__TReturnStatus));
 		if ((*destination) != NULL)
 		{

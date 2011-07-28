@@ -269,7 +269,8 @@ int  soap_call_srm2__srmRmDir_test2(struct soap *soap, const char *soap_endpoint
 						struct srm2__srmRmdirRequest *srmRmdirRequest,
 						struct srm2__srmRmdirResponse_ *_param_18)
 {
-	return -1;
+    _param_18->srmRmdirResponse = NULL;
+    return -1;
 }
 int  soap_call_srm2__srmRmDir_test3(struct soap *soap, const char *soap_endpoint, const char *soap_action,
 						struct srm2__srmRmdirRequest *srmRmdirRequest,
@@ -295,17 +296,13 @@ START_TEST (test_srmv2_rmdir)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 	input.surl = fixture_test_string;
 	input.recursive = 0;
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test1;
 	result = srmv2_rmdir(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != 1),
 				   "Expected Success!");
 
@@ -316,6 +313,7 @@ START_TEST (test_srmv2_rmdir)
 
 	call_function.call_srm2__srmRmdir = soap_call_srm2__srmRmDir_test3;
 	result = srmv2_rmdir(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != 1),
 				   "Expected Success!");
 }
@@ -366,22 +364,19 @@ START_TEST (test_srmv2_rm)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 	input.surls = fixture_test_strings;
 	input.nbfiles = 1;
 
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test1;
 	result = srmv2_rm(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != -1),
 				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmRm = soap_call_srm2__srmRm_test2;
 	result = srmv2_rm(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != 1),
 				   "Expected Success!");
 }
@@ -466,12 +461,7 @@ START_TEST (test_srmv2_mkdir)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 	input.dir_name = test_dir;
 
 	call_function.call_srm2__srmMkdir = soap_call_srm2__srmMkdir_test1;
@@ -547,12 +537,7 @@ START_TEST (test_srmv2_abort_files)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 	input.nbfiles = 1;
 	input.surls = test_surls;
 	input.reqtoken = "test";
@@ -671,12 +656,7 @@ START_TEST (test_srmv2_put_done)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 	input.nbfiles = 1;
 	input.surls = test_surls;
 	input.reqtoken = "test";
@@ -809,11 +789,7 @@ START_TEST (test_srmv2_release_files)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.nbfiles = 1;
 	input.surls = test_surls;
@@ -955,18 +931,14 @@ START_TEST (test_srmv2_bring_online_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2", NULL};
+	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.nbfiles = 1;
 	input.desiredpintime = 1000;
@@ -987,11 +959,13 @@ START_TEST (test_srmv2_bring_online_async)
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test3;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 3!");
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test4;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 4!");
 
@@ -1006,13 +980,16 @@ START_TEST (test_srmv2_bring_online_async)
 
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test6;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
+	srm_srm2__TReturnStatus_delete(output.retstatus);
+	free(output.token);
+    fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
 					"Expected Queued!");
 
 
 	output.filestatuses= filestatus;
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test7;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
 					"Expected Success!");
 }
@@ -1101,18 +1078,14 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
+	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.nbfiles = 1;
 	input.desiredpintime = 1000;
@@ -1130,6 +1103,7 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test2;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
 				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
@@ -1153,12 +1127,14 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	output.filestatuses= filestatus;
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
 				   "Expected Success!");
 
 
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test5;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
 				   "Expected Failure!");
 }
@@ -1267,18 +1243,14 @@ START_TEST (test_srmv2_prepare_to_get_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
+	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.nbfiles = 1;
 	input.desiredpintime = 1000;
@@ -1294,21 +1266,25 @@ START_TEST (test_srmv2_prepare_to_get_async)
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test2;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 2!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test3;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 3!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test4;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 4!");
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test5;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
 					"Expected Timeout!");
 
@@ -1318,6 +1294,8 @@ START_TEST (test_srmv2_prepare_to_get_async)
 
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test6;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
+    free(output.token);
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
 					"Expected Queued!");
 
@@ -1325,6 +1303,7 @@ START_TEST (test_srmv2_prepare_to_get_async)
 	output.filestatuses= filestatus;
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test7;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
 					"Expected Success!");
 }
@@ -1412,18 +1391,14 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
+	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.nbfiles = 1;
 	input.desiredpintime = 1000;
@@ -1441,11 +1416,13 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test2;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED),
 				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{
 		result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
+	    srm_srm2__TReturnStatus_delete(output.retstatus);
 		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
 					   "Do not fail/succeed if queued,expected timeout after 10 calls.!");
 	}
@@ -1456,6 +1433,7 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test3;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
 				   "Expected Timeout!");
 
@@ -1470,6 +1448,7 @@ START_TEST (test_srmv2_status_of_get_request_async)
 
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test5;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
 				   "Expected Failure!");
 }
@@ -1580,18 +1559,14 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
+	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.filesizes = filesizes_test;
 	input.nbfiles = 1;
@@ -1608,21 +1583,25 @@ START_TEST (test_srmv2_prepare_to_put_async)
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test2;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 2!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test3;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 3!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test4;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 4!");
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test5;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT)|| (result != -1),
 					"Expected Timeout!");
 
@@ -1632,6 +1611,8 @@ START_TEST (test_srmv2_prepare_to_put_async)
 
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test6;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
+    free(output.token);
 	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
 					"Expected Queued!");
 
@@ -1639,12 +1620,14 @@ START_TEST (test_srmv2_prepare_to_put_async)
 	input.filesizes = NULL;
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result != -1),
 					"Expected Failure 4!");
 
 	input.filesizes = filesizes_test;
 	call_function.call_srm2__srmPrepareToPut = soap_call_srm2__srmPrepareToPut_test7;
 	result = srmv2_prepare_to_put_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
 					"Expected Success!");
 }
@@ -1732,19 +1715,14 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	struct srm_internal_context internal_context;
 	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_protocols[] = {"protocol1","protocol2"};
+	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
 
 	internal_context.estimated_wait_time = -1;
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 	input.nbfiles = 1;
 	input.desiredpintime = 1000;
 	input.spacetokendesc  = NULL;
@@ -1761,11 +1739,13 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test2;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
 				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
 	{
 		result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
+	    srm_srm2__TReturnStatus_delete(output.retstatus);
 		fail_if ((internal_context.current_status   == srm_call_status_SUCCESS) || (internal_context.current_status   == srm_call_status_FAILURE),
 					   "Do not fail/succeed if queued,expected timeout after 10 calls.!");
 	}
@@ -1776,6 +1756,7 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test3;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_TIMEOUT) || (result  != -1),
 				   "Expected Timeout!");
 
@@ -1784,12 +1765,14 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	output.filestatuses= filestatus;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test4;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
 				   "Expected Success!");
 
 
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test5;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE) || (result  != -1),
 				   "Expected Failure!");
 }
@@ -1879,11 +1862,7 @@ START_TEST (test_srmv2_getspacemd)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	input.nbtokens = 0;
 	input.spacetokens = NULL;
@@ -2024,13 +2003,9 @@ START_TEST (test_srmv2_getspacetokens)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
+    srm_context_init(&context, "test", NULL, 0, 0);
 
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
-
+	input.spacetokendesc = NULL;
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test1;
 	result = srmv2_getspacetokens(&context,&input,&output);
 	fail_if ((result  != -1),
@@ -2060,13 +2035,16 @@ START_TEST (test_srmv2_getspacetokens)
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test5;
 	result = srmv2_getspacetokens(&context,&input,&output);
-	fail_if ((result  != 0),
+    fail_if ((result  != 0),
 					"Expected Success!");
 	fail_if ((strcmp(output.spacetokens[0],fixture_test_string)  != 0),
 						"Expected the same string !");
+	free(output.spacetokens[0]);
+	free(output.spacetokens);
 
 	call_function.call_srm2__srmGetSpaceTokens = soap_call_srm2__srmGetSpaceTokens_test6;
 	result = srmv2_getspacetokens(&context,&input,&output);
+	free(output.spacetokens);
 	fail_if ((result  != -1),
 					"Expected Failure !");
 
@@ -2121,15 +2099,11 @@ START_TEST (test_srmv2_ping)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
-
+    srm_context_init(&context, "test", NULL, 0, 0);
 
 	call_function.call_srm2__srmPing = soap_call_srm2__srmPing_test1;
 	result = srmv2_ping(&context,&output);
+    free(output.versioninfo);
 	fail_if ((result  != 0),
 					"Expected Success !");
 
@@ -2223,13 +2197,8 @@ START_TEST (test_srmv2_set_permission)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
+    srm_context_init(&context, "test", NULL, 0, 0);
 	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
-
 
 	input.surl = test_surls[0];
 	input.owner_permission = SRM_PERMISSION_RWX;
@@ -2366,13 +2335,8 @@ START_TEST (test_srmv2_get_permission)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
+    srm_context_init(&context, "test", NULL, 0, 0);
 	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
-
 
 	input.nbfiles = 1;
 	input.surls =  test_surls;
@@ -2380,6 +2344,7 @@ START_TEST (test_srmv2_get_permission)
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test1;
 	result = srmv2_get_permission(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != -1),
 					"Expected Failure !");
 
@@ -2395,11 +2360,13 @@ START_TEST (test_srmv2_get_permission)
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test4;
 	result = srmv2_get_permission(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != -1),
 					"Expected Failure !");
 
 	call_function.call_srm2__srmGetPermission = soap_call_srm2__srmGetPermission_test5;
 	result = srmv2_get_permission(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != 1),
 					"Expected Success!");
 
@@ -2513,12 +2480,8 @@ START_TEST (test_srmv2_check_permission)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
+    srm_context_init(&context, "test", NULL, 0, 0);
 	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
 
 	input.amode = R_OK;
 	input.nbfiles = 1;
@@ -2647,12 +2610,8 @@ START_TEST (test_srmv2_extend_file_lifetime)
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
-
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
+    srm_context_init(&context, "test", NULL, 0, 0);
 	context.version = VERSION_2_2;
-	context.srm_endpoint = "test";
 
 	input.pintime = 100;
 	input.nbfiles = 1;
@@ -2662,6 +2621,7 @@ START_TEST (test_srmv2_extend_file_lifetime)
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test1;
 	result = srmv2_extend_file_lifetime(&context,&input,&output); //failure empty fs
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != -1),
 					"Expected Failure !");
 
@@ -2677,11 +2637,13 @@ START_TEST (test_srmv2_extend_file_lifetime)
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test4;
 	result = srmv2_extend_file_lifetime(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != -1),
 					"Expected Failure !");
 
 	call_function.call_srm2__srmExtendFileLifeTime = soap_call_srm2__srmExtendFileLifeTime_test5;
 	result = srmv2_extend_file_lifetime(&context,&input,&output);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((result  != 1),
 					"Expected Success!");
 
@@ -2692,33 +2654,113 @@ START_TEST (test_srm_util_add_strings)
 {
     const char* s1 = "s1";
     const char* s2 = "s2";
+    char* res = NULL;
 
-    fail_unless(strcmp("s1s2", srm_util_add_strings(s1, s2)) == 0, "Expected equality");
-    fail_unless(strcmp(s2, srm_util_add_strings("", s2)) == 0, "Expected equality");
-    fail_unless(strcmp(s1, srm_util_add_strings(s1, "")) == 0, "Expected equality");
-    fail_unless(strcmp("", srm_util_add_strings("", "")) == 0, "Expected equality");
+    res = srm_util_add_strings(s1, s2);
+    fail_unless(strcmp("s1s2", res) == 0, "Expected equality");
+    free(res);
+    res = NULL;
+
+    res = srm_util_add_strings("", s2);
+    fail_unless(strcmp(s2, res) == 0, "Expected equality");
+    free(res);
+    res = NULL;
+
+    res = srm_util_add_strings(s1, "");
+    fail_unless(strcmp(s1, res) == 0, "Expected equality");
+    free(res);
+    res = NULL;
+
+    res = srm_util_add_strings("", "");
+    fail_unless(strcmp("", res) == 0, "Expected equality");
+    free(res);
+    res = NULL;
 }
 END_TEST
 
 
 START_TEST (test_srm_util_consolidate_multiple_characters)
 {
+    char* res = NULL;
+
     fail_unless(NULL == srm_util_consolidate_multiple_characters(NULL, 'x', 0));
-    fail_unless(0 == strcmp("abcd", srm_util_consolidate_multiple_characters("abcd", 'a', 0)));
-    fail_unless(0 == strcmp("abcd", srm_util_consolidate_multiple_characters("abcd", 'x', 0)));
-    fail_unless(0 == strcmp("abcd", srm_util_consolidate_multiple_characters("abcd", '0', 0)));
-    fail_unless(0 == strcmp("", srm_util_consolidate_multiple_characters("", '0', 0)));
-    fail_unless(0 == strcmp("", srm_util_consolidate_multiple_characters("", 'a', 0)));
-    fail_unless(0 == strcmp("a", srm_util_consolidate_multiple_characters("a", 'a', 0)));
-    fail_unless(0 == strcmp("a", srm_util_consolidate_multiple_characters("aa", 'a', 0)));
-    fail_unless(0 == strcmp("a", srm_util_consolidate_multiple_characters("aaa", 'a', 0)));
-    fail_unless(0 == strcmp("aaa", srm_util_consolidate_multiple_characters("aaa", 'x', 0)));
-    fail_unless(0 == strcmp("xa", srm_util_consolidate_multiple_characters("xaaa", 'a', 0)));
-    fail_unless(0 == strcmp("xay", srm_util_consolidate_multiple_characters("xaaay", 'a', 0)));
-    fail_unless(0 == strcmp("ay", srm_util_consolidate_multiple_characters("aaay", 'a', 0)));
-    fail_unless(0 == strcmp("aaaxay", srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 3)));
-    fail_unless(0 == strcmp("aaxay", srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 1)));
-    fail_unless(0 == strcmp("aaaxaaay", srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 100)));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("abcd", 'a', 0);
+    fail_unless(0 == strcmp("abcd", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("abcd", 'x', 0);
+    fail_unless(0 == strcmp("abcd", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("abcd", '0', 0);
+    fail_unless(0 == strcmp("abcd", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("", '0', 0); 
+    fail_unless(0 == strcmp("", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("", 'a', 0); 
+    fail_unless(0 == strcmp("", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("a", 'a', 0); 
+    fail_unless(0 == strcmp("a", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aa", 'a', 0); 
+    fail_unless(0 == strcmp("a", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aaa", 'a', 0); 
+    fail_unless(0 == strcmp("a", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aaa", 'x', 0); 
+    fail_unless(0 == strcmp("aaa", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("xaaa", 'a', 0); 
+    fail_unless(0 == strcmp("xa", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("xaaay", 'a', 0); 
+    fail_unless(0 == strcmp("xay", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aaay", 'a', 0); 
+    fail_unless(0 == strcmp("ay", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 3); 
+    fail_unless(0 == strcmp("aaaxay", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 1); 
+    fail_unless(0 == strcmp("aaxay", res));
+    free(res);
+    res = NULL;
+
+    res = srm_util_consolidate_multiple_characters("aaaxaaay", 'a', 100); 
+    fail_unless(0 == strcmp("aaaxaaay", res));
+    free(res);
+    res = NULL;
 }
 END_TEST
 
@@ -2733,15 +2775,47 @@ START_TEST (test_srm_util_normalize_surl)
     char* surl_6 = "srm://server:port/dir1/dir2";
     char* surl_7 = "srm://server:port/dir1//dir2/";
     char* surl_8 = "srm://server:port/dir1//dir2//";
+    char* res = NULL;
 
-    fail_unless(strcmp(surl_1, srm_util_normalize_surl(surl_1)) == 0);   
-    fail_unless(strcmp(surl_3, srm_util_normalize_surl(surl_2)) == 0);   
-    fail_unless(strcmp(surl_3, srm_util_normalize_surl(surl_3)) == 0);   
-    fail_unless(strcmp(surl_3, srm_util_normalize_surl(surl_4)) == 0);   
-    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_5)) == 0);   
-    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_6)) == 0);   
-    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_7)) == 0);   
-    fail_unless(strcmp(surl_5, srm_util_normalize_surl(surl_8)) == 0);   
+    res = srm_util_normalize_surl(surl_1);
+    fail_unless(strcmp(surl_1, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_2);
+    fail_unless(strcmp(surl_3, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_3);
+    fail_unless(strcmp(surl_3, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_4);
+    fail_unless(strcmp(surl_3, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_5);
+    fail_unless(strcmp(surl_5, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_6);
+    fail_unless(strcmp(surl_5, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_7);
+    fail_unless(strcmp(surl_5, res) == 0);   
+    free(res);
+    res = NULL;
+
+    res = srm_util_normalize_surl(surl_8);
+    fail_unless(strcmp(surl_5, res) == 0);   
+    free(res);
+    res = NULL;
 }
 END_TEST
 

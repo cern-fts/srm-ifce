@@ -205,6 +205,7 @@ struct srm_ls_output
 	struct srmv2_mdfilestatus   *statuses;
 	char 						*token; // request token
 	struct srm2__TReturnStatus  *retstatus;
+    int                         statuses_num;
 };
 
 struct srm_rm_input

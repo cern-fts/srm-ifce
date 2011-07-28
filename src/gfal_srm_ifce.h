@@ -23,6 +23,9 @@
 
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose);
 
+/* srm_ls functions */
+void srm_ls_output_destroy(struct srm_ls_output *output);
+
 int srm_ls(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output);
 

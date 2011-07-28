@@ -163,8 +163,10 @@ endif
 
 
 GFAL_SRM_IFCE_CFLAGS = \
+    -Wall -Wextra \
 	-DGFAL_SECURE \
 	-DVERSION=\"$(VERSION)-$(RELEASE)\" \
+    -D_GNU_SOURCE \
 	-D_LARGEFILE64_SOURCE \
 	$(SOAPCPP2_FLAGS)
 	
@@ -225,7 +227,7 @@ gfal_srm_ifce_version_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS)
 #-------------------------------------------------------------------------------
 gfal_srm_ifce_unittest_SOURCES = \
 	gfal_srm_ifce_unittest.c \
-	gfal_srm_ifce_unittest_srmls.c \ 
+	gfal_srm_ifce_unittest_srmls.c \
 	gfal_srm_ifce_unittest_common.c 
 	
 gfal_srm_ifce_unittest_LDADD = -lgfal_srm_ifce $(CCHECK_LIBS)

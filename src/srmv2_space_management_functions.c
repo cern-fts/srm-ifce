@@ -183,7 +183,10 @@ int srmv2_getspacetokens (struct srm_context *context,
 	struct srm2__ArrayOfString *tknrepp;
 	const char srmfunc[] = "GetSpaceTokens";
 
-	if (input == NULL || input->spacetokendesc == NULL || context->srm_endpoint == NULL || output == NULL)
+	if (input == NULL || 
+        input->spacetokendesc == NULL || 
+        context->srm_endpoint == NULL || 
+        output == NULL)
 	{
 		srm_errmsg( context, "[SRM][srmv2_getspacetokens][EINVAL] Invalid arguments");
 		errno = EINVAL;

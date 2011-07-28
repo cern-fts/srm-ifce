@@ -196,11 +196,13 @@ START_TEST (test_srmv2_ls_async)
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test3;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 3!");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test4;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_FAILURE)|| (result != -1),
 					"Expected Failure 4!");
 
@@ -212,14 +214,16 @@ START_TEST (test_srmv2_ls_async)
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
 
-
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test6;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
-	fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
+    free(output.token); 
+	srm_srm2__TReturnStatus_delete(output.retstatus);
+    fail_if ((internal_context.current_status  != srm_call_status_QUEUED)|| (result == -1),
 					"Expected Queued!");
 
 	call_function.call_srm2__srmLs = soap_call_srm2__srmLs_test7;
 	result = srmv2_ls_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS)|| (result == -1),
 					"Expected Success!");
 }
@@ -313,6 +317,7 @@ START_TEST (test_srmv2_status_of_ls_request)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test2;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status   != srm_call_status_QUEUED)|| (result  == -1),
 				   "Expected Queued in first call!");
 	for (i=0;i<15;i++)
@@ -335,6 +340,7 @@ START_TEST (test_srmv2_status_of_ls_request)
 	internal_context.end_time = time(NULL)+10000;
 	call_function.call_srm2__srmStatusOfLsRequest = soap_call_srm2__srmStatusOfLs_test4;
 	result = srmv2_status_of_ls_request_async_internal(&context,&input,&output,&internal_context);
+	srm_srm2__TReturnStatus_delete(output.retstatus);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  != 1),
 				   "Expected Success!");
 

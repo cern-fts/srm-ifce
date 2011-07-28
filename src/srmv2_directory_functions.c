@@ -31,6 +31,23 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input);
 
 // Asynchronous srm ls call
+void srm_ls_output_destroy(struct srm_ls_output *output)
+{
+    if (output == NULL)
+    {
+        return;
+    }
+
+    srm_srm2__TReturnStatus_delete(output->retstatus);
+    output->retstatus = NULL;
+
+    free(output->token);
+    output->token = NULL;
+
+    srm_srmv2_mdfilestatus_delete(output->statuses, output->statuses_num);
+    output->statuses = NULL;
+}
+
 int srmv2_ls_async_internal(struct srm_context *context,
 		struct srm_ls_input *input,struct srm_ls_output *output,struct srm_internal_context *internal_context)
 {
@@ -132,13 +149,16 @@ int srmv2_ls_async_internal(struct srm_context *context,
 				internal_context->current_status = srm_call_status_SUCCESS;
 				// Everything is fine copy file structure and check if copy went ok
 				ret = copy_mdfilestatuses(output->retstatus, &output->statuses,repfs);
+
 				if (ret == -1)
 				{
 					errno = srm_call_err(context,output->retstatus,srmfunc);
 					internal_context->current_status  = srm_call_status_FAILURE;
 				}else
 				{
-					if (ret == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
+                    output->statuses_num = repfs->__sizepathDetailArray;
+					
+                    if (ret == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
 							repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
 					{
 						// offset is only supported for a single directory listing
@@ -225,6 +245,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 					internal_context->current_status  = srm_call_status_FAILURE;
 				}else
 				{
+                    output->statuses_num = repfs->__sizepathDetailArray;
 					if (ret == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
 							repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
 					{
