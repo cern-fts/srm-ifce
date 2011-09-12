@@ -306,19 +306,23 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+			if (!repfs ||
+                repfs->__sizestatusArray < 1 ||
+                !repfs->statusArray ||
+                internal_context->current_status == srm_call_status_FAILURE)
 			{
-				internal_context->current_status = srm_call_status_FAILURE;
-				errno = srm_call_err(context,output->retstatus,srmfunc);
-				ret = -1;
-			}else
-			{
-				errno = 0;
-				internal_context->current_status = srm_call_status_SUCCESS;
-				ret = copy_pinfilestatuses_put(output->retstatus,
-											&output->filestatuses,
-											repfs,
-											srmfunc);
+			    internal_context->current_status = srm_call_status_FAILURE;
+
+			    if (internal_context->current_status == srm_call_status_FAILURE)
+			    {
+                    errno = srm_call_err(context,output->retstatus,srmfunc);
+                    ret = -1;
+			    }
+			    else
+			    {
+                    srm_call_err(context, "<empty response>", srmfunc);
+                    errno = ECOMM;
+			    }
 			}
 			break;
 		default:
