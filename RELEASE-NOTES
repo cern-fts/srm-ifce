@@ -1,2 +1,10 @@
+*** Release glite-data-srm-ifce_R_1_1_0_1 2011-09-14
+    o Trac ticket 134: Wrong error message displayed when not supported protocol is requested
+    o correction on set_permission() returned errcode
+    o add proper file for the memory management - correct a license problem
+    o modification of the exponential backoff for the timeout - last effort change
+    o fix a bad SRM_ERROR -> errno error translation
+    
+
 *** Release glite-data-srm-ifce_R_1_0_0 2011-02-04
 	Initial release. Contains the refactored and unchanged functionality.
