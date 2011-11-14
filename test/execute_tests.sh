@@ -25,9 +25,11 @@ SCRIPTPATH=`dirname $SCRIPT`
 #	LIB_FOLDER_TYPE=lib
 #fi
 
-if [ -n "$1" ]; then
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$1
-fi
+#if [ -n "$1" ]; then
+#	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$1
+#fi
+ccheck_path=`locate libcheck.so.0 | head -1 | sed 's/libcheck.so.0//'`
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ccheck_path
 echo $LD_LIBRARY_PATH
 
 function execute_test {
