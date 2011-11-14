@@ -20,6 +20,9 @@ SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
 BUILD_DIR=$SCRIPTPATH/../../build  #script is in /test/unit
 
+ccheck_path=`locate libcheck.so.0 | head -1 | sed 's/libcheck.so.0//'`
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$1:$ccheck_path
+echo $LD_LIBRARY_PATH
 
 pushd $BUILD_DIR/src &> /dev/null
 ./gfal_srm_ifce_unittest
