@@ -28,6 +28,7 @@ SCRIPTPATH=`dirname $SCRIPT`
 #if [ -n "$1" ]; then
 #	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$1
 #fi
+sudo updatedb
 ccheck_path=`locate libcheck.so.0 | head -1 | sed 's/libcheck.so.0//'`
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ccheck_path
 echo $LD_LIBRARY_PATH
