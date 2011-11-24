@@ -214,6 +214,16 @@ AC_MSG_NOTICE([GSOAP_VERSION_NUM is $GSOAP_VERSION_NUM])
 AC_MSG_NOTICE([checking gsoap version to apply on-the-fly patches])
 AM_CONDITIONAL([USE_GSOAP_2_7_10],[test "x$GSOAP_VERSION_NUM" = "x020710"])
 
+#conditional vars to disable tests
+AC_ARG_ENABLE(tests,
+[  --enable-tests    Turn on tests compilation],
+[case "${enableval}" in
+  yes) tests=true ;;
+  no)  tests=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-debug) ;;
+esac],[tests=true])
+AM_CONDITIONAL(TESTS, test x$tests = xtrue)
+
 AC_CONFIG_HEADERS([src/autogen/config.h])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])

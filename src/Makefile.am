@@ -225,6 +225,8 @@ gfal_srm_ifce_version_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS)
 
 # test programs
 #-------------------------------------------------------------------------------
+if TESTS
+
 gfal_srm_ifce_unittest_SOURCES = \
 	gfal_srm_ifce_unittest.c \
 	gfal_srm_ifce_unittest_srmls.c \
@@ -237,3 +239,4 @@ gfal_srm_ifce_systemtest_SOURCES = gfal_srm_ifce_systemtest.c
 gfal_srm_ifce_systemtest_LDADD = -lgfal_srm_ifce $(CCHECK_LIBS)
 gfal_srm_ifce_systemtest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(CCHECK_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
 
+endif
