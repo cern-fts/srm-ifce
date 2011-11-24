@@ -35,14 +35,6 @@ Requires: srm-ifce
 %description devel
 headers and static library for srm-ifce
 
-%package tests
-Summary: srm-ifce unit tests and functionals tests
-Group: grid/lcg
-BuildRequires: automake, gsoap, gsoap-devel, CGSI-gSOAP-devel,  libtool, globus-common-progs, globus-gssapi-gsi-devel, globus-gss-assist-devel, globus-ftp-client-devel
-AutoReqProv: no
-Requires: srm-ifce
-%description tests
-srm-ifce unit tests and functionals tests
 
 
 
@@ -63,7 +55,7 @@ autoheader;
 automake --foreign --add-missing --copy;
 autoconf 
 cd build; 
-../configure --enable-wall --prefix=/ --with-version=%{version} --with-release=%{release} --with-emi
+../configure --enable-wall --prefix=/ --with-version=%{version} --with-release=%{release} --with-emi --enable-tests=no
 cd .. ;
 
 %build
@@ -91,10 +83,6 @@ make -C build -j $NUMCPU install DESTDIR="$RPM_BUILD_ROOT"
 /usr/include/gfal_srm_ifce.h
 /usr/include/gfal_srm_ifce_types.h
 
-%files tests
-/usr/bin/gfal_srm_ifce_systemtest
-/usr/bin/gfal_srm_ifce_unittest
-/usr/bin/gfal_srm_ifce_version
  
 %files
 
