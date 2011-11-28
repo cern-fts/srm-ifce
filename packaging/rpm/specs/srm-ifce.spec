@@ -1,113 +1,99 @@
-%define projectname srm-ifce
-%define version 1.19
-%define release 2_epel
-
-
-%define debug_package %{nil}
-
-Name: %{projectname}
-License: Apache-2.0
-Summary: SRM client side library
-Version: %{version}
-Release: %{release}
-Group: Grid/lcg
-BuildRoot: %{_tmppath}/%{projectname}-%{version}-%{release}
-Source: %{projectname}-%{version}-%{release}.src.tar.gz 
-# SRM ifce packaging 
-# svn co http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce
-# cd srm-ifce
-# ./packaging/bin/packager_rpm.sh ./packaging/rpm/specs/ ./
-# mock -r {yourconfig} rebuild RPMS/*.rpm
+Name:		srm-ifce
+Version:	1.19
+Release:	1
+Summary:	SRM client side library
+Group:		Applications/Internet
+License:	ASL 2.0
+URL:		https://svnweb.cern.ch/trac/lcgutil
 #
-Requires: srm-ifce-libs >= %{version}
-%description
-SRM client side implementation for GFAL and FTS compatible SRMv1 and SRMv2
+# The source of this package was pulled from upstream's vcs. Use the
+# following commands to generate the tarball:
+# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce-1.19
+# tar -czvf srm-ifce-1.19.tar.gz srm-ifce-1.19
+Source:		%{name}-%{version}.tar.gz 
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
 
+BuildRequires:	automake
+BuildRequires:	CGSI-gSOAP-devel%{?_isa}
+BuildRequires:	gsoap-devel%{?_isa}
+BuildRequires:	libtool%{?_isa}
+BuildRequires:	globus-gssapi-gsi-devel%{?_isa}
+BuildRequires:	globus-gss-assist-devel%{?_isa}
+BuildRequires:	globus-ftp-client-devel%{?_isa}
+
+%description
+SRM client side implementation for GFAL and FTS compatible SRMv1 and SRMv2.
 
 %package libs
-Summary: SRM client side shared libraries for FTS/gfal
-Group: grid/lcg
-BuildRequires: automake, gsoap, gsoap-devel, CGSI-gSOAP-devel,  libtool, globus-common-progs, globus-gssapi-gsi-devel, globus-gss-assist-devel, globus-ftp-client-devel
-AutoReqProv: no
-Requires: gsoap, CGSI-gSOAP, globus-gssapi-gsi, globus-gss-assist, globus-ftp-client
+Summary:	SRM client side shared libraries for FTS/gfal
+Group:		System Environment/Libraries
+Requires:	CGSI-gSOAP
+Requires:	gsoap
+Requires:	globus-gssapi-gsi
+Requires:	globus-gss-assist
+Requires:	globus-ftp-client
+
 %description libs
-srm-ifce is a client side implementation of \
-the SRMv1 and SRMv2 specification for GFAL and FTS.
-SRM means Storage Resource Manager Interface, \
-It is a specification of a SOAP interface providing a \
-generic way to manage distributed storage systems .
+srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
+for GFAL and FTS. SRM means Storage Resource Manager Interface, it is a 
+specification of a SOAP interface providing a generic way to manage 
+distributed storage systems.
 
 %package devel
-Summary: SRM client side headers and static libraries
-Group: grid/lcg
-BuildRequires: automake, gsoap, gsoap-devel, CGSI-gSOAP-devel,  libtool, globus-common-progs, globus-gssapi-gsi-devel, globus-gss-assist-devel, globus-ftp-client-devel
-AutoReqProv: no
-Requires: srm-ifce-libs >= %{version}
+Summary:	SRM client side headers and static libraries
+Group:		Development/Libraries
+Requires:	srm-ifce-libs >= %{version}-%{release}
+
 %description devel
-development files for srm-ifce
-
-
-
-
-
-%post libs
-/sbin/ldconfig
-
-%postun libs
-/sbin/ldconfig
-
-%clean
-[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT";
-rm -rf build/
+This package contains common development libraries and header files for
+the srm-ifce component.
 
 %prep
 %setup -q
-mkdir -p src/autogen build; 
-aclocal -I m4-EPEL/ ; 
-libtoolize --force; 
-autoheader; 
-automake --foreign --add-missing --copy;
-autoconf 
-cd build; 
-../configure --libdir=%{_libdir} --prefix=/usr/ --with-version=%{version} --with-release=%{release} --with-emi --enable-tests=no
-cd .. ;
 
 %build
-NUMCPU=`grep processor /proc/cpuinfo | wc -l`; if [[ "$NUMCPU" == "0" ]]; then NUMCPU=1; fi;
-make -C build all
+aclocal -I m4-EPEL;
+libtoolize --force;
+autoheader;
+automake --foreign --add-missing --copy;
+autoconf;
+mkdir build;
+cd build;
+../configure \
+	--libdir=%{_libdir} \
+	--prefix=${prefix} \
+	--with-version=%{version} \
+	--with-release=%{release} \
+	--with-emi \
+	--enable-tests=no
 
-
+make %{?_smp_mflags}
 
 %install
-[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf "$RPM_BUILD_ROOT"; 
-NUMCPU=`grep processor /proc/cpuinfo | wc -l`; if [[ "$NUMCPU" == "0" ]]; then NUMCPU=1; fi;
-make -C build -j $NUMCPU install DESTDIR="$RPM_BUILD_ROOT"
+rm -rf $RPM_BUILD_ROOT
+make -C build DESTDIR=$RPM_BUILD_ROOT install
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post libs -p /sbin/ldconfig
+
+%postun libs -p /sbin/ldconfig
 
 %files libs
 %defattr (-,root,root)
-/usr/%{_lib}/libgfal_srm_ifce.so.*
-/usr/bin/gfal_srm_ifce_version
-
+%{_bindir}/gfal_srm_ifce_version
+%{_libdir}/libgfal_srm_ifce.so.*
+%{_datadir}/doc/srm-access-library-for-lcg_util/LICENSE
+%{_datadir}/doc/srm-access-library-for-lcg_util/RELEASE-NOTES
+%{_datadir}/doc/srm-access-library-for-lcg_util/VERSION
 
 %files devel
 %defattr (-,root,root)
-/usr/%{_lib}/libgfal_srm_ifce.so
-/usr/%{_lib}/libgfal_srm_ifce.a
-/usr/%{_lib}/libgfal_srm_ifce.la
-/usr/include/gfal_srm_ifce.h
-/usr/include/gfal_srm_ifce_types.h
-
- 
-%files
-%defattr (-,root,root)
-/usr/share/doc/srm-access-library-for-lcg_util/LICENSE
-/usr/share/doc/srm-access-library-for-lcg_util/RELEASE-NOTES
-/usr/share/doc/srm-access-library-for-lcg_util/VERSION
+%{_libdir}/libgfal_srm_ifce.so
+%{_includedir}/gfal_srm_ifce.h
+%{_includedir}/gfal_srm_ifce_types.h
 
 %changelog
-* Mon Nov 28 2011 adevress at cern.ch 
- - packaging warnings corrections
-* Mon Nov 14 2011 adevress at cern.ch 
- - Initial gfal 2.0 preview release
-
+* Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.19-1
+ - Initial build 
