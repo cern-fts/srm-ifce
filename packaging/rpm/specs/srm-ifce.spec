@@ -1,29 +1,35 @@
 %define projectname srm-ifce
 %define version 1.19
-%define release 1_beta_epel
+%define release 2_epel
 
 
 %define debug_package %{nil}
 
 Name: %{projectname}
 License: Apache-2.0
-Summary: SRM client side layer
+Summary: SRM client side library
 Version: %{version}
 Release: %{release}
 Group: Grid/lcg
 BuildRoot: %{_tmppath}/%{projectname}-%{version}-%{release}
 Source: %{projectname}-%{version}-%{release}.src.tar.gz 
-Requires: srm-ifce-libs
+# SRM ifce packaging 
+# svn co http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce
+# cd srm-ifce
+# ./packaging/bin/packager_rpm.sh ./packaging/rpm/specs/ ./
+# mock -r {yourconfig} rebuild RPMS/*.rpm
+#
+Requires: srm-ifce-libs >= %{version}
 %description
-SRM client side implementation for GFAL and FTS compatible srmv1 and srmv2
+SRM client side implementation for GFAL and FTS compatible SRMv1 and SRMv2
 
 
 %package libs
-Summary: srm-ifce shared libraries
+Summary: SRM client side shared libraries for FTS/gfal
 Group: grid/lcg
 BuildRequires: automake, gsoap, gsoap-devel, CGSI-gSOAP-devel,  libtool, globus-common-progs, globus-gssapi-gsi-devel, globus-gss-assist-devel, globus-ftp-client-devel
 AutoReqProv: no
-Requires: gsoap, CGSI-gSOAP, CGSI_gSOAP_2.7, globus-gssapi-gsi, globus-gss-assist, globus-ftp-client
+Requires: gsoap, CGSI-gSOAP, globus-gssapi-gsi, globus-gss-assist, globus-ftp-client
 %description libs
 srm-ifce is a client side implementation of \
 the SRMv1 and SRMv2 specification for GFAL and FTS.
@@ -32,13 +38,13 @@ It is a specification of a SOAP interface providing a \
 generic way to manage distributed storage systems .
 
 %package devel
-Summary: srm-ifce headers and static libraries
+Summary: SRM client side headers and static libraries
 Group: grid/lcg
 BuildRequires: automake, gsoap, gsoap-devel, CGSI-gSOAP-devel,  libtool, globus-common-progs, globus-gssapi-gsi-devel, globus-gss-assist-devel, globus-ftp-client-devel
 AutoReqProv: no
-Requires: srm-ifce
+Requires: srm-ifce-libs >= %{version}
 %description devel
-headers and static library for srm-ifce
+development files for srm-ifce
 
 
 
@@ -94,10 +100,14 @@ make -C build -j $NUMCPU install DESTDIR="$RPM_BUILD_ROOT"
 
  
 %files
+%defattr (-,root,root)
 /usr/share/doc/srm-access-library-for-lcg_util/LICENSE
 /usr/share/doc/srm-access-library-for-lcg_util/RELEASE-NOTES
 /usr/share/doc/srm-access-library-for-lcg_util/VERSION
 
 %changelog
+* Mon Nov 28 2011 adevress at cern.ch 
+ - packaging warnings corrections
 * Mon Nov 14 2011 adevress at cern.ch 
  - Initial gfal 2.0 preview release
+
