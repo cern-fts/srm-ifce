@@ -33,6 +33,7 @@ Requires:	globus-gssapi-gsi
 Requires:	globus-gss-assist
 Requires:	globus-ftp-client
 
+
 %description libs
 srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
 for GFAL and FTS. SRM means Storage Resource Manager Interface, it is a 
