@@ -1,5 +1,5 @@
 Name:		srm-ifce
-Version:	1.19
+Version:	1.12
 Release:	1
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -68,5 +68,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/gfal_srm_ifce_types.h
 
 %changelog
-* Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.19-1
+* Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.12-1
  - Initial build 
