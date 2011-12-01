@@ -13,21 +13,18 @@ URL:		https://svnweb.cern.ch/trac/lcgutil
 Source:		%{name}-%{version}.tar.gz 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
 
-BuildRequires:	automake
+BuildRequires:	cmake%{?_isa}
 BuildRequires:	CGSI-gSOAP-devel%{?_isa}
 BuildRequires:	globus-ftp-client-devel%{?_isa}
 BuildRequires:	globus-gssapi-gsi-devel%{?_isa}
 BuildRequires:	globus-gss-assist-devel%{?_isa}
 BuildRequires:	gsoap-devel%{?_isa}
-BuildRequires:	libtool%{?_isa}
 
 %description
 srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
 for GFAL and FTS. SRM means Storage Resource Manager Interface, it is a 
 specification of a SOAP interface providing a generic way to manage 
 distributed storage systems.
-
-
 
 %package devel
 Summary:	SRM client side headers and static libraries
@@ -42,27 +39,12 @@ the srm-ifce component.
 %setup -q
 
 %build
-aclocal -I m4-EPEL;
-libtoolize --force;
-autoheader;
-automake --foreign --add-missing --copy;
-autoconf;
-mkdir build;
-cd build;
-../configure \
-	--libdir=%{_libdir} \
-	--prefix=%{_prefix} \
-	--with-version=%{version} \
-	--with-release=%{release} \
-	--with-emi \
-	--enable-tests=no \
-	--enable-static=no
-
+cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} .
 make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make -C build %{?_smp_mflags} DESTDIR=$RPM_BUILD_ROOT install
+make %{?_smp_mflags} DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT

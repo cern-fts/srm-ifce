@@ -85,7 +85,9 @@ set_target_properties(srm-ifce 	PROPERTIES
 ## version control
 add_executable(gfal_srm_ifce_version 
 									${src_program})
-target_link_libraries(gfal_srm_ifce_version ${OUTPUT_NAME})								
+target_link_libraries(gfal_srm_ifce_version )								
+
+IF (${UNIT_TESTS} DEFINED)
 
 ## unit tests
 add_executable(gfal_srm_ifce_unittest 
@@ -95,9 +97,15 @@ add_executable(gfal_srm_ifce_systemtest
 									${src_system_tests} )
 target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce)
 
+ENDIF (${UNIT_TESTS} DEFINED)
+
 install(TARGETS srm-ifce
 	    RUNTIME       DESTINATION ${CMAKE_INSTALL_PREFIX}
 	    LIBRARY       DESTINATION ${LIB_INSTALL_DIR} )
 	    
 install(TARGETS gfal_srm_ifce_version
 	    RUNTIME       DESTINATION ${BIN_INSTALL_DIR})
+
+install(FILES "gfal_srm_ifce_types.h" "gfal_srm_ifce.h"
+		DESTINATION ${INCLUDE_INSTALL_DIR})
+

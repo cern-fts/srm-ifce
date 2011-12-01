@@ -32,5 +32,9 @@ set(CGSI_PKG_LIBRARIES "cgsi_plugin")
 cmake_minimum_required (VERSION 2.6)
 project (srm-ifce)
 
+#install doc license
+install(FILES "LICENSE" "RELEASE-NOTES" "VERSION"
+		DESTINATION ${DATA_INSTALL_DIR}/doc/srm-access-library-for-lcg_util/)
+
 
 add_subdirectory (src)
