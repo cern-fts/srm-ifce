@@ -29,6 +29,10 @@
 #include "srm_dependencies.h"
 #include "gfal_srm_ifce_internal.h"
 
+#ifdef CMAKE_BUILD
+#define namespaces_srmv2 namespaces
+#endif 
+
 const char *err_msg_begin = "SE";
 
 const char *srmv2_errmsg[] = {
