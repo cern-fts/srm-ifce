@@ -214,6 +214,8 @@ lib_LIBRARIES = \
 # shared libraries
 lib_LTLIBRARIES = \
 	libgfal_srm_ifce.la
+	
+
 
 endif
 
