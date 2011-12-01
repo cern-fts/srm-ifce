@@ -1,11 +1,14 @@
 ## cmake build script for srm-ifce
 cmake_minimum_required (VERSION 2.6)
 message("cmake source dir : ${CMAKE_SOURCE_DIR}")
+# build type
+set(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
 # load module
 include(DefineInstallationPaths REQUIRED)
 include(MacroCopyFile REQUIRED)
+include(ReleaseDebugAutoFlags REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
