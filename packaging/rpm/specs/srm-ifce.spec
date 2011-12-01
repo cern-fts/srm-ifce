@@ -12,13 +12,14 @@ URL:		https://svnweb.cern.ch/trac/lcgutil
 # tar -czvf srm-ifce-1.19.tar.gz srm-ifce-1.19
 Source:		%{name}-%{version}.tar.gz 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
+
 BuildRequires:	automake
 BuildRequires:	CGSI-gSOAP-devel%{?_isa}
-BuildRequires:	gsoap-devel%{?_isa}
-BuildRequires:	libtool%{?_isa}
+BuildRequires:	globus-ftp-client-devel%{?_isa}
 BuildRequires:	globus-gssapi-gsi-devel%{?_isa}
 BuildRequires:	globus-gss-assist-devel%{?_isa}
-BuildRequires:	globus-ftp-client-devel%{?_isa}
+BuildRequires:	gsoap-devel%{?_isa}
+BuildRequires:	libtool%{?_isa}
 
 %description
 srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
@@ -50,13 +51,14 @@ mkdir build;
 cd build;
 ../configure \
 	--libdir=%{_libdir} \
-	--prefix=${prefix} \
+	--prefix=%{_prefix} \
 	--with-version=%{version} \
 	--with-release=%{release} \
 	--with-emi \
-	--enable-tests=no
+	--enable-tests=no \
+	--enable-static=no
 
-make 
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
