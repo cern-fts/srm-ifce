@@ -106,13 +106,7 @@ dist_include_HEADERS = \
 bin_PROGRAMS = \
 	gfal_srm_ifce_version
 
-# libraries
-lib_LIBRARIES = \
-	libgfal_srm_ifce.a
 
-# shared libraries
-lib_LTLIBRARIES = \
-	libgfal_srm_ifce.la
 
 # generated source files (to build before other programs and libraries)
 BUILT_SOURCES = \
@@ -168,7 +162,7 @@ GFAL_SRM_IFCE_CFLAGS = \
 	-D_LARGEFILE64_SOURCE \
 	$(SOAPCPP2_FLAGS)
 	
- 
+if STATIC_ENABLE 
 
 # libgfal.a
 #-------------------------------------------------------------------------------
@@ -184,6 +178,7 @@ libgfal_srm_ifce_a_CFLAGS = \
 # libgfal.la
 #-------------------------------------------------------------------------------
 libgfal_srm_ifce_la_SOURCES = $(GFAL_SRM_IFCE_SOURCE_FILES)
+
 
 
 if USE_GSOAP_2_7_13
@@ -211,6 +206,16 @@ libgfal_srm_ifce_la_CFLAGS = \
 libgfal_srm_ifce_la_LDFLAGS = \
 	$(GFAL_SRM_IFCE_CFLAGS) \
 	-version-info $(INTERFACE_LIBTOOL_CURRENT):$(INTERFACE_LIBTOOL_REVISION):$(INTERFACE_LIBTOOL_AGE)
+	
+# libraries
+lib_LIBRARIES = \
+	libgfal_srm_ifce.a
+
+# shared libraries
+lib_LTLIBRARIES = \
+	libgfal_srm_ifce.la
+
+endif
 
 # gfal_version
 #-------------------------------------------------------------------------------

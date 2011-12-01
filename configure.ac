@@ -214,6 +214,16 @@ AC_MSG_NOTICE([GSOAP_VERSION_NUM is $GSOAP_VERSION_NUM])
 AC_MSG_NOTICE([checking gsoap version to apply on-the-fly patches])
 AM_CONDITIONAL([USE_GSOAP_2_7_10],[test "x$GSOAP_VERSION_NUM" = "x020710"])
 
+# enable or disable static library generation
+AC_ARG_ENABLE(static,
+[  --enable-static    Turn on static library generation],
+[case "${enableval}" in
+  yes) static=true ;;
+  no)  static=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-static) ;;
+esac],[static=true])
+AM_CONDITIONAL(STATIC_ENABLE, test x$static = xtrue)
+
 #conditional vars to disable tests
 AC_ARG_ENABLE(tests,
 [  --enable-tests    Turn on tests compilation],

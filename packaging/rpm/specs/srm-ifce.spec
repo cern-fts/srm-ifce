@@ -1,17 +1,17 @@
-Name:		srm-ifce
-Version:	1.19
-Release:	1
-Summary:	SRM client side library
-Group:		Applications/Internet
-License:	ASL 2.0
-URL:		https://svnweb.cern.ch/trac/lcgutil
+Name:			srm-ifce
+Version:		1.19
+Release:		1
+Summary:		SRM client side library
+Group:			Applications/Internet
+License:		ASL 2.0
+URL:			https://svnweb.cern.ch/trac/lcgutil
 #
 # The source of this package was pulled from upstream's vcs. Use the
 # following commands to generate the tarball:
 # svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce-1.19
 # tar -czvf srm-ifce-1.19.tar.gz srm-ifce-1.19
-Source:		%{name}-%{version}.tar.gz 
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
+Source:			%{name}-%{version}.tar.gz 
+BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}
 
 BuildRequires:	automake
 BuildRequires:	libtool
@@ -22,7 +22,8 @@ BuildRequires:	globus-gss-assist-devel%{?_isa}
 BuildRequires:	globus-ftp-client-devel%{?_isa}
 
 %description
-srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
+srm-ifce is a client side implementation of \
+the SRMv1 and SRMv2 specification 
 for GFAL and FTS. SRM means Storage Resource Manager Interface, it is a 
 specification of a SOAP interface providing a generic way to manage 
 distributed storage systems.
@@ -32,10 +33,10 @@ distributed storage systems.
 
 
 %package devel
-Summary:	SRM client side headers and static libraries
-Group:		Development/Libraries
-Requires:	srm-ifce >= %{version}-%{release}
-Provides: srm-ifce-static = %{version}-%{release}
+Summary:		SRM client side headers and static libraries
+Group:			Development/Libraries
+Requires:		srm-ifce >= %{version}-%{release}
+Provides: 		srm-ifce-static = %{version}-%{release}
 
 %description devel
 This package contains common development libraries and header files for
@@ -58,7 +59,8 @@ cd build;
 	--with-version=%{version} \
 	--with-release=%{release} \
 	--with-emi \
-	--enable-tests=no
+	--enable-tests=no \
+	--enable-static=no
 
 make %{?_smp_mflags}
 
@@ -84,8 +86,6 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr (-,root,root)
 %{_libdir}/libgfal_srm_ifce.so
-%{_libdir}/libgfal_srm_ifce.a
-%{_libdir}/libgfal_srm_ifce.la
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
 
