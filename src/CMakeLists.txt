@@ -28,10 +28,10 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${srm1_dir})
 
 add_custom_command(	OUTPUT ${srm1_header_files} 
 					DEPENDS ${srmv1_typemap} ${srmv1_wsdl}
-					COMMAND wsdl2h -c -e -y -z -t ${CMAKE_CURRENT_SOURCE_DIR}/${srmv1_typemap}  ${CMAKE_CURRENT_SOURCE_DIR}/${srmv1_wsdl}  -o ${srm1_header_files})
+					COMMAND ${GSOAP_WSDL2H} ${GSOAP_276_COMPAT_FLAGS} -c -e -y -z -t ${CMAKE_CURRENT_SOURCE_DIR}/${srmv1_typemap}  ${CMAKE_CURRENT_SOURCE_DIR}/${srmv1_wsdl}  -o ${srm1_header_files})
 add_custom_command(	OUTPUT ${srm1_source_files} ${srm1_map_files} 
 					DEPENDS ${srm1_header_files} 
-					COMMAND soapcpp2 -c -d ${CMAKE_CURRENT_BINARY_DIR}/${srm1_dir} -p srm ${srm1_header_files} )
+					COMMAND ${GSOAP_SOAPCPP2} -c -d ${CMAKE_CURRENT_BINARY_DIR}/${srm1_dir} -p srm ${srm1_header_files} )
 
 
 #srmv2
@@ -51,10 +51,10 @@ file(MAKE_DIRECTORY ${srm2_dir})
 
 add_custom_command(	OUTPUT  ${srm2_header_files}
 					DEPENDS  ${srmv2_typemap} ${srmv2_wsdl} 
-					COMMAND wsdl2h -c -e -y -z -t ${CMAKE_CURRENT_SOURCE_DIR}/${srmv2_typemap}  ${CMAKE_CURRENT_SOURCE_DIR}/${srmv2_wsdl}  -o ${srm2_header_files})
+					COMMAND ${GSOAP_WSDL2H} ${GSOAP_276_COMPAT_FLAGS} -c -e -y  -t ${CMAKE_CURRENT_SOURCE_DIR}/${srmv2_typemap}  ${CMAKE_CURRENT_SOURCE_DIR}/${srmv2_wsdl}  -o ${srm2_header_files})
 add_custom_command(	OUTPUT ${srm2_source_file1} ${srm2_source_file2}
 					DEPENDS ${srm2_header_files} 
-					COMMAND soapcpp2 -c -d ${srm2_dir} -p srmv2 ${srm2_header_files} )
+					COMMAND ${GSOAP_SOAPCPP2} -c -d ${srm2_dir} -p srmv2 ${srm2_header_files} )
 
 					
 # transform typemap

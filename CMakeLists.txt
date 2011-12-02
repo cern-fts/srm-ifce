@@ -1,4 +1,5 @@
 ## cmake build script for srm-ifce
+project (srm-ifce)
 cmake_minimum_required (VERSION 2.6)
 message("cmake source dir : ${CMAKE_SOURCE_DIR}")
 # build type
@@ -11,6 +12,7 @@ include(MacroCopyFile REQUIRED)
 include(ReleaseDebugAutoFlags REQUIRED)
 
 find_package(PkgConfig REQUIRED)
+find_package(gSOAP REQUIRED)
 
 #define PROJECT vars
 set(PROJECT_NAME "srm-ifce")
@@ -32,8 +34,7 @@ pkg_check_modules(GSOAP_PKG REQUIRED gsoap)
 
 set(CGSI_PKG_LIBRARIES "cgsi_plugin")
 
-cmake_minimum_required (VERSION 2.6)
-project (srm-ifce)
+
 
 #install doc license
 install(FILES "LICENSE" "RELEASE-NOTES" "VERSION"
