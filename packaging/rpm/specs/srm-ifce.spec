@@ -8,8 +8,8 @@ URL:		https://svnweb.cern.ch/trac/lcgutil
 #
 # The source of this package was pulled from upstream's vcs. Use the
 # following commands to generate the tarball:
-# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce-1.19
-# tar -czvf srm-ifce-1.19.tar.gz srm-ifce-1.19
+# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce-1.12
+# tar -czvf srm-ifce-1.12.tar.gz srm-ifce-1.12
 Source:		%{name}-%{version}.tar.gz 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
 
