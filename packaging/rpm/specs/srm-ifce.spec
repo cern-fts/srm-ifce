@@ -27,9 +27,9 @@ specification of a SOAP interface providing a generic way to manage
 distributed storage systems.
 
 %package devel
-Summary:	SRM client side headers and static libraries
+Summary:	SRM client side headers and development files
 Group:		Development/Libraries
-Requires:	srm-ifce-libs >= %{version}-%{release}
+Requires:	srm-ifce >= %{version}-%{release}
 
 %description devel
 This package contains common development libraries and header files for
