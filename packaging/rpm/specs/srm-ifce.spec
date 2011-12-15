@@ -66,6 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
+%doc %{_datadir}/doc/srm-access-library-for-lcg_util/README
 
 %changelog
 * Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.12-1

@@ -37,7 +37,7 @@ set(CGSI_PKG_LIBRARIES "cgsi_plugin")
 
 
 #install doc license
-install(FILES "LICENSE" "RELEASE-NOTES" "VERSION"
+install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README"
 		DESTINATION ${SHARE_INSTALL_PREFIX}/doc/srm-access-library-for-lcg_util/)
 
 
