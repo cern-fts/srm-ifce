@@ -1,3 +1,6 @@
+*** Release glite-data-srm-ifce_R_1_1_0_2 2011-12-20
+    o General EPEL packaging for all the lcg-utils components: https://svnweb.cern.ch/trac/lcgutil/ticket/249
+
 *** Release glite-data-srm-ifce_R_1_1_0_1 2011-09-14
     o Trac ticket 134: Wrong error message displayed when not supported protocol is requested
     o correction on set_permission() returned errcode
