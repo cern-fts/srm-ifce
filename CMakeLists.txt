@@ -38,7 +38,7 @@ set(CGSI_PKG_LIBRARIES "cgsi_plugin")
 
 #install doc license
 install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README"
-		DESTINATION ${SHARE_INSTALL_PREFIX}/doc/srm-ifce/)
+		DESTINATION ${DOC_INSTALL_DIR})
 
 
 add_subdirectory (src)

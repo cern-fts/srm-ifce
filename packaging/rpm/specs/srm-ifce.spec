@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12
-Release:	2
+Release:	3
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -37,7 +37,7 @@ the srm-ifce component.
 %setup -q
 
 %build
-%cmake .
+%cmake -D DOC_INSTALL_DIR=%{_docdir}/%{name}-%{version} .
 make %{?_smp_mflags}
 
 %install
@@ -55,19 +55,23 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
-%{_docdir}/srm-ifce/LICENSE
-%{_docdir}/srm-ifce/RELEASE-NOTES
-%{_docdir}/srm-ifce/VERSION
+%{_docdir}/%{name}-%{version}/LICENSE
+%{_docdir}/%{name}-%{version}/VERSION
+%doc %{_docdir}/%{name}-%{version}/README
 
 %files devel
 %defattr (-,root,root)
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
-%doc %{_docdir}/srm-ifce/README
+%doc %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Thu Jan 05 2012 Adrien Devress <adevress at cern.ch> - 1.12-3 
+ - Second Revision for EPEL/fedora conformance
+
 * Fri Dec 16 2011 Adrien Devress <adevress at cern.ch> - 1.12-2
  - First Revision for EPEL/fedora conformance
+
 * Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.12-1
  - Initial build 
