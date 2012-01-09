@@ -30,8 +30,9 @@ SCRIPTPATH=`dirname $SCRIPT`
 #fi
 sudo updatedb
 ccheck_path=`locate libcheck.so.0 | head -1 | sed 's/libcheck.so.0//'`
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ccheck_path
-echo $LD_LIBRARY_PATH
+cgsi_path=`locate libcgsi_plugin_gsoap_2.7.so.1 | head -1 | sed 's/libcgsi_plugin_gsoap_2.7.so.1//'`
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ccheck_path:$cgsi_path
+
 
 function execute_test {
 

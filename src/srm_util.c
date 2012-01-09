@@ -894,6 +894,35 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 	errno = 0;
 	return (n);
 }
+
+/**
+ * Copy TLocality (ONLINE, NEARLINE,...) from srm soap to srmifce enum
+ */
+void copy_Locality(struct srm2__TMetaDataPathDetail *soap_file_meta_data, struct srmv2_mdfilestatus *statuses){
+	enum srm2__TFileLocality loc = 	*(soap_file_meta_data->fileLocality);
+	TFileLocality res_loc;
+	switch(loc){
+		case ONLINE_:
+			res_loc = GFAL_LOCALITY_ONLINE_;
+			break;
+		case NEARLINE_:
+			res_loc = GFAL_LOCALITY_NEARLINE_;
+			break;
+		case ONLINE_USCOREAND_USCORENEARLINE:
+			res_loc = GFAL_LOCALITY_ONLINE_USCOREAND_USCORENEARLINE;
+			break;
+		case LOST:
+			res_loc = GFAL_LOCALITY_LOST;
+			break;
+		case UNAVAILABLE:
+			res_loc = GFAL_LOCALITY_UNAVAILABLE;
+			break;			
+		default:
+			res_loc = GFAL_LOCALITY_UNKNOWN;
+	}
+	statuses->locality = res_loc;
+}
+
 int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		struct srmv2_mdfilestatus **statuses,
 		struct srm2__ArrayOfTMetaDataPathDetail *repfs)
@@ -956,7 +985,7 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		}
 		if (repfs->pathDetailArray[i]->fileLocality)
 		{
-			(*statuses)[i].locality = *(repfs->pathDetailArray[i]->fileLocality); // TODO check this line
+			copy_Locality(repfs->pathDetailArray[i], &((*statuses)[i]) );
         }
 		(*statuses)[i].stat.st_uid = 2;//TODO: create haseh placeholder for string<->uid/gid mapping
 		(*statuses)[i].stat.st_gid = 2;
