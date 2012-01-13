@@ -16,7 +16,7 @@
 # CGSI_GSOAP Libraries
 # -----------------------------------------------------
 find_library(CGSI_GSOAP_LIBRARIES
-    NAMES cgsi_plugin
+    NAMES cgsi_plugin cgsi_plugin_gsoap_2.7
     HINTS ${CGSI_GSOAP_LOCATION}/lib ${CGSI_GSOAP_LOCATION}/lib64 ${CGSI_GSOAP_LOCATION}/lib32 ${STAGE_DIR}/lib ${STAGE_DIR}/lib64
     DOC "The main CGSI_GSOAP library"
 )
