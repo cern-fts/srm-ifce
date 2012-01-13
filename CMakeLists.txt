@@ -14,6 +14,7 @@ include(CMakeGeneratePkgConfig REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 find_package(gSOAP REQUIRED)
+find_package(CGSI_GSOAP REQUIRED)
 
 #define PROJECT vars
 set(PROJECT_NAME "srm-ifce")

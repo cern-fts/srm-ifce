@@ -96,6 +96,6 @@ function(add_PkgConfigFile_for_Library)
 
 	SET(filename "${CMAKE_CURRENT_BINARY_DIR}/${pkgconfig_filename}")
 	FILE(WRITE ${filename} "${pc_file_content}" )
-	message("-- generate pkgconfig file for ${lib_target} under ${filename}")
+	message(STATUS "-- generate pkgconfig file for ${lib_target} under ${filename}")
 endfunction(add_PkgConfigFile_for_Library)
 

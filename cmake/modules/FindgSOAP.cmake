@@ -58,11 +58,11 @@ find_program(GSOAP_SOAPCPP2
 # GSOAP_276_COMPAT_FLAGS and GSOAPVERSION
 # try to determine the flagfor the 2.7.6 compatiblity, break with 2.7.13 and re-break with 2.7.16
 # ----------------------------------------------------
-message(" - wsdlh : ${GSOAP_WSDL2H}")
-message(" - SOAPCPP2 : ${GSOAP_SOAPCPP2}")
+message(STATUS " - wsdlh : ${GSOAP_WSDL2H}")
+message(STATUS " - SOAPCPP2 : ${GSOAP_SOAPCPP2}")
 execute_process(COMMAND ${GSOAP_SOAPCPP2}  "-v"   OUTPUT_VARIABLE GSOAP_STRING_VERSION ERROR_VARIABLE GSOAP_STRING_VERSION )
 string(REGEX MATCH "[0-9]*\\.[0-9]*\\.[0-9]*" GSOAP_VERSION ${GSOAP_STRING_VERSION})
-message(" - GSOAP VERSION : ${GSOAP_VERSION}")
+message(STATUS " - GSOAP VERSION : ${GSOAP_VERSION}")
 if( "${GSOAP_VERSION}"  VERSION_LESS "2.7.6")
 	set(GSOAP_276_COMPAT_FLAGS "")
 elseif ( "${GSOAP_VERSION}"  VERSION_LESS "2.7.14") 
