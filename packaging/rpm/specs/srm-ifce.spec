@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12
-Release:	4
+Release:	5
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -28,6 +28,7 @@ distributed storage systems.
 Summary:	SRM client side headers and development files
 Group:		Development/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	pkgconfig
 
 %description devel
 This package contains common development libraries and header files for
@@ -61,12 +62,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr (-,root,root)
+%{_libdir}/pkgconfig/*
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Thu Jan 12 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
+ - add pkg-config files
+
 * Wed Jan 11 2012 Adrien Devress <adevress at cern.ch> - 1.12-4
  - Add a fixed source tree for packaging
  - Correct a problem of include with gcc 4.6

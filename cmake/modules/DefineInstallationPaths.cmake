@@ -6,14 +6,12 @@ if (UNIX)
 
 # Suffix for Linux
 	IF (CMAKE_SIZEOF_VOID_P EQUAL 4)
-		SET(LIB_SUFFIX 
-		""
-		CACHE PATH "Suffix of the lib")
+		SET(LIB_SUFFIX ""
+		CACHE STRING "Suffix of the lib")
 		SET (PKG_ARCH "i386")
 	ELSE (CMAKE_SIZEOF_VOID_P EQUAL 4)
-		SET(LIB_SUFFIX 
-		"64"
-		CACHE PATH "Suffix of the lib")
+		SET(LIB_SUFFIX "64"
+		CACHE STRING "Suffix of the lib")
 		SET (PKG_ARCH "x86_64")
 	ENDIF (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
@@ -46,6 +44,12 @@ if (UNIX)
     "${EXEC_INSTALL_PREFIX}/libexec"
     CACHE PATH "The subdirectory relative to the install prefix where libraries will be installed (default is prefix/libexec)"
   )
+
+  SET(PKGCONFIG_FILES_DIR
+    "${LIB_INSTALL_DIR}/pkgconfig/"
+    CACHE PATH "subdirectory relative to the install prefix where pkgconfig files (.pc) will be installed"
+  )
+
   SET(PLUGIN_INSTALL_DIR
     "${LIB_INSTALL_DIR}/${APPLICATION_NAME}"
     CACHE PATH "The subdirectory relative to the install prefix where plugins will be installed (default is prefix/lib/${APPLICATION_NAME})"

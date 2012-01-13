@@ -10,6 +10,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
 include(DefineInstallationPaths REQUIRED)
 include(MacroCopyFile REQUIRED)
 include(ReleaseDebugAutoFlags REQUIRED)
+include(CMakeGeneratePkgConfig REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 find_package(gSOAP REQUIRED)

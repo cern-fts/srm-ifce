@@ -78,9 +78,14 @@ set_target_properties(srm-ifce 	PROPERTIES
 								SOVERSION ${VERSION_MAJOR}
 								CLEAN_DIRECT_OUTPUT 1
 								OUTPUT_NAME ${OUTPUT_NAME} 
-
 	                          
 )
+
+# add a package config file
+add_PkgConfigFile_for_Library(srm-ifce.pc srm-ifce)
+
+
+
 
 ## version control
 add_executable(gfal_srm_ifce_version 
@@ -99,12 +104,14 @@ target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce)
 
 ENDIF (${UNIT_TESTS} DEFINED)
 
-install(TARGETS srm-ifce
+install(TARGETS srm-ifce 
 	    RUNTIME       DESTINATION ${CMAKE_INSTALL_PREFIX}
 	    LIBRARY       DESTINATION ${LIB_INSTALL_DIR} )
 	    
 install(TARGETS gfal_srm_ifce_version
 	    RUNTIME       DESTINATION ${BIN_INSTALL_DIR})
+	    
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/srm-ifce.pc" DESTINATION ${PKGCONFIG_FILES_DIR})
 
 install(FILES "gfal_srm_ifce_types.h" "gfal_srm_ifce.h"
 		DESTINATION ${INCLUDE_INSTALL_DIR})
