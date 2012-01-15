@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12
-Release:	5
+Release:	5%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -8,10 +8,10 @@ URL:		https://svnweb.cern.ch/trac/lcgutil
 #
 # The source of this package was pulled from upstream's vcs. Use the
 # following commands to generate the tarball:
-# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_1_12_4 srm-ifce-1.12
+# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_1_12_5 srm-ifce-1.12
 # tar -czvf srm-ifce-1.12.tar.gz srm-ifce-1.12
 Source:		%{name}-%{version}.tar.gz 
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}
+BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	cmake
 BuildRequires:	CGSI-gSOAP-devel
@@ -20,7 +20,7 @@ BuildRequires:	globus-gss-assist-devel
 
 %description
 srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
-for GFAL and FTS. SRM means Storage Resource Manager Interface, it is a 
+for GFAL1/2 and FTS. SRM means Storage Resource Manager Interface, it is a 
 specification of a SOAP interface providing a generic way to manage 
 distributed storage systems.
 
@@ -28,11 +28,11 @@ distributed storage systems.
 Summary:	SRM client side headers and development files
 Group:		Development/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
-Requires:	pkgconfig
+Requires:	pkgconfig%{?_isa}
 
 %description devel
-This package contains common development libraries and header files for
-the srm-ifce component.
+Development libraries, pkgconfig files and header files for
+the srm-ifce.
 
 %prep
 %setup -q
@@ -56,9 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
-%{_docdir}/%{name}-%{version}/LICENSE
-%{_docdir}/%{name}-%{version}/VERSION
-%{_docdir}/%{name}-%{version}/README
+%doc %{_docdir}/%{name}-%{version}/LICENSE
+%doc %{_docdir}/%{name}-%{version}/VERSION
+%doc %{_docdir}/%{name}-%{version}/README
 
 %files devel
 %defattr (-,root,root)
@@ -66,11 +66,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
-%{_docdir}/%{name}-%{version}/RELEASE-NOTES
+%doc %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
-* Thu Jan 12 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
+* Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
  - add pkg-config files
+ - add %doc macro for LICENSE & doc 
+ - add dist macro
+ - correct buildroot path
 
 * Wed Jan 11 2012 Adrien Devress <adevress at cern.ch> - 1.12-4
  - Add a fixed source tree for packaging
