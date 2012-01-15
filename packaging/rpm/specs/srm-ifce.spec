@@ -71,7 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
  - add pkg-config files
- - add %doc macro for LICENSE & doc 
+ - add doc macro for LICENSE & doc 
  - add dist macro
  - correct buildroot path
 
