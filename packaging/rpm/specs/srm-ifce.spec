@@ -56,9 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
-%doc %{_docdir}/%{name}-%{version}/LICENSE
-%doc %{_docdir}/%{name}-%{version}/VERSION
-%doc %{_docdir}/%{name}-%{version}/README
+%{_docdir}/%{name}-%{version}/LICENSE
+%{_docdir}/%{name}-%{version}/VERSION
+%{_docdir}/%{name}-%{version}/README
 
 %files devel
 %defattr (-,root,root)
@@ -66,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
-%doc %{_docdir}/%{name}-%{version}/RELEASE-NOTES
+%{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
 * Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
