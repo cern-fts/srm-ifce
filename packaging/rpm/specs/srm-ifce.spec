@@ -5,12 +5,8 @@ Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
 URL:		https://svnweb.cern.ch/trac/lcgutil
-#
-# The source of this package was pulled from upstream's vcs. Use the
-# following commands to generate the tarball:
-# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_1_12_5 srm-ifce-1.12
-# tar -czvf srm-ifce-1.12.tar.gz srm-ifce-1.12
-Source:		%{name}-%{version}.tar.gz 
+# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce
+Source0:	http://grid-deployment.web.cern.ch/grid-deployment/dms/lcgutil/tar/%{name}/%{name}-%{version}.tar.gz 
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	cmake
@@ -71,7 +67,6 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
  - add pkg-config files
- - add doc macro for LICENSE & doc 
  - add dist macro
  - correct buildroot path
 
