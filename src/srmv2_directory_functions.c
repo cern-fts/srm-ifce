@@ -53,7 +53,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 {
 	int ret;
 	enum xsd__boolean trueoption = true_;
-	struct soap soap;
+	struct soap* soap = srm_soap_init_new();
 	const char srmfunc[] = "Ls";
 	struct srm2__srmLsRequest req;
 	struct srm2__srmLsResponse_ rep;
@@ -74,15 +74,14 @@ int srmv2_ls_async_internal(struct srm_context *context,
         return -1;
     }
 
-	srm_soap_init(&soap);
 	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
-	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -105,14 +104,14 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	do
 	{
 		// Gsoap call soap_call_srm2__srmLs
-		ret = call_function.call_srm2__srmLs(&soap,context->srm_endpoint, srmfunc, &req, &rep);
+		ret = call_function.call_srm2__srmLs(soap,context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
 		if ((rep.srmLsResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmLsResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return -1;
 		}
 		// Check status and wait with back off logic if necessary(Internal_error)
@@ -129,7 +128,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			if (copy_string(&output->token,rep.srmLsResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
-				srm_soap_deinit(&soap);
+				srm_soap_free(soap);
 				return -1;
 			}
 			break;
@@ -176,7 +175,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 	return ret;
 }
 
@@ -186,15 +185,13 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_internal_context *internal_context)
 {
 	const char srmfunc[] = "StatusOfLsRequest";
-	struct soap soap;
+	struct soap* soap = srm_soap_init_new();
 	struct srm2__srmStatusOfLsRequestResponse_ srep;
 	struct srm2__srmStatusOfLsRequestRequest sreq;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
 	int ret;
 
 	// wait for files ready
-
-	srm_soap_init(&soap);
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
@@ -205,14 +202,14 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 
 	do
 	{
-		ret = call_function.call_srm2__srmStatusOfLsRequest (&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
+		ret = call_function.call_srm2__srmStatusOfLsRequest (soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
 		if ((srep.srmStatusOfLsRequestResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfLsRequestResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return -1;
 		}
 		// Check status and wait with back off logic if necessary(Internal_error)
@@ -266,7 +263,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 	return (ret);
 }
 

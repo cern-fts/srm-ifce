@@ -19,8 +19,14 @@
 #ifndef SRM_UTIL_H_
 #define SRM_UTIL_H_
 
+//static allocation
 void srm_soap_init(struct soap *soap);
 void srm_soap_deinit(struct soap *soap);
+
+
+// dyn allocation
+struct soap * srm_soap_init_new();
+void srm_soap_free(struct soap *soap);
 
 extern const char *err_msg_begin;
 void srm_errmsg (struct srm_context *context, const char *format, ...);

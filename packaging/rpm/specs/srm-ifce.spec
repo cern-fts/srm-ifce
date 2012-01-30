@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12
-Release:	5%{?dist}
+Release:	6%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Mon Jan 30 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
+ - Fix a stack smash problem relative to gsoap internal struct
+
 * Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
  - add pkg-config files
  - add dist macro
