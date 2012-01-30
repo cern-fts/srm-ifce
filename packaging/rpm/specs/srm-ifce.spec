@@ -1,5 +1,5 @@
 Name:		srm-ifce
-Version:	1.12
+Version:	1.12.2
 Release:	6%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -65,23 +65,23 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
-* Mon Jan 30 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
+* Mon Jan 30 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-6
  - Fix a stack smash problem relative to gsoap internal struct
 
-* Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12-5
+* Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12.1-5
  - add pkg-config files
  - add dist macro
  - correct buildroot path
 
-* Wed Jan 11 2012 Adrien Devress <adevress at cern.ch> - 1.12-4
+* Wed Jan 11 2012 Adrien Devress <adevress at cern.ch> - 1.12.1-4
  - Add a fixed source tree for packaging
  - Correct a problem of include with gcc 4.6
 
-* Thu Jan 05 2012 Adrien Devress <adevress at cern.ch> - 1.12-3 
+* Thu Jan 05 2012 Adrien Devress <adevress at cern.ch> - 1.12.1-3 
  - Second Revision for EPEL/fedora conformance
 
-* Fri Dec 16 2011 Adrien Devress <adevress at cern.ch> - 1.12-2
+* Fri Dec 16 2011 Adrien Devress <adevress at cern.ch> - 1.12.1-2
  - First Revision for EPEL/fedora conformance
 
-* Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.12-1
+* Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.12.1-1
  - Initial build 
