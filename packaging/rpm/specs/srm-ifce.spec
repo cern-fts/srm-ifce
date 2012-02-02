@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12.2
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -24,7 +24,7 @@ distributed storage systems.
 Summary:	SRM client side headers and development files
 Group:		Development/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
-Requires:	pkgconfig%{?_isa}
+Requires:	pkgconfig
 
 %description devel
 Development libraries, pkgconfig files and header files for
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Thu Feb 02 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-7
+ - remove macro of pkgconfig dependency causing bug on i686 pkgs
+ 
 * Mon Jan 30 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-6
  - Fix a stack smash problem relative to gsoap internal struct
 
