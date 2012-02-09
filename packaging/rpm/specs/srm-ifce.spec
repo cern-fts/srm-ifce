@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12.2
-Release:	7%{?dist}
+Release:	8%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Thu Feb 09 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-8
+ - Recompile with gsoap 2.8 compatibility 
+
 * Thu Feb 02 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-7
  - remove macro of pkgconfig dependency causing bug on i686 pkgs
  
