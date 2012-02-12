@@ -6,6 +6,7 @@ message("cmake source dir : ${CMAKE_SOURCE_DIR}")
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
 # load module
 include(DefineInstallationPaths REQUIRED)
 include(MacroCopyFile REQUIRED)
@@ -15,6 +16,9 @@ include(CMakeGeneratePkgConfig REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(gSOAP REQUIRED)
 find_package(CGSI_GSOAP REQUIRED)
+#define opts
+set(UNIT_TESTS FALSE
+	CACHE STRING "enable or disable unti test compilation")
 
 #define PROJECT vars
 set(PROJECT_NAME "srm-ifce")
