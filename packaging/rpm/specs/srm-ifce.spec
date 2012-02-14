@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.12.2
-Release:	9%{?dist}
+Release:	10%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Tue Feb 14 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-10
+ - correct smash stack related to gsoap
+
 * Thu Feb 09 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-9
  - correct gsoap issue for f18
 
