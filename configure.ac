@@ -56,6 +56,19 @@ AC_ARG_ENABLE(
 	[AS_HELP_STRING([--enable-wall],[Compile with all warnings enabled.])],
 	[CFLAGS="$CFLAGS -Wall"])
 
+
+# -- enable or disable unit tests, enabled by default
+#---------------------------------------------------------------------------------
+AC_ARG_ENABLE([tests],
+	[  --enable-tests    Turn on unit test compilation],
+	[case "${enableval}" in
+		yes) tests=true ;;
+		no)  tests=false ;;
+		*) AC_MSG_ERROR([bad value ${enableval} for --enable-tests]) ;;
+	esac],[tests=true])
+
+AM_CONDITIONAL([TESTS], [test x$tests = xtrue])
+
 # Set GLite Properties
 AC_GLITE
 AC_GLITE_VERSION
