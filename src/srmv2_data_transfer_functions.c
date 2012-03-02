@@ -323,6 +323,19 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
                     srm_call_err(context, "<empty response>", srmfunc);
                     errno = ECOMM;
 			    }
+			}else{
+				if ( output->token == NULL && copy_string(&output->token,rep.srmPrepareToPutResponse->requestToken))
+				{
+					internal_context->current_status = srm_call_status_FAILURE;
+					errno = srm_call_err(context,output->retstatus,srmfunc);
+					ret = -1;
+				}else{				
+					errno = 0;
+					internal_context->current_status = srm_call_status_SUCCESS;
+					ret = copy_pinfilestatuses_put(output->retstatus, &output->filestatuses,
+												repfs,
+												srmfunc);
+				}				
 			}
 			break;
 		default:
