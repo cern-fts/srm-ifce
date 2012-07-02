@@ -64,12 +64,10 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 {
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
 	int ret = 0;
-	struct soap soap;
+	struct soap* soap = srm_soap_init_new();
 	struct srm2__srmStatusOfPutRequestResponse_ srep;
 	struct srm2__srmStatusOfPutRequestRequest sreq;
 	const char srmfunc[] = "StatusOfPutRequest";
-
-	srm_soap_init(&soap);
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
@@ -78,14 +76,14 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 
 	do
 	{
-		ret = call_function.call_srm2__srmStatusOfPutRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
+		ret = call_function.call_srm2__srmStatusOfPutRequest(soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
 		if ((srep.srmStatusOfPutRequestResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfPutRequestResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return -1;
 		}
 		set_estimated_wait_time(internal_context, srep.srmStatusOfPutRequestResponse->remainingTotalRequestTime);
@@ -100,7 +98,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 	if (output->retstatus->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
 		srm_errmsg (context,"[SRM][%s][%s] %s: Space lifetime expired",srmfunc, statuscode2errmsg(output->retstatus->statusCode), context->srm_endpoint);
 		errno = statuscode2errno(output->retstatus->statusCode);
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -130,7 +128,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 			ret = -1;
 			break;
 	}
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 	return ret;
 }
 
@@ -148,7 +146,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
 	struct srm2__srmPrepareToPutRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap soap;
+	struct soap* soap = srm_soap_init_new();
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	char *targetspacetoken;
 	const char srmfunc[] = "PrepareToPut";
@@ -156,24 +154,23 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	SRM_LONG64 totalsize;
 	struct srm_mkdir_input mkdirinput;
 
-	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
 	memset (&rep, 0, sizeof(rep));
 	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfFileRequests =
-				soap_malloc (&soap, sizeof(struct srm2__ArrayOfTPutFileRequest))) == NULL ||
+				soap_malloc (soap, sizeof(struct srm2__ArrayOfTPutFileRequest))) == NULL ||
 			(req.arrayOfFileRequests->requestArray =
-			 soap_malloc (&soap, input->nbfiles* sizeof(struct srm2__TPutFileRequest *))) == NULL ||
+			 soap_malloc (soap, input->nbfiles* sizeof(struct srm2__TPutFileRequest *))) == NULL ||
 			(req.transferParameters =
-			 soap_malloc (&soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
+			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
 			(req.targetSpaceToken =
-			 soap_malloc (&soap, sizeof(char *))) == NULL) {
+			 soap_malloc (soap, sizeof(char *))) == NULL) {
 
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -192,25 +189,25 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	if (input->filesizes == NULL &&  input->nbfiles>0)
 	{
 		errno = EINVAL;
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 
 	for (i = 0; i < input->nbfiles; i++) {
 		if ((req.arrayOfFileRequests->requestArray[i] =
-					soap_malloc (&soap, sizeof(struct srm2__TPutFileRequest))) == NULL) {
+					soap_malloc (soap, sizeof(struct srm2__TPutFileRequest))) == NULL) {
 			srm_errmsg (context, "[SRM][soap_malloc][] error");
 			errno = ENOMEM;
-			srm_soap_deinit(&soap);
+			srm_soap_deinit(soap);
 			return (-1);
 		}
 		memset (req.arrayOfFileRequests->requestArray[i], 0, sizeof(struct srm2__TPutFileRequest));
 		req.arrayOfFileRequests->requestArray[i]->targetSURL = (char *)input->surls[i];
 
-		if ((req.arrayOfFileRequests->requestArray[i]->expectedFileSize = soap_malloc (&soap, sizeof(ULONG64))) == NULL) {
+		if ((req.arrayOfFileRequests->requestArray[i]->expectedFileSize = soap_malloc (soap, sizeof(ULONG64))) == NULL) {
 			srm_errmsg (context, "[SRM][soap_malloc][] error");
 			errno = ENOMEM;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return (-1);
 		}
 		*(req.arrayOfFileRequests->requestArray[i]->expectedFileSize) = input->filesizes[i];
@@ -222,11 +219,11 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	req.transferParameters->arrayOfClientNetworks = NULL;
 	req.transferParameters->arrayOfTransferProtocols = NULL;
 
-	ret = srm_set_protocol_in_transferParameters(context,&soap, req.transferParameters,input->protocols);
+	ret = srm_set_protocol_in_transferParameters(context,soap, req.transferParameters,input->protocols);
 
 	if (ret)
 	{
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -245,7 +242,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 				req.targetSpaceToken = targetspacetoken;
 			} else
 			{
-				srm_soap_deinit(&soap);
+				srm_soap_free(soap);
 				return (-1);
 			}
 	}
@@ -276,14 +273,14 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 
 	do
 	{
-		ret = call_function.call_srm2__srmPrepareToPut (&soap, context->srm_endpoint, srmfunc, &req, &rep);
+		ret = call_function.call_srm2__srmPrepareToPut (soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
 		if ((rep.srmPrepareToPutResponse== NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmPrepareToPutResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return -1;
 		}
 		set_estimated_wait_time(internal_context, rep.srmPrepareToPutResponse->remainingTotalRequestTime);
@@ -344,7 +341,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 	return ret;
 }
 
@@ -364,30 +361,30 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	struct srm2__srmPrepareToGetRequest req;
 	struct srm2__TReturnStatus *reqstatp;
 	struct srm_getbestspacetokens_input spacetokeninput;
-	struct soap soap;
+	int canary = 0;
+	struct soap* soap = srm_soap_init_new();
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	const char srmfunc[] = "PrepareToGet";
 
-	srm_soap_init(&soap);
 
 	/* issue "get" request */
 	memset (&req, 0, sizeof(req));
 	memset(output,0,sizeof(*output));
-
 	if ((req.arrayOfFileRequests =
-				soap_malloc (&soap, sizeof(struct srm2__ArrayOfTGetFileRequest))) == NULL ||
+				soap_malloc (soap, sizeof(struct srm2__ArrayOfTGetFileRequest))) == NULL ||
 			(req.arrayOfFileRequests->requestArray =
-			 soap_malloc (&soap, input->nbfiles * sizeof(struct srm2__TGetFileRequest *))) == NULL ||
+			 soap_malloc (soap, input->nbfiles * sizeof(struct srm2__TGetFileRequest *))) == NULL ||
 			(req.transferParameters =
-			 soap_malloc (&soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
+			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
 			(req.targetSpaceToken =
-			 soap_malloc (&soap, sizeof(char *))) == NULL) {
+			 soap_malloc (soap, sizeof(char *))) == NULL) {
 
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
+
 
 	/* get first space token from user space token description */
 	if (!input->spacetokendesc)
@@ -402,7 +399,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			req.targetSpaceToken = targetspacetoken;
 		} else
 		{
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return (-1);
 		}
 	}
@@ -422,11 +419,11 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	for (i = 0; i < input->nbfiles; i++)
 	{
 		if ((req.arrayOfFileRequests->requestArray[i] =
-					soap_malloc (&soap, sizeof(struct srm2__TGetFileRequest))) == NULL)
+					soap_malloc (soap, sizeof(struct srm2__TGetFileRequest))) == NULL)
 		{
 			srm_errmsg (context, "[SRM][soap_malloc][] error");
 			errno = ENOMEM;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return (-1);
 		}
 		memset (req.arrayOfFileRequests->requestArray[i], 0, sizeof(struct srm2__TGetFileRequest));
@@ -438,24 +435,24 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	req.transferParameters->connectionType = NULL;
 	req.transferParameters->arrayOfClientNetworks = NULL;
 
-	ret = srm_set_protocol_in_transferParameters(context,&soap, req.transferParameters,input->protocols);
+	ret = srm_set_protocol_in_transferParameters(context,soap, req.transferParameters,input->protocols);
 
 	if (ret)
 	{
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 
 	do
 	{
-		ret = call_function.call_srm2__srmPrepareToGet (&soap, context->srm_endpoint, srmfunc, &req, &rep);
+		ret = call_function.call_srm2__srmPrepareToGet (soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
 		if ((rep.srmPrepareToGetResponse== NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmPrepareToGetResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return -1;
 		}
 		set_estimated_wait_time(internal_context, rep.srmPrepareToGetResponse->remainingTotalRequestTime);
@@ -465,6 +462,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 		repfs = rep.srmPrepareToGetResponse->arrayOfFileStatuses;
 
 	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
+
 
 	switch (internal_context->current_status)
 	{
@@ -511,7 +509,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 	return ret;
 }
 
@@ -522,12 +520,11 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 {
 	struct srm2__ArrayOfTGetRequestFileStatus *repfs;
 	int ret = 0;
-	struct soap soap;
+	struct soap* soap = srm_soap_init_new();
 	struct srm2__srmStatusOfGetRequestResponse_ srep;
 	struct srm2__srmStatusOfGetRequestRequest sreq;
 	const char srmfunc[] = "StatusOfPutRequest";
 
-	srm_soap_init(&soap);
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = output->token;
@@ -536,14 +533,14 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 
 	do
 	{
-		ret = call_function.call_srm2__srmStatusOfGetRequest(&soap, context->srm_endpoint, srmfunc, &sreq, &srep);
+		ret = call_function.call_srm2__srmStatusOfGetRequest(soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
 		if ((srep.srmStatusOfGetRequestResponse == NULL)||(ret!=0) ||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfGetRequestResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,&soap,srmfunc);
+			errno = srm_soap_call_err(context,soap,srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_deinit(&soap);
+			srm_soap_free(soap);
 			return -1;
 		}
 		set_estimated_wait_time(internal_context, srep.srmStatusOfGetRequestResponse->remainingTotalRequestTime);
@@ -593,7 +590,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 	return ret;
 
 }
