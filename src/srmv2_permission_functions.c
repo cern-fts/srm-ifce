@@ -120,19 +120,17 @@ int srmv2_get_permission(struct srm_context *context,
 	struct srm2__srmGetPermissionRequest req;
 	struct srm2__srmGetPermissionResponse_ rep;
 	struct srm2__ArrayOfTPermissionReturn *repperm;
-	struct soap soap;
+	struct soap* soap = srm_soap_init_new();
 	int result = 0;
-
-	srm_soap_init(&soap);
 
 	memset (&req, 0, sizeof(req));
 	memset(output,0,sizeof(*output));
 
-	if ((req.arrayOfSURLs = soap_malloc (&soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_deinit(&soap);
+		srm_soap_free(soap);
 		return (-1);
 	}
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
@@ -142,7 +140,7 @@ int srmv2_get_permission(struct srm_context *context,
 
 
 
-	result = call_function.call_srm2__srmGetPermission (&soap, context->srm_endpoint, srmfunc, &req, &rep);
+	result = call_function.call_srm2__srmGetPermission (soap, context->srm_endpoint, srmfunc, &req, &rep);
 
 	// check response
 	if (result != 0 ||
@@ -150,7 +148,7 @@ int srmv2_get_permission(struct srm_context *context,
 		copy_returnstatus(&output->retstatus,rep.srmGetPermissionResponse->returnStatus))
 	{
 		// Soap call failure
-		errno = srm_soap_call_err(context,&soap,srmfunc);
+		errno = srm_soap_call_err(context,soap,srmfunc);
 		result = -1;
 	}else
 	{
@@ -168,7 +166,7 @@ int srmv2_get_permission(struct srm_context *context,
 		}
 	}
 
-	srm_soap_deinit(&soap);
+	srm_soap_free(soap);
 
 	return result;
 }
