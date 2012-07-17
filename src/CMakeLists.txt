@@ -73,7 +73,7 @@ link_directories( ${CGSI_GSOAP_LIBRARY_DIRS} )
 
 ## main libs
 add_library(srm-ifce  SHARED ${src_libs} ${srm2_source_file1} ${srm2_source_file2} ${CMAKE_CURRENT_BINARY_DIR}/${srm_map_files_c})
-target_link_libraries(srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_PKG_LIBRARIES} )
+target_link_libraries(srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} )
 set_target_properties(srm-ifce 	PROPERTIES
 								VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 								SOVERSION ${VERSION_MAJOR}

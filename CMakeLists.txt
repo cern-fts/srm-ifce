@@ -18,7 +18,7 @@ find_package(gSOAP REQUIRED)
 find_package(CGSI_GSOAP REQUIRED)
 #define opts
 set(UNIT_TESTS FALSE
-	CACHE STRING "enable or disable unti test compilation")
+        CACHE STRING "enable or disable unit test compilation")
 
 #define PROJECT vars
 set(PROJECT_NAME "srm-ifce")

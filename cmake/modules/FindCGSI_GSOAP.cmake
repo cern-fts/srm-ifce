@@ -24,7 +24,7 @@ find_library(CGSI_GSOAP_PATH
 
 if(CGSI_GSOAP_PATH)
 	parse_lib_path("CGSI_GSOAP_LIBRARIES" "CGSI_GSOAP_LIBRARY_DIRS" ${CGSI_GSOAP_PATH})
-	#message( " link ${CGSI_GSOAP_LIBRARIES}  path ${CGSI_GSOAP_LIBRARY_DIRS}")	
+        #message( " link ${CGSI_GSOAP_LIBRARIES}  path ${CGSI_GSOAP_LIBRARY_DIRS}")
 endif(CGSI_GSOAP_PATH)
 
 
