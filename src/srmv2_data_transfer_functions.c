@@ -64,7 +64,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 {
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
 	int ret = 0;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfPutRequestResponse_ srep;
 	struct srm2__srmStatusOfPutRequestRequest sreq;
 	const char srmfunc[] = "StatusOfPutRequest";
@@ -146,7 +146,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
 	struct srm2__srmPrepareToPutRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	char *targetspacetoken;
 	const char srmfunc[] = "PrepareToPut";
@@ -362,7 +362,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	struct srm2__TReturnStatus *reqstatp;
 	struct srm_getbestspacetokens_input spacetokeninput;
 	int canary = 0;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	const char srmfunc[] = "PrepareToGet";
 
@@ -520,7 +520,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 {
 	struct srm2__ArrayOfTGetRequestFileStatus *repfs;
 	int ret = 0;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfGetRequestResponse_ srep;
 	struct srm2__srmStatusOfGetRequestRequest sreq;
 	const char srmfunc[] = "StatusOfPutRequest";
@@ -604,7 +604,7 @@ int srmv2_put_done(struct srm_context *context,
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 	struct srm2__srmPutDoneRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "PutDone";
 
 	// Setup the timeout
@@ -672,7 +672,7 @@ int srmv2_release_files(struct srm_context *context,
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 	struct srm2__srmReleaseFilesRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "ReleaseFiles";
 
 	// Setup the timeout
@@ -745,7 +745,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
 	struct srm2__srmBringOnlineRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	char *targetspacetoken;
 	int nbproto = 0;
@@ -903,7 +903,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 	int ret;
 	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfBringOnlineRequestResponse_ srep;
 	struct srm2__srmStatusOfBringOnlineRequestRequest sreq;
 	const char srmfunc[] = "StatusOfBringOnlineRequest";
@@ -988,7 +988,7 @@ int srmv2_abort_files(struct srm_context *context,
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 	struct srm2__srmAbortFilesRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "AbortFiles";
 
 	// Setup the timeout
@@ -1061,7 +1061,7 @@ int srmv2_abort_request(struct srm_context *context,char *token)
 	const char srmfunc[] = "AbortRequest";
 	struct srm2__srmAbortRequestRequest abortreq;
 	struct srm2__srmAbortRequestResponse_ abortrep;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	int result;
 
 

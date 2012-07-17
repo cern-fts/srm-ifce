@@ -27,7 +27,7 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 	const char srmfunc[] = "AbortRequest";
 	struct srm2__srmPingRequest req;
 	struct srm2__srmPingResponse_ rep;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	int result;
 
 	

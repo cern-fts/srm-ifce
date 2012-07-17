@@ -25,7 +25,15 @@ void srm_soap_deinit(struct soap *soap);
 
 
 // dyn allocation
+/**
+  dynamic allocation of a srm soap context
+  timeouts are initialized from the default values
+*/
 struct soap * srm_soap_init_new();
+/**
+  dynamic allocation of a srm soap context
+  timeouts are initialized from the context values ( default, excepted if user-change
+*/
 struct soap * srm_soap_init_context_new(struct srm_context* c);
 void srm_soap_free(struct soap *soap);
 

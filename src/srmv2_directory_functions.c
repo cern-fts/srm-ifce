@@ -53,7 +53,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 {
 	int ret;
 	enum xsd__boolean trueoption = true_;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "Ls";
 	struct srm2__srmLsRequest req;
 	struct srm2__srmLsResponse_ rep;
@@ -185,7 +185,7 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_internal_context *internal_context)
 {
 	const char srmfunc[] = "StatusOfLsRequest";
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfLsRequestResponse_ srep;
 	struct srm2__srmStatusOfLsRequestRequest sreq;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
@@ -275,7 +275,7 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 	struct srm2__srmRmRequest req;
 	//struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "srmRm";
 	struct srm_internal_context internal_context;
 	int i,n,ret;
@@ -360,7 +360,7 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 	struct srm2__srmRmdirRequest req;
 	enum xsd__boolean trueoption = true_;
 	struct srm_internal_context internal_context;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "srmRmdir";
 
 	back_off_logic_init(context,&internal_context);
@@ -422,7 +422,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 	struct srm2__srmMkdirResponse_ rep;
 	struct srm2__srmMkdirRequest req;
 	struct srm2__TReturnStatus *repstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "Mkdir";
 
 	
@@ -509,7 +509,7 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	struct srm2__srmExtendFileLifeTimeResponse_ rep;
 	struct srm2__srmExtendFileLifeTimeRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	int i = 0;
 	const char srmfunc[] = "ExtendFileLifeTime";
 

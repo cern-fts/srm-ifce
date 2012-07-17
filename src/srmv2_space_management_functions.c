@@ -27,7 +27,7 @@ int srmv2_getspacemd (struct srm_context *context,
 	int flags;
 	int sav_errno = 0;
 	int i, ret;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceMetaDataResponse_ tknrep;
 	struct srm2__srmGetSpaceMetaDataRequest tknreq;
 	struct srm2__TReturnStatus *tknrepstatp = NULL;
@@ -176,7 +176,7 @@ int srmv2_getspacetokens (struct srm_context *context,
 	int flags;
 	int sav_errno = 0;
 	int i, ret;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceTokensResponse_ tknrep;
 	struct srm2__srmGetSpaceTokensRequest tknreq;
 	struct srm2__TReturnStatus *tknrepstatp = NULL;
@@ -334,7 +334,7 @@ int srmv2_reservespace(struct srm_context *context,
 	int flags;
 	int sav_errno = 0;
 	int i, ret;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReserveSpaceResponse_ rep;
 	struct srm2__srmReserveSpaceRequest req;
 	struct srm2__TReturnStatus *repstatp;
@@ -391,7 +391,7 @@ int srmv2_releasespace(struct srm_context *context,
 	int flags;
 	int sav_errno = 0;
 	int i, ret;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReleaseSpaceResponse_ rep;
 	struct srm2__srmReleaseSpaceRequest req;
 	struct srm2__TReturnStatus *repstatp;
@@ -427,7 +427,7 @@ int srmv2_purgefromspace(struct srm_context *context,
 		struct srm_purgefromspace_output *output)
 {
 	int n,i,ret;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmPurgeFromSpaceResponse_ rep;
 	struct srm2__srmPurgeFromSpaceRequest req;
 	struct srm2__TReturnStatus *repstatp;

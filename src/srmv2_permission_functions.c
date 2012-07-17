@@ -31,7 +31,7 @@ int srmv2_set_permission(struct srm_context *context,
 	struct srm2__srmSetPermissionResponse_ rep;
 	enum srm2__TPermissionMode otherPermission;
 	enum srm2__TPermissionMode ownerPermission;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 
 	memset (&req, 0, sizeof(req));
 
@@ -120,7 +120,7 @@ int srmv2_get_permission(struct srm_context *context,
 	struct srm2__srmGetPermissionRequest req;
 	struct srm2__srmGetPermissionResponse_ rep;
 	struct srm2__ArrayOfTPermissionReturn *repperm;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	int result = 0;
 
 	memset (&req, 0, sizeof(req));
@@ -181,7 +181,7 @@ int srmv2_check_permission(struct srm_context *context,
 	struct srm2__ArrayOfTSURLPermissionReturn *repfs;
 	struct srm2__srmCheckPermissionRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-	struct soap* soap = srm_soap_init_new();
+    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "CheckPermission";
 
 
