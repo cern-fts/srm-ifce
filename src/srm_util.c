@@ -16,6 +16,7 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
+ 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,10 +24,8 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <assert.h>
+#include "srmv2Stub.h"
 #include "srm_soap.h"
-#include "gfal_srm_ifce_types.h"
-#include "srmv2H.h"
-#include "srm_dependencies.h"
 #include "gfal_srm_ifce_internal.h"
 
 #ifdef CMAKE_BUILD

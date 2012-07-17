@@ -151,7 +151,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	char *targetspacetoken;
 	const char srmfunc[] = "PrepareToPut";
 	struct srm_getbestspacetokens_input spacetokeninput;
-	SRM_LONG64 totalsize;
+	SRM_LONG64 totalsize=0;
 	struct srm_mkdir_input mkdirinput;
 
 

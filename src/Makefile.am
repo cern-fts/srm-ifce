@@ -106,13 +106,7 @@ dist_include_HEADERS = \
 bin_PROGRAMS = \
 	gfal_srm_ifce_version
 
-# libraries
-lib_LIBRARIES = \
-	libgfal_srm_ifce.a
 
-# shared libraries
-lib_LTLIBRARIES = \
-	libgfal_srm_ifce.la
 
 # generated source files (to build before other programs and libraries)
 BUILT_SOURCES = \
@@ -168,7 +162,7 @@ GFAL_SRM_IFCE_CFLAGS = \
 	-D_LARGEFILE64_SOURCE \
 	$(SOAPCPP2_FLAGS)
 	
- 
+if STATIC_ENABLE 
 
 # libgfal.a
 #-------------------------------------------------------------------------------
@@ -184,6 +178,7 @@ libgfal_srm_ifce_a_CFLAGS = \
 # libgfal.la
 #-------------------------------------------------------------------------------
 libgfal_srm_ifce_la_SOURCES = $(GFAL_SRM_IFCE_SOURCE_FILES)
+
 
 
 if USE_GSOAP_2_7_13
@@ -211,6 +206,18 @@ libgfal_srm_ifce_la_CFLAGS = \
 libgfal_srm_ifce_la_LDFLAGS = \
 	$(GFAL_SRM_IFCE_CFLAGS) \
 	-version-info $(INTERFACE_LIBTOOL_CURRENT):$(INTERFACE_LIBTOOL_REVISION):$(INTERFACE_LIBTOOL_AGE)
+	
+# libraries
+lib_LIBRARIES = \
+	libgfal_srm_ifce.a
+
+# shared libraries
+lib_LTLIBRARIES = \
+	libgfal_srm_ifce.la
+	
+
+
+endif
 
 # gfal_version
 #-------------------------------------------------------------------------------
@@ -224,6 +231,7 @@ gfal_srm_ifce_version_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS)
 # test programs
 #-------------------------------------------------------------------------------
 if TESTS
+
 gfal_srm_ifce_unittest_SOURCES = \
 	gfal_srm_ifce_unittest.c \
 	gfal_srm_ifce_unittest_srmls.c \
@@ -236,9 +244,9 @@ gfal_srm_ifce_systemtest_SOURCES = gfal_srm_ifce_systemtest.c
 gfal_srm_ifce_systemtest_LDADD = -lgfal_srm_ifce $(CCHECK_LIBS)
 gfal_srm_ifce_systemtest_CFLAGS = $(GFAL_SRM_IFCE_CFLAGS) $(CCHECK_CFLAGS) $(GSOAP_CFLAGS) $(CGSI_GSOAP_CFLAGS) 
 
-bin_PROGRAMS += \
-		gfal_srm_ifce_unittest \
-		gfal_srm_ifce_systemtest 
 
-
+bin_PROGRAMS +=\
+	gfal_srm_ifce_unittest \
+    gfal_srm_ifce_systemtest 
+    
 endif
