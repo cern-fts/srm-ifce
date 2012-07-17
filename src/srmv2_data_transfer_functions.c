@@ -317,7 +317,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			    }
 			    else
 			    {
-                    srm_call_err(context, "<empty response>", srmfunc);
+                    srm_call_err(context, NULL, srmfunc);
                     errno = ECOMM;
 			    }
 			}else{

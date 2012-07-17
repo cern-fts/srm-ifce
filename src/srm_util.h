@@ -26,6 +26,7 @@ void srm_soap_deinit(struct soap *soap);
 
 // dyn allocation
 struct soap * srm_soap_init_new();
+struct soap * srm_soap_init_context_new(struct srm_context* c);
 void srm_soap_free(struct soap *soap);
 
 extern const char *err_msg_begin;
