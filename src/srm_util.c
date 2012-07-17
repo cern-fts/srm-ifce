@@ -71,7 +71,7 @@ const char *srmv2_errmsg[] = {
 	"SRM_CUSTOM_STATUS"
 };
 static int srm_timeout_connect = 60;
-static int srm_timeout_sendreceive = 0;
+static int srm_timeout_sendreceive = 180;
 
 int srm_get_timeout_connect ()
 {
