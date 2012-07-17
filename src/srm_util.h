@@ -30,11 +30,16 @@ void srm_soap_deinit(struct soap *soap);
   timeouts are initialized from the default values
 */
 struct soap * srm_soap_init_new();
+
 /**
   dynamic allocation of a srm soap context
   timeouts are initialized from the context values ( default, excepted if user-change
 */
 struct soap * srm_soap_init_context_new(struct srm_context* c);
+
+/**
+  free an srm gsoap context
+*/
 void srm_soap_free(struct soap *soap);
 
 extern const char *err_msg_begin;
