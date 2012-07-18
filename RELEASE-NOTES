@@ -1,3 +1,7 @@
+NG:
+    ABI break, extend the context structure for timeout-per-context
+
+
 2012-04-17 17:39  molnarzs
 
 	* RELEASE-NOTES, VERSION, packaging/rpm/specs/srm-ifce.spec:

@@ -150,9 +150,10 @@ struct srm_context
 	char * 				errbuf;
 	int 				errbufsz;
 	int 				verbose;
-    int 				timeout; // global timeout for asynchronous operations
-    int                 timeout_conn; // global timeout for SOAP connection
-    int                 timeout_ops; //global timeout for response on operation ( send/receive )
+    int 				timeout;        // global timeout for asynchronous operations
+    int                 timeout_conn;   // global timeout for SOAP connection
+    int                 timeout_ops;    // global timeout for response on operation ( send/receive )
+    void*               reserved[25];   // reserved field for futur usage
 };
 
 struct srm_internal_context
