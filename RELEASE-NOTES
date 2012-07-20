@@ -1,5 +1,10 @@
-NG:
-    ABI break, extend the context structure for timeout-per-context
+
+Fri Jul 20 2012 Adrien Devresse <adevress at cern.ch> - 1.13.0-0
+ - Synchronise with EMI 2 Update 13
+ - introduction of operation timeout
+ - buffer overflow  and memory corruption corrections
+ - minor warning corrections
+ - ABI break, extend the context structure for timeout-per-context, impact limitated to gfal and gfal 2.0
 
 
 2012-04-17 17:39  molnarzs

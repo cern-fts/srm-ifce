@@ -1,11 +1,11 @@
 Name:		srm-ifce
-Version:	1.12.3
-Release:	1%{?dist}
+Version:	1.13.0
+Release:	0%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
 URL:		https://svnweb.cern.ch/trac/lcgutil
-# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/branches/EPEL_trunk srm-ifce
+# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/trunk srm-ifce
 Source0:	http://grid-deployment.web.cern.ch/grid-deployment/dms/lcgutil/tar/%{name}/%{name}-%{version}.tar.gz 
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
@@ -65,38 +65,44 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Fri Jul 20 2012 Adrien Devresse <adevress at cern.ch> - 1.13.0-0
+ - Synchronise with EMI 2 Update 13
+ - introduction of operation timeout
+ - buffer overflow  and memory corruption corrections
+ - minor warning corrections
+
 * Wed Apr 18 2012 Zsolt Molnar <Zsolt.Molnar@cern.ch> - 1.12.3-1
  - Integrating to EPEL, adapting to changes in external components
 
-* Tue Feb 14 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-10
+* Tue Feb 14 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-10
  - correct smash stack related to gsoap
 
-* Thu Feb 09 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-9
+* Thu Feb 09 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-9
  - correct gsoap issue for f18
 
-* Thu Feb 09 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-8
+* Thu Feb 09 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-8
  - Recompile with gsoap 2.8 compatibility 
 
-* Thu Feb 02 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-7
+* Thu Feb 02 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-7
  - remove macro of pkgconfig dependency causing bug on i686 pkgs
  
-* Mon Jan 30 2012 Adrien Devress <adevress at cern.ch> - 1.12.2-6
+* Mon Jan 30 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-6
  - Fix a stack smash problem relative to gsoap internal struct
 
-* Sun Jan 15 2012 Adrien Devress <adevress at cern.ch> - 1.12.1-5
+* Sun Jan 15 2012 Adrien Devresse <adevress at cern.ch> - 1.12.1-5
  - add pkg-config files
  - add dist macro
  - correct buildroot path
 
-* Wed Jan 11 2012 Adrien Devress <adevress at cern.ch> - 1.12.1-4
+* Wed Jan 11 2012 Adrien Devresse <adevress at cern.ch> - 1.12.1-4
  - Add a fixed source tree for packaging
  - Correct a problem of include with gcc 4.6
 
-* Thu Jan 05 2012 Adrien Devress <adevress at cern.ch> - 1.12.1-3 
+* Thu Jan 05 2012 Adrien Devresse <adevress at cern.ch> - 1.12.1-3
  - Second Revision for EPEL/fedora conformance
 
-* Fri Dec 16 2011 Adrien Devress <adevress at cern.ch> - 1.12.1-2
+* Fri Dec 16 2011 Adrien Devresse <adevress at cern.ch> - 1.12.1-2
  - First Revision for EPEL/fedora conformance
 
-* Mon Nov 28 2011 Adrien Devress <adevress at cern.ch> - 1.12.1-1
+* Mon Nov 28 2011 Adrien Devresse <adevress at cern.ch> - 1.12.1-1
  - Initial build 
