@@ -588,7 +588,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 											srmfunc);
 			}
 			break;
-        case srm_call_status_TIMEOUT:
+        case srm_call_status_TIMEOUT: // add timeout management for backoff logic
             errno = ETIMEDOUT;
             ret = -1;
             break;
@@ -977,6 +977,10 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 												srmfunc);
 			}
 			break;
+        case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;

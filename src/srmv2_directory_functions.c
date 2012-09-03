@@ -257,6 +257,10 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_QUEUED:
 			break;
+        case srm_call_status_TIMEOUT:
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
