@@ -523,7 +523,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfGetRequestResponse_ srep;
 	struct srm2__srmStatusOfGetRequestRequest sreq;
-	const char srmfunc[] = "StatusOfPutRequest";
+    const char srmfunc[] = "StatusOfGetRequest";
 
 
 	memset (&sreq, 0, sizeof(sreq));
