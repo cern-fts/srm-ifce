@@ -68,12 +68,12 @@ set_source_files_properties(${srm_map_files_c} ${srm2_source_file1} ${srm2_sourc
 
 
 add_definitions(-D_LARGEFILE64_SOURCE -DVERSION="${VERSION_STRING}" -DCMAKE_BUILD -D_GNU_SOURCE -DGFAL_SECURE)
-include_directories(${srm2_dir} ${CGSI_GSOAP_INCLUDE_DIRS})
+include_directories(${srm2_dir} ${CGSI_GSOAP_INCLUDE_DIRS} ${GLIB2_PKG_INCLUDE_DIRS})
 link_directories( ${CGSI_GSOAP_LIBRARY_DIRS} )
 
 ## main libs
 add_library(srm-ifce  SHARED ${src_libs} ${srm2_source_file1} ${srm2_source_file2} ${CMAKE_CURRENT_BINARY_DIR}/${srm_map_files_c})
-target_link_libraries(srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} )
+target_link_libraries(srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
 set_target_properties(srm-ifce 	PROPERTIES
 								VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 								SOVERSION ${VERSION_MAJOR}

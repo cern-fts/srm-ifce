@@ -16,44 +16,11 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
-#include <errno.h>
-#include <assert.h>
-#include "gfal_srm_ifce.h"
+
+#include "srm_ifce_internal.h"
 #include "srm_soap.h"
-#include "srm_util.h"
-#include "srm_dependencies.h"
 
 
-
-int srmv2_status_of_put_request_async_internal(struct srm_context *context,
-		struct srm_preparetoput_input *input,
-		struct srm_preparetoget_output *output,
-		struct srm_internal_context *internal_context);
-
-int srmv2_prepare_to_put_async_internal(struct srm_context *context,
-		struct srm_preparetoput_input *input,
-		struct srm_preparetoput_output *output,
-		struct srm_internal_context *internal_context);
-
-int srmv2_prepare_to_get_async_internal(struct srm_context *context,
-		struct srm_preparetoget_input *input,
-		struct srm_preparetoget_output *output,
-		struct srm_internal_context *internal_context);
-
-int srmv2_status_of_get_request_async_internal(struct srm_context *context,
-		struct srm_preparetoget_input *input,
-		struct srm_preparetoget_output *output,
-		struct srm_internal_context *internal_context);
-
-int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
-		struct srm_bringonline_input *input,
-		struct srm_bringonline_output *output,
-		struct srm_internal_context *internal_context);
-
-int srmv2_bring_online_async_internal (struct srm_context *context,
-		struct srm_bringonline_input *input,
-		struct srm_bringonline_output *output,
-		struct srm_internal_context *internal_context);
 
 
 
@@ -144,19 +111,16 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 		struct srm_internal_context *internal_context)
 {
 	int i;
-	int n;
 	int ret = 0;
 	struct srm2__srmPrepareToPutResponse_ rep;
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;
 	struct srm2__srmPrepareToPutRequest req;
-	struct srm2__TReturnStatus *reqstatp;
     struct soap* soap = srm_soap_init_context_new(context);
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	char *targetspacetoken;
 	const char srmfunc[] = "PrepareToPut";
 	struct srm_getbestspacetokens_input spacetokeninput;
 	SRM_LONG64 totalsize=0;
-	struct srm_mkdir_input mkdirinput;
 
 
 	memset (&req, 0, sizeof(req));
@@ -362,14 +326,11 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 {
 	char *targetspacetoken;
 	int i;
-	int n;
 	int ret = 0;
 	struct srm2__srmPrepareToGetResponse_ rep;
 	struct srm2__ArrayOfTGetRequestFileStatus *repfs;
 	struct srm2__srmPrepareToGetRequest req;
-	struct srm2__TReturnStatus *reqstatp;
 	struct srm_getbestspacetokens_input spacetokeninput;
-	int canary = 0;
     struct soap* soap = srm_soap_init_context_new(context);
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	const char srmfunc[] = "PrepareToGet";
@@ -613,13 +574,12 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 int srmv2_put_done(struct srm_context *context,
 		struct srm_putdone_input *input, struct srmv2_filestatus **statuses)
 {
-	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int ret=0;
 	struct srm2__srmPutDoneResponse_ rep;
+    struct srm2__TReturnStatus *reqstatp;
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 	struct srm2__srmPutDoneRequest req;
-	struct srm2__TReturnStatus *reqstatp;
     struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "PutDone";
 
@@ -690,7 +650,6 @@ int srmv2_put_done(struct srm_context *context,
 int srmv2_release_files(struct srm_context *context,
 		struct srm_releasefiles_input *input, struct srmv2_filestatus **statuses)
 {
-	srm_call_status current_status;
 	struct srm_internal_context internal_context;
 	int ret;
 	struct srm2__srmReleaseFilesResponse_ rep;
@@ -772,17 +731,14 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 		struct srm_bringonline_output *output,
 		struct srm_internal_context *internal_context)
 {
-	srm_call_status current_status;
 	int ret,i;
 	struct srm_getbestspacetokens_input spacetokeninput;
 	struct srm2__srmBringOnlineResponse_ rep;
 	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
 	struct srm2__srmBringOnlineRequest req;
-	struct srm2__TReturnStatus *reqstatp;
     struct soap* soap = srm_soap_init_context_new(context);
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	char *targetspacetoken;
-	int nbproto = 0;
 	const char srmfunc[] = "BringOnline";
 
 
@@ -935,12 +891,8 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 		struct srm_bringonline_output *output,
 		struct srm_internal_context *internal_context)
 {
-	int sav_errno = 0;
-	int i = 0;
-	int n;
 	int ret;
 	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
-	struct srm2__TReturnStatus *reqstatp;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfBringOnlineRequestResponse_ srep;
 	struct srm2__srmStatusOfBringOnlineRequestRequest sreq;

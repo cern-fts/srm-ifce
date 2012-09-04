@@ -16,8 +16,7 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
-#include "gfal_srm_ifce_types.h"
-#include "gfal_srm_ifce.h"
+#include "srm_ifce_internal.h"
 
 
 

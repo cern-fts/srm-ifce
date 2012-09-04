@@ -16,9 +16,12 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
+
 #include <stdio.h>
-#include "gfal_srm_ifce_types.h"
-#include "gfal_srm_ifce.h"
+
+#include "srmv2_sync_wrapper.h"
+#include "srm_ifce_internal.h"
+
 
 int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output *output)
 {

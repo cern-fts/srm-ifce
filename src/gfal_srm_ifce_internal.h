@@ -21,14 +21,8 @@
 
 #include <assert.h>
 #include "gfal_srm_ifce.h"
+#include "srm_ifce_internal.h"
 
-/* Normal assertion happens in debug mode. In non-debug mode, force crash! */
-#define GFAL_SRM_IFCE_ASSERT(cond) \
-    assert((cond)); \
-    if ( ! (cond) ) {\
-        char* c = NULL; \
-        c = 0; \
-    }
 
 #endif /* _GFAL_SRM_IFCE_INTERNAL_H_ */
 
