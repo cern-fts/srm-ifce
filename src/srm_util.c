@@ -122,14 +122,14 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
 	internal_context->estimated_wait_time = -1;
 	internal_context->attempt = 1;
 }
-void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time)
+void set_estimated_wait_time(struct srm_internal_context *internal_context, int *my_time)
 {
-	if (time == NULL)
+    if (my_time == NULL)
 	{
 		internal_context->estimated_wait_time = -1;
 	}else
 	{
-		internal_context->estimated_wait_time = *time;
+        internal_context->estimated_wait_time = *my_time;
 	}
 }
 
@@ -379,7 +379,7 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 			return -1;
 		}
 	}else
-	if (internal_context->estimated_wait_time == 0)
+    if (internal_context->estimated_wait_time <= 0)
 	{
 		// Timeout
 		return -1;

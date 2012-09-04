@@ -169,6 +169,10 @@ int srmv2_ls_async_internal(struct srm_context *context,
 				}
 			}
 			break;
+        case srm_call_status_TIMEOUT:
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
@@ -322,6 +326,12 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
+    if(internal_context.current_status == srm_call_status_TIMEOUT){
+               errno = ETIMEDOUT;
+               srm_soap_free(soap);
+               return (-1);
+     }
+
 	repfs = rep.srmRmResponse->arrayOfFileStatuses;
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
@@ -398,6 +408,13 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 		internal_context.current_status = back_off_logic(context,srmfunc,&internal_context,output->retstatus);
 
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
+
+
+    if(internal_context.current_status == srm_call_status_TIMEOUT){
+               errno = ETIMEDOUT;
+               srm_soap_free(soap);
+               return (-1);
+     }
 
 	if ((output->statuses = (struct srmv2_filestatus*) calloc (1, sizeof (struct srmv2_filestatus))) == NULL) {
 		errno = ENOMEM;

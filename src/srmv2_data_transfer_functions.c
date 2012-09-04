@@ -339,6 +339,10 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 				}				
 			}
 			break;
+        case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
@@ -414,7 +418,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	}
 	if (context->timeout > 0)
 	{
-		req.desiredTotalRequestTime = &context->timeout;
+        req.desiredTotalRequestTime = &context->timeout;
 	}
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
@@ -507,6 +511,10 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 											srmfunc);
 			}
 			break;
+        case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
@@ -654,18 +662,27 @@ int srmv2_put_done(struct srm_context *context,
 
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
+    switch(internal_context.current_status){
 
-	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
-	{
-		errno = srm_call_err(context,reqstatp,srmfunc);
-		srm_soap_free(soap);
-		return (-1);
-	}else
-	{
-		errno = 0;
-		internal_context.current_status = srm_call_status_SUCCESS;
-		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
-	}
+         case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
+        default:
+            if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+            {
+                errno = srm_call_err(context,reqstatp,srmfunc);
+                srm_soap_free(soap);
+                return (-1);
+            }else
+            {
+                errno = 0;
+                internal_context.current_status = srm_call_status_SUCCESS;
+                ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
+            }
+            break;
+
+    }
 
 	srm_soap_free(soap);
 	return (ret);
@@ -724,17 +741,26 @@ int srmv2_release_files(struct srm_context *context,
 
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
-	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
-	{
-		errno = srm_call_err(context,reqstatp,srmfunc);
-		srm_soap_free(soap);
-		return (-1);
-	}else
-	{
-		errno = 0;
-		internal_context.current_status = srm_call_status_SUCCESS;
-		ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
-	}
+    switch(internal_context.current_status){
+
+         case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+            errno = ETIMEDOUT;
+            ret = -1;
+            break;
+        default:
+            if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
+            {
+                errno = srm_call_err(context,reqstatp,srmfunc);
+                srm_soap_free(soap);
+                return (-1);
+            }else
+            {
+                errno = 0;
+                internal_context.current_status = srm_call_status_SUCCESS;
+                ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
+            }
+            break;
+    }
 
 	srm_soap_free(soap);
 	return (ret);
@@ -891,6 +917,10 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 											srmfunc);
 			}
 			break;
+        case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+           errno = ETIMEDOUT;
+           ret = -1;
+           break;
 		default:
 			errno = srm_call_err(context,output->retstatus,srmfunc);
 			ret = -1;
@@ -1059,6 +1089,10 @@ int srmv2_abort_files(struct srm_context *context,
 				ret = copy_filestatuses(reqstatp,statuses,repfs,srmfunc);
 			}
 			break;
+        case srm_call_status_TIMEOUT: // add timeout management for backoff logic
+           errno = ETIMEDOUT;
+           ret = -1;
+           break;
 		default:
 			ret = -1;
 			break;
