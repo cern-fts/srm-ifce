@@ -367,8 +367,8 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
                 wait_till_end = internal_context->end_time - time(NULL) -  last_chance_sec_before_end; //try the last hope before the end
 				if (wait_till_end>0) 
 					call_function.call_sleep(wait_till_end); 
-                else // deadline outdated, do not sleep and try a last time
-                    return 0; 					// simply return in timeout
+                else // deadline outdated,
+                    return -1; 					// simply return in timeout
 			}else
 			{
 				call_function.call_sleep(random_wait);

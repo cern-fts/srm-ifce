@@ -43,7 +43,7 @@ START_TEST (test_wait_for_new_attempt)
 		   "Wait for new attempt does not return timeout error for 11 attempts!");
 
 	internal_context.attempt = 5;
-	internal_context.end_time = time(NULL)-1;
+    internal_context.end_time = time(NULL)-20;
 	fail_if (wait_for_new_attempt(&internal_context) != -1,
 		   "Timeout error not received!");
 
@@ -59,8 +59,8 @@ START_TEST (test_wait_for_new_attempt)
 	internal_context.attempt = 1; // be careful changing this number
 	internal_context.end_time = time(NULL)+100;
 	internal_context.estimated_wait_time = 0;
-	fail_if (wait_for_new_attempt(&internal_context) != -1,
-		   "Timeout should occur!");
+    fail_if (wait_for_new_attempt(&internal_context) != 0,
+           "Timeout should not occur, estimated wait time == 0 ignored !");
 
 
 	internal_context.attempt = 1; // be careful changing this number

@@ -93,7 +93,7 @@ add_executable(gfal_srm_ifce_version
 									${src_program})
 target_link_libraries(gfal_srm_ifce_version )								
 
-IF (${UNIT_TESTS})
+IF (UNIT_TESTS)
 
 ## unit tests
 add_executable(gfal_srm_ifce_unittest 
@@ -103,7 +103,10 @@ add_executable(gfal_srm_ifce_systemtest
 									${src_system_tests} )
 target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce)
 
-ENDIF (${UNIT_TESTS})
+add_test(base_unit_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_unittest)
+#add_test(base_system_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_systemtest)
+
+ENDIF (UNIT_TESTS)
 
 install(TARGETS srm-ifce 
 	    RUNTIME       DESTINATION ${CMAKE_INSTALL_PREFIX}

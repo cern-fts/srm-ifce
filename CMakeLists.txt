@@ -8,6 +8,9 @@ set(CMAKE_BUILD_TYPE "RelWithDebInfo"
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
+#enable testing
+INCLUDE(CTest)
+
 # load module
 include(DefineInstallationPaths REQUIRED)
 include(MacroCopyFile REQUIRED)

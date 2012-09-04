@@ -24,9 +24,9 @@
 /* the version should be set by a "define" at the makefile level */
 static const char version[] = VERSION;
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-	printf ("gfal-srm-ifce--%s\n", version);
+    printf ("gfal-srm-ifce--%s\n", version);
 	exit (0);
 }
 
