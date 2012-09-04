@@ -359,7 +359,7 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 		if (internal_context->attempt<=10) // Maximum 10 attempts
 		{
             random_limit = (time_t) (1<<(internal_context->attempt));
-            random_wait = (rand_r(&(internal_context->random_seed)) % random_limit);
+            random_wait = (rand_r(&(internal_context->random_seed)) % random_limit)+1;
 			internal_context->attempt++;
             after_sleep += (time_t) random_wait;
 			if (after_sleep >= internal_context->end_time)

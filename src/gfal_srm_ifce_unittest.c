@@ -35,6 +35,7 @@ void PrintResult(struct srmv2_mdfilestatus* output);
 
 START_TEST (test_wait_for_new_attempt)
 {
+    int i;
 	struct srm_internal_context internal_context;
 
 	internal_context.estimated_wait_time = -1;
@@ -68,6 +69,12 @@ START_TEST (test_wait_for_new_attempt)
 	internal_context.estimated_wait_time = -10;
 	fail_if (mock_sleep_time > 1, // be careful changing this number
 			  "Random sleep time exceeded expected value !!!");
+
+    internal_context.attempt = 1; // be careful changing this number
+    for(i=0; i < 8; ++i){ // simple backoff print to evaluate value
+        wait_for_new_attempt(&internal_context);
+        fprintf(stdout, " backoff timeout attempt : %d, sleep_time : %d \n",i ,mock_sleep_time);
+    }
 
 	internal_context.estimated_wait_time = 10;
 	wait_for_new_attempt(&internal_context);
