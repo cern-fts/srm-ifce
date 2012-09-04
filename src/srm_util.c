@@ -353,7 +353,7 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 	time_t after_sleep;
 	after_sleep = time(NULL) ;
 
-    if (internal_context->estimated_wait_time <= 0)
+    if (internal_context->estimated_wait_time <= 0 && internal_context->estimated_wait_time < ( internal_context->end_time - time(NULL)))
 	{
 		// Exponential logic
 		if (internal_context->attempt<=10) // Maximum 10 attempts
