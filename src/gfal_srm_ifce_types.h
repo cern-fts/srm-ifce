@@ -162,6 +162,7 @@ struct srm_internal_context
 	time_t 						end_time;
 	int 						attempt;
 	int							estimated_wait_time; //remainingTotalRequestTime in srm documentation
+    unsigned int                random_seed;
 };
 
 struct srm_ls_input

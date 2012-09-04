@@ -121,6 +121,7 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
 	}
 	internal_context->estimated_wait_time = -1;
 	internal_context->attempt = 1;
+    internal_context->random_seed = (unsigned int) time(NULL);
 }
 void set_estimated_wait_time(struct srm_internal_context *internal_context, int *my_time)
 {
@@ -345,30 +346,29 @@ void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqsta
 // Returns  0 for wait finished
 int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or Timeout
 {
-	const int last_chance_sec_before_end = 2; // 2 seconds before the end
-	int random_limit;
-	int random_wait;
-	int wait_till_end=0;
+    const time_t last_chance_sec_before_end = 2; // 2 seconds before the end
+    int random_limit;
+    int random_wait;
+    time_t wait_till_end=0;
 	time_t after_sleep;
 	after_sleep = time(NULL) ;
-	srand( time(NULL) ); // new seed
 
-	if (internal_context->estimated_wait_time <= -1)
+    if (internal_context->estimated_wait_time <= 0)
 	{
 		// Exponential logic
 		if (internal_context->attempt<=10) // Maximum 10 attempts
 		{
-			random_limit = (1<<(internal_context->attempt));
-			random_wait = (rand() % random_limit);
+            random_limit = (time_t) (1<<(internal_context->attempt));
+            random_wait = (rand_r(&(internal_context->random_seed)) % random_limit);
 			internal_context->attempt++;
-			after_sleep += random_wait;
+            after_sleep += (time_t) random_wait;
 			if (after_sleep >= internal_context->end_time)
 			{
-				wait_till_end = internal_context->end_time - time(NULL) -last_chance_sec_before_end; //try the last hope before the end
+                wait_till_end = internal_context->end_time - time(NULL) -  last_chance_sec_before_end; //try the last hope before the end
 				if (wait_till_end>0) 
 					call_function.call_sleep(wait_till_end); 
-				else // deadline outdated, also..
-					return -1; 					// simply return in timeout
+                else // deadline outdated, do not sleep and try a last time
+                    return 0; 					// simply return in timeout
 			}else
 			{
 				call_function.call_sleep(random_wait);
@@ -378,30 +378,24 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 			// Timeout, attempts exceeded
 			return -1;
 		}
-	}else
-    if (internal_context->estimated_wait_time <= 0)
-	{
-		// Timeout
-		return -1;
-	}else
-	{
-		after_sleep += internal_context->estimated_wait_time ;
-		if (after_sleep >= internal_context->end_time)
-		{
-			wait_till_end = internal_context->end_time - (time(NULL)+last_chance_sec_before_end);
-			if (wait_till_end>0)
-			{
-				call_function.call_sleep(wait_till_end);
-			}else
-			{
-				// Timeout
-				return -1;
-			}
-		}else
-		{
-			call_function.call_sleep(internal_context->estimated_wait_time );
-		}
-	}
+    }else{
+            after_sleep += internal_context->estimated_wait_time ;
+            if (after_sleep >= internal_context->end_time)
+            {
+                wait_till_end = internal_context->end_time - (time(NULL)+last_chance_sec_before_end);
+                if (wait_till_end>0)
+                {
+                    call_function.call_sleep(wait_till_end);
+                }else
+                {
+                    // Timeout
+                    return -1;
+                }
+            }else
+            {
+                call_function.call_sleep(internal_context->estimated_wait_time );
+            }
+    }
 
 	return 0;
 }
