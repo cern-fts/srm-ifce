@@ -41,7 +41,7 @@ set(CMAKE_CURRENT_BINARY_DIR ${CMAKE_SOURCE_DIR}/build/)
 
 # libs checks
 pkg_check_modules(GSOAP_PKG REQUIRED gsoap)
-
+pkg_check_modules(GLIB2_PKG REQUIRED glib-2.0)
 
 #install doc license
 install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README"

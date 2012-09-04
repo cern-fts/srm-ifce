@@ -11,6 +11,7 @@ BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	cmake
 BuildRequires:	CGSI-gSOAP-devel
+BuildRequires:	glib2-devel
 BuildRequires:	globus-ftp-client-devel
 BuildRequires:	globus-gss-assist-devel
 
@@ -24,6 +25,7 @@ distributed storage systems.
 Summary:	SRM client side headers and development files
 Group:		Development/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	glib2-devel
 Requires:	pkgconfig
 
 %description devel
