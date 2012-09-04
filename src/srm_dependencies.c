@@ -48,5 +48,6 @@ callers_t call_function = {
 		soap_call_srm2__srmRm,
 		soap_call_srm2__srmRmdir,
 		soap_call_srm2__srmMkdir,
-		sleep
+        sleep,
+        usleep
 };

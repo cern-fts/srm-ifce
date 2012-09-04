@@ -83,6 +83,26 @@ START_TEST (test_wait_for_new_attempt)
 }
 END_TEST
 
+
+START_TEST (test_wait_ng)
+{
+    int i;
+    srm_context_t context = srm_context_new("test",NULL,0,0);
+    struct srm_internal_context internal_context;
+    back_off_logic_init(context, &internal_context);
+
+
+    for(i=0;i <100;++i){
+        time_t t1 = time(NULL);
+        wait_for_new_attempt_min_max_ng(context, &internal_context);
+        printf(" wait for %d : %ld \n", i, time(NULL)- t1);
+    }
+
+
+    srm_context_free(context);
+}
+END_TEST
+
 //////////////////////////////////////////////////////////////////
 // test wait_for_new_attempt function
 //////////////////////////////////////////////////////////////////
@@ -2904,6 +2924,7 @@ Suite * test_suite (void)
     tcase_add_test (tc_case_2, test_srm_util_consolidate_multiple_characters);
     tcase_add_test (tc_case_2, test_srmv2_check_srm_root);
     tcase_add_test (tc_case_2, test_srm_context);
+    tcase_add_test (tc_case_2, test_wait_ng);
 
     suite_add_tcase (s, tc_case_2);
 

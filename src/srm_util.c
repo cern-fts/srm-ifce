@@ -103,15 +103,27 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
 {
     GFAL_SRM_IFCE_ASSERT(context);
     GFAL_SRM_IFCE_ASSERT(internal_context);
+    memset(internal_context,0, sizeof(struct srm_internal_context));
 
+    clock_gettime(CLOCK_MONOTONIC, &internal_context->end_time_spec);
     if (context->timeout > 0)
 	{
 		internal_context->end_time = (time(NULL) + context->timeout);
-	}
+        internal_context->end_time_spec.tv_sec+= context->timeout;
+    }else{
+        internal_context->end_time = (time(NULL) + 60);
+        internal_context->end_time_spec.tv_sec+= context->timeout;
+    }
 	internal_context->estimated_wait_time = -1;
 	internal_context->attempt = 1;
+    if(context->ext){
+        timespec_add(&(internal_context->current_waittime_spec), &(context->ext->min_waittime), &(internal_context->current_waittime_spec));
+    }
+
     internal_context->random_seed = (unsigned int) time(NULL);
 }
+
+
 void set_estimated_wait_time(struct srm_internal_context *internal_context, int *my_time)
 {
     if (my_time == NULL)
@@ -332,6 +344,35 @@ void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqsta
 				srmfunc, statuscode2errmsg(
 						reqstatp->statusCode));
 }
+
+
+int wait_for_new_attempt_min_max_ng(srm_context_t context, struct srm_internal_context *internal_context){
+    int ret =-1; // default -> go timeout
+    struct timespec sleep_time, current_time, end_sleep_time;
+    clock_gettime(CLOCK_MONOTONIC, &current_time);
+    timespec_add(&(internal_context->current_waittime_spec), &(current_time), &(end_sleep_time));
+    if( timespec_cmp(&end_sleep_time, &(internal_context->end_time_spec), <) ){
+        printf(" I wil sleep %ld %ld", internal_context->current_waittime_spec.tv_sec, internal_context->current_waittime_spec.tv_nsec);
+        while(timespec_cmp(&(current_time), &end_sleep_time, <)){ // go to sleep for the exact required time
+            call_function.call_usleep(1);
+            clock_gettime(CLOCK_MONOTONIC, &current_time);
+        }
+
+        ret =0;
+    }
+
+     // double the wait time if < max
+    timespec_add(&(internal_context->current_waittime_spec),&(internal_context->current_waittime_spec),
+                 &(sleep_time));
+    if(timespec_cmp(&sleep_time, &(context->ext->max_waittime), <) ){
+        timespec_copy(&(internal_context->current_waittime_spec), &sleep_time);
+    }else{
+         timespec_copy(&(internal_context->current_waittime_spec), &(context->ext->max_waittime));
+    }
+    return ret;
+}
+
+
 // Returns -1 for timeout
 // Returns  0 for wait finished
 int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or Timeout
@@ -389,6 +430,21 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 
 	return 0;
 }
+
+int wait_switch_auto(srm_context_t context, struct srm_internal_context *internal_context){
+    if(context->ext == NULL)
+        return wait_for_new_attempt(internal_context);
+    switch(context->ext->polling_logic){
+        case SRM_POLLING_LOGIC_OLD:
+            return wait_for_new_attempt(internal_context);
+        case SRM_POLLING_LOGIC_MIN_MAX_EXP:
+        default:
+            return wait_for_new_attempt_min_max_ng(context, internal_context);
+
+    }
+    return -1;
+}
+
 // Return all statuses timeout, failure,internal error, queued
 srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 		struct srm_internal_context *internal_context,struct srm2__TReturnStatus  *retstatus)
@@ -406,7 +462,7 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 		switch (retstatus->statusCode )
 		{
 			case SRM_USCOREINTERNAL_USCOREERROR:
-				if (wait_for_new_attempt(internal_context) != 0)
+                if (wait_switch_auto(context,internal_context)  != 0)
 				{
 					srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
 							err_msg_begin,srmfunc, context->srm_endpoint);
@@ -417,7 +473,7 @@ srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
 				return srm_call_status_INTERNAL_ERROR;
 			case SRM_USCOREREQUEST_USCOREQUEUED:
 			case SRM_USCOREREQUEST_USCOREINPROGRESS:
-				if (wait_for_new_attempt(internal_context) != 0)
+                if (wait_switch_auto(context,internal_context) != 0)
 				{
 					srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
 							err_msg_begin,srmfunc, context->srm_endpoint);

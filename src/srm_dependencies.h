@@ -202,6 +202,7 @@ typedef struct misc_callers {
 	soap_call_srm2__srmRmdir_fv					call_srm2__srmRmdir;
 	soap_call_srm2__srmMkdir_fv					call_srm2__srmMkdir;
 	sleep_fv									call_sleep;
+    int (*call_usleep)(useconds_t usec);
 } callers_t;
 
 extern callers_t call_function;

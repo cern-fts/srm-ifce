@@ -19,6 +19,8 @@
 #ifndef SRM_UTIL_H_
 #define SRM_UTIL_H_
 
+#include "time_utils.h"
+
 //static allocation
 void srm_soap_init(struct soap *soap);
 void srm_soap_deinit(struct soap *soap);
@@ -115,6 +117,10 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 		struct srm2__ArrayOfTPermissionReturn *repperm);
 
 void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time);
+
+int wait_for_new_attempt_min_max_ng(srm_context_t context, struct srm_internal_context *internal_context);
+
+int wait_switch_auto(srm_context_t context, struct srm_internal_context *internal_context);
 
 /* General utility functions */
 

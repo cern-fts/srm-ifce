@@ -22,6 +22,8 @@
 
 #include <errno.h>
 #include <glib.h>
+#include <time.h>
+
 #include "gfal_srm_ifce.h"
 #include "srm_dependencies.h"
 #include "srm_util.h"
@@ -38,6 +40,9 @@ typedef enum _srm_polling_logic{
 
 struct srm_context_extension{
     srm_polling_logic polling_logic;
+    // polling MIN_MAX_EXP params
+    struct timespec min_waittime;
+    struct timespec max_waittime;
 };
 
 /* Normal assertion for srm-ifce */
