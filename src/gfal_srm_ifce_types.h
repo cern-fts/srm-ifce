@@ -19,9 +19,11 @@
 #ifndef _SRM_TYPES_H
 #define _SRM_TYPES_H
 
+
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <glib.h>
 
 
 #ifndef SRM_LONG64_FORMAT
@@ -34,17 +36,15 @@
 #endif
 #endif
 #ifndef SRM_LONG64
-#if defined(__ia64__) || defined(__x86_64)
-#define SRM_LONG64 long
-#elif defined(_WIN32)
-#define SRM_LONG64 __i64
-#else
-#define SRM_LONG64 long long
-#endif
+#define SRM_LONG64 gint64
 #endif
 
 
 #define SRM_SIZE_MARGIN          1048576     // 1MB
+
+typedef struct srm_context* srm_context_t;
+
+typedef struct srm_context_extension* srm_context_extension_t;
 
 enum TFileLocality_
 {
@@ -153,7 +153,8 @@ struct srm_context
     int 				timeout;        // global timeout for asynchronous operations
     int                 timeout_conn;   // global timeout for SOAP connection
     int                 timeout_ops;    // global timeout for response on operation ( send/receive )
-    void*               reserved[25];   // reserved field for futur usage
+    srm_context_extension_t ext;
+    void*               reserved[24];   // reserved field for futur usage
 };
 
 struct srm_internal_context

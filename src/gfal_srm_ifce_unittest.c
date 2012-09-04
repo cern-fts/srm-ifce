@@ -2849,6 +2849,20 @@ START_TEST (test_srmv2_check_srm_root)
 END_TEST
 
 
+START_TEST (test_srm_context)
+{
+    char errbuff[200];
+    struct srm_context old_style;
+    srm_context_init(&old_style,"my_endpoint", errbuff,200,1);
+    srm_context_t c = srm_context_new("my_endpoint",errbuff,200,1);
+    srm_context_free(c);
+    c = NULL;
+    srm_context_free(c);
+    srm_context_free(&old_style);
+}
+END_TEST
+
+
 Suite * test_suite (void)
 {
     Suite *s = suite_create ("new srm interface unit test suit");
@@ -2889,6 +2903,7 @@ Suite * test_suite (void)
     tcase_add_test (tc_case_2, test_srm_util_normalize_surl);
     tcase_add_test (tc_case_2, test_srm_util_consolidate_multiple_characters);
     tcase_add_test (tc_case_2, test_srmv2_check_srm_root);
+    tcase_add_test (tc_case_2, test_srm_context);
 
     suite_add_tcase (s, tc_case_2);
 

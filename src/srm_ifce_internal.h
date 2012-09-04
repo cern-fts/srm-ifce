@@ -31,7 +31,16 @@
 #include "srmv2_directory_functions.h"
 #include "srmv2_space_management_functions.h"
 
-/* Normal assertion happens in debug mode. In non-debug mode, force crash! */
+typedef enum _srm_polling_logic{
+    SRM_POLLING_LOGIC_OLD,
+    SRM_POLLING_LOGIC_MIN_MAX_EXP
+} srm_polling_logic;
+
+struct srm_context_extension{
+    srm_polling_logic polling_logic;
+};
+
+/* Normal assertion for srm-ifce */
 #define GFAL_SRM_IFCE_ASSERT(cond) \
     do{ \
         g_assert((cond)); \

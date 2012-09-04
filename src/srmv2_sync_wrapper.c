@@ -27,6 +27,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 {
 	struct srm_internal_context internal_context;
     int result;
+    char * req_token;
 
 	// Setup the timeout
 	back_off_logic_init(context,&internal_context);
@@ -36,6 +37,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 	result = srmv2_ls_async_internal(context,input,output,&internal_context);
 
 	internal_context.attempt = 1;
+    req_token = output->token;
 
 	// if ls was queued start polling statusOfLsRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
@@ -43,7 +45,7 @@ int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct 
 		result = srmv2_status_of_ls_request_async_internal(context,input,output,&internal_context);
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
 		{
-			srmv2_abort_request(context,&internal_context);
+            srmv2_abort_request(context, req_token);
 			return -1;
 		}
 

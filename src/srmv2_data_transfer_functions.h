@@ -63,5 +63,6 @@ int srmv2_put_done(struct srm_context *context,
 int srmv2_abort_files(struct srm_context *context,
         struct srm_abort_files_input *input,struct srmv2_filestatus **statuses);
 
+int srmv2_abort_request(struct srm_context *context,char *token);
 
 #endif

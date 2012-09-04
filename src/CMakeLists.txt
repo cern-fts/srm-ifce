@@ -95,13 +95,15 @@ target_link_libraries(gfal_srm_ifce_version )
 
 IF (UNIT_TESTS)
 
+link_directories (${PROJECT_BINARY_DIR}/ ${PROJECT_BINARY_DIR}/src)
+
 ## unit tests
 add_executable(gfal_srm_ifce_unittest 
 									${src_unit_tests} )
-target_link_libraries(gfal_srm_ifce_unittest ${OUTPUT_NAME} check srm-ifce)
+target_link_libraries(gfal_srm_ifce_unittest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
 add_executable(gfal_srm_ifce_systemtest 
 									${src_system_tests} )
-target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce)
+target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
 
 add_test(base_unit_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_unittest)
 #add_test(base_system_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_systemtest)

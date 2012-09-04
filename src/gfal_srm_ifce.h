@@ -22,6 +22,23 @@
 #include <glib.h>
 #include "gfal_srm_ifce_types.h"
 
+/**
+  @brief create a srm_context
+
+  srm context are used by all the srm operations
+  need to be free with @ref srm_context_free after usage
+*/
+srm_context_t srm_context_new(const char * srm_endpoint, char *errbuf,int errbufsz,int verbose);
+
+
+/**
+  free resources used by a srm context
+*/
+void srm_context_free(srm_context_t context);
+
+/**
+  brief : old compatibility : deprecated
+*/
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose);
 
 /* srm_ls functions */

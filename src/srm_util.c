@@ -100,6 +100,7 @@ void srm_set_timeout_sendreceive (int value)
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose)
 {
     GFAL_SRM_IFCE_ASSERT(context);
+    context->ext = NULL;
 	context->errbuf = errbuf;
 	context->errbufsz = errbufsz;
 	context->version = VERSION_2_2;
