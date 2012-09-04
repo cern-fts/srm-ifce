@@ -17,15 +17,11 @@
  * Authors: Todor Manev  IT-GT CERN
  */
 #include <errno.h>
-#include "srm_soap.h"
-#include "srm_util.h"
-#include "srm_dependencies.h"
+#include "srmv2_space_management_functions.h"
 
 int srmv2_getspacemd (struct srm_context *context,
 		struct srm_getspacemd_input *input,struct srm_spacemd **spaces)
 {
-	int flags;
-	int sav_errno = 0;
 	int i, ret;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceMetaDataResponse_ tknrep;
@@ -173,8 +169,6 @@ int srmv2_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_input *input,
 		struct srm_getspacetokens_output *output)
 {
-	int flags;
-	int sav_errno = 0;
 	int i, ret;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceTokensResponse_ tknrep;
@@ -331,14 +325,10 @@ int srmv2_reservespace(struct srm_context *context,
 		struct srm_reservespace_input *input,
 		struct srm_reservespace_output *output)
 {
-	int flags;
-	int sav_errno = 0;
-	int i, ret;
+    int ret;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReserveSpaceResponse_ rep;
 	struct srm2__srmReserveSpaceRequest req;
-	struct srm2__TReturnStatus *repstatp;
-	struct srm2__ArrayOfString *repp;
 	struct srm2__TRetentionPolicyInfo retentionPolicy;
 	const char srmfunc[] = "ReserveSpace";
 
@@ -388,13 +378,10 @@ int srmv2_reservespace(struct srm_context *context,
 int srmv2_releasespace(struct srm_context *context,
 		char *spacetoken)
 {
-	int flags;
-	int sav_errno = 0;
-	int i, ret;
+    int ret;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReleaseSpaceResponse_ rep;
 	struct srm2__srmReleaseSpaceRequest req;
-	struct srm2__TReturnStatus *repstatp;
 	const char srmfunc[] = "ReserveSpace";
 
 	if (spacetoken == NULL)
@@ -430,7 +417,6 @@ int srmv2_purgefromspace(struct srm_context *context,
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmPurgeFromSpaceResponse_ rep;
 	struct srm2__srmPurgeFromSpaceRequest req;
-	struct srm2__TReturnStatus *repstatp;
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 
 	const char srmfunc[] = "PurgeFromSpace";

@@ -16,7 +16,7 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
-#include "srm_ifce_internal.h"
+#include "srmv2_async_wrapper.h"
 
 
 

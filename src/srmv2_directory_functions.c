@@ -19,9 +19,9 @@
 #include <errno.h>
 #include <regex.h>
 #include <assert.h>
+#include "srm_ifce_internal.h"
 #include "srm_soap.h"
-#include "srm_util.h"
-#include "srm_dependencies.h"
+
 
 // Utility functions
 int srmv2_check_srm_root(const char* surl);
@@ -368,7 +368,6 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 //struct srmv2_filestatus **statuses, char *errbuf, int errbufsz, int timeout)
 int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct srm_rmdir_output *output)
 {
-	int flags;
 	int ret;
 	struct srm2__srmRmdirResponse_ rep;
 	struct srm2__srmRmdirRequest req;
@@ -437,7 +436,6 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 {
 	char* file = NULL;
     int ret = -1;
-	int flags;
 	int sav_errno = 0;
 	char *p, *endp;
 	struct srm2__srmMkdirResponse_ rep;
@@ -529,9 +527,7 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs;
 	struct srm2__srmExtendFileLifeTimeResponse_ rep;
 	struct srm2__srmExtendFileLifeTimeRequest req;
-	struct srm2__TReturnStatus *reqstatp;
     struct soap* soap = srm_soap_init_context_new(context);
-	int i = 0;
 	const char srmfunc[] = "ExtendFileLifeTime";
 
 	
@@ -594,7 +590,7 @@ int srmv2_check_srm_root(const char* surl)
 {
     int ret = 0;
     static regex_t re;
-    static is_compiled = 0;
+    static int is_compiled = 0;
     static const char* regexp = "^srm\://[^/]*/$";
     #define SRMV1_CHECK_SRM_ROOT_NMATCH 1
     regmatch_t match[SRMV1_CHECK_SRM_ROOT_NMATCH];

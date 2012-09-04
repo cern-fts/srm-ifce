@@ -26,7 +26,7 @@
 
 int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 		struct srm_preparetoput_input *input,
-		struct srm_preparetoget_output *output,
+        struct srm_preparetoput_output *output,
 		struct srm_internal_context *internal_context)
 {
 	struct srm2__ArrayOfTPutRequestFileStatus *repfs;

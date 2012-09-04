@@ -19,14 +19,14 @@
 
 #include <stdio.h>
 
+#include "gfal_srm_ifce.h"
 #include "srmv2_sync_wrapper.h"
-#include "srm_ifce_internal.h"
 
 
 int srmv2_ls_sync(struct srm_context *context,struct srm_ls_input *input,struct srm_ls_output *output)
 {
 	struct srm_internal_context internal_context;
-	int i,result;
+    int result;
 
 	// Setup the timeout
 	back_off_logic_init(context,&internal_context);
@@ -61,7 +61,7 @@ int srmv2_prepare_to_put_sync(struct srm_context *context,
 		struct srm_preparetoput_input *input, struct srm_preparetoput_output *output)
 {
 	struct srm_internal_context internal_context;
-	int i,result;
+    int result;
 
 	// Setup the timeout
 	back_off_logic_init(context,&internal_context);
@@ -91,10 +91,10 @@ int srmv2_prepare_to_put_sync(struct srm_context *context,
 }
 
 int srmv2_prepare_to_get_sync(struct srm_context *context,
-		struct srm_preparetoput_input *input, struct srm_preparetoput_output *output)
+        struct srm_preparetoget_input *input, struct srm_preparetoget_output *output)
 {
 	struct srm_internal_context internal_context;
-	int i,result;
+    int result;
 
 	// Setup the timeout
 	back_off_logic_init(context,&internal_context);
@@ -123,10 +123,10 @@ int srmv2_prepare_to_get_sync(struct srm_context *context,
 	return result;
 }
 int srmv2_bring_online_sync(struct srm_context *context,
-		struct srm_preparetoput_input *input, struct srm_preparetoput_output *output)
+        struct srm_bringonline_input *input, struct srm_bringonline_output *output)
 {
 	struct srm_internal_context internal_context;
-	int i,result;
+    int result;
 
 	// Setup the timeout
 	back_off_logic_init(context,&internal_context);

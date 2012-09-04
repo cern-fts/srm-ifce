@@ -16,10 +16,9 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
-#include <errno.h>
+#include "srmv2_permission_functions.h"
 #include "srm_soap.h"
-#include "srm_util.h"
-#include "srm_dependencies.h"
+
 
 
 int srmv2_set_permission(struct srm_context *context,

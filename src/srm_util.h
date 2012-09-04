@@ -42,6 +42,8 @@ struct soap * srm_soap_init_context_new(struct srm_context* c);
 */
 void srm_soap_free(struct soap *soap);
 
+void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqstatp,const char *srmfunc);
+
 extern const char *err_msg_begin;
 void srm_errmsg (struct srm_context *context, const char *format, ...);
 int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);

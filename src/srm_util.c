@@ -331,6 +331,7 @@ int srm_print_error_status_additional(struct srm_context *context,struct srm2__T
 	}
 	return statuscode2errno (status->statusCode);
 }
+
 void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqstatp,const char *srmfunc)
 {
 	if (reqstatp->explanation != NULL && reqstatp->explanation[0])

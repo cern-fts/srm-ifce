@@ -67,7 +67,7 @@ set_source_files_properties(${srm_map_files_c} ${srm2_source_file1} ${srm2_sourc
 
 
 
-add_definitions(-D_LARGEFILE64_SOURCE -DVERSION="${VERSION_STRING}" -DCMAKE_BUILD -D_GNU_SOURCE -DGFAL_SECURE)
+add_definitions(-D_LARGEFILE64_SOURCE -DVERSION="${VERSION_STRING}" -DCMAKE_BUILD -D_GNU_SOURCE -DGFAL_SECURE -Wall)
 include_directories(${srm2_dir} ${CGSI_GSOAP_INCLUDE_DIRS} ${GLIB2_PKG_INCLUDE_DIRS})
 link_directories( ${CGSI_GSOAP_LIBRARY_DIRS} )
 
