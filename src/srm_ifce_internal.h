@@ -39,10 +39,13 @@ typedef enum _srm_polling_logic{
 } srm_polling_logic;
 
 struct srm_context_extension{
+    // asynchronous query strategy
     srm_polling_logic polling_logic;
     // polling MIN_MAX_EXP params
     struct timespec min_waittime;
     struct timespec max_waittime;
+    // advanced timeout management
+    guint turl_timeout;
 };
 
 /* Normal assertion for srm-ifce */

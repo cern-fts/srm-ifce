@@ -142,14 +142,16 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 		return (-1);
 	}
 
-	if (input->desiredpintime > 0)
-	{
-		req.desiredPinLifeTime = &input->desiredpintime;
-	}
-	if (context->timeout > 0)
-	{
-		req.desiredTotalRequestTime = &context->timeout ;
-	}
+    if(context->ext && context->ext->turl_timeout){ // advanced context -> turl timeout
+        req.desiredPinLifeTime = &(context->ext->turl_timeout);
+        req.desiredTotalRequestTime = &(context->ext->turl_timeout);
+    }else{
+        if (input->desiredpintime > 0)
+            req.desiredPinLifeTime = &input->desiredpintime;
+
+        if (context->timeout > 0)
+            req.desiredTotalRequestTime = &context->timeout;
+    }
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
@@ -373,14 +375,17 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 		}
 	}
 
-	if (input->desiredpintime > 0)
-	{
-		req.desiredPinLifeTime = &input->desiredpintime;
-	}
-	if (context->timeout > 0)
-	{
-        req.desiredTotalRequestTime = &context->timeout;
-	}
+
+    if(context->ext && context->ext->turl_timeout){ // advanced context -> turl timeout
+        req.desiredPinLifeTime = &(context->ext->turl_timeout);
+        req.desiredTotalRequestTime = &(context->ext->turl_timeout);
+    }else{
+        if (input->desiredpintime > 0)
+            req.desiredPinLifeTime = &input->desiredpintime;
+
+        if (context->timeout > 0)
+            req.desiredTotalRequestTime = &context->timeout;
+    }
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
