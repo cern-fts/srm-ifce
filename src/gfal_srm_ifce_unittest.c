@@ -35,6 +35,7 @@ void PrintResult(struct srmv2_mdfilestatus* output);
 
 START_TEST (test_wait_for_new_attempt)
 {
+    call_function.call_sleep = mock_sleep;
     int i;
 	struct srm_internal_context internal_context;
 
@@ -79,7 +80,7 @@ START_TEST (test_wait_for_new_attempt)
 	internal_context.estimated_wait_time = 10;
 	wait_for_new_attempt(&internal_context);
 	fail_if (mock_sleep_time != 10,
-			  "Sleep time estimated wait time not equal to sleep time!");
+              "Sleep time estimated wait time not equal to sleep time!");
 }
 END_TEST
 
@@ -90,14 +91,18 @@ START_TEST (test_wait_ng)
     srm_context_t context = srm_context_new("test",NULL,0,0);
     struct srm_internal_context internal_context;
     back_off_logic_init(context, &internal_context);
-
+    gboolean timeout = FALSE;
+    long total_wait_time = 0;
 
     for(i=0;i <100;++i){
         time_t t1 = time(NULL);
-        wait_for_new_attempt_min_max_ng(context, &internal_context);
+        timeout = (wait_for_new_attempt_min_max_ng(context, &internal_context) ==0)?timeout:TRUE;
         printf(" wait for %d : %ld \n", i, time(NULL)- t1);
+        total_wait_time += (time(NULL)- t1);
     }
-
+    fail_if(timeout == FALSE, " should go to timeout, to much iteration...");
+    printf(" total timeout  %ld \n", total_wait_time);
+    fail_if(total_wait_time < context->timeout-2 && total_wait_time > context->timeout+2, "not in the timeout range");
 
     srm_context_free(context);
 }
@@ -114,10 +119,7 @@ START_TEST (test_back_off_logic)
 	struct srm2__TReturnStatus retstatus;
 	srm_call_status result;
 
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+    srm_context_init(&context,"test",NULL,0,0);
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
 
@@ -249,10 +251,8 @@ START_TEST (test_srmv2_abort_request)
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
 
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
-	context.srm_endpoint = "test";
+
+    srm_context_init(&context,"test",NULL,0,0);
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test1;
 	result = srmv2_abort_request(&context,NULL);
