@@ -148,6 +148,8 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
     }else{
         if (input->desiredpintime > 0)
             req.desiredPinLifeTime = &input->desiredpintime;
+        else
+            req.desiredPinLifeTime = &context->timeout;
 
         if (context->timeout > 0)
             req.desiredTotalRequestTime = &context->timeout;
@@ -382,6 +384,8 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
     }else{
         if (input->desiredpintime > 0)
             req.desiredPinLifeTime = &input->desiredpintime;
+        else
+            req.desiredPinLifeTime = &context->timeout;
 
         if (context->timeout > 0)
             req.desiredTotalRequestTime = &context->timeout;
