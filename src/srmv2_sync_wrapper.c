@@ -81,6 +81,7 @@ int srmv2_prepare_to_put_sync(struct srm_context *context,
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
 		{
 			srmv2_abort_request(context,output->token);
+            errno = ETIMEDOUT;
 			return -1;
 		}
 	}
@@ -114,6 +115,7 @@ int srmv2_prepare_to_get_sync(struct srm_context *context,
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
 		{
 			srmv2_abort_request(context,output->token);
+            errno = ETIMEDOUT;
 			return -1;
 		}
 	}
