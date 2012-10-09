@@ -57,6 +57,7 @@ void srm_context_free(srm_context_t context){
             g_free(context->srm_endpoint);
             srm_context_extension_free(context->ext);
         }
+        g_free(context);
     }
 }
 

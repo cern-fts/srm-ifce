@@ -591,7 +591,7 @@ int srmv2_check_srm_root(const char* surl)
     int ret = 0;
     static regex_t re;
     static int is_compiled = 0;
-    static const char* regexp = "^srm\://[^/]*/$";
+    static const char* regexp = "^srm://[^/]*/$";
     #define SRMV1_CHECK_SRM_ROOT_NMATCH 1
     regmatch_t match[SRMV1_CHECK_SRM_ROOT_NMATCH];
 

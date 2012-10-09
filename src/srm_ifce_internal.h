@@ -45,7 +45,7 @@ struct srm_context_extension{
     struct timespec min_waittime;
     struct timespec max_waittime;
     // advanced timeout management
-    guint turl_timeout;
+    int turl_timeout;
 };
 
 /* Normal assertion for srm-ifce */
