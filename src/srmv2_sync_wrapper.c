@@ -77,8 +77,8 @@ int srmv2_prepare_to_put_sync(struct srm_context *context,
 	// if put was queued start polling statusOfPutRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
-        srm_srmv2_pinfilestatus_delete(output->filestatuses, result);
-        srm_srm2__TReturnStatus_delete(output->retstatus);
+        //srm_srmv2_pinfilestatus_delete(output->filestatuses, result);
+       // srm_srm2__TReturnStatus_delete(output->retstatus);
 		result = srmv2_status_of_put_request_async_internal(context,input,output,&internal_context);
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
 		{
@@ -113,8 +113,8 @@ int srmv2_prepare_to_get_sync(struct srm_context *context,
 	// if put was queued start polling statusOfPutRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
-        srm_srmv2_pinfilestatus_delete(output->filestatuses, result);
-        srm_srm2__TReturnStatus_delete(output->retstatus);
+       // srm_srmv2_pinfilestatus_delete(output->filestatuses, result);
+       // srm_srm2__TReturnStatus_delete(output->retstatus);
 		result = srmv2_status_of_get_request_async_internal(context,input,output,&internal_context);
 		if (internal_context.current_status == srm_call_status_TIMEOUT)
 		{
@@ -148,8 +148,8 @@ int srmv2_bring_online_sync(struct srm_context *context,
 	// if put was queued start polling statusOfPutRequest
 	while ((internal_context.current_status == srm_call_status_QUEUED)&&(result >= 0))
 	{
-        srm_srmv2_pinfilestatus_delete(output->filestatuses, result);
-        srm_srm2__TReturnStatus_delete(output->retstatus);
+        //srm_srmv2_pinfilestatus_delete(output->filestatuses, result);
+       // srm_srm2__TReturnStatus_delete(output->retstatus);
 		result = srmv2_status_of_bring_online_async_internal(context,input,output,&internal_context);
 		if ((internal_context.current_status != srm_call_status_SUCCESS)
 				&&(internal_context.current_status != srm_call_status_QUEUED)
