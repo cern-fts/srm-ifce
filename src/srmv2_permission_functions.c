@@ -198,7 +198,7 @@ int srmv2_check_permission(struct srm_context *context,
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
 	req.arrayOfSURLs->urlArray = (char **) input->surls;
 
-	if ((ret = call_function.call_srm2__srmCheckPermission (soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	if (call_function.call_srm2__srmCheckPermission (soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
 	{
 		errno = srm_soap_call_err(context,soap,srmfunc);
 		srm_soap_free(soap);

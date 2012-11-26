@@ -22,7 +22,7 @@
 int srmv2_getspacemd (struct srm_context *context,
 		struct srm_getspacemd_input *input,struct srm_spacemd **spaces)
 {
-	int i, ret;
+	int i;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceMetaDataResponse_ tknrep;
 	struct srm2__srmGetSpaceMetaDataRequest tknreq;
@@ -61,7 +61,7 @@ int srmv2_getspacemd (struct srm_context *context,
 	tknreq.arrayOfSpaceTokens->__sizestringArray = input->nbtokens;
 	tknreq.arrayOfSpaceTokens->stringArray = input->spacetokens;
 
-	if ((ret = call_function.call_srm2__srmGetSpaceMetaData(soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep)))
+	if (call_function.call_srm2__srmGetSpaceMetaData(soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep) != 0)
 	{
 		errno = srm_soap_call_err(context,soap,srmfunc);
 		srm_soap_free(soap);
@@ -169,7 +169,7 @@ int srmv2_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_input *input,
 		struct srm_getspacetokens_output *output)
 {
-	int i, ret;
+	int i;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceTokensResponse_ tknrep;
 	struct srm2__srmGetSpaceTokensRequest tknreq;
@@ -192,7 +192,7 @@ int srmv2_getspacetokens (struct srm_context *context,
 
 	tknreq.userSpaceTokenDescription = (char *) input->spacetokendesc;
 
-	if ((ret = call_function.call_srm2__srmGetSpaceTokens (soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep)))
+	if (call_function.call_srm2__srmGetSpaceTokens (soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep) != 0)
 	{
 		srm_soap_call_err(context,soap,srmfunc);
 		srm_soap_free(soap);
@@ -325,7 +325,6 @@ int srmv2_reservespace(struct srm_context *context,
 		struct srm_reservespace_input *input,
 		struct srm_reservespace_output *output)
 {
-    int ret;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReserveSpaceResponse_ rep;
 	struct srm2__srmReserveSpaceRequest req;
@@ -352,7 +351,7 @@ int srmv2_reservespace(struct srm_context *context,
 	req.retentionPolicyInfo = &retentionPolicy;
 	req.desiredLifetimeOfReservedSpace =  &input->desired_lifetime;
 
-	if ((ret = call_function.call_srm2__srmReserveSpace(soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	if (call_function.call_srm2__srmReserveSpace(soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
 	{
 		errno = srm_soap_call_err(context,soap,srmfunc);
 		srm_soap_free(soap);
@@ -378,7 +377,6 @@ int srmv2_reservespace(struct srm_context *context,
 int srmv2_releasespace(struct srm_context *context,
 		char *spacetoken)
 {
-    int ret;
     struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReleaseSpaceResponse_ rep;
 	struct srm2__srmReleaseSpaceRequest req;
@@ -397,7 +395,7 @@ int srmv2_releasespace(struct srm_context *context,
 
 	req.spaceToken = spacetoken;
 
-	if ((ret = call_function.call_srm2__srmReleaseSpace(soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	if (call_function.call_srm2__srmReleaseSpace(soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
 	{
 		errno = srm_soap_call_err(context,soap,srmfunc);
 		srm_soap_free(soap);

@@ -1036,25 +1036,26 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		if (repfs->pathDetailArray[i]->status)
 		{
 			(*statuses)[i].status = statuscode2errno(repfs->pathDetailArray[i]->status->statusCode);
-		}
-		if ((*statuses)[i].status) {
-			if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
-			{
-                (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
-						repfs->pathDetailArray[i]->status->explanation);
-			}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-			{
-                 (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
-						reqstatp->explanation);
-			}else
-			{
-                 (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode));
-			}
 
-			continue;
+			if ((*statuses)[i].status) {
+				if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
+				{
+					(void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
+							srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
+							repfs->pathDetailArray[i]->status->explanation);
+				}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+				{
+					 (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
+							srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
+							reqstatp->explanation);
+				}else
+				{
+					 (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
+							srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode));
+				}
+
+				continue;
+			}
 		}
 
 		if (repfs->pathDetailArray[i]->size)
