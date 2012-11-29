@@ -1,4 +1,7 @@
 Trunk:
+-
+
+* Thu Nov 29 2012 Adrien Devresse <adevress at cern.ch> - 1.14.0-0
 - correct misleading namespace in PrepareToGetRequestStatus
 - correct a timeout issue related to exponential backoff system in put/get
 - improve reliability of the exponential backoff wait system

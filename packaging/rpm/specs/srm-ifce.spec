@@ -1,5 +1,5 @@
 Name:		srm-ifce
-Version:	1.13.10
+Version:	1.14.0
 Release:	0%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -67,6 +67,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Thu Nov 29 2012 Adrien Devresse <adevress at cern.ch> - 1.14.0-0
+- correct misleading namespace in PrepareToGetRequestStatus
+- correct a timeout issue related to exponential backoff system in put/get
+- improve reliability of the exponential backoff wait system
+- big big code cleaning
+- re-factory of the context system with backward compatibility
+- fix the srm timeout issue
+- fix the srm put done issue for long transfer
+
 * Fri Jul 20 2012 Adrien Devresse <adevress at cern.ch> - 1.13.0-0
  - Synchronise with EMI 2 Update 13
  - introduction of operation timeout
