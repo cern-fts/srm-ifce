@@ -77,7 +77,7 @@ START_TEST (test_wait_for_new_attempt)
         fprintf(stdout, " backoff timeout attempt : %d, sleep_time : %d \n",i ,mock_sleep_time);
     }
 
-	internal_context.estimated_wait_time = 10;
+    internal_context.estimated_wait_time = 2;
 	wait_for_new_attempt(&internal_context);
 	fail_if (mock_sleep_time != 10,
               "Sleep time estimated wait time not equal to sleep time!");
