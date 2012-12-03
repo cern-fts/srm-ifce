@@ -1,0 +1,1107 @@
+Trunk:
+-
+
+* Thu Nov 29 2012 Adrien Devresse <adevress at cern.ch> - 1.14.0-0
+- correct misleading namespace in PrepareToGetRequestStatus
+- correct a timeout issue related to exponential backoff system in put/get
+- improve reliability of the exponential backoff wait system
+- big big code cleaning
+- re-factory of the context system with backward compatibility
+- fix the srm timeout issue
+- fix the srm put done issue for long transfer
+
+Fri Jul 20 2012 Adrien Devresse <adevress at cern.ch> - 1.13.0-0
+ - Synchronise with EMI 2 Update 13
+ - introduction of operation timeout
+ - buffer overflow  and memory corruption corrections
+ - minor warning corrections
+ - ABI break, extend the context structure for timeout-per-context, impact limitated to gfal and gfal 2.0
+
+
+2012-04-17 17:39  molnarzs
+
+	* RELEASE-NOTES, VERSION, packaging/rpm/specs/srm-ifce.spec:
+	  [ticket:]: Release notes updated for srm-ifce_R_1_1_1_1
+
+2012-03-02 14:22  adevress
+
+	* src/srmv2_data_transfer_functions.c: -correct asychronous put
+	  invalid token, GGUS ticket related to EOS
+
+2012-02-14 12:59  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: - increase spec file packaging
+	  release number [ticket:251]
+
+2012-02-13 08:30  adevress
+
+	* src/srmv2_space_management_functions.c: - correct again ^ 34
+	  memory corruption from gsoap [ticket:274]
+
+2012-02-12 21:42  adevress
+
+	* CMakeLists.txt, src/CMakeLists.txt,
+	  src/srmv2_discovery_functions.c,
+	  src/srmv2_permission_functions.c: -correct memory corrpution from
+	  gsoapfor discovery and directories function [ticket:274]
+
+2012-02-12 21:28  adevress
+
+	* src/srmv2_directory_functions.c: -correct memory corrpution from
+	  gsoap [ticket:274]
+
+2012-02-12 09:14  adevress
+
+	* src/srmv2_data_transfer_functions.c: -add more fix for soap
+	  memory corruption in the srm-ifce [ticket:271]
+
+2012-02-09 14:54  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -correct issue for fc18
+	  [ticket:251]
+
+2012-02-09 09:03  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: - correct pakcaging problem
+	  after gsoap repackaging [ticket:251]
+
+2012-02-02 13:01  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: - remove macro on specfiles,
+	  bug on i686 [ticket:251]
+
+2012-01-30 16:12  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: - change versiong system
+
+2012-01-30 16:08  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec, src/CMakeLists.txt,
+	  src/srm_util.c, src/srm_util.h,
+	  src/srmv2_data_transfer_functions.c,
+	  src/srmv2_directory_functions.c,
+	  src/srmv2_permission_functions.c: -fix the gsoap stack smash
+	  problem
+	  increase the version of srm-ifce for epel
+	  - change the versioning system
+
+2012-01-16 14:39  adevress
+
+	* packaging/bin/packager_rpm.sh, packaging/rpm/specs/srm-ifce.spec:
+	  -add source url tar
+	  - remvoe useless comments
+
+2012-01-16 14:38  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -add the spec file
+	  modification for EPEL
+
+2012-01-15 20:59  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -correct maro problem in
+	  rpmlint
+
+2012-01-15 20:36  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -add new EPEL version
+
+2012-01-13 12:33  adevress
+
+	* cmake/modules/CMakeGeneratePkgConfig.cmake,
+	  cmake/modules/FindDCAP.cmake: -add cmake files
+
+2012-01-13 10:55  adevress
+
+	* cmake/modules/FindCGSI_GSOAP.cmake: -add emit version of cgsi
+	  gsoap for head compilation
+
+2012-01-13 10:23  adevress
+
+	* CMakeLists.txt, cmake/modules/CMakeGeneratePkgConfig.cmake,
+	  cmake/modules/FindCGSI_GSOAP.cmake,
+	  cmake/modules/FindgSOAP.cmake: -add missing cgsi FIND package
+
+2012-01-13 09:43  adevress
+
+	* cmake/modules/CMakeGeneratePkgConfig.cmake,
+	  cmake/modules/CMakeMacroParseArguments.cmake,
+	  cmake/modules/CMakeStringHelpers.cmake,
+	  cmake/modules/FindDPM.cmake, cmake/modules/FindLFC.cmake: -add
+	  missing cmake files
+
+2012-01-13 09:12  adevress
+
+	* CMakeLists.txt, cmake/modules/DefineInstallationPaths.cmake,
+	  packaging/rpm/specs/srm-ifce.spec, src/CMakeLists.txt: -add
+	  pkg-config auto-generation tools
+
+2012-01-11 09:54  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -fix the include problem with
+	  gcc
+	  - create a branch for packaging
+
+2012-01-11 09:12  adevress
+
+	* src/srm_util.c: -patch srm_util include to avoid problem of
+	  deferenced pointer with gcc 4.6 ( rawhide, fedora 15/16 )
+
+2012-01-09 16:44  adevress
+
+	* RELEASE-NOTES, VERSION, src/srm_util.c, test/execute_tests.sh,
+	  test/unit/execute_tests.sh: -merge the TLocality change
+
+2012-01-05 10:10  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -remove the useless %doc macro
+	  ( docdir usage )
+
+2012-01-05 09:35  adevress
+
+	* CMakeLists.txt, cmake/modules/DefineInstallationPaths.cmake,
+	  packaging/rpm/specs/srm-ifce.spec: -modify spec files and doc
+	  install dir for EPEL compliance
+
+2011-12-16 16:02  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -replace place of
+	  documentation
+
+2011-12-16 13:24  adevress
+
+	* CMakeLists.txt, packaging/rpm/specs/srm-ifce.spec: - Improve spec
+	  file quality with the comments of my sponsor
+	  - change doc install dir
+	  - use cmake macro
+	  - remove isa macro for build req
+	  - correct recursive dependencies
+
+2011-12-15 10:02  adevress
+
+	* CMakeLists.txt, README, packaging/rpm/specs/srm-ifce.spec: -add
+	  README file for documentation purpose in the EPEL devel package
+
+2011-12-15 10:00  adevress
+
+	* src/gfal_srm_ifce.h, src/gfal_srm_ifce_internal.h,
+	  src/gfal_srm_ifce_systemtest.c, src/gfal_srm_ifce_types.h,
+	  src/gfal_srm_ifce_unittest.c, src/gfal_srm_ifce_unittest.h,
+	  src/gfal_srm_ifce_unittest_common.c,
+	  src/gfal_srm_ifce_unittest_srmls.c, src/srm_dependencies.c,
+	  src/srm_soap.h, src/srm_util.c, src/srm_util.h,
+	  src/srmv2_data_transfer_functions.c,
+	  src/srmv2_directory_functions.c: - remove execution right to
+	  source file, brings error to debuginfo generation
+
+2011-12-15 09:55  adevress
+
+	* CMakeLists.txt: -patch srm-ifce for debuginfo generation
+
+2011-12-12 15:14  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -add srm ifce fix for the
+	  -libs dependencies
+	  -change bad summary
+
+2011-12-02 12:21  adevress
+
+	* cmake/modules/FindgSOAP.cmake: -correct gsoap macros
+
+2011-12-02 12:19  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -hotfix the version number
+
+2011-12-02 12:16  adevress
+
+	* CMakeLists.txt: - correct specfiles in order to match the new
+	  files name
+
+2011-12-02 10:53  adevress
+
+	* CMakeLists.txt, cmake/modules/FindgSOAP.cmake,
+	  src/CMakeLists.txt: - add macro for gsoap backward compatibility
+
+2011-12-01 16:51  adevress
+
+	* CMakeLists.txt, cmake/modules/ReleaseDebugAutoFlags.cmake: -add
+	  release mode to the build
+
+2011-12-01 15:25  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -correct spec file version
+	  number
+
+2011-12-01 15:14  adevress
+
+	* CMakeLists.txt, cmake, cmake/modules,
+	  cmake/modules/DefineInstallationPaths.cmake,
+	  cmake/modules/MacroCopyFile.cmake, m4-EPEL/ares.m4,
+	  m4-EPEL/boost.m4, m4-EPEL/ccheck.m4, m4-EPEL/cgsi-gsoap.m4,
+	  m4-EPEL/classads.m4, m4-EPEL/condorg.m4, m4-EPEL/cppunit.m4,
+	  m4-EPEL/db.m4, m4-EPEL/docbook_html.m4, m4-EPEL/docbook_man.m4,
+	  m4-EPEL/expat.m4, m4-EPEL/fcgi.m4, m4-EPEL/find_activemq.m4,
+	  m4-EPEL/find_apr.m4, m4-EPEL/glib2.m4, m4-EPEL/glite-version.m4,
+	  m4-EPEL/glite.m4, m4-EPEL/glite_ce.m4, m4-EPEL/glite_data.m4,
+	  m4-EPEL/glite_dgas.m4, m4-EPEL/glite_dgas_common.m4,
+	  m4-EPEL/glite_gpbox.m4, m4-EPEL/glite_gsoap_headernames.m4,
+	  m4-EPEL/glite_jdl.m4, m4-EPEL/glite_jobid.m4,
+	  m4-EPEL/glite_lb_nf.m4, m4-EPEL/glite_rgma.m4,
+	  m4-EPEL/glite_security.m4, m4-EPEL/glite_service_discovery.m4,
+	  m4-EPEL/glite_wms.m4, m4-EPEL/glite_wms_broker.m4,
+	  m4-EPEL/glite_wms_brokerinfo.m4,
+	  m4-EPEL/glite_wms_classad_plugin.m4, m4-EPEL/glite_wms_common.m4,
+	  m4-EPEL/glite_wms_helper.m4, m4-EPEL/glite_wms_ism.m4,
+	  m4-EPEL/glite_wms_jss.m4, m4-EPEL/glite_wms_matchmaking.m4,
+	  m4-EPEL/glite_wms_ns.m4, m4-EPEL/glite_wms_optional.m4,
+	  m4-EPEL/glite_wms_purger.m4, m4-EPEL/glite_wms_tp_bypass.m4,
+	  m4-EPEL/glite_wms_ui_optional.m4, m4-EPEL/glite_wms_wmproxy.m4,
+	  m4-EPEL/glite_wmsutils.m4, m4-EPEL/glite_wsdl_file.m4,
+	  m4-EPEL/globus-fix.m4, m4-EPEL/globus.m4, m4-EPEL/gridlist.m4,
+	  m4-EPEL/gridsite.m4, m4-EPEL/gsoap-fix.m4, m4-EPEL/gsoap.m4,
+	  m4-EPEL/gsoap_base.m4, m4-EPEL/httpd.m4, m4-EPEL/java.m4,
+	  m4-EPEL/jclassad.m4, m4-EPEL/jglobus.m4, m4-EPEL/lcmaps.m4,
+	  m4-EPEL/ldap.m4, m4-EPEL/libtar.m4, m4-EPEL/log4cpp.m4,
+	  m4-EPEL/log4cxx.m4, m4-EPEL/log4j.m4, m4-EPEL/ltdl-fix.m4,
+	  m4-EPEL/myproxy.m4, m4-EPEL/mysql-devel.m4, m4-EPEL/mysql.m4,
+	  m4-EPEL/optimize.m4, m4-EPEL/oracle-instantclient.m4,
+	  m4-EPEL/python-c.m4, m4-EPEL/python.m4, m4-EPEL/replica.m4,
+	  m4-EPEL/swig.m4, m4-EPEL/symbol-version.m4, m4-EPEL/unixodbc.m4,
+	  m4-EPEL/xalan.m4, m4-EPEL/xerces.m4, m4-EPEL/xml2.m4,
+	  m4-EPEL/zlib.m4, packaging/rpm/specs/srm-ifce.spec,
+	  src/CMakeLists.txt: -modify spec files for CMake
+	  - add the cmake macros
+	  - add headers to install
+	  - validate this
+
+2011-12-01 13:57  adevress
+
+	* CMakeLists.txt, src/CMakeLists.txt, src/srm_util.c: -add build
+	  support for CMake
+
+2011-12-01 13:57  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: add the no static lib flag
+	  -try to re-enable parallels builds
+	  - modify to put them in alphabetical order
+
+2011-12-01 13:57  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec, src/Makefile.am: -revert
+	  changes to original ricardo spec file
+
+2011-12-01 13:57  adevress
+
+	* configure.ac, packaging/rpm/specs/srm-ifce.spec, src/Makefile.am:
+	  -add a way to disable static build
+	  - improve spec fiels with ricardo comments
+
+2011-11-28 22:32  adevress
+
+	* packaging/bin/packager_rpm.sh, packaging/rpm/specs/srm-ifce.spec:
+	  Merge branch 'rpm_trunk_local2' into tmp
+
+2011-11-28 17:48  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -valdiate rebase
+
+2011-11-28 15:34  rocha
+
+	* packaging/rpm/specs/srm-ifce.spec: Proper macro usage, better
+	  description, no need for main rpm.
+
+2011-11-28 10:31  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -improve spec files for epel
+
+2011-11-24 17:22  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec, src/Makefile.am: -full EPEL
+	  compatible build
+
+2011-11-24 12:53  adevress
+
+	* packaging/rpm/specs/srm-ifce.spec: -modify specs files in order
+	  to disable tests generation
+
+2011-11-24 12:53  adevress
+
+	* configure.ac, src/Makefile.am: -add autotools macro in order to
+	  disable tests generation
+
+2011-11-24 12:53  adevress
+
+	* src/autogen/config.h, src/autogen/config.h.in,
+	  src/autogen/stamp-h1: remove generated files
+
+2011-11-24 12:53  adevress
+
+	* Makefile.in, src/Makefile.in: remove generated by configure files
+
+2011-11-24 10:43  adevress
+
+	* Makefile.in, m4-EPEL, m4-EPEL/ares.m4, m4-EPEL/boost.m4,
+	  m4-EPEL/ccheck.m4, m4-EPEL/cgsi-gsoap.m4, m4-EPEL/classads.m4,
+	  m4-EPEL/condorg.m4, m4-EPEL/cppunit.m4, m4-EPEL/db.m4,
+	  m4-EPEL/docbook_html.m4, m4-EPEL/docbook_man.m4,
+	  m4-EPEL/expat.m4, m4-EPEL/fcgi.m4, m4-EPEL/find_activemq.m4,
+	  m4-EPEL/find_apr.m4, m4-EPEL/glib2.m4, m4-EPEL/glite-version.m4,
+	  m4-EPEL/glite.m4, m4-EPEL/glite_ce.m4, m4-EPEL/glite_data.m4,
+	  m4-EPEL/glite_dgas.m4, m4-EPEL/glite_dgas_common.m4,
+	  m4-EPEL/glite_gpbox.m4, m4-EPEL/glite_gsoap_headernames.m4,
+	  m4-EPEL/glite_jdl.m4, m4-EPEL/glite_jobid.m4,
+	  m4-EPEL/glite_lb_nf.m4, m4-EPEL/glite_rgma.m4,
+	  m4-EPEL/glite_security.m4, m4-EPEL/glite_service_discovery.m4,
+	  m4-EPEL/glite_wms.m4, m4-EPEL/glite_wms_broker.m4,
+	  m4-EPEL/glite_wms_brokerinfo.m4,
+	  m4-EPEL/glite_wms_classad_plugin.m4, m4-EPEL/glite_wms_common.m4,
+	  m4-EPEL/glite_wms_helper.m4, m4-EPEL/glite_wms_ism.m4,
+	  m4-EPEL/glite_wms_jss.m4, m4-EPEL/glite_wms_matchmaking.m4,
+	  m4-EPEL/glite_wms_ns.m4, m4-EPEL/glite_wms_optional.m4,
+	  m4-EPEL/glite_wms_purger.m4, m4-EPEL/glite_wms_tp_bypass.m4,
+	  m4-EPEL/glite_wms_ui_optional.m4, m4-EPEL/glite_wms_wmproxy.m4,
+	  m4-EPEL/glite_wmsutils.m4, m4-EPEL/glite_wsdl_file.m4,
+	  m4-EPEL/globus-fix.m4, m4-EPEL/globus.m4, m4-EPEL/gridlist.m4,
+	  m4-EPEL/gridsite.m4, m4-EPEL/gsoap-fix.m4, m4-EPEL/gsoap.m4,
+	  m4-EPEL/gsoap_base.m4, m4-EPEL/httpd.m4, m4-EPEL/java.m4,
+	  m4-EPEL/jclassad.m4, m4-EPEL/jglobus.m4, m4-EPEL/lcmaps.m4,
+	  m4-EPEL/ldap.m4, m4-EPEL/libtar.m4, m4-EPEL/log4cpp.m4,
+	  m4-EPEL/log4cxx.m4, m4-EPEL/log4j.m4, m4-EPEL/ltdl-fix.m4,
+	  m4-EPEL/myproxy.m4, m4-EPEL/mysql-devel.m4, m4-EPEL/mysql.m4,
+	  m4-EPEL/optimize.m4, m4-EPEL/oracle-instantclient.m4,
+	  m4-EPEL/python-c.m4, m4-EPEL/python.m4, m4-EPEL/replica.m4,
+	  m4-EPEL/swig.m4, m4-EPEL/symbol-version.m4, m4-EPEL/unixodbc.m4,
+	  m4-EPEL/xalan.m4, m4-EPEL/xerces.m4, m4-EPEL/xml2.m4,
+	  m4-EPEL/zlib.m4, packaging, packaging/bin,
+	  packaging/bin/packager_rpm.sh, packaging/rpm,
+	  packaging/rpm/specs, packaging/rpm/specs/srm-ifce.spec,
+	  src/Makefile.in, src/autogen, src/autogen/config.h,
+	  src/autogen/config.h.in, src/autogen/stamp-h1: Merge branch
+	  'rpms_epel' into rpm_epel_trunk_local
+
+2011-11-24 10:19  adevress
+
+	* .: Branch for EPEL packaging
+
+2011-11-15 05:53  msalicho
+
+	* one more attempt to fix 32bits
+
+2011-11-14 19:45  msalicho
+
+	* first attempt to fix 32bit build
+
+2011-11-14 19:45  msalicho
+
+	* first attempt to fix 32bit build
+
+2011-09-14 16:06  molnarzs
+
+	* Release candidate glite-data-srm-ifce_R_1_1_0_1
+
+2011-09-12 18:04  molnarzs
+
+	* Ticket [ticket:134] integrated.
+
+2011-07-28 12:00  molnarzs
+
+	* The memory leak hunt will be continued in a branch. Checking in
+	  everything before branching.
+
+2011-07-20 16:23  adevress
+
+	* -reverse change for the last chance expo backoff
+
+2011-07-19 11:00  molnarzs
+
+	* SrmLs tests extended to cover FTS use cases
+
+2011-07-08 09:50  adevress
+
+	* bug correction on set_permission() returned errcode
+
+2011-06-14 12:05  adevress
+
+	* -modification of the free functions for the recursive use case
+
+2011-06-09 13:16  adevress
+
+	* -modification of docs/comments
+
+2011-06-09 13:14  adevress
+
+	* -add proper file for the memory management
+	  - correct a license problem
+
+2011-06-09 13:05  adevress
+
+	* -modification of the exponential backoff for the timeout
+
+2011-06-09 11:52  adevress
+
+	* -add memory management function and associated doc
+
+2011-06-08 14:40  adevress
+
+	* - fix a bad SRM_ERROR -> errno error translation
+
+2011-06-02 05:48  msalicho
+
+	* remove DDEBUG to prevent gsoap logfiles creation
+
+2011-03-26 06:50  msalicho
+
+	* change ccheck macro name
+
+2011-03-26 06:35  msalicho
+
+	* change ccheck macro name
+
+2011-02-23 13:57  msalicho
+
+	* change gsoap version for EMI
+
+2011-02-04 18:03  molnarzs
+
+	* Integration candidate glite-data-srm-ifce_R_1_0_0
+
+2011-02-04 11:24  molnarzs
+
+	* - srm2_mkdir does not attempt to create the root directory
+	  - Bugfix in handling permission denied error when creating
+	  directories
+
+2011-01-31 10:18  msalicho
+
+	* EMI gsoap changes
+
+2011-01-20 15:06  molnarzs
+
+	* Savannah bug fix https://savannah.cern.ch/bugs/?52502 ported to
+	  srm-ifce
+
+2011-01-20 12:16  molnarzs
+
+	* Segmentation fault in unit tests for uninitialized pointer fixed
+
+2011-01-20 10:33  molnarzs
+
+	* Hard-coded resources from srm-ifce system tests removed.
+
+2011-01-17 15:49  molnarzs
+
+	* Segfault of srm_ls appeared in the nightly tests fixed.
+
+2011-01-14 15:51  molnarzs
+
+	* Negative values of count and offset values in srm-ls request
+	  cause EINVAL error on client side.
+
+2010-12-03 16:32  tmanev
+
+	* Fixing gfal-release test fail.
+
+2010-12-03 16:28  tmanev
+
+	* Fixing failing gfal-release test due to not proper bring online
+	  execution(it was not waiting for the end of bring_online queued).
+
+2010-12-03 14:57  tmanev
+
+	* Reverted back to old behaviour to have positive result even if
+	  only one(not all) filestatus returned.
+
+2010-12-02 16:13  tmanev
+
+	* Fixed gfal-prestagestatus test fail.
+
+2010-12-02 15:42  tmanev
+
+	* Fixing some of the failing python gfal tests.
+
+2010-12-02 13:08  tmanev
+
+	* Fixing gfal-get and gfal-getstatus tests.
+
+2010-12-01 14:40  tmanev
+
+	* Fixing some of the failing gfal api python tests.
+
+2010-11-30 16:04  tmanev
+
+	* Fixing systemtests.
+
+2010-11-30 15:04  tmanev
+
+	* Fixing tests for ls,put,bring online according to bug 52893.
+
+2010-11-30 13:30  tmanev
+
+	* Fixing tests gfal-pin and gfal-unlink.
+
+2010-11-30 12:44  tmanev
+
+	* Fixing gfal-open test and unittests.
+
+2010-11-30 10:34  tmanev
+
+	* Added test for unexistent file permission check. Fixed failing
+	  gfal_access test.
+
+2010-11-29 15:41  tmanev
+
+	* Added srmPurgeFromSpace to space management functions. According
+	  to savannah bug #49578.
+
+2010-11-26 16:25  tmanev
+
+	* Improved error message handling. First string [SE] is now stored
+	  in one const variable - err_msg_begin.
+
+2010-11-26 13:19  tmanev
+
+	* Change srm_context_init function added input parameters for
+	  errbuf errbufsz and verbose.
+
+2010-11-26 11:13  tmanev
+
+	* Fixing savannah bug #75530. Added setup of errno on multiple
+	  places.
+
+2010-11-25 16:28  tmanev
+
+	* Script cleanup.
+
+2010-11-25 15:58  tmanev
+
+	* Removed lib from the script.
+
+2010-11-25 15:50  tmanev
+
+	* Added first parameter to be added in LD path.
+
+2010-11-25 15:30  tmanev
+
+	* Show libdir variable.
+
+2010-11-25 13:32  tmanev
+
+	* Removed change of LD_LIBRARY_PATH.
+
+2010-11-25 11:06  tmanev
+
+	* Added setup of LD folder before execution of the tests.
+
+2010-11-24 13:27  tmanev
+
+	* Clean up of commented srm_types.
+
+2010-11-24 13:18  tmanev
+
+	* Test execution script, fixed to work no matter from where it is
+	  executed.
+
+2010-11-24 13:06  tmanev
+
+	* Add unittest script folder.
+
+2010-11-24 13:04  tmanev
+
+	* Added EGEE copyright headers.
+
+2010-11-24 10:29  tmanev
+
+	* Revert back to verbose test results.
+
+2010-11-24 10:28  tmanev
+
+	* Fixed seg fault in unittests, code cleaned up, added NOFORK
+	  capabilities for easier debug.
+
+2010-11-23 14:25  tmanev
+
+	* Removed unused files from srm-ifce library.
+
+2010-11-23 14:22  tmanev
+
+	* Removed unused file generation.
+
+2010-11-23 10:19  tmanev
+
+	* Reverted to the previous gfal enum definitions.(in order not to
+	  change dm-util).
+
+2010-11-22 14:33  tmanev
+
+	* Added globus to configuration.
+
+2010-11-19 16:21  tmanev
+
+	* Added test folder.
+
+2010-11-19 15:40  tmanev
+
+	* Added globus dependency due to cgsi dependency.
+
+2010-11-19 14:09  tmanev
+
+	* Missing CCHECK_CFLAGS.
+
+2010-11-19 12:59  tmanev
+
+	* Clear warning white space following backslash in makefile.am
+
+2010-11-19 12:38  tmanev
+
+	* Added m4 macro to build-common-cpp. Adjust configuration and
+	  makefile.
+
+2010-11-19 10:52  tmanev
+
+	* Added ccheck to configuration and include.
+
+2010-11-19 10:21  tmanev
+
+	* Added gfal_srm_ifce_systemtest binary to the build.
+
+2010-11-19 09:54  tmanev
+
+	* Fixed build of binaries.
+
+2010-11-19 09:45  tmanev
+
+	* Fixed linking. Making baniries left.
+
+2010-11-19 09:28  tmanev
+
+	* Fix compilation. Linking left.
+
+2010-11-19 08:53  molnarzs
+
+	* Autotools introduced
+
+2010-11-17 13:32  tmanev
+
+	* Added last chance attempt to the backoff logic, will attempt 2
+	  sec before the timeout.
+
+2010-11-17 10:22  tmanev
+
+	* Added estimated wait time for request and for file in data
+	  transfer functions.
+
+2010-11-17 09:20  tmanev
+
+	* Async calls wrong function calls.
+
+2010-11-17 09:16  tmanev
+
+	* Fix one typo.
+
+2010-11-16 15:26  tmanev
+
+	* Remove various printf in srm_test added verbose output of the
+	  test, for better parsing and integration of test results.
+
+2010-11-12 13:42  tmanev
+
+	* Imporved srm permissions test.
+
+2010-11-12 09:05  tmanev
+
+	* Fix rmdir unittest.
+
+2010-11-11 12:44  tmanev
+
+	* Added set/check/get permssions check in srm_test .
+
+2010-11-10 16:47  tmanev
+
+	* Removed some lcg utils calls fixed mkdir test. Now srm_test only
+	  depends on lcg-cp.
+
+2010-11-10 13:43  tmanev
+
+	* rm_dir returns 1 upon successful directory removal in order to be
+	  compatible with the old srm code.
+
+2010-11-08 16:29  tmanev
+
+	* Empty srm_compy function removed.
+
+2010-11-08 15:52  tmanev
+
+	* Fixing various bugs in srm_test.
+
+2010-11-08 13:56  tmanev
+
+	* Fix uninitialized output variables,by memset 0 for srm output
+	  structures.
+
+2010-11-05 12:26  tmanev
+
+	* Fixed Segmentation fault, on double call of bring online. Because
+	  of uninitialized request variables of srm abort request.
+
+2010-11-03 11:53  tmanev
+
+	* Add regression unittest for the mkdir last level directory
+	  creation problem.
+
+2010-11-03 09:54  tmanev
+
+	* Fixing bug of mkdir - last level folder was not created. (fix
+	  provided by Ronny Tschueter)
+
+2010-07-28 08:45  tmanev
+
+	* Fixed wrong commit, from is-interface files.
+
+2010-07-28 08:40  tmanev
+
+	* cornel configuration script for is-interface wrongly submitted.
+
+2010-07-28 08:40  tmanev
+
+	* cornel configuration script for is-interface wrongly submitted.
+
+2010-07-27 09:55  cmicu
+
+	* glib dependencies configuration.
+
+2010-07-27 09:55  cmicu
+
+	* changed permissions.
+
+2010-07-20 12:25  tmanev
+
+	* Set output token for synchroneous calls to NULL, in the begining
+	  of the calls.
+
+2010-07-13 15:58  tmanev
+
+	* Added version wrapper for check permission.
+
+2010-07-13 11:58  tmanev
+
+	* srm extend file lifetime fixed input/output parameters, according
+	  to the template.
+
+2010-07-13 07:38  tmanev
+
+	* Clear a warning, for incompatible pointer types.
+
+2010-07-12 09:45  tmanev
+
+	* Making the make file build with 32 bit.
+
+2010-07-09 07:59  tmanev
+
+	* 
+
+2010-07-08 15:09  tmanev
+
+	* prepare was written prepeare in some of the functions.
+
+2010-07-08 14:53  tmanev
+
+	* Added version wrapper for prepare to put and prepare to get and
+	  status of put/get request synchronious calls.
+
+2010-07-07 14:07  tmanev
+
+	* Fixed verious segmentation faults in unittests due to
+	  uninitialized variables in the test and some.
+
+2010-07-06 09:19  tmanev
+
+	* Removed voms from makefile and configuration file. Changed to
+	  stage folder.
+
+2010-07-05 11:25  tmanev
+
+	* 
+
+2010-07-05 11:20  tmanev
+
+	* missing coma in config file.
+
+2010-07-05 10:03  tmanev
+
+	* cchek location added.
+
+2010-07-05 09:28  tmanev
+
+	* Added ccheck folders in configuration script and makefile.
+
+2010-07-02 15:13  tmanev
+
+	* 
+
+2010-07-02 15:03  tmanev
+
+	* Delete automake file.
+
+2010-07-02 15:02  tmanev
+
+	* Delete automake scripts.
+
+2010-07-02 15:02  tmanev
+
+	* Delete auto make files.
+
+2010-07-02 14:27  tmanev
+
+	* 
+
+2010-07-02 13:18  tmanev
+
+	* 
+
+2010-07-02 12:27  tmanev
+
+	* 
+
+2010-07-02 12:23  tmanev
+
+	* Makefile changes, remove automake.
+
+2010-07-02 07:50  tmanev
+
+	* Wrong function prototype.
+
+2010-06-29 15:13  tmanev
+
+	* 
+
+2010-06-29 13:41  tmanev
+
+	* 
+
+2010-06-25 15:09  tmanev
+
+	* 
+
+2010-06-25 13:35  tmanev
+
+	* 
+
+2010-06-24 15:05  tmanev
+
+	* 
+
+2010-06-24 13:18  tmanev
+
+	* Removed various warnings.
+
+2010-06-24 11:36  tmanev
+
+	* Clearing various warnings and errors.
+
+2010-06-24 08:11  tmanev
+
+	* Added srm_context_init function. Removed some dependencies.
+
+2010-06-22 13:46  tmanev
+
+	* 
+
+2010-06-17 13:38  tmanev
+
+	* 
+
+2010-06-17 12:19  tmanev
+
+	* 
+
+2010-06-10 14:29  tmanev
+
+	* 
+
+2010-06-09 15:08  tmanev
+
+	* 
+
+2010-06-07 15:55  tmanev
+
+	* 
+
+2010-06-07 13:06  tmanev
+
+	* 
+
+2010-06-04 15:33  tmanev
+
+	* 
+
+2010-06-03 14:57  tmanev
+
+	* 
+
+2010-06-02 15:32  tmanev
+
+	* 
+
+2010-06-02 13:48  tmanev
+
+	* 
+
+2010-06-01 15:45  tmanev
+
+	* 
+
+2010-06-01 15:33  tmanev
+
+	* 
+
+2010-06-01 15:17  tmanev
+
+	* 
+
+2010-06-01 14:54  tmanev
+
+	* 
+
+2010-06-01 13:14  tmanev
+
+	* 
+
+2010-06-01 12:32  tmanev
+
+	* 
+
+2010-06-01 12:11  tmanev
+
+	* 
+
+2010-05-31 16:14  tmanev
+
+	* 
+
+2010-05-31 13:46  tmanev
+
+	* 
+
+2010-05-28 15:58  tmanev
+
+	* 
+
+2010-05-28 08:51  tmanev
+
+	* 
+
+2010-05-27 13:15  tmanev
+
+	* 
+
+2010-05-27 10:02  tmanev
+
+	* 
+
+2010-05-27 08:16  tmanev
+
+	* 
+
+2010-05-26 16:06  tmanev
+
+	* 
+
+2010-05-26 14:14  tmanev
+
+	* 
+
+2010-05-26 11:57  tmanev
+
+	* 
+
+2010-05-25 15:58  tmanev
+
+	* 
+
+2010-05-25 13:23  tmanev
+
+	* 
+
+2010-05-25 12:49  tmanev
+
+	* 
+
+2010-05-25 12:48  tmanev
+
+	* 
+
+2010-05-25 12:47  tmanev
+
+	* 
+
+2010-05-25 11:39  tmanev
+
+	* 
+
+2010-05-25 09:13  tmanev
+
+	* 
+
+2010-05-21 17:10  tmanev
+
+	* 
+
+2010-05-21 14:08  tmanev
+
+	* 
+
+2010-05-20 15:42  tmanev
+
+	* 
+
+2010-05-20 09:41  tmanev
+
+	* 
+
+2010-05-19 14:02  tmanev
+
+	* 
+
+2010-05-18 15:40  tmanev
+
+	* 
+
+2010-05-18 12:31  tmanev
+
+	* 
+
+2010-05-17 16:16  tmanev
+
+	* 
+
+2010-05-07 12:03  tmanev
+
+	* 
+
+2010-05-07 06:58  tmanev
+
+	* 
+
+2010-05-06 14:21  tmanev
+
+	* 
+
+2010-05-04 09:44  tmanev
+
+	* 
+
+2010-05-04 08:55  tmanev
+
+	* 
+
+2010-05-04 07:26  tmanev
+
+	* 
+
+2010-05-03 13:53  tmanev
+
+	* 
+
+2010-04-23 09:22  molnarzs
+
+	* First import
+

@@ -1,0 +1,4 @@
+srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
+for GFAL and FTS. SRM means Storage Resource Manager Interface, it is a 
+specification of a SOAP interface providing a generic way to manage 
+distributed storage systems.
