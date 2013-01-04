@@ -65,7 +65,10 @@ void srm_srmv2_mdfilestatus_delete(struct srmv2_mdfilestatus* mdfilestatus, int 
 			free(mdfilestatus[i].checksum);
 			free(mdfilestatus[i].checksumtype);	
 			for(j=0; j < mdfilestatus[i].nbspacetokens;++j){
-				free(mdfilestatus[i].spacetokens[i]);
+				if(mdfilestatus !=NULL && mdfilestatus[i].spacetokens[i] ){
+					free(mdfilestatus[i].spacetokens[i]);
+					mdfilestatus[i].spacetokens[i]=NULL;
+				}
 			}
 			srm_srmv2_mdfilestatus_delete(mdfilestatus[i].subpaths, mdfilestatus[i].nbsubpaths);	
 		}
