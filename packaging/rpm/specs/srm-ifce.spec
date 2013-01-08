@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Tue Jan 08 2013 Adrien Devresse <adevress at cern.ch> - 1.14.0-1
+- correct two timeout bug LCGUTIL-78 and LCGUTIL-82
+
 * Thu Nov 29 2012 Adrien Devresse <adevress at cern.ch> - 1.14.0-0
 - correct misleading namespace in PrepareToGetRequestStatus
 - correct a timeout issue related to exponential backoff system in put/get
