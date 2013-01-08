@@ -1,3 +1,0 @@
-The Grid File Access Library offers a POSIX interface to Replica Catalogs,
-Storage Resource Managers and File Access services using protocols like rfio,
-dcap...

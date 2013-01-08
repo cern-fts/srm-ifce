@@ -149,10 +149,10 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
         if (input->desiredpintime > 0)
             req.desiredPinLifeTime = &input->desiredpintime;
         else
-            req.desiredPinLifeTime = &context->timeout;
+            req.desiredPinLifeTime = &context->timeout_ops;
 
-        if (context->timeout > 0)
-            req.desiredTotalRequestTime = &context->timeout;
+        if (context->timeout_ops > 0)
+            req.desiredTotalRequestTime = &context->timeout_ops;
     }
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
@@ -387,8 +387,8 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
         else
             req.desiredPinLifeTime = &context->timeout;
 
-        if (context->timeout > 0)
-            req.desiredTotalRequestTime = &context->timeout;
+        if (context->timeout_ops > 0)
+            req.desiredTotalRequestTime = &context->timeout_ops;
     }
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
