@@ -30,6 +30,8 @@
 */
 srm_context_t srm_context_new(const char * srm_endpoint, char *errbuf,int errbufsz,int verbose);
 
+srm_context_t srm_context_new2(const char * srm_endpoint, char *errbuf,int errbufsz,int verbose, int keep_alive);
+
 
 /**
   free resources used by a srm context
@@ -40,6 +42,9 @@ void srm_context_free(srm_context_t context);
   brief : old compatibility : deprecated
 */
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose);
+
+void srm_context_init2(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose,
+                       int keep_alive);
 
 /* srm_ls functions */
 void srm_ls_output_destroy(struct srm_ls_output *output);

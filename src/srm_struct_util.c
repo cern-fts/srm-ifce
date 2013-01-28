@@ -50,6 +50,12 @@ srm_context_t srm_context_new(const char * srm_endpoint, char *errbuf,int errbuf
     return context;
 }
 
+srm_context_t srm_context_new2(const char * srm_endpoint, char *errbuf,int errbufsz,int verbose, int keep_alive){
+    struct srm_context* context = srm_context_new(srm_endpoint, errbuf, errbufsz, verbose);
+    context->ext->keep_alive = keep_alive;
+    return context;
+}
+
 
 //
 void srm_context_free(srm_context_t context){
@@ -68,7 +74,7 @@ void srm_context_free(srm_context_t context){
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose)
 {
     GFAL_SRM_IFCE_ASSERT(context);
-    context->ext = NULL;
+    context->ext = srm_context_extension_new();
     context->errbuf = errbuf;
     context->errbufsz = errbufsz;
     context->version = VERSION_2_2;
@@ -77,4 +83,11 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
     context->verbose = verbose;
     context->timeout_conn = srm_get_timeout_connect ();
     context->timeout_ops = srm_get_timeout_sendreceive();
+}
+
+
+void srm_context_init2(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose,
+                       int keep_alive){
+    srm_context_init(context, srm_endpoint, errbuf, errbufsz, verbose);
+    context->ext->keep_alive = keep_alive;
 }
