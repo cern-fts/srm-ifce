@@ -46,6 +46,7 @@ srm_context_t srm_context_new(const char * srm_endpoint, char *errbuf,int errbuf
     context->timeout_conn = srm_get_timeout_connect ();
     context->timeout_ops = srm_get_timeout_sendreceive();
     context->ext = srm_context_extension_new();
+    context->keep_alive = 0;
     return context;
 }
 
@@ -76,4 +77,5 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
     context->verbose = verbose;
     context->timeout_conn = srm_get_timeout_connect ();
     context->timeout_ops = srm_get_timeout_sendreceive();
+    context->keep_alive = 0;
 }

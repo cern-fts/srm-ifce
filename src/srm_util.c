@@ -162,7 +162,19 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     #ifdef GFAL_SECURE
     int flags;
     #endif
-    struct soap *soap_handle = soap_new();
+    struct soap *soap_handle = NULL;
+
+    if (c->keep_alive) {
+        soap_handle = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
+        soap_handle->bind_flags |= SO_REUSEADDR;
+        soap_handle->max_keep_alive = 10;
+        soap_handle->accept_timeout = 0;
+        soap_handle->socket_flags = MSG_NOSIGNAL;
+    }
+    else {
+        soap_handle = soap_new();
+    }
+
     soap_init (soap_handle);
     soap_handle->namespaces = namespaces_srmv2;
 

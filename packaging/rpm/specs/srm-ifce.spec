@@ -1,5 +1,5 @@
 Name:		srm-ifce
-Version:	1.14.0
+Version:	1.15.0
 Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
