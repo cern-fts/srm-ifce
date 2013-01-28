@@ -33,6 +33,7 @@ char test_file1[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
 char test_file2[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
 char test_unexisting[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
 char test_dir[MAX_PATH_LEN + MAX_FILE_NAME_LEN];
+const char *test_vo;
 
 char *source_file = "file:///etc/group";
 char *test_spacedescriptor = "srm_test_space";
@@ -55,7 +56,7 @@ int MkDir(char *directory);
 void CopyFile(char *file)
 {
 	char *command;
-	asprintf (&command, "lcg-cp --nobdii -D srmv2 --vo dteam  %s %s ", source_file,file);
+	asprintf (&command, "lcg-cp --nobdii -D srmv2 --vo %s  %s %s ", test_vo, source_file,file);
 	//printf("%s \n",command);
 	system(command);
 }
@@ -265,9 +266,7 @@ START_TEST (test_data_transfer_functions)
 	struct srmv2_pinfilestatus *filestatuses;
 	SRM_LONG64 filesizes[1] ={ 1024 };
 
-	context.verbose = 0;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 0);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -632,9 +631,14 @@ void SetUp()
     sprintf(test_file2, "%s/test_file2", test_dir);
     sprintf(test_unexisting, "%s/unexisting", test_dir);
 
+    test_vo = getenv("VO");
+    if (!test_vo)
+        test_vo = "dteam";
+
     printf("\nTest setup:\n\n");
     printf("SRM host: %s\n", srm_host);
-    printf("Test path: %s\n\n", test_dir);
+    printf("Test path: %s\n", test_dir);
+    printf("VO Name: %s\n\n", test_vo);
 }
 
 ///////////////////////////////////////////////
@@ -671,9 +675,7 @@ int TestLs(char *surl)
 	struct srm_ls_input input_ls;
 	struct srm_ls_output output_ls;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -710,9 +712,7 @@ int TestPutDone(char** surls,char *token)
 	struct srm_putdone_input input_putdone;
 	struct srm_context context;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -732,9 +732,7 @@ int TestPurgeFromSpace(char** surls,char *token)
 	struct srm_purgefromspace_output output_purge;
 	struct srm_context context;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -754,9 +752,7 @@ int TestAbortRequest(char *token)
 	int c;
 	struct srm_context context;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -773,9 +769,7 @@ int TestAbortFiles(char **files,char *token)
 	struct srm_context context;
 	struct srm_abort_files_input input;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -795,9 +789,7 @@ int TestReleaseFiles(char **files,char *token)
 	struct srm_context context;
 	struct srm_releasefiles_input input;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -817,9 +809,7 @@ int TestBringOnline(char **files,char **protocols)
 	struct srm_bringonline_output output_bringonline;
 	int a;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -852,10 +842,7 @@ void TestSpaceTokensSpaceMetadata()
 	struct srm_getspacetokens_output output_space_tokens;
 
 
-
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -882,9 +869,7 @@ int TestPing(char *endpoint)
 	struct srm_context context;
 	struct srm_ping_output output;
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = endpoint;
+	srm_context_init(&context, endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
