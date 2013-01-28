@@ -46,6 +46,8 @@ struct srm_context_extension{
     struct timespec max_waittime;
     // advanced timeout management
     int turl_timeout;
+    // keep alive connections
+    int keep_alive;
 };
 
 /* Normal assertion for srm-ifce */
