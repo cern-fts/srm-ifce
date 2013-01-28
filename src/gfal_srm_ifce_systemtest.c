@@ -78,9 +78,7 @@ int FakeCopy(char *surl) // does prepare to put and put done without copying a s
 	struct srm_preparetoput_output output_put;
 	SRM_LONG64 filesizes[1] ={ 0 };
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -147,9 +145,7 @@ int MkDir(char *directory)
 	asprintf(&test_surl_rmdir,"%s/test_dir",test_dir);
 	asprintf(&test_surl_mkdir,"%s/test_dir/1/2",test_dir);
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -181,9 +177,7 @@ START_TEST (test_directory_functions)
 	asprintf(&test_surl_rmdir,"%s/test_dir",test_dir);
 	asprintf(&test_surl_mkdir,"%s/test_dir/1/2",test_dir);
 
-	context.verbose = 1;
-	context.errbufsz = 0;
-	context.srm_endpoint = test_srm_endpoint;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.timeout = 3600;
 	context.version = VERSION_2_2;
 
@@ -348,13 +342,9 @@ START_TEST (test_srm_ping)
 	struct srm_context context;
 	int result;
 
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
 	context.version = VERSION_2_2;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);;
 
-
-	context.srm_endpoint = test_srm_endpoint;
 	result = srm_ping(&context,&output);
 	fail_if ((result  != 0),
 					"Expected Success !");
@@ -395,11 +385,8 @@ START_TEST (test_srm_space_management)
 	char *test_spacetoken_descriptor = test_spacedescriptor;
 	char *best_spacetoken;
 
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.version = VERSION_2_2;
-	context.srm_endpoint =  test_srm_endpoint;
 
 	input_reserve.desired_lifetime = 100;
 	input_reserve.desired_size = 1048576*2; // 2MB
@@ -488,11 +475,8 @@ START_TEST (test_srm_permissions)
 
 	int result;
 
-	context.verbose = 0;
-	context.errbuf = NULL;
-	context.errbufsz = 0;
+	srm_context_init(&context, test_srm_endpoint, NULL, 0, 1);
 	context.version = VERSION_2_2;
-	context.srm_endpoint = test_srm_endpoint;
 
 	input.nbfiles = 1;
 	input.surls =  surls;
