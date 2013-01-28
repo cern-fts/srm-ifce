@@ -164,7 +164,7 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     #endif
     struct soap *soap_handle = NULL;
 
-    if (c->ext->keep_alive) {
+    if (c->ext && c->ext->keep_alive) {
         soap_handle = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
         soap_handle->bind_flags |= SO_REUSEADDR;
         soap_handle->max_keep_alive = 10;
