@@ -475,10 +475,14 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			{
 				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
+                if(rep.srmPrepareToGetResponse->requestToken != NULL){
+                    copy_string(&output->token,rep.srmPrepareToGetResponse->requestToken);
+                }
 				ret = copy_pinfilestatuses_get(output->retstatus,
 											&output->filestatuses,
 											repfs,
 											srmfunc);
+
 			}
 			break;
         case srm_call_status_TIMEOUT: // add timeout management for backoff logic
