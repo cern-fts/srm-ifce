@@ -22,6 +22,17 @@
 
 
 
+int srmv2_put_status_estimated_wait_time(struct srm2__srmStatusOfPutRequestResponse_ *prepareToPutStatusRep){
+    if( prepareToPutStatusRep && prepareToPutStatusRep->srmStatusOfPutRequestResponse && prepareToPutStatusRep->srmStatusOfPutRequestResponse->arrayOfFileStatuses
+        && prepareToPutStatusRep->srmStatusOfPutRequestResponse->arrayOfFileStatuses->__sizestatusArray > 0
+        && prepareToPutStatusRep->srmStatusOfPutRequestResponse->arrayOfFileStatuses->statusArray){
+        struct srm2__TPutRequestFileStatus* status= *prepareToPutStatusRep->srmStatusOfPutRequestResponse->arrayOfFileStatuses->statusArray;
+        if(status && status->estimatedWaitTime){
+            return *status->estimatedWaitTime;
+        }
+    }
+    return -1;
+}
 
 
 int srmv2_status_of_put_request_async_internal(struct srm_context *context,
@@ -53,7 +64,7 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 			srm_soap_free(soap);
 			return -1;
 		}
-		set_estimated_wait_time(internal_context, srep.srmStatusOfPutRequestResponse->remainingTotalRequestTime);
+        set_estimated_wait_time(internal_context, srmv2_put_status_estimated_wait_time(&srep));
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -103,6 +114,18 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 	return ret;
 }
 
+
+int srmv2_put_estimated_wait_time(struct srm2__srmPrepareToPutResponse_ *prepareToPutRep){
+    if(prepareToPutRep && prepareToPutRep->srmPrepareToPutResponse && prepareToPutRep->srmPrepareToPutResponse->arrayOfFileStatuses
+            && prepareToPutRep->srmPrepareToPutResponse->arrayOfFileStatuses->__sizestatusArray > 0
+            && prepareToPutRep->srmPrepareToPutResponse->arrayOfFileStatuses->statusArray){
+       struct srm2__TPutRequestFileStatus * status = *prepareToPutRep->srmPrepareToPutResponse->arrayOfFileStatuses->statusArray;
+       if(status && status->estimatedWaitTime){
+           return *status->estimatedWaitTime;
+       }
+    }
+    return -1;
+}
 
 
 int srmv2_prepare_to_put_async_internal(struct srm_context *context,
@@ -255,7 +278,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			srm_soap_free(soap);
 			return -1;
 		}
-		set_estimated_wait_time(internal_context, rep.srmPrepareToPutResponse->remainingTotalRequestTime);
+        set_estimated_wait_time(internal_context, srmv2_put_estimated_wait_time(&rep));
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -321,7 +344,18 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	return ret;
 }
 
-
+int srmv2_get_estimated_wait_time(struct srm2__srmPrepareToGetResponse_ *prepareTogetResp){
+    if(prepareTogetResp && prepareTogetResp->srmPrepareToGetResponse
+       && prepareTogetResp->srmPrepareToGetResponse->arrayOfFileStatuses &&
+       prepareTogetResp->srmPrepareToGetResponse->arrayOfFileStatuses->statusArray > 0
+       && prepareTogetResp->srmPrepareToGetResponse->arrayOfFileStatuses->statusArray){
+       struct srm2__TGetRequestFileStatus* status=  *prepareTogetResp->srmPrepareToGetResponse->arrayOfFileStatuses->statusArray;
+       if(status && status->estimatedWaitTime ){
+           return *status->estimatedWaitTime ;
+       }
+    }
+    return -1;
+}
 
 int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 		struct srm_preparetoget_input *input,
@@ -433,7 +467,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			srm_soap_free(soap);
 			return -1;
 		}
-		set_estimated_wait_time(internal_context, rep.srmPrepareToGetResponse->remainingTotalRequestTime);
+        set_estimated_wait_time(internal_context, srmv2_get_estimated_wait_time(&rep));
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -499,6 +533,20 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	return ret;
 }
 
+
+int srmv2_get_status_estimated_wait_time(struct srm2__srmStatusOfGetRequestResponse_ *prepareTogetRespstatus){
+    if(prepareTogetRespstatus && prepareTogetRespstatus->srmStatusOfGetRequestResponse
+            && prepareTogetRespstatus->srmStatusOfGetRequestResponse->arrayOfFileStatuses
+            && prepareTogetRespstatus->srmStatusOfGetRequestResponse->arrayOfFileStatuses->__sizestatusArray > 0
+            && prepareTogetRespstatus->srmStatusOfGetRequestResponse->arrayOfFileStatuses->statusArray){
+        struct srm2__TGetRequestFileStatus* status = *prepareTogetRespstatus->srmStatusOfGetRequestResponse->arrayOfFileStatuses->statusArray;
+        if(status && status->estimatedWaitTime)
+            return *status->estimatedWaitTime;
+    }
+    return -1;
+}
+
+
 int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 		struct srm_preparetoget_input *input,
 		struct srm_preparetoget_output *output,
@@ -529,7 +577,7 @@ int srmv2_status_of_get_request_async_internal(struct srm_context *context,
 			srm_soap_free(soap);
 			return -1;
 		}
-		set_estimated_wait_time(internal_context, srep.srmStatusOfGetRequestResponse->remainingTotalRequestTime);
+        set_estimated_wait_time(internal_context, srmv2_get_status_estimated_wait_time(&srep));
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 
@@ -739,6 +787,20 @@ int srmv2_release_files(struct srm_context *context,
 }
 
 
+int srmv2_bringonline_estimated_wait_time(struct srm2__srmBringOnlineResponse_ *bringOnlineRep){
+    if( bringOnlineRep && bringOnlineRep->srmBringOnlineResponse && bringOnlineRep->srmBringOnlineResponse->arrayOfFileStatuses
+            && bringOnlineRep->srmBringOnlineResponse->arrayOfFileStatuses->__sizestatusArray > 0
+            && bringOnlineRep->srmBringOnlineResponse->arrayOfFileStatuses->statusArray){
+        struct  srm2__TBringOnlineRequestFileStatus* status =  *bringOnlineRep->srmBringOnlineResponse->arrayOfFileStatuses->statusArray;
+        if(status && status->estimatedWaitTime){
+            return *status->estimatedWaitTime;
+        }
+    }
+    return -1;
+}
+
+
+
 int srmv2_bring_online_async_internal (struct srm_context *context,
 		struct srm_bringonline_input *input,
 		struct srm_bringonline_output *output,
@@ -839,7 +901,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			return -1;
 		}
 
-		set_estimated_wait_time(internal_context, rep.srmBringOnlineResponse->remainingTotalRequestTime);
+        set_estimated_wait_time(internal_context, srmv2_bringonline_estimated_wait_time(&rep));
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus );
 
@@ -899,6 +961,22 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	srm_soap_free(soap);
 	return ret;
 }
+
+
+
+int srmv2_bringonline_status_estimated_wait_time(struct srm2__srmStatusOfBringOnlineRequestResponse_ *bringOnlineStatusRep){
+    if( bringOnlineStatusRep && bringOnlineStatusRep->srmStatusOfBringOnlineRequestResponse && bringOnlineStatusRep->srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses
+         && bringOnlineStatusRep->srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses->__sizestatusArray > 0
+         && bringOnlineStatusRep->srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses->statusArray){
+        struct srm2__TBringOnlineRequestFileStatus* status = *bringOnlineStatusRep->srmStatusOfBringOnlineRequestResponse->arrayOfFileStatuses->statusArray;
+        if(status && status->estimatedWaitTime){
+            return *status->estimatedWaitTime;
+        }
+    }
+    return -1;
+}
+
+
 int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 		struct srm_bringonline_input *input,
 		struct srm_bringonline_output *output,
@@ -931,7 +1009,7 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 			srm_soap_free(soap);
 			return -1;
 		}
-		set_estimated_wait_time(internal_context, srep.srmStatusOfBringOnlineRequestResponse->remainingTotalRequestTime);
+        set_estimated_wait_time(internal_context, srmv2_bringonline_status_estimated_wait_time(&srep));
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
 

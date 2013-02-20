@@ -116,7 +116,7 @@ int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
 		struct srm_filepermission **permissions,
 		struct srm2__ArrayOfTPermissionReturn *repperm);
 
-void set_estimated_wait_time(struct srm_internal_context *internal_context, int *time);
+void set_estimated_wait_time(struct srm_internal_context *internal_context, int time);
 
 int wait_for_new_attempt_min_max_ng(srm_context_t context, struct srm_internal_context *internal_context);
 

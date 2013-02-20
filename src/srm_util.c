@@ -127,9 +127,10 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
 }
 
 
-void set_estimated_wait_time(struct srm_internal_context *internal_context, int* my_time)
+void set_estimated_wait_time(struct srm_internal_context *internal_context, int my_time)
 {
-    internal_context->estimated_wait_time = (my_time)?(*my_time):-1;
+    // safety check on the serve value, if > relative_timeout -> fallback on eponential backoff logic
+    internal_context->estimated_wait_time = (my_time > 0 && my_time < internal_context->relative_timeout)?my_time:-1;
 }
 
 void srm_soap_init(struct soap *soap)
