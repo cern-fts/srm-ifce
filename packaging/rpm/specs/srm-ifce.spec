@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.15.0
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
