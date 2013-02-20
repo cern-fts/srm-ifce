@@ -161,10 +161,11 @@ struct srm_internal_context
 {
 	srm_call_status 			current_status;
 	time_t 						end_time;
+    time_t                      relative_timeout;
     struct timespec             end_time_spec;
     struct timespec             current_waittime_spec;
 	int 						attempt;
-	int							estimated_wait_time; //remainingTotalRequestTime in srm documentation
+    int							estimated_wait_time;
     unsigned int                random_seed;
 };
 

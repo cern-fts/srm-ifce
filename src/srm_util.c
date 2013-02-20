@@ -108,14 +108,17 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
     clock_gettime(CLOCK_MONOTONIC, &internal_context->end_time_spec);
     if (context->timeout > 0)
 	{
-		internal_context->end_time = (time(NULL) + context->timeout);
-        internal_context->end_time_spec.tv_sec+= context->timeout;
+        internal_context->relative_timeout = context->timeout;
+        internal_context->end_time = (time(NULL) + internal_context->relative_timeout);
+        internal_context->end_time_spec.tv_sec+= internal_context->relative_timeout;
     }else{
-        internal_context->end_time = (time(NULL) + 60);
-        internal_context->end_time_spec.tv_sec+= context->timeout;
+        internal_context->relative_timeout = 180;
+        internal_context->end_time = (time(NULL) + internal_context->relative_timeout);
+        internal_context->end_time_spec.tv_sec+= internal_context->relative_timeout;
     }
 	internal_context->estimated_wait_time = -1;
 	internal_context->attempt = 1;
+
     if(context->ext){
         timespec_add(&(internal_context->current_waittime_spec), &(context->ext->min_waittime), &(internal_context->current_waittime_spec));
     }
@@ -124,15 +127,9 @@ void back_off_logic_init(struct srm_context *context,struct srm_internal_context
 }
 
 
-void set_estimated_wait_time(struct srm_internal_context *internal_context, int *my_time)
+void set_estimated_wait_time(struct srm_internal_context *internal_context, int* my_time)
 {
-    if (my_time == NULL)
-	{
-		internal_context->estimated_wait_time = -1;
-	}else
-	{
-        internal_context->estimated_wait_time = *my_time;
-	}
+    internal_context->estimated_wait_time = (my_time)?(*my_time):-1;
 }
 
 void srm_soap_init(struct soap *soap)
