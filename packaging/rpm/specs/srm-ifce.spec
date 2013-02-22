@@ -1,6 +1,6 @@
 Name:		srm-ifce
-Version:	1.15.0
-Release:	4%{?dist}
+Version:	1.15.1
+Release:	0%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -16,7 +16,7 @@ BuildRequires:	globus-ftp-client-devel
 BuildRequires:	globus-gss-assist-devel
 
 %description
-srm-ifce is a client side implementation of the SRMv1 and SRMv2 specification 
+srm-ifce is a client side implementation of the SRMv2 specification
 for GFAL1/2 and FTS. SRM means Storage Resource Manager Interface, it is a 
 specification of a SOAP interface providing a generic way to manage 
 distributed storage systems.
@@ -67,6 +67,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Fri Feb 22 2013 Adrien Devresse <adevress at cern.ch> - 1.15.1-0
+ - fix an estimatedWaitTime problem with the backoff logic
+ - introduce srm session reuse
+
+
 * Tue Jan 08 2013 Adrien Devresse <adevress at cern.ch> - 1.14.0-1
 - correct two timeout bug LCGUTIL-78 and LCGUTIL-82
 
