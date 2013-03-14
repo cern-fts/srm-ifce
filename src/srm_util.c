@@ -165,8 +165,9 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     if (c && c->ext && c->ext->keep_alive) {
         soap_handle = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
         soap_handle->bind_flags |= SO_REUSEADDR;
-        soap_handle->max_keep_alive = 100;
+        soap_handle->max_keep_alive = 50;
         soap_handle->accept_timeout = 0;
+	soap_handle->tcp_keep_alive = 1;
         soap_handle->socket_flags = MSG_NOSIGNAL;
     }
     else {
