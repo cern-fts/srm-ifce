@@ -165,19 +165,18 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     if (c && c->ext && c->ext->keep_alive) {
         soap_handle = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
         soap_handle->bind_flags |= SO_REUSEADDR;
-        soap_handle->max_keep_alive = 10;
+        soap_handle->max_keep_alive = 100;
         soap_handle->accept_timeout = 0;
         soap_handle->socket_flags = MSG_NOSIGNAL;
     }
     else {
         soap_handle = soap_new();
     }
-
-    soap_init (soap_handle);
+   
     soap_handle->namespaces = namespaces_srmv2;
 
     #ifdef GFAL_SECURE
-    flags = CGSI_OPT_DISABLE_NAME_CHECK;
+    flags = CGSI_OPT_DISABLE_NAME_CHECK | CGSI_OPT_KEEP_ALIVE;
     soap_register_plugin_arg (soap_handle, client_cgsi_plugin, &flags);
     #endif
 

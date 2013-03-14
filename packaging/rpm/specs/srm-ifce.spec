@@ -1,5 +1,5 @@
 Name:		srm-ifce
-Version:	1.15.1
+Version:	1.15.2
 Release:	0%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Thu Mar 14 2013 Michail Salichos <msalicho at cern.ch> - 1.15.2-0
+ - avoid double initialization when session reuse is enabled
+
 * Fri Feb 22 2013 Adrien Devresse <adevress at cern.ch> - 1.15.1-0
  - fix an estimatedWaitTime problem with the backoff logic
  - introduce srm session reuse
