@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.15.2
-Release:	0%{?dist}
+Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Wed Mar 20 2013 adevress at cern.ch - 1.15.2-1
+ - EMI lcgutil 1.15.0 release
+ 
 * Thu Mar 14 2013 Michail Salichos <msalicho at cern.ch> - 1.15.2-0
  - avoid double initialization when session reuse is enabled
 
