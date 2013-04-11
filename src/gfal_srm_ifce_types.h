@@ -19,7 +19,7 @@
 #ifndef _SRM_TYPES_H
 #define _SRM_TYPES_H
 
-
+#include <errno.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -41,6 +41,10 @@
 
 
 #define SRM_SIZE_MARGIN          1048576     // 1MB
+
+#ifndef ECOMM
+#define ECOMM EIO
+#endif
 
 typedef struct srm_context* srm_context_t;
 
