@@ -167,6 +167,10 @@ typedef int (*soap_call_srm2__srmPurgeFromSpace_fv)(
     struct srm2__srmPurgeFromSpaceRequest *,
     struct srm2__srmPurgeFromSpaceResponse_ *);
 
+typedef int (*soap_call_srm2__srmMv_fv)(
+	struct soap *, const char*, const char*,
+	struct srm2__srmMvRequest*,
+	struct srm2__srmMvResponse_*);
 
 
 typedef unsigned int (*sleep_fv)(
@@ -201,6 +205,8 @@ typedef struct misc_callers {
 	soap_call_srm2__srmRm_fv					call_srm2__srmRm;
 	soap_call_srm2__srmRmdir_fv					call_srm2__srmRmdir;
 	soap_call_srm2__srmMkdir_fv					call_srm2__srmMkdir;
+	soap_call_srm2__srmMv_fv                    call_srm2__srmMv;
+
 	sleep_fv									call_sleep;
     int (*call_usleep)(useconds_t usec);
 } callers_t;

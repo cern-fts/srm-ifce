@@ -55,4 +55,6 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 
 int srmv2_check_srm_root(const char* surl);
 
+int srmv2_mv(struct srm_context *context, struct srm_mv_input *input);
+
 #endif

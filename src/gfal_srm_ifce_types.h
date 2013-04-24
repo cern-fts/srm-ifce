@@ -249,6 +249,12 @@ struct srm_mkdir_input
 	char 	*dir_name; // directory surl
 };
 
+struct srm_mv_input
+{
+    char    *from;
+    char    *to;
+};
+
 struct srm_preparetoget_input
 {
 	int nbfiles; // number of surls in the array

@@ -519,6 +519,41 @@ CLEANUP_AND_RETURN:
     return ret;
 }
 
+int srmv2_mv(struct srm_context *context, struct srm_mv_input *input)
+{
+    struct srm2__srmMvRequest request;
+    struct srm2__srmMvResponse_ response;
+    struct soap *soap;
+    const char srmfunc[] = "Mv";
+    int ret;
+
+    request.authorizationID = NULL;
+    request.fromSURL = input->from;
+    request.toSURL = input->to;
+    request.storageSystemInfo = NULL;
+
+    memset(&response, 0, sizeof(response));
+
+    soap = srm_soap_init_context_new(context);
+    ret = call_function.call_srm2__srmMv(soap, context->srm_endpoint, srmfunc,
+                                         &request, &response);
+
+    if (ret) {
+        errno = srm_soap_call_err(context, soap, srmfunc);
+        srm_soap_free(soap);
+        return -1;
+    }
+
+    if (response.srmMvResponse->returnStatus == NULL ||
+        statuscode2errno(response.srmMvResponse->returnStatus->statusCode) != 0) {
+        errno = srm_call_err(context, response.srmMvResponse->returnStatus, srmfunc);
+    }
+
+    srm_soap_free(soap);
+
+    return (errno)?-1:0;
+}
+
 int srmv2_extend_file_lifetime(struct srm_context *context,
 		struct srm_extendfilelifetime_input *input,
 		struct srm_extendfilelifetime_output *output)

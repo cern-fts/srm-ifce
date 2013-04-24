@@ -94,6 +94,8 @@ int srm_rmdir(struct srm_context *context,
 int srm_mkdir(struct srm_context *context,
 		struct srm_mkdir_input *input);
 
+int srm_mv(struct srm_context *context, struct srm_mv_input *input);
+
 int srm_put_done(struct srm_context *context,
 		struct srm_putdone_input *input, struct srmv2_filestatus **statuses);
 
