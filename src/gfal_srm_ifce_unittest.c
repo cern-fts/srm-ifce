@@ -28,6 +28,7 @@
 #include "srm_soap.h"
 
 #include "gfal_srm_ifce_unittest.h"
+#include "srmv2_data_transfer_functions.h"
 
 char test_dir[] = "/test/1/2/3/4";
 char* fixture_test_strings[3]= { "fixture_test_string1","fixture_test_string2",NULL};
@@ -246,7 +247,6 @@ START_TEST (test_srmv2_abort_request)
 {
 	const char *token = "testtoken";
 	struct srm_context context;
-	struct srm2__TReturnStatus retstatus;
 	srm_call_status result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -260,22 +260,22 @@ START_TEST (test_srmv2_abort_request)
 				   "Expected Failure 1!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test2;
-	result = srmv2_abort_request(&context,token);
+	result = srmv2_abort_request(&context, (char*)token);
 	fail_if ((result  != -1),
 				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test3;
-	result = srmv2_abort_request(&context,token);
+	result = srmv2_abort_request(&context, (char*)token);
 	fail_if ((result  != -1),
 				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test4;
-	result = srmv2_abort_request(&context,token);
+	result = srmv2_abort_request(&context, (char*)token);
 	fail_if ((result  != -1),
 				   "Expected Failure!");
 
 	call_function.call_srm2__srmAbortRequest = soap_call_srm2__abort_request_test5;
-	result = srmv2_abort_request(&context,token);
+	result = srmv2_abort_request(&context, (char*)token);
 	fail_if ((result  != 0),
 				   "Expected Success!");
 }
@@ -316,7 +316,6 @@ int  soap_call_srm2__srmRmDir_test3(struct soap *soap, const char *soap_endpoint
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_rmdir)
 {
-	struct srmv2_filestatus *filestatus;
 	struct srm_rmdir_input input;
 	struct srm_rmdir_output output;
 	struct srm_context context;
@@ -383,7 +382,6 @@ int  soap_call_srm2__srmRm_test2(struct soap *soap, const char *soap_endpoint, c
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_rm)
 {
-	struct srmv2_filestatus *filestatus;
 	struct srm_rm_input input;
 	struct srm_rm_output output;
 	struct srm_context context;
@@ -952,11 +950,9 @@ START_TEST (test_srmv2_bring_online_async)
 {
 	struct srm_bringonline_input input;
 	struct srm_bringonline_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
+	struct srmv2_pinfilestatus filestatus;
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
@@ -1013,7 +1009,7 @@ START_TEST (test_srmv2_bring_online_async)
 					"Expected Queued!");
 
 
-	output.filestatuses= filestatus;
+	output.filestatuses = &filestatus;
 	call_function.call_srm2__srmBringOnline = soap_call_srm2__srmBringOnline_test7;
 	result = srmv2_bring_online_async_internal(&context,&input,&output,&internal_context);
 	srm_srm2__TReturnStatus_delete(output.retstatus);
@@ -1099,11 +1095,9 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 	int i;
 	struct srm_bringonline_input input;
 	struct srm_bringonline_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
+	struct srmv2_pinfilestatus filestatus;
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
@@ -1151,7 +1145,7 @@ START_TEST (test_srmv2_status_of_bring_online_async)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= filestatus;
+	output.filestatuses= &filestatus;
 	call_function.call_srm2__srmStatusOfBringOnlineRequest = soap_call_srm2__srmStatusOfBringOnline_test4;
 	result = srmv2_status_of_bring_online_async_internal(&context,&input,&output,&internal_context);
 	srm_srm2__TReturnStatus_delete(output.retstatus);
@@ -1264,11 +1258,9 @@ START_TEST (test_srmv2_prepare_to_get_async)
 {
 	struct srm_preparetoget_input input;
 	struct srm_preparetoget_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
+	struct srmv2_pinfilestatus filestatus;
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
@@ -1327,7 +1319,7 @@ START_TEST (test_srmv2_prepare_to_get_async)
 					"Expected Queued!");
 
 
-	output.filestatuses= filestatus;
+	output.filestatuses = &filestatus;
 	call_function.call_srm2__srmPrepareToGet = soap_call_srm2__srmPrepareToGet_test7;
 	result = srmv2_prepare_to_get_async_internal(&context,&input,&output,&internal_context);
 	srm_srm2__TReturnStatus_delete(output.retstatus);
@@ -1412,11 +1404,9 @@ START_TEST (test_srmv2_status_of_get_request_async)
 	int i;
 	struct srm_preparetoget_input input;
 	struct srm_preparetoget_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
+	struct srmv2_pinfilestatus filestatus;
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
@@ -1466,7 +1456,7 @@ START_TEST (test_srmv2_status_of_get_request_async)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= filestatus;
+	output.filestatuses= &filestatus;
 	call_function.call_srm2__srmStatusOfGetRequest = soap_call_srm2__srmStatusOfGet_test4;
 	result = srmv2_status_of_get_request_async_internal(&context,&input,&output,&internal_context);
 	fail_if ((internal_context.current_status  != srm_call_status_SUCCESS) || (result  == -1),
@@ -1579,12 +1569,9 @@ START_TEST (test_srmv2_prepare_to_put_async)
 {
 	struct srm_preparetoput_input input;
 	struct srm_preparetoput_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
 	struct srm_context context;
 	SRM_LONG64 filesizes_test[] = { 1024 };
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
@@ -1736,11 +1723,9 @@ START_TEST (test_srmv2_status_of_put_request_async)
 	int i;
 	struct srm_preparetoput_input input;
 	struct srm_preparetoput_output output;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
+	struct srmv2_pinfilestatus filestatus;
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_protocols[] = {"protocol1","protocol2",NULL};
 	int result;
@@ -1789,7 +1774,7 @@ START_TEST (test_srmv2_status_of_put_request_async)
 
 	internal_context.attempt = 1;
 	internal_context.end_time = time(NULL)+10000;
-	output.filestatuses= filestatus;
+	output.filestatuses = &filestatus;
 	call_function.call_srm2__srmStatusOfPutRequest = soap_call_srm2__srmStatusOfPut_test4;
 	result = srmv2_status_of_put_request_async_internal(&context,&input,&output,&internal_context);
 	srm_srm2__TReturnStatus_delete(output.retstatus);
@@ -1875,15 +1860,10 @@ int  soap_call_srm2__srmGetSpaceMetaData_test5(struct soap *soap, const char *so
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_getspacemd)
 {
-	int i;
 	struct srm_getspacemd_input input;
 	struct srm_spacemd *spaces;
-	struct srmv2_pinfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
 	struct srm_context context;
 
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	char *test_tokens1[] = {"token1",NULL};
 	char *test_tokens2[] = {"token1","token2",NULL};
 	int result;
@@ -2018,15 +1998,10 @@ int  soap_call_srm2__srmGetSpaceTokens_test6(struct soap *soap, const char *soap
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_getspacetokens)
 {
-	int i;
 	struct srm_getspacetokens_input input;
 	struct srm_getspacetokens_output output;
 	struct srm_context context;
 
-	struct srm2__TReturnStatus retstatus;
-	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
-	char *test_tokens1[] = {"token1",NULL};
-	char *test_tokens2[] = {"token1","token2",NULL};
 	int result;
 
 	call_function.call_sleep = mock_sleep; // set mock sleep function
@@ -2120,7 +2095,6 @@ int  soap_call_srm2__srmPing_test4(struct soap *soap, const char *soap_endpoint,
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_ping)
 {
-	int i;
 	struct srm_ping_output output;
 	struct srm_context context;
 	int result;
@@ -2216,7 +2190,6 @@ int  soap_call_srm2__srmSetPermission_test6(struct soap *soap, const char *soap_
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_set_permission)
 {
-	int i;
 	struct srm_setpermission_input input;
 	struct srm_permission user_perm;
 	struct srm_context context;
@@ -2354,7 +2327,6 @@ int  soap_call_srm2__srmGetPermission_test6(struct soap *soap, const char *soap_
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_get_permission)
 {
-	int i;
 	struct srm_getpermission_input input;
 	struct srm_getpermission_output output;
 	struct srm_context context;
@@ -2499,7 +2471,6 @@ int  soap_call_srm2__srmCheckPermission_test6(struct soap *soap, const char *soa
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_check_permission)
 {
-	int i;
 	struct srm_checkpermission_input input;
 	struct srmv2_filestatus *status;
 	struct srm_context context;
@@ -2628,10 +2599,8 @@ int  soap_call_srm2__srmExtendFileLifeTime_test5(struct soap *soap, const char *
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srmv2_extend_file_lifetime)
 {
-	int i;
 	struct srm_extendfilelifetime_input input;
 	struct srm_extendfilelifetime_output output;
-	struct srmv2_pinfilestatus *status;
 	struct srm_context context;
 	char *test_surls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	int result;
@@ -2864,7 +2833,6 @@ START_TEST (test_srmv2_check_srm_root)
     fail_unless(0 == srmv2_check_srm_root(bad_url_4));
     fail_unless(0 == srmv2_check_srm_root(bad_url_5));
 
-    return NULL;
 }
 END_TEST
 
@@ -2934,7 +2902,6 @@ Suite * test_suite (void)
 int main(void)
 {
 	int number_failed;
-	int i;
 
 	Suite *s = test_suite ();
 	SRunner *sr = srunner_create (s);

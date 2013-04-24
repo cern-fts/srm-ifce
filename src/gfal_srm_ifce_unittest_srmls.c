@@ -18,6 +18,8 @@
  */
 
 #include "gfal_srm_ifce_unittest.h"
+#include "srm_util.h"
+#include "srmv2_directory_functions.h"
 
 START_TEST (test_wait_for_new_attempt)
 {
@@ -157,11 +159,8 @@ int  soap_call_srm2__srmLs_test7(struct soap *soap, const char *soap_endpoint, c
 START_TEST (test_srmv2_ls_async)
 {
 	struct srm_ls_output output;
-	struct srm_mdfilestatus *filestatus;
-	const char *srmfunc = "testfunc";
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	struct srm_ls_input input;
 	char *test_surls_ls[] = {"srm://lxbra1910.cern.ch:8446/srm/managerv2?SFN=/dpm/cern.ch/home/dteam/"};
 	int result;
@@ -284,13 +283,10 @@ int  soap_call_srm2__srmStatusOfLs_test4(struct soap *soap, const char *soap_end
 START_TEST (test_srmv2_status_of_ls_request)
 {
 	int i;
-	struct srm_mdfilestatus *filestatus;
 	struct srm_ls_input input;
 	struct srm_ls_output output;
-	const char *srmfunc = "testfunc";
 	struct srm_context context;
 	struct srm_internal_context internal_context;
-	struct srm2__TReturnStatus retstatus;
 	int result;
 
 
@@ -354,6 +350,7 @@ void gfal_unittest_srmls_test_suite (Suite *s)
   tcase_add_checked_fixture (tc_case_1, NULL,NULL);
   tcase_add_test (tc_case_1, test_srmv2_ls_async);
   tcase_add_test (tc_case_1, test_srmv2_status_of_ls_request);
+  tcase_add_test (tc_case_1, test_wait_for_new_attempt);
   suite_add_tcase (s, tc_case_1);
 }
 

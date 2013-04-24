@@ -24,6 +24,7 @@
 #include <assert.h>
 #include "gfal_srm_ifce_types.h"
 #include "gfal_srm_ifce.h"
+#include "srmv2_space_management_functions.h"
 
 
 #define MAX_PATH_LEN 1024
@@ -127,17 +128,8 @@ int DelSurl(int nbfiles,char **surls)
 }
 int MkDir(char *directory)
 {
-	char *command;
-	int a;
 	struct srm_context context;
-	struct srm_rm_input input_rm;
-	struct srm_rm_output output_rm;
-	struct srm_rmdir_input input_rmdir;
-	struct srm_rmdir_output output_rmdir;
 	struct srm_mkdir_input input_mkdir;
-	int j;
-
-	char *test_surls_rm[] = {test_file1};
 
 
 	char *test_surl_mkdir;
@@ -158,7 +150,6 @@ int MkDir(char *directory)
 //////////////////////////////////////////////////////////////////
 START_TEST (test_directory_functions)
 {
-	char *command;
 	int a;
 	struct srm_context context;
 	struct srm_rm_input input_rm;
@@ -245,7 +236,7 @@ END_TEST
 //////////////////////////////////////////////////////////////////
 START_TEST (test_data_transfer_functions)
 {
-	int a,b,c;
+	int a,b;
 	char *test_surls_get[] = {test_file1};
 	char *test_surls_put[] = {test_file2};
 	char *test_surls_unexisting[] = {test_unexisting};
@@ -256,8 +247,7 @@ START_TEST (test_data_transfer_functions)
 	struct srm_preparetoget_input input_get;
 	struct srm_preparetoget_output output_get;
 	struct srm_preparetoput_input input_put;
-	struct srm_preparetoput_output output_put,output_put2,output_put3;
-	struct srmv2_pinfilestatus *filestatuses;
+	struct srm_preparetoput_output output_put,output_put2;
 	SRM_LONG64 filesizes[1] ={ 1024 };
 
 	srm_context_init(&context, test_srm_endpoint, NULL, 0, 0);
@@ -365,9 +355,6 @@ END_TEST
 //////////////////////////////////////////////////////////////////
 START_TEST (test_srm_space_management)
 {
-	char *test_surls[] = {test_file1};
-
-
 	struct srm_getspacemd_input input_metadata;
 	struct srm_spacemd *spaces;
 
@@ -710,7 +697,6 @@ int TestPutDone(char** surls,char *token)
 }
 int TestPurgeFromSpace(char** surls,char *token)
 {
-	struct srmv2_filestatus *filestatuses;
 	int c;
 	struct srm_purgefromspace_input input_purge;
 	struct srm_purgefromspace_output output_purge;
@@ -732,7 +718,6 @@ int TestPurgeFromSpace(char** surls,char *token)
 
 int TestAbortRequest(char *token)
 {
-	struct srmv2_pinfilestatus *filestatuses;
 	int c;
 	struct srm_context context;
 
