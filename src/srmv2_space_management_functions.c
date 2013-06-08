@@ -309,6 +309,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 		srm_errmsg (context,"[SRM][srmv2_getbestspacetoken][EINVAL] %s: no associated space token with enough free space",
 				input->spacetokendesc);
 		errno = EINVAL;
+		srm_spacemd_free (getspacetoken_output.nbtokens, spacemd);
 		return (NULL);
 	}
 
