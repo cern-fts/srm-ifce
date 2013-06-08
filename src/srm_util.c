@@ -255,6 +255,7 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 		vsnprintf (context->errbuf, context->errbufsz, actual_format, ap);
 
 	free (actual_format);
+	va_end(ap);
 }
 int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
 {
