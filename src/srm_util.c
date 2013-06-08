@@ -247,7 +247,10 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 
 	va_start (ap, format);
      (void)asprintf (&actual_format, "%s\n", format);
-	if (actual_format == NULL) return;
+	if (actual_format == NULL){ 
+		va_end(ap);
+		return;
+	}
 
 	if (context->errbuf == NULL)
 		vfprintf (stderr, actual_format, ap);
