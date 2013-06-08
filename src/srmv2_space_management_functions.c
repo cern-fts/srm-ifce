@@ -290,6 +290,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 
 		free (getspacetoken_output.spacetokens);
 		errno = sav_errno;
+		srm_spacemd_free (getspacetoken_output.nbtokens, spacemd);		
 		return (NULL);
 	}
 
