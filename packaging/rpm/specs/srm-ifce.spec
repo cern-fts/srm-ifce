@@ -1,6 +1,6 @@
 Name:		srm-ifce
 Version:	1.15.3
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/RELEASE-NOTES
 
 %changelog
+* Mon Jun 10 2013 Michail Salichos <msalicho at cern.ch> - 1.15.3-3
+ - fixing memory leaks
+
 * Fri Apr 26 2013 Michail Salichos <msalicho at cern.ch> - 1.15.3-2
  - added srmmv implementation
 
