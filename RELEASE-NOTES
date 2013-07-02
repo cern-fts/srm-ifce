@@ -1,4 +1,11 @@
-Trunk
+
+* Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
+ - [LCGUTIL-90] - SRM-ifce : correct portability issue reported by Mattias 
+ - [LCGUTIL-178] - source-contains-unsafe-symlink
+ - [LCGUTIL-183] - SRM-ifce : big cleaning operation done by Michail from coverity scan 
+ - [LCGUTIL-184] - SRM-ifce : add srm-mv support for "rename" operation
+ - [LCGUTIL-185] - SRM-ifce : memory leaks correction
+ - [LCGUTIL-186] - Srm-ifce : new session re-use logic in srm-ifce
 
 
 * Tue Jan 08 2013 Adrien Devresse <adevress at cern.ch> - 1.14.0-1
