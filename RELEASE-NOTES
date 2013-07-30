@@ -1,3 +1,6 @@
+* Trunk :
+ - Enable IPv6 flag
+
 
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
  - [LCGUTIL-90] - SRM-ifce : correct portability issue reported by Mattias 

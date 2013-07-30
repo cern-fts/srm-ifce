@@ -15,6 +15,23 @@
 #   setting this enables search for gsoap libraries / headers in this location
 
 
+# ------------------------------------------------------
+# try pkg config search
+#
+# -----------------------------------------------------
+
+
+find_package(PkgConfig)
+pkg_check_modules(PC_GSOAP QUIET gsoap)
+
+IF(PC_GSOAP_FOUND)
+
+SET(GSOAP_LIBRARIES ${PC_GSOAP_LIBRARIES})
+SET(GSOAP_INCLUDE_DIR ${PC_GSOAP_INCLUDE_DIRS})
+SET(GSOAP_DEFINITIONS "${PC_GSOAP_CFLAGS} ${PC_GSOAP_CFLAGS_OTHER}")
+
+ELSE(PC_GSOAP_FOUND)
+
 # -----------------------------------------------------
 # GSOAP Libraries
 # -----------------------------------------------------
@@ -23,12 +40,6 @@ find_library(GSOAP_LIBRARIES
     HINTS ${GSOAP_LOCATION}/lib ${GSOAP_LOCATION}/lib64 
           ${GSOAP_LOCATION}/lib32
     DOC "The main gsoap library"
-)
-find_library(GSOAP_SSL_LIBRARIES
-    NAMES gsoapssl
-    HINTS ${GSOAP_LOCATION}/lib ${GSOAP_LOCATION}/lib64 
-          ${GSOAP_LOCATION}/lib32
-    DOC "The ssl gsoap library"
 )
 
 # -----------------------------------------------------
@@ -39,6 +50,23 @@ find_path(GSOAP_INCLUDE_DIR
     HINTS ${GSOAP_LOCATION} ${GSOAP_LOCATION}/include ${GSOAP_LOCATION}/include/*
     DOC "The gsoap include directory"
 )
+
+SET(GSOAP_DEFINITIONS "")
+
+ENDIF(PC_GSOAP_FOUND)
+
+# -----------------------------------------------------
+# GSOAP ssl Libraries
+# -----------------------------------------------------
+
+find_library(GSOAP_SSL_LIBRARIES
+    NAMES gsoapssl
+    HINTS ${GSOAP_LOCATION}/lib ${GSOAP_LOCATION}/lib64 
+          ${GSOAP_LOCATION}/lib32
+    DOC "The ssl gsoap library"
+)
+
+
 
 # -----------------------------------------------------
 # GSOAP Binaries
