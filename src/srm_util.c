@@ -200,9 +200,13 @@ void srm_soap_deinit(struct soap *soap)
 
 void srm_soap_free(struct soap *soap)
 {
+    const int srm_ifce_errno = errno;
 	soap_end (soap);
 	soap_done (soap);
 	soap_free(soap);
+    // override errno with srm-ifce specific value
+    // hack for globus openssl errno problems
+    errno = srm_ifce_errno;
 }
 
 
@@ -237,6 +241,22 @@ int statuscode2errno (int statuscode)
 		default:
 			return (EINVAL);
 	}
+}
+
+int statuscode_and_msg_to_errno(int statuscode, const char** err_tab_msg){
+    int err_code = statuscode2errno(statuscode);
+    if(err_code == EINVAL && err_tab_msg != NULL){
+        // search for string pattern
+        char** err_tab = (char**) err_tab_msg;
+        while(*err_tab != NULL){
+            // search for pattern EEXIST, LCGUTIL-203 bug
+            if( strstr(*err_tab,"exists, overwite is not allowed") != NULL)
+                err_code = EEXIST;
+
+            ++err_tab;
+        }
+    }
+    return err_code;
 }
 
 
@@ -296,7 +316,8 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 			retstatus->statusCode != SRM_USCOREDONE &&
 			retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
 	{
-		result_errno = statuscode2errno (retstatus->statusCode);
+        const char * tab_err_msg[] = { retstatus->explanation, NULL };
+        result_errno = statuscode_and_msg_to_errno(retstatus->statusCode, tab_err_msg);
 		if (retstatus->explanation && retstatus->explanation[0])
 		{
 			srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
