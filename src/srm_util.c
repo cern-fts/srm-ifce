@@ -206,9 +206,11 @@ void srm_soap_free(struct soap *soap)
 }
 
 
-const char * statuscode2errmsg (int statuscode)
+const char * statuscode2errmsg (unsigned int statuscode)
 {
-	return (srmv2_errmsg[statuscode]);
+    if(statuscode < (sizeof(srmv2_errmsg)/sizeof(char*)))
+        return (srmv2_errmsg[statuscode]);
+    return srmv2_errmsg[1];
 }
 
 int statuscode2errno (int statuscode)
@@ -236,6 +238,8 @@ int statuscode2errno (int statuscode)
 			return (EINVAL);
 	}
 }
+
+
 
 void srm_errmsg (struct srm_context *context, const char *format, ...)
 {
