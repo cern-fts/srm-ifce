@@ -1,6 +1,9 @@
+# unversionned doc dir F20 change https://fedoraproject.org/wiki/Changes/UnversionedDocdirs
+%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
+
 Name:		srm-ifce
 Version:	1.16.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -36,7 +39,7 @@ the srm-ifce.
 %setup -q
 
 %build
-%cmake -D DOC_INSTALL_DIR=%{_docdir}/%{name}-%{version} .
+%cmake -D DOC_INSTALL_DIR=%{_pkgdocdir} .
 make %{?_smp_mflags}
 
 %install
@@ -54,9 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
-%{_docdir}/%{name}-%{version}/LICENSE
-%{_docdir}/%{name}-%{version}/VERSION
-%{_docdir}/%{name}-%{version}/README
+%{_pkgdocdir}/LICENSE
+%{_pkgdocdir}/VERSION
+%{_pkgdocdir}/README
 
 %files devel
 %defattr (-,root,root)
@@ -64,7 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
-%{_docdir}/%{name}-%{version}/RELEASE-NOTES
+%{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
