@@ -2,8 +2,8 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.16.0
-Release:	2%{?dist}
+Version:	1.17.0
+Release:	0%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -70,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Tue Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0-0
+- Release srm-ifce 1.17.0
+
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
  - Release srm-ifce 1.16.0, first post-EMI release 
 
