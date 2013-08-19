@@ -1,5 +1,9 @@
-* Trunk :
- - Enable IPv6 flag
+* Mon Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0 :
+ - [LCGUTIL-198] - SRM-ifce : IPv6 flag enabled
+ - [LCGUTIL-203] - GFAL 2.0 : dCache production servers does not return the correct SRM error in case of file already exist.
+ - [LCGUTIL-204] - SRM-ifce : potential security issue allowing arbitrary RAM read
+ - [LCGUTIL-205] - SRM-ifce : globus openssl used indirectly by CGSI_GSOAP override errno values in some case by gsoap_free
+ - [LCGUTIL-206] - GFAL2, SRM-ifce, LCGUTIL, FTS 3.0 : Checksum request are invalid with Storm which answer with MD5 checksum instead of ADLER32
 
 
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
