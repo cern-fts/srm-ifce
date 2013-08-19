@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.17.0
+Version:	1.18.0
 Release:	0%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
