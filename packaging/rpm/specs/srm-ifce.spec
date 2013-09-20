@@ -3,7 +3,7 @@
 
 Name:		srm-ifce
 Version:	1.18.0
-Release:	0%{?dist}
+Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
@@ -70,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Fri Sep 20 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-1
+- Release srm-ifce 1.18.0
+
 * Tue Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0-0
 - Release srm-ifce 1.17.0
 

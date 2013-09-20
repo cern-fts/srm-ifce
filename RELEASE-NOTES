@@ -1,3 +1,6 @@
+* Fri Sep 20 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-1 :
+- support for mtime and atime st field
+
 * Mon Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0 :
  - [LCGUTIL-198] - SRM-ifce : IPv6 flag enabled
  - [LCGUTIL-203] - GFAL 2.0 : dCache production servers does not return the correct SRM error in case of file already exist.
