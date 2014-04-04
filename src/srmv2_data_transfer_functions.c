@@ -861,6 +861,8 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	req.desiredFileStorageType = &s_types[PERMANENT];
 	req.targetFileRetentionPolicyInfo = NULL;
 	req.deferredStartTime = NULL;
+	if (input->desiredpintime > 0)
+	    req.desiredLifeTime = &(input->desiredpintime);
 
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
 
