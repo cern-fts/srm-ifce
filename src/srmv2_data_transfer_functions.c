@@ -146,8 +146,8 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	SRM_LONG64 totalsize=0;
 
 
-	memset (&req, 0, sizeof(req));
-	memset (&rep, 0, sizeof(rep));
+	memset(&req, 0, sizeof(req));
+	memset(&rep, 0, sizeof(rep));
 	memset(output,0,sizeof(*output));
 
 	if ((req.arrayOfFileRequests =
@@ -155,9 +155,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			(req.arrayOfFileRequests->requestArray =
 			 soap_malloc (soap, input->nbfiles* sizeof(struct srm2__TPutFileRequest *))) == NULL ||
 			(req.transferParameters =
-			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
-			(req.targetSpaceToken =
-			 soap_malloc (soap, sizeof(char *))) == NULL) {
+			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL) {
 
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
@@ -382,9 +380,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 			(req.arrayOfFileRequests->requestArray =
 			 soap_malloc (soap, input->nbfiles * sizeof(struct srm2__TGetFileRequest *))) == NULL ||
 			(req.transferParameters =
-			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
-			(req.targetSpaceToken =
-			 soap_malloc (soap, sizeof(char *))) == NULL) {
+			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL) {
 
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
@@ -510,13 +506,13 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 				errno = 0;
 				internal_context->current_status = srm_call_status_SUCCESS;
                 if(rep.srmPrepareToGetResponse->requestToken != NULL){
-                    copy_string(&output->token,rep.srmPrepareToGetResponse->requestToken);
+                    ret =  copy_string(&output->token,rep.srmPrepareToGetResponse->requestToken);
                 }
-				ret = copy_pinfilestatuses_get(output->retstatus,
-											&output->filestatuses,
-											repfs,
-											srmfunc);
-
+                if (ret >= 0)
+                    ret = copy_pinfilestatuses_get(output->retstatus,
+                                                &output->filestatuses,
+                                                repfs,
+                                                srmfunc);
 			}
 			break;
         case srm_call_status_TIMEOUT: // add timeout management for backoff logic
@@ -827,9 +823,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 			(req.arrayOfFileRequests->requestArray =
 			 soap_malloc (soap, input->nbfiles * sizeof(struct srm2__TGetFileRequest *))) == NULL ||
 			(req.transferParameters =
-			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL ||
-			(req.targetSpaceToken =
-			 soap_malloc (soap, sizeof(char *))) == NULL) {
+			 soap_malloc (soap, sizeof(struct srm2__TTransferParameters))) == NULL) {
 
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
