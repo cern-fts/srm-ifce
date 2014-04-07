@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.18.0
+Version:	1.19.0
 Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -70,12 +70,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Mon Apr 07 2014 Alejandro Alvarez <aalvarez at cern.ch> - 1.19.0-1
+ - Release srm-ifce 1.19.0
+
 * Fri Sep 20 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-1
-- Release srm-ifce 1.18.0
+ - Release srm-ifce 1.18.0
 
 * Tue Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0-0
-- Release srm-ifce 1.17.0
-
+ - Release srm-ifce 1.17.0
+ 
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
  - Release srm-ifce 1.16.0, first post-EMI release 
 
