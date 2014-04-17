@@ -178,7 +178,6 @@ int srmv2_getspacetokens (struct srm_context *context,
 	const char srmfunc[] = "GetSpaceTokens";
 
 	if (input == NULL || 
-        input->spacetokendesc == NULL || 
         context->srm_endpoint == NULL || 
         output == NULL)
 	{
