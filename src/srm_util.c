@@ -393,7 +393,7 @@ int wait_for_new_attempt_min_max_ng(srm_context_t context, struct srm_internal_c
     if( timespec_cmp(&end_sleep_time, &(internal_context->end_time_spec), <) ){
         //printf(" I wil sleep %ld %ld", internal_context->current_waittime_spec.tv_sec, internal_context->current_waittime_spec.tv_nsec);
         while(timespec_cmp(&(current_time), &end_sleep_time, <)){ // go to sleep for the exact required time
-            call_function.call_usleep(1);
+            call_function.call_usleep(500000);
             clock_gettime(CLOCK_MONOTONIC, &current_time);
         }
 
