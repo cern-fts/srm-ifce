@@ -31,6 +31,8 @@ srm_context_extension_t srm_context_extension_new(){
 
 void srm_context_extension_free(srm_context_extension_t context){
     if(context){
+        g_free(context->ucert);
+        g_free(context->ukey);
         g_free(context);
     }
 }
@@ -92,4 +94,13 @@ void srm_context_init2(struct srm_context *context,char *srm_endpoint,char *errb
     srm_context_init(context, srm_endpoint, errbuf, errbufsz, verbose);
     context->ext = srm_context_extension_new();
     context->ext->keep_alive = keep_alive;
+}
+
+
+void srm_set_credentials(struct srm_context *context, const char *ucert, const char *ukey)
+{
+    if (context->ext == NULL)
+        context->ext = srm_context_extension_new();
+    context->ext->ucert = g_strdup(ucert);
+    context->ext->ukey = g_strdup(ukey);
 }

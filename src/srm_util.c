@@ -100,7 +100,7 @@ void srm_set_timeout_sendreceive (int value)
 
 
 
-void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context)
+void back_off_logic_init(struct srm_context *context, struct srm_internal_context *internal_context)
 {
     GFAL_SRM_IFCE_ASSERT(context);
     GFAL_SRM_IFCE_ASSERT(internal_context);
@@ -134,28 +134,6 @@ void set_estimated_wait_time(struct srm_internal_context *internal_context, int 
     internal_context->estimated_wait_time = (my_time > 0 && my_time < internal_context->relative_timeout)?my_time:-1;
 }
 
-void srm_soap_init(struct soap *soap)
-{
-	#ifdef GFAL_SECURE
-	int flags;
-	#endif
-	soap_init (soap);
-	soap->namespaces = namespaces_srmv2;
-
-	#ifdef GFAL_SECURE
-	flags = CGSI_OPT_DISABLE_NAME_CHECK;
-	soap_register_plugin_arg (soap, client_cgsi_plugin, &flags);
-	#endif
-
-	soap->send_timeout =  srm_get_timeout_sendreceive ();
-	soap->recv_timeout =  srm_get_timeout_sendreceive ();
-	soap->connect_timeout = srm_get_timeout_connect ();
-}
-
-struct soap * srm_soap_init_new()
-{
-    return srm_soap_init_context_new(NULL);
-}
 
 struct soap * srm_soap_init_context_new(struct srm_context* c){
     #ifdef GFAL_SECURE
@@ -167,7 +145,7 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
         soap_handle = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
         soap_handle->bind_flags |= SO_REUSEADDR;        
         soap_handle->accept_timeout = 0;
-	soap_handle->tcp_keep_alive = 1;
+        soap_handle->tcp_keep_alive = 1;
         soap_handle->socket_flags = MSG_NOSIGNAL;
     }
     else {
@@ -179,6 +157,13 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     #ifdef GFAL_SECURE
     flags = CGSI_OPT_DISABLE_NAME_CHECK | CGSI_OPT_KEEP_ALIVE;
     soap_register_plugin_arg (soap_handle, client_cgsi_plugin, &flags);
+    if (c->ext) {
+        if (cgsi_plugin_set_credentials(soap_handle, 0, c->ext->ucert, c->ext->ukey) != 0) {
+            soap_free(soap_handle);
+            srm_errmsg (c, "[SRM][srm_soap_init_context_new] could not load client credentials");
+            return NULL;
+        }
+    }
     #endif
 
     if(c){
@@ -193,11 +178,6 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     return soap_handle;
 }
 
-void srm_soap_deinit(struct soap *soap)
-{
-	soap_end (soap);
-	soap_done (soap);
-}
 
 void srm_soap_free(struct soap *soap)
 {
@@ -285,6 +265,7 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 	free (actual_format);
 	va_end(ap);
 }
+
 int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
 {
 	if (soap->fault != NULL && soap->fault->faultstring != NULL)
@@ -302,6 +283,7 @@ int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *
 	}
 	return ECOMM;
 }
+
 int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,
 		const char *srmfunc)
 {
@@ -340,6 +322,7 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 	}
 	return result_errno;
 }
+
 // return error status
 int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc)
 {
@@ -356,6 +339,7 @@ int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatu
 	}
 	return statuscode2errno (status->statusCode);
 }
+
 int srm_print_error_status_additional(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc,char *additional_info)
 {
 
