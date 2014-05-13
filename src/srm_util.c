@@ -157,7 +157,7 @@ struct soap * srm_soap_init_context_new(struct srm_context* c){
     #ifdef GFAL_SECURE
     flags = CGSI_OPT_DISABLE_NAME_CHECK | CGSI_OPT_KEEP_ALIVE;
     soap_register_plugin_arg (soap_handle, client_cgsi_plugin, &flags);
-    if (c->ext) {
+    if (c && c->ext) {
         if (cgsi_plugin_set_credentials(soap_handle, 0, c->ext->ucert, c->ext->ukey) != 0) {
             soap_free(soap_handle);
             srm_errmsg (c, "[SRM][srm_soap_init_context_new] could not load client credentials");
