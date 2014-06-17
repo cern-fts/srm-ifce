@@ -1111,12 +1111,14 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		if (repfs->pathDetailArray[i]->createdAtTime)
 		{
 			struct tm createdAtTime;
+			memset(&createdAtTime, 0, sizeof(createdAtTime));
 			strptime(repfs->pathDetailArray[i]->createdAtTime, "%Y-%m-%dT%T", &createdAtTime);
 			(*statuses)[i].stat.st_ctime = mktime(&createdAtTime);
 		}
 		if (repfs->pathDetailArray[i]->lastModificationTime)
 		{
 			struct tm modifiedTime;
+			memset(&modifiedTime, 0, sizeof(modifiedTime));
 			strptime(repfs->pathDetailArray[i]->lastModificationTime, "%Y-%m-%dT%T", &modifiedTime);
 			(*statuses)[i].stat.st_mtime = mktime(&modifiedTime);
 		}
