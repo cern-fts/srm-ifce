@@ -158,7 +158,7 @@ struct srm_context
     int                 timeout_conn;   // global timeout for SOAP connection
     int                 timeout_ops;    // global timeout for response on operation ( send/receive )
     srm_context_extension_t ext;
-    void*               reserved[24];   // reserved field for futur usage
+    void*               reserved[24];   // reserved field for future usage
 };
 
 struct srm_internal_context

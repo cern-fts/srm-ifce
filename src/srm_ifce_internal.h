@@ -48,6 +48,8 @@ struct srm_context_extension{
     int turl_timeout;
     // keep alive connections
     int keep_alive;
+    // user credentials
+    char *ucert, *ukey;
 };
 
 /* Normal assertion for srm-ifce */

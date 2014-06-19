@@ -32,7 +32,6 @@ srm_context_t srm_context_new(const char * srm_endpoint, char *errbuf,int errbuf
 
 srm_context_t srm_context_new2(const char * srm_endpoint, char *errbuf,int errbufsz,int verbose, int keep_alive);
 
-
 /**
   free resources used by a srm context
 */
@@ -45,6 +44,11 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
 
 void srm_context_init2(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose,
                        int keep_alive);
+
+/**
+ * set user credentials
+ */
+void srm_set_credentials(struct srm_context *context, const char *ucert, const char *ukey);
 
 /* srm_ls functions */
 void srm_ls_output_destroy(struct srm_ls_output *output);
