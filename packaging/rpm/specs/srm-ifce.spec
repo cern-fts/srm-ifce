@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.20.0
+Version:	1.20.1
 Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -13,10 +13,12 @@ Source0:	http://grid-deployment.web.cern.ch/grid-deployment/dms/lcgutil/tar/%{na
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	cmake
-BuildRequires:	CGSI-gSOAP-devel
+BuildRequires:	CGSI-gSOAP-devel >= 1.3.6
 BuildRequires:	glib2-devel
 BuildRequires:	globus-ftp-client-devel
 BuildRequires:	globus-gss-assist-devel
+
+Requires:  CGSI-gSOAP >= 1.3.6
 
 %description
 srm-ifce is a client side implementation of the SRMv2 specification
