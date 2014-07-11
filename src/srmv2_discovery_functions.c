@@ -27,31 +27,27 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 	const char srmfunc[] = "AbortRequest";
 	struct srm2__srmPingRequest req;
 	struct srm2__srmPingResponse_ rep;
-    struct soap* soap = srm_soap_init_context_new(context);
 	int result;
 
-	
+	srm_context_soap_init(context);
 
 	memset (&req, 0, sizeof(req));
 
-	result = call_function.call_srm2__srmPing (soap, context->srm_endpoint, srmfunc, &req, &rep);
+	result = call_function.call_srm2__srmPing (context->soap, context->srm_endpoint, srmfunc, &req, &rep);
 
 	if (result != 0)
 	{
 		// Soap call failure
-		errno = srm_soap_call_err(context,soap,srmfunc);
+		errno = srm_soap_call_err(context, srmfunc);
 	}else
 	{
 		if (rep.srmPingResponse == NULL ||
 				copy_string(&output->versioninfo,rep.srmPingResponse->versionInfo))
 		{
 			errno = EINVAL;
-			srm_soap_free(soap);
 			return (-1);
 		}
 	}
-
-	srm_soap_free(soap);
 
 	return result;
 }

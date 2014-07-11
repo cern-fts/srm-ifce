@@ -23,18 +23,18 @@ int srmv2_getspacemd (struct srm_context *context,
 		struct srm_getspacemd_input *input,struct srm_spacemd **spaces)
 {
 	int i;
-    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceMetaDataResponse_ tknrep;
 	struct srm2__srmGetSpaceMetaDataRequest tknreq;
 	struct srm2__TReturnStatus *tknrepstatp = NULL;
 	struct srm2__ArrayOfTMetaDataSpace *tknrepp;
 	const char srmfunc[] = "GetSpaceMetaData";
 
+	srm_context_soap_init(context);
+
 	if (input->nbtokens < 1 || input->spacetokens == NULL || context->srm_endpoint == NULL || spaces == NULL)
 	{
 		srm_errmsg (context, "[SRM][srmv2_getspacemd][EINVAL] Invalid arguments");
 		errno = EINVAL;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -42,43 +42,37 @@ int srmv2_getspacemd (struct srm_context *context,
 	{
 		srm_errmsg (context, "[SRM][srmv2_getspacemd][EINVAL] Invalid space token number");
 		errno = EINVAL;
-		srm_soap_free(soap);	
 		return (-1);
 	}
-
 
 	memset (&tknreq, 0, sizeof(tknreq));
 
 	if ((tknreq.arrayOfSpaceTokens =
-				soap_malloc (soap, input->nbtokens * sizeof(struct srm2__ArrayOfString))) == NULL)
+				soap_malloc (context->soap, input->nbtokens * sizeof(struct srm2__ArrayOfString))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
 	tknreq.arrayOfSpaceTokens->__sizestringArray = input->nbtokens;
 	tknreq.arrayOfSpaceTokens->stringArray = input->spacetokens;
 
-	if (call_function.call_srm2__srmGetSpaceMetaData(soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep) != 0)
+	if (call_function.call_srm2__srmGetSpaceMetaData(context->soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep) != 0)
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
 	if (tknrep.srmGetSpaceMetaDataResponse == NULL ||
 			(tknrepstatp = tknrep.srmGetSpaceMetaDataResponse->returnStatus) == NULL) {
 		errno = srm_call_err(context,tknrepstatp,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
 	if (tknrepstatp->statusCode != SRM_USCORESUCCESS)
 	{
 		errno = srm_print_error_status(context,tknrepstatp,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -89,19 +83,16 @@ int srmv2_getspacemd (struct srm_context *context,
 		srm_errmsg (context, "[%s][%s][] %s: <empty response>",
 				err_msg_begin,srmfunc, context->srm_endpoint);
 		errno = ECOMM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 	if (tknrepp->__sizespaceDataArray < 1 || !tknrepp->spaceDataArray) {
 		srm_errmsg (context, "[%s][%s][] %s: no valid space tokens",
 				err_msg_begin,srmfunc, context->srm_endpoint);
-		srm_soap_free(soap);
 		errno = EINVAL;
 		return (-1);
 	}
 
 	if ((*spaces = (struct srm_spacemd *) calloc (input->nbtokens, sizeof (struct srm_spacemd))) == NULL) {
-		srm_soap_free(soap);
 		errno = ENOMEM;
 		return (-1);
 	}
@@ -113,7 +104,6 @@ int srmv2_getspacemd (struct srm_context *context,
 		if (tknrepp->spaceDataArray[i]->status &&
 				tknrepp->spaceDataArray[i]->status->statusCode != SRM_USCORESUCCESS) {
 			errno = srm_call_err(context,tknrepp->spaceDataArray[i]->status,srmfunc);
-			srm_soap_free(soap);
 			return (-1);
 		}
 		(*spaces)[i].spacetoken = strdup (tknrepp->spaceDataArray[i]->spaceToken);
@@ -160,7 +150,6 @@ int srmv2_getspacemd (struct srm_context *context,
 		}
 	}
 
-	srm_soap_free(soap);
     errno = 0;
 	return (0);
 }
@@ -170,15 +159,16 @@ int srmv2_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_output *output)
 {
 	int i;
-    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmGetSpaceTokensResponse_ tknrep;
 	struct srm2__srmGetSpaceTokensRequest tknreq;
 	struct srm2__TReturnStatus *tknrepstatp = NULL;
 	struct srm2__ArrayOfString *tknrepp;
 	const char srmfunc[] = "GetSpaceTokens";
 
-	if (input == NULL || 
-        context->srm_endpoint == NULL || 
+	srm_context_soap_init(context);
+
+	if (input == NULL ||
+        context->srm_endpoint == NULL ||
         output == NULL)
 	{
 		srm_errmsg( context, "[SRM][srmv2_getspacetokens][EINVAL] Invalid arguments");
@@ -191,17 +181,15 @@ int srmv2_getspacetokens (struct srm_context *context,
 
 	tknreq.userSpaceTokenDescription = (char *) input->spacetokendesc;
 
-	if (call_function.call_srm2__srmGetSpaceTokens (soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep) != 0)
+	if (call_function.call_srm2__srmGetSpaceTokens (context->soap, context->srm_endpoint, srmfunc, &tknreq, &tknrep) != 0)
 	{
-		srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
 	if (tknrep.srmGetSpaceTokensResponse == NULL ||
 			(tknrepstatp = tknrep.srmGetSpaceTokensResponse->returnStatus) == NULL) {
 		errno = srm_call_err(context,tknrepstatp,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -209,7 +197,6 @@ int srmv2_getspacetokens (struct srm_context *context,
 	{
 
 		errno = srm_print_error_status(context,tknrepstatp,srmfunc);;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -218,7 +205,6 @@ int srmv2_getspacetokens (struct srm_context *context,
 	if (!tknrepp) {
 		srm_errmsg (context, "[SE][%s][%s] %s: <empty response>",
 				 srmfunc, statuscode2errmsg (tknrepstatp->statusCode), context->srm_endpoint);
-		srm_soap_free(soap);
 		errno = ECOMM;
 		return (-1);
 	}
@@ -228,13 +214,11 @@ int srmv2_getspacetokens (struct srm_context *context,
 		srm_errmsg (context, "[%s][%s][%s] %s: %s: No such space token descriptor",
 				err_msg_begin,srmfunc, statuscode2errmsg (tknrepstatp->statusCode),
 				context->srm_endpoint,input->spacetokendesc);
-		srm_soap_free(soap);
 		errno = EINVAL;
 		return (-1);
 	}
 
 	if ((output->spacetokens = (char **) calloc (output->nbtokens + 1, sizeof (char *))) == NULL) {
-		srm_soap_free(soap);
 		errno = ENOMEM;
 		return (-1);
 	}
@@ -242,7 +226,6 @@ int srmv2_getspacetokens (struct srm_context *context,
 	for (i = 0; i < output->nbtokens; ++i)
 		output->spacetokens[i] = strdup(tknrepp->stringArray[i]);
 
-	srm_soap_free(soap);
     errno = 0;
 	return (0);
 }
@@ -289,7 +272,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 
 		free (getspacetoken_output.spacetokens);
 		errno = sav_errno;
-		srm_spacemd_free (getspacetoken_output.nbtokens, spacemd);		
+		srm_spacemd_free (getspacetoken_output.nbtokens, spacemd);
 		return (NULL);
 	}
 
@@ -326,11 +309,12 @@ int srmv2_reservespace(struct srm_context *context,
 		struct srm_reservespace_input *input,
 		struct srm_reservespace_output *output)
 {
-    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReserveSpaceResponse_ rep;
 	struct srm2__srmReserveSpaceRequest req;
 	struct srm2__TRetentionPolicyInfo retentionPolicy;
 	const char srmfunc[] = "ReserveSpace";
+
+    srm_context_soap_init(context);
 
 	if (input->spacetokendescriptor == NULL)
 	{
@@ -339,7 +323,7 @@ int srmv2_reservespace(struct srm_context *context,
 		return (-1);
 	}
 
-	
+
 
 	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
@@ -352,17 +336,15 @@ int srmv2_reservespace(struct srm_context *context,
 	req.retentionPolicyInfo = &retentionPolicy;
 	req.desiredLifetimeOfReservedSpace =  &input->desired_lifetime;
 
-	if (call_function.call_srm2__srmReserveSpace(soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
+	if (call_function.call_srm2__srmReserveSpace(context->soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
 	if (copy_string(&output->spacetoken,rep.srmReserveSpaceResponse->spaceToken))
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
@@ -370,7 +352,6 @@ int srmv2_reservespace(struct srm_context *context,
 	{
 		//printf("Reserved Space token: %s \n",output->spacetoken);
 	}
-	srm_soap_free(soap);
     errno = 0;
 	return (0);
 }
@@ -378,10 +359,11 @@ int srmv2_reservespace(struct srm_context *context,
 int srmv2_releasespace(struct srm_context *context,
 		char *spacetoken)
 {
-    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmReleaseSpaceResponse_ rep;
 	struct srm2__srmReleaseSpaceRequest req;
 	const char srmfunc[] = "ReserveSpace";
+
+    srm_context_soap_init(context);
 
 	if (spacetoken == NULL)
 	{
@@ -390,19 +372,15 @@ int srmv2_releasespace(struct srm_context *context,
 		return (-1);
 	}
 
-	
-
 	memset (&req, 0, sizeof(req));
 
 	req.spaceToken = spacetoken;
 
-	if (call_function.call_srm2__srmReleaseSpace(soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
+	if (call_function.call_srm2__srmReleaseSpace(context->soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
-	srm_soap_free(soap);
     errno = 0;
 	return (0);
 }
@@ -413,12 +391,13 @@ int srmv2_purgefromspace(struct srm_context *context,
 		struct srm_purgefromspace_output *output)
 {
 	int n,i,ret;
-    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmPurgeFromSpaceResponse_ rep;
 	struct srm2__srmPurgeFromSpaceRequest req;
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 
 	const char srmfunc[] = "PurgeFromSpace";
+
+    srm_context_soap_init(context);
 
 	if (input->spacetoken == NULL)
 	{
@@ -427,34 +406,29 @@ int srmv2_purgefromspace(struct srm_context *context,
 		return (-1);
 	}
 
-	
-
 	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
-	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	if ((req.arrayOfSURLs = soap_malloc (context->soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
 	req.arrayOfSURLs->urlArray = (char **)input->surls;
 	req.spaceToken = input->spacetoken;
 
-	if ((ret = call_function.call_srm2__srmPurgeFromSpace(soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	if ((ret = call_function.call_srm2__srmPurgeFromSpace(context->soap, context->srm_endpoint, srmfunc, &req, &rep)))
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
 	if ((rep.srmPurgeFromSpaceResponse == NULL)||(ret!=0)||
 					copy_returnstatus(&output->retstatus,rep.srmPurgeFromSpaceResponse->returnStatus))
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return -1;
 	}
 
@@ -464,7 +438,6 @@ int srmv2_purgefromspace(struct srm_context *context,
 	if (output->retstatus->statusCode != SRM_USCORESUCCESS || !repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,output->retstatus,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -473,7 +446,6 @@ int srmv2_purgefromspace(struct srm_context *context,
 	if ((output->statuses = (struct srmv2_filestatus*) calloc (n, sizeof (struct srmv2_filestatus))) == NULL)
 	{
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -490,7 +462,6 @@ int srmv2_purgefromspace(struct srm_context *context,
 		}
 	}
 
-	srm_soap_free(soap);
     errno = 0;
 	return (n);
 }

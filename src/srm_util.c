@@ -16,7 +16,7 @@
  *
  * Authors: Todor Manev  IT-GT CERN
  */
- 
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +32,7 @@
 
 #ifdef CMAKE_BUILD
 #define namespaces_srmv2 namespaces
-#endif 
+#endif
 
 const char *err_msg_begin = "SE";
 
@@ -135,47 +135,45 @@ void set_estimated_wait_time(struct srm_internal_context *internal_context, int 
 }
 
 
-struct soap * srm_soap_init_context_new(struct srm_context* c){
+void srm_context_soap_init(struct srm_context* c)
+{
+    assert(c);
+    if (c->soap)
+        return;
+
     #ifdef GFAL_SECURE
     int flags;
     #endif
-    struct soap *soap_handle = NULL;
 
-    if (c && c->ext && c->ext->keep_alive) {
-        soap_handle = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
-        soap_handle->bind_flags |= SO_REUSEADDR;        
-        soap_handle->accept_timeout = 0;
-        soap_handle->tcp_keep_alive = 1;
-        soap_handle->socket_flags = MSG_NOSIGNAL;
+    if (c->ext && c->ext->keep_alive) {
+        c->soap = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
+        c->soap->bind_flags |= SO_REUSEADDR;
+        c->soap->accept_timeout = 0;
+        c->soap->tcp_keep_alive = 1;
+        c->soap->socket_flags = MSG_NOSIGNAL;
     }
     else {
-        soap_handle = soap_new();
+        c->soap = soap_new();
     }
-   
-    soap_handle->namespaces = namespaces_srmv2;
+
+    c->soap->namespaces = namespaces_srmv2;
 
     #ifdef GFAL_SECURE
     flags = CGSI_OPT_DISABLE_NAME_CHECK | CGSI_OPT_KEEP_ALIVE;
-    soap_register_plugin_arg (soap_handle, client_cgsi_plugin, &flags);
-    if (c && c->ext) {
-        if (cgsi_plugin_set_credentials(soap_handle, 0, c->ext->ucert, c->ext->ukey) != 0) {
-            soap_free(soap_handle);
+    soap_register_plugin_arg (c->soap, client_cgsi_plugin, &flags);
+    if (c->ext) {
+        if (cgsi_plugin_set_credentials(c->soap, 0, c->ext->ucert, c->ext->ukey) != 0) {
+            soap_free(c->soap);
+            c->soap = NULL;
             srm_errmsg (c, "[SRM][srm_soap_init_context_new] could not load client credentials");
-            return NULL;
+            return;
         }
     }
     #endif
 
-    if(c){
-        soap_handle->recv_timeout= c->timeout_ops;
-        soap_handle->send_timeout = c->timeout_ops;
-        soap_handle->connect_timeout = c->timeout_conn;
-    }else{
-        soap_handle->send_timeout =  srm_get_timeout_sendreceive ();
-        soap_handle->recv_timeout =  srm_get_timeout_sendreceive ();
-        soap_handle->connect_timeout = srm_get_timeout_connect ();
-    }
-    return soap_handle;
+    c->soap->recv_timeout= c->timeout_ops;
+    c->soap->send_timeout = c->timeout_ops;
+    c->soap->connect_timeout = c->timeout_conn;
 }
 
 
@@ -252,7 +250,7 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 
 	va_start (ap, format);
      (void)asprintf (&actual_format, "%s\n", format);
-	if (actual_format == NULL){ 
+	if (actual_format == NULL){
 		va_end(ap);
 		return;
 	}
@@ -266,20 +264,20 @@ void srm_errmsg (struct srm_context *context, const char *format, ...)
 	va_end(ap);
 }
 
-int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc)
+int srm_soap_call_err(struct srm_context *context, const char *srmfunc)
 {
-	if (soap->fault != NULL && soap->fault->faultstring != NULL)
+	if (context->soap->fault != NULL && context->soap->fault->faultstring != NULL)
 	{
 		srm_errmsg (context, "[%s][%s][] %s: %s",err_msg_begin,
-				 srmfunc, context->srm_endpoint, soap->fault->faultstring);
-	}else if (soap->error == SOAP_EOF)
+				 srmfunc, context->srm_endpoint, context->soap->fault->faultstring);
+	}else if (context->soap->error == SOAP_EOF)
 	{
 		srm_errmsg (context, "[%s][%s][] %s: Connection fails or timeout",
 				err_msg_begin,srmfunc,context->srm_endpoint);
 	}else
 	{
 		srm_errmsg (context, "[%s][%s][] %s: Unknown SOAP error (%d)",
-				err_msg_begin,srmfunc,context->srm_endpoint, soap->error);
+				err_msg_begin,srmfunc,context->srm_endpoint, context->soap->error);
 	}
 	return ECOMM;
 }
@@ -419,8 +417,8 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
 			if (after_sleep >= internal_context->end_time)
 			{
                 wait_till_end = internal_context->end_time - time(NULL) -  last_chance_sec_before_end; //try the last hope before the end
-				if (wait_till_end>0) 
-					call_function.call_sleep(wait_till_end); 
+				if (wait_till_end>0)
+					call_function.call_sleep(wait_till_end);
                 else // deadline outdated,
                     return -1; 					// simply return in timeout
 			}else
@@ -530,7 +528,6 @@ void srm_spacemd_free (int nbtokens,struct srm_spacemd *smd)
 }
 int srm_set_protocol_in_transferParameters(
 	struct srm_context *context,
-    struct soap* soap,
     struct srm2__TTransferParameters* transferParameters,
     char** protocols)
 {
@@ -540,7 +537,7 @@ int srm_set_protocol_in_transferParameters(
     *array = NULL;
 
     if (protocols) {
-        *array = soap_malloc (soap, sizeof(struct srm2__ArrayOfString));
+        *array = soap_malloc (context->soap, sizeof(struct srm2__ArrayOfString));
 
         if (*array == NULL) {
             srm_errmsg (context, "[SRM][soap_malloc][] error");
@@ -1020,7 +1017,7 @@ void copy_Locality(struct srm2__TMetaDataPathDetail *soap_file_meta_data, struct
 			break;
 		case UNAVAILABLE:
 			res_loc = GFAL_LOCALITY_UNAVAILABLE;
-			break;			
+			break;
 		default:
 			res_loc = GFAL_LOCALITY_UNKNOWN;
 	}
@@ -1215,7 +1212,7 @@ char* srm_util_consolidate_multiple_characters(const char* s, const char c, cons
 
     if (s == 0) {
         return 0;
-    }    
+    }
 
     tmp = (char*) malloc (strlen(s) + 1);
 
@@ -1224,12 +1221,12 @@ char* srm_util_consolidate_multiple_characters(const char* s, const char c, cons
         if (i < start || s[i] != c || s[i + 1] != c) {
             tmp[tmp_i] = s[i];
             ++tmp_i;
-        } 
-    } 
-    
+        }
+    }
+
     tmp[tmp_i] = 0;
     // strdup the string, to shrink to the real size
-    ret = strdup(tmp);    
+    ret = strdup(tmp);
     free(tmp);
     return ret;
 }
@@ -1242,7 +1239,7 @@ char* srm_util_add_strings(const char* s1, const char* s2)
 
     assert(s1);
     assert(s2);
-   
+
     if (!s1 || !s2) {
         return 0;
     }
@@ -1250,7 +1247,7 @@ char* srm_util_add_strings(const char* s1, const char* s2)
     len_s1 = strlen(s1);
     ret = malloc(len_s1 + strlen(s2) + 1);
     assert(ret);
-   
+
     if (ret) {
         strcpy(ret, s1);
         strcat(ret + len_s1, s2);

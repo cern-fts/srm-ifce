@@ -53,11 +53,12 @@ int srmv2_ls_async_internal(struct srm_context *context,
 {
 	int ret;
 	enum xsd__boolean trueoption = true_;
-    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "Ls";
 	struct srm2__srmLsRequest req;
 	struct srm2__srmLsResponse_ rep;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
+
+	srm_context_soap_init(context);
 
     /* Basic sanity checks */
     if (input->offset && *input->offset < 0)
@@ -77,18 +78,17 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	memset(output,0,sizeof(*output));
 	memset (&req, 0, sizeof(req));
 
-	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	if ((req.arrayOfSURLs = soap_malloc (context->soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
 	req.fullDetailedList = &trueoption;
 	req.numOfLevels = &(input->numlevels);
 
-	if (input->offset && *input->offset > 0) 
+	if (input->offset && *input->offset > 0)
     {
 		req.offset = input->offset;
 	}
@@ -104,20 +104,17 @@ int srmv2_ls_async_internal(struct srm_context *context,
 	do
 	{
 		// Gsoap call soap_call_srm2__srmLs
-		ret = call_function.call_srm2__srmLs(soap,context->srm_endpoint, srmfunc, &req, &rep);
+		ret = call_function.call_srm2__srmLs(context->soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
 		if ((rep.srmLsResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmLsResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,soap,srmfunc);
+			errno = srm_soap_call_err(context, srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_free(soap);
 			return -1;
 		}
 		// Check status and wait with back off logic if necessary(Internal_error)
 		internal_context->current_status = back_off_logic(context,srmfunc,internal_context,output->retstatus);
-
-
 
 	}while (internal_context->current_status == srm_call_status_INTERNAL_ERROR);
 
@@ -128,7 +125,6 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			if (copy_string(&output->token,rep.srmLsResponse->requestToken))
 			{
 				internal_context->current_status = srm_call_status_FAILURE;
-				srm_soap_free(soap);
 				return -1;
 			}
 			break;
@@ -156,7 +152,7 @@ int srmv2_ls_async_internal(struct srm_context *context,
 				}else
 				{
                     output->statuses_num = repfs->__sizepathDetailArray;
-					
+
                     if (ret == 1 && input->offset && output->retstatus->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS &&
 							repfs->pathDetailArray[0] != NULL && repfs->pathDetailArray[0]->arrayOfSubPaths != NULL)
 					{
@@ -179,7 +175,6 @@ int srmv2_ls_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_free(soap);
 	return ret;
 }
 
@@ -189,11 +184,12 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 		struct srm_internal_context *internal_context)
 {
 	const char srmfunc[] = "StatusOfLsRequest";
-    struct soap* soap = srm_soap_init_context_new(context);
 	struct srm2__srmStatusOfLsRequestResponse_ srep;
 	struct srm2__srmStatusOfLsRequestRequest sreq;
 	struct srm2__ArrayOfTMetaDataPathDetail *repfs = NULL;
 	int ret;
+
+	srm_context_soap_init(context);
 
 	// wait for files ready
 
@@ -206,14 +202,13 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 
 	do
 	{
-		ret = call_function.call_srm2__srmStatusOfLsRequest (soap, context->srm_endpoint, srmfunc, &sreq, &srep);
+		ret = call_function.call_srm2__srmStatusOfLsRequest (context->soap, context->srm_endpoint, srmfunc, &sreq, &srep);
 		// If no response break with failure
 		if ((srep.srmStatusOfLsRequestResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,srep.srmStatusOfLsRequestResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,soap,srmfunc);
+			errno = srm_soap_call_err(context, srmfunc);
 			internal_context->current_status = srm_call_status_FAILURE;
-			srm_soap_free(soap);
 			return -1;
 		}
 		// Check status and wait with back off logic if necessary(Internal_error)
@@ -271,7 +266,6 @@ int srmv2_status_of_ls_request_async_internal(struct srm_context *context,
 			break;
 	}
 
-	srm_soap_free(soap);
 	return (ret);
 }
 
@@ -283,24 +277,22 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	struct srm2__ArrayOfTSURLReturnStatus *repfs;
 	struct srm2__srmRmRequest req;
 	//struct srm2__TReturnStatus *reqstatp;
-    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "srmRm";
 	struct srm_internal_context internal_context;
 	int i,n,ret;
 
-	back_off_logic_init(context,&internal_context);
+	srm_context_soap_init(context);
 
-	
+	back_off_logic_init(context,&internal_context);
 
 	memset (&req, 0, sizeof(req));
 	memset(output,0,sizeof(*output));
 
 
 	// NOTE: only one file in the array
-	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL) {
+	if ((req.arrayOfSURLs = soap_malloc (context->soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL) {
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -311,14 +303,13 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	do
 	{
 		// Gsoap call
-		ret = call_function.call_srm2__srmRm (soap,context->srm_endpoint, srmfunc, &req, &rep);
+		ret = call_function.call_srm2__srmRm (context->soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
 		if ((rep.srmRmResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmRmResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,soap,srmfunc);
+			errno = srm_soap_call_err(context, srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
-			srm_soap_free(soap);
 			return -1;
 		}
 		// Check status and wait with back off logic if necessary(Internal_error)
@@ -327,16 +318,14 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 	}while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
     if(internal_context.current_status == srm_call_status_TIMEOUT){
-               errno = ETIMEDOUT;
-               srm_soap_free(soap);
-               return (-1);
+           errno = ETIMEDOUT;
+           return (-1);
      }
 
 	repfs = rep.srmRmResponse->arrayOfFileStatuses;
 
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray) {
 		errno = srm_call_err(context,output->retstatus,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -344,7 +333,6 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 
 	if ((output->statuses = (struct srmv2_filestatus*) calloc (n, sizeof (struct srmv2_filestatus))) == NULL) {
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -360,7 +348,6 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 		}
 	}
 
-	srm_soap_free(soap);
     errno = 0;
 	return (n);
 }
@@ -373,12 +360,11 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 	struct srm2__srmRmdirRequest req;
 	enum xsd__boolean trueoption = true_;
 	struct srm_internal_context internal_context;
-    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "srmRmdir";
 
-	back_off_logic_init(context,&internal_context);
+	srm_context_soap_init(context);
 
-	
+	back_off_logic_init(context,&internal_context);
 
 	memset (&req, 0, sizeof(req));
 	memset(output,0,sizeof(*output));
@@ -393,14 +379,13 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 	do
 	{
 		// Gsoap call
-		ret = call_function.call_srm2__srmRmdir(soap,context->srm_endpoint, srmfunc, &req, &rep);
+		ret = call_function.call_srm2__srmRmdir(context->soap, context->srm_endpoint, srmfunc, &req, &rep);
 		// If no response break with failure
 		if ((rep.srmRmdirResponse == NULL)||(ret!=0)||
 				copy_returnstatus(&output->retstatus,rep.srmRmdirResponse->returnStatus))
 		{
-			errno = srm_soap_call_err(context,soap,srmfunc);
+			errno = srm_soap_call_err(context, srmfunc);
 			internal_context.current_status = srm_call_status_FAILURE;
-			srm_soap_free(soap);
 			return -1;
 		}
 		// Check status and wait with back off logic if necessary(Internal_error)
@@ -410,14 +395,12 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 
 
     if(internal_context.current_status == srm_call_status_TIMEOUT){
-               errno = ETIMEDOUT;
-               srm_soap_free(soap);
-               return (-1);
+           errno = ETIMEDOUT;
+           return (-1);
      }
 
 	if ((output->statuses = (struct srmv2_filestatus*) calloc (1, sizeof (struct srmv2_filestatus))) == NULL) {
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 	output->statuses[0].surl = strdup (input->surl);
@@ -426,7 +409,7 @@ int srmv2_rmdir(struct srm_context *context,struct srm_rmdir_input *input,struct
 	{
 		srm_print_explanation(&((output->statuses)[0].explanation),output->retstatus,srmfunc);
 	}
-	srm_soap_free(soap);
+
 	errno = 0;
 	return (1); //deleted one folder
 }
@@ -441,10 +424,10 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 	struct srm2__srmMkdirResponse_ rep;
 	struct srm2__srmMkdirRequest req;
 	struct srm2__TReturnStatus *repstatp;
-    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "Mkdir";
 
-	
+	srm_context_soap_init(context);
+
 	memset (&req, 0, sizeof (struct srm2__srmMkdirRequest));
 	memset (&rep, 0, sizeof (struct srm2__srmMkdirResponse_));
     file = srm_util_normalize_surl(input->dir_name);
@@ -455,15 +438,15 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
         /* Do not try to create the root directory... */
         if (srmv2_check_srm_root(file)) {
             break;
-        }   
+        }
 
 		*p = 0;
 		req.SURL = file;
 
-		if (call_function.call_srm2__srmMkdir (soap, context->srm_endpoint, srmfunc, &req, &rep))
+		if (call_function.call_srm2__srmMkdir (context->soap, context->srm_endpoint, srmfunc, &req, &rep))
 		{
-			errno = srm_soap_call_err(context,soap,srmfunc);
-            goto CLEANUP_AND_RETURN; 
+			errno = srm_soap_call_err(context, srmfunc);
+            goto CLEANUP_AND_RETURN;
 		}
 
 		repstatp = rep.srmMkdirResponse->returnStatus;
@@ -473,7 +456,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 		{
 			srm_print_error_status_additional(context,repstatp,srmfunc,input->dir_name);
 			errno = sav_errno;
-            goto CLEANUP_AND_RETURN; 
+            goto CLEANUP_AND_RETURN;
 		}
 	} while (sav_errno == ENOENT && (p = strrchr (file, '/')) != NULL);
 
@@ -481,7 +464,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 		// should never happen, failure must appear in soap call
 		srm_errmsg (context, "[SRM][srmv2_makedirp][EINVAL] %s: Invalid SURL", input->dir_name);
 		errno = EINVAL;
-	    goto CLEANUP_AND_RETURN; 
+	    goto CLEANUP_AND_RETURN;
 	}
 
 	// 2nd cycle, creating directories descendingly as of the one created by previous cycle
@@ -491,9 +474,9 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 	{
 		req.SURL = file;
 
-		if (call_function.call_srm2__srmMkdir(soap, context->srm_endpoint, srmfunc, &req, &rep))
+		if (call_function.call_srm2__srmMkdir(context->soap, context->srm_endpoint, srmfunc, &req, &rep))
 		{
-			errno = srm_soap_call_err(context,soap,srmfunc);
+			errno = srm_soap_call_err(context, srmfunc);
 			errno = ECOMM;
             goto CLEANUP_AND_RETURN;
 		}
@@ -504,7 +487,7 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 		{
 			errno = srm_call_err(context,repstatp,srmfunc);
-            goto CLEANUP_AND_RETURN; 
+            goto CLEANUP_AND_RETURN;
 		}
 
 		*p = '/';
@@ -515,7 +498,6 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 
 CLEANUP_AND_RETURN:
     free(file);
-    srm_soap_free(soap);
     return ret;
 }
 
@@ -523,7 +505,6 @@ int srmv2_mv(struct srm_context *context, struct srm_mv_input *input)
 {
     struct srm2__srmMvRequest request;
     struct srm2__srmMvResponse_ response;
-    struct soap *soap;
     const char srmfunc[] = "Mv";
     int ret;
 
@@ -534,13 +515,12 @@ int srmv2_mv(struct srm_context *context, struct srm_mv_input *input)
 
     memset(&response, 0, sizeof(response));
 
-    soap = srm_soap_init_context_new(context);
-    ret = call_function.call_srm2__srmMv(soap, context->srm_endpoint, srmfunc,
+    srm_context_soap_init(context);
+    ret = call_function.call_srm2__srmMv(context->soap, context->srm_endpoint, srmfunc,
                                          &request, &response);
 
     if (ret) {
-        errno = srm_soap_call_err(context, soap, srmfunc);
-        srm_soap_free(soap);
+        errno = srm_soap_call_err(context, srmfunc);
         return -1;
     }
 
@@ -548,8 +528,6 @@ int srmv2_mv(struct srm_context *context, struct srm_mv_input *input)
         statuscode2errno(response.srmMvResponse->returnStatus->statusCode) != 0) {
         errno = srm_call_err(context, response.srmMvResponse->returnStatus, srmfunc);
     }
-
-    srm_soap_free(soap);
 
     return (errno)?-1:0;
 }
@@ -562,21 +540,19 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs;
 	struct srm2__srmExtendFileLifeTimeResponse_ rep;
 	struct srm2__srmExtendFileLifeTimeRequest req;
-    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "ExtendFileLifeTime";
 
-	
+	srm_context_soap_init(context);
 
 	/* issue "extendfilelifetime" request */
 
 	memset (&req, 0, sizeof(req));
 	memset(output,0,sizeof(*output));
 
-	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	if ((req.arrayOfSURLs = soap_malloc (context->soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -587,17 +563,15 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
 	req.arrayOfSURLs->urlArray = input->surls;
 
-	if ((ret = call_function.call_srm2__srmExtendFileLifeTime (soap, context->srm_endpoint, srmfunc, &req, &rep)))
+	if ((ret = call_function.call_srm2__srmExtendFileLifeTime (context->soap, context->srm_endpoint, srmfunc, &req, &rep)))
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 	if ((rep.srmExtendFileLifeTimeResponse == NULL)||(ret!=0)||
 			copy_returnstatus(&output->retstatus,rep.srmExtendFileLifeTimeResponse->returnStatus))
 	{
 		errno = srm_call_err(context,output->retstatus,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -607,7 +581,6 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 	if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 	{
 		errno = srm_call_err(context,output->retstatus,srmfunc);
-		srm_soap_free(soap);
 		return (-1);
 	}
 
@@ -617,7 +590,6 @@ int srmv2_extend_file_lifetime(struct srm_context *context,
 							repfs,
 							srmfunc);
 
-	srm_soap_free(soap);
 	return (ret);
 }
 
@@ -639,7 +611,7 @@ int srmv2_check_srm_root(const char* surl)
         assert(comp_res == 0);
         is_compiled = 1;
     }
-   
+
     if (0 == regexec(&re, surl, SRMV1_CHECK_SRM_ROOT_NMATCH, match, 0)) {
         ret = 1;
     }

@@ -158,7 +158,8 @@ struct srm_context
     int                 timeout_conn;   // global timeout for SOAP connection
     int                 timeout_ops;    // global timeout for response on operation ( send/receive )
     srm_context_extension_t ext;
-    void*               reserved[24];   // reserved field for future usage
+    struct soap        *soap;           // bind the soap struct to the context, so there is real keep-alive between calls
+    void*               reserved[23];   // reserved field for future usage
 };
 
 struct srm_internal_context
@@ -372,7 +373,7 @@ struct srm_getpermission_input
 
 struct srm_checkpermission_input
 {
-	int amode; 
+	int amode;
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 };
@@ -381,7 +382,7 @@ struct srm_extendfilelifetime_input
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
 	char *reqtoken; // request token
-	int pintime; // pin time 
+	int pintime; // pin time
 };
 
 struct srm_extendfilelifetime_output
@@ -415,7 +416,7 @@ struct srm_spacemd
 {
 	char *spacetoken; // space token string
 	char *owner; // name of the owner
-	SRM_LONG64 totalsize; // total size of the space 
+	SRM_LONG64 totalsize; // total size of the space
 	SRM_LONG64 guaranteedsize;  // guaranteed size of the space
 	SRM_LONG64 unusedsize; // unused space
 	int lifetimeassigned; // life time assigned to the space
