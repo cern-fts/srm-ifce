@@ -1,3 +1,9 @@
+* Tue Jul 15 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.20.1-1
+- [LCGUTIL-382] - excessive cpu usage from srm-ifce function
+- [LCGUTIL-421] - Initialize time fields when stating/listing
+- [LCGUTIL-389] - Add support to query all space tokens
+- [LCGUTIL-55] - GFAL 2.0 : set a clean API to set/get at runtime the different possible credential
+
 * Mon Apr 07 2014 Alejandro Alvarez <aalvarez at cern.ch> - 1.19.0-1:
 - [LCGUTIL-320] - SRM is overloaded with polling requests on prepare to get
 - [LCGUTIL-367] - srm-ifce does not respect desired pin lifetime
