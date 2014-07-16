@@ -316,6 +316,7 @@ int srm_abort_request(struct srm_context *context,
 			return (-1);
 	}
 }
+
 int srm_ping(struct srm_context *context,
 		struct srm_ping_output *output)
 {
@@ -330,6 +331,39 @@ int srm_ping(struct srm_context *context,
 			return (-1);
 	}
 }
+
+int srm_xping(struct srm_context *context,
+        struct srm_xping_output *output)
+{
+    switch (context->version)
+    {
+        case VERSION_2_2:
+            return srmv2_xping(context,output);
+        case VERSION_1:
+            // TODO
+            return (-1);
+        default:
+            return (-1);
+    }
+}
+
+
+int srm_xping_output_free(struct srm_xping_output output)
+{
+    int i;
+
+    free(output.versioninfo);
+    output.versioninfo = NULL;
+    for (i = 0; i < output.n_extra; ++i) {
+        free(output.extra[i].key);
+        free(output.extra[i].value);
+    }
+    free(output.extra);
+    output.extra = NULL;
+    output.n_extra = 0;
+    return 0;
+}
+
 char* srm_getbestspacetoken (struct srm_context *context,
 		struct srm_getbestspacetokens_input *input)
 {
@@ -344,6 +378,7 @@ char* srm_getbestspacetoken (struct srm_context *context,
 			return (NULL);
 	}
 }
+
 int srm_getspacetokens (struct srm_context *context,
 		struct srm_getspacetokens_input *input,struct srm_getspacetokens_output *output)
 {
@@ -373,6 +408,7 @@ int srm_getspacemd (struct srm_context *context,
 			return (-1);
 	}
 }
+
 int srm_getpermission (struct srm_context *context,
 		struct srm_getpermission_input *input,struct srm_getpermission_output *output)
 {
@@ -387,6 +423,7 @@ int srm_getpermission (struct srm_context *context,
 			return (-1);
 	}
 }
+
 int srm_setpermission (struct srm_context *context,
 		struct srm_setpermission_input *input)
 {
@@ -401,6 +438,7 @@ int srm_setpermission (struct srm_context *context,
 			return (-1);
 	}
 }
+
 int srm_extend_file_lifetime (struct srm_context *context,
 		struct srm_extendfilelifetime_input *input,
 		struct srm_extendfilelifetime_output *output)
@@ -416,6 +454,7 @@ int srm_extend_file_lifetime (struct srm_context *context,
 			return (-1);
 	}
 }
+
 int srm_check_permission(struct srm_context *context,
 		struct srm_checkpermission_input *input,
 		struct srmv2_filestatus **statuses)
@@ -431,6 +470,7 @@ int srm_check_permission(struct srm_context *context,
 			return (-1);
 	}
 }
+
 int srm_purgefromspace(struct srm_context *context,
 		struct srm_purgefromspace_input *input,
 		struct srm_purgefromspace_output *output)

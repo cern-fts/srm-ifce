@@ -148,7 +148,6 @@ void srm_context_soap_init(struct srm_context* c)
     if (c->ext && c->ext->keep_alive) {
         c->soap = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
         c->soap->bind_flags |= SO_REUSEADDR;
-        c->soap->accept_timeout = 0;
         c->soap->tcp_keep_alive = 1;
         c->soap->socket_flags = MSG_NOSIGNAL;
     }
@@ -607,6 +606,7 @@ int copy_string(char **dest,char *src)
 	}
 	return 0;
 }
+
 int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
 						struct srmv2_filestatus **statuses,
 						struct srm2__ArrayOfTSURLPermissionReturn *repfs,

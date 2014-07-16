@@ -45,9 +45,67 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 				copy_string(&output->versioninfo,rep.srmPingResponse->versionInfo))
 		{
 			errno = EINVAL;
-			return (-1);
+			return -1;
 		}
 	}
 
 	return result;
+}
+
+
+int srmv2_xping(struct srm_context *context, struct srm_xping_output *output)
+{
+    const char srmfunc[] = "AbortRequest";
+    struct srm2__srmPingRequest req;
+    struct srm2__srmPingResponse_ rep;
+    int result, i = 0;
+
+    srm_context_soap_init(context);
+
+    memset (&req, 0, sizeof(req));
+
+    result = call_function.call_srm2__srmPing (context->soap, context->srm_endpoint, srmfunc, &req, &rep);
+
+    if (result != 0)
+    {
+        // Soap call failure
+        errno = srm_soap_call_err(context, srmfunc);
+    }else
+    {
+        if (rep.srmPingResponse == NULL)
+        {
+            errno = EINVAL;
+            return -1;
+        }
+        if (copy_string(&output->versioninfo, rep.srmPingResponse->versionInfo) < 0) {
+            errno = EINVAL;
+            return -1;
+        }
+
+        output->n_extra = rep.srmPingResponse->otherInfo->__sizeextraInfoArray;
+        output->extra = calloc(output->n_extra, sizeof(struct srm_key_value));
+        if (!output->extra) {
+            free(output->versioninfo);
+            errno = EINVAL;
+            return -1;
+        }
+
+        for (i = 0; i < output->n_extra; ++i) {
+            if (copy_string(&output->extra[i].key, rep.srmPingResponse->otherInfo->extraInfoArray[i]->key) < 0)
+                goto xping_abort;
+            if (copy_string(&output->extra[i].value, rep.srmPingResponse->otherInfo->extraInfoArray[i]->value) < 0)
+                goto xping_abort;
+        }
+        result = 0;
+    }
+    return result;
+xping_abort:
+    while (i > 0) {
+        free(output->extra[i].key);
+        free(output->extra[i].value);
+        --i;
+    }
+    free(output->extra);
+    free(output->versioninfo);
+    return -1;
 }

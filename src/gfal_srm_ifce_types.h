@@ -188,6 +188,19 @@ struct srm_ping_output
 	char *versioninfo; // srm server version information
 };
 
+struct srm_key_value
+{
+    char *key;
+    char *value;
+};
+
+struct srm_xping_output
+{
+    char *versioninfo; // srm server version information
+    int n_extra; // number of additional key/value
+    struct srm_key_value *extra;
+};
+
 #if ! defined(linux) || defined(_LARGEFILE64_SOURCE)
 struct srm_mdfilestatus
 {

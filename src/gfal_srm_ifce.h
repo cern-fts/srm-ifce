@@ -124,6 +124,11 @@ int srm_getspacemd (struct srm_context *context,
 int srm_ping(struct srm_context *context,
 		struct srm_ping_output *output);
 
+int srm_xping(struct srm_context *context,
+        struct srm_xping_output *output);
+
+int srm_xping_output_free(struct srm_xping_output output);
+
 int srm_getpermission (struct srm_context *context,
 		struct srm_getpermission_input *input,struct srm_getpermission_output *output);
 
