@@ -39,7 +39,7 @@
 /**
  *  @brief delete properly and free memory for a number n of of struct srmv2_pinstatuses
  * If called on a NULL value, simply return
- **/ 
+ **/
 void srm_srmv2_pinfilestatus_delete(struct srmv2_pinfilestatus*  srmv2_pinstatuses, int n){
 	if(srmv2_pinstatuses){
 		int i ;
@@ -48,29 +48,30 @@ void srm_srmv2_pinfilestatus_delete(struct srmv2_pinfilestatus*  srmv2_pinstatus
 			free(srmv2_pinstatuses[i].turl);
 			free(srmv2_pinstatuses[i].explanation);
 		}
-		free(srmv2_pinstatuses);	
+		free(srmv2_pinstatuses);
 	}
 }
 
 /**
- *  @brief delete properly and free memory for a number n of struct srmv2_mdfilestatus 
+ *  @brief delete properly and free memory for a number n of struct srmv2_mdfilestatus
  *  If called on a NULL value, simply return
- **/ 
+ **/
 void srm_srmv2_mdfilestatus_delete(struct srmv2_mdfilestatus* mdfilestatus, int n){
 	if(mdfilestatus){
 		int i,j ;
 		for(i=0; i < n; ++i){
 			free(mdfilestatus[i].surl);
-			free(mdfilestatus[i].explanation);		
+			free(mdfilestatus[i].explanation);
 			free(mdfilestatus[i].checksum);
-			free(mdfilestatus[i].checksumtype);	
+			free(mdfilestatus[i].checksumtype);
 			for(j=0; j < mdfilestatus[i].nbspacetokens;++j){
-				if(mdfilestatus && mdfilestatus[i].spacetokens[i] ){
-					free(mdfilestatus[i].spacetokens[i]);
-					mdfilestatus[i].spacetokens[i]=NULL;
+				if(mdfilestatus && mdfilestatus[i].spacetokens[j] ){
+					free(mdfilestatus[i].spacetokens[j]);
+					mdfilestatus[i].spacetokens[j]=NULL;
 				}
 			}
-			srm_srmv2_mdfilestatus_delete(mdfilestatus[i].subpaths, mdfilestatus[i].nbsubpaths);	
+			free(mdfilestatus[i].spacetokens);
+			srm_srmv2_mdfilestatus_delete(mdfilestatus[i].subpaths, mdfilestatus[i].nbsubpaths);
 		}
 		free(mdfilestatus);
 	}
@@ -79,7 +80,7 @@ void srm_srmv2_mdfilestatus_delete(struct srmv2_mdfilestatus* mdfilestatus, int 
 /**
  *  @brief delete properly and free memory for a number n of struct srmv2_filestatuses
  *  If called on a NULL value, simply return
- **/ 
+ **/
 void srm_srmv2_filestatus_delete(struct srmv2_filestatus*  srmv2_statuses, int n){
 	if(srmv2_statuses){
 		int i;
@@ -88,12 +89,12 @@ void srm_srmv2_filestatus_delete(struct srmv2_filestatus*  srmv2_statuses, int n
 			free(srmv2_statuses[i].turl);
 			free(srmv2_statuses[i].explanation);
 		}
-		free(srmv2_statuses);	
+		free(srmv2_statuses);
 	}
 }
 
 /**
- * 
+ *
  * @brief delete properly and free memory for a struct srm2__TReturnStatus
  *  If called on a NULL value, simply return
  */

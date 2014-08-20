@@ -16,7 +16,7 @@
  *
  * Authors: Devresse Adrien
  */
- 
+
 #include "srm_ifce_internal.h"
 
 srm_context_extension_t srm_context_extension_new(){
@@ -63,12 +63,14 @@ srm_context_t srm_context_new2(const char * srm_endpoint, char *errbuf,int errbu
 //
 void srm_context_free(srm_context_t context){
     if(context){
-        if(context->ext){ // ext -> dynamically allocated
-            g_free(context->srm_endpoint);
+        if(context->ext) {
             srm_context_extension_free(context->ext);
-            g_free(context);
         }
-
+        if (context->soap) {
+            srm_soap_free(context->soap);
+        }
+        g_free(context->srm_endpoint);
+        g_free(context);
     }
 }
 
@@ -103,4 +105,10 @@ void srm_set_credentials(struct srm_context *context, const char *ucert, const c
         context->ext = srm_context_extension_new();
     context->ext->ucert = g_strdup(ucert);
     context->ext->ukey = g_strdup(ukey);
+
+    // Drop soap context, so it will recreated
+    if (context->soap) {
+        srm_soap_free(context->soap);
+        context->soap = NULL;
+    }
 }

@@ -23,9 +23,9 @@
 
 /**
   dynamic allocation of a srm soap context
-  timeouts are initialized from the context values ( default, excepted if user-change
+  timeouts are initialized from the context values ( default, excepted if user-change )
 */
-struct soap * srm_soap_init_context_new(struct srm_context* c);
+void srm_context_soap_init(struct srm_context* c);
 
 /**
   free an srm gsoap context
@@ -36,7 +36,7 @@ void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqsta
 
 extern const char *err_msg_begin;
 void srm_errmsg (struct srm_context *context, const char *format, ...);
-int srm_soap_call_err(struct srm_context *context,struct soap *soap,const char *srmfunc);
+int srm_soap_call_err(struct srm_context *context, const char *srmfunc);
 int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,const char *srmfunc);
 int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc);
 int srm_print_error_status_additional(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc,char *additional_info);
@@ -53,7 +53,6 @@ void srm_spacemd_free (int nbtokens, struct srm_spacemd *smd);
 
 int srm_set_protocol_in_transferParameters(
 	struct srm_context *context,
-    struct soap* soap,
     struct srm2__TTransferParameters* transferParameters,
     char** protocols);
 
@@ -113,7 +112,7 @@ int wait_switch_auto(srm_context_t context, struct srm_internal_context *interna
 /* General utility functions */
 
 /**
- * Normalize a SURL: remove multiple slashes (exept for "srm://"), and add a single slash 
+ * Normalize a SURL: remove multiple slashes (exept for "srm://"), and add a single slash
  * to the end of the SURL. For example, SURL
  *
  * srm://server:port/dir1//dir2
@@ -138,7 +137,7 @@ char* srm_util_normalize_surl(const char* surl);
  *
  * The returned string is dynamically allocated, free it!
  *
- * @param s the string to be consolidated. 
+ * @param s the string to be consolidated.
  * @param c the character to look for
  * @param start consolidating starts from this index. Before this index, all the characters
  *              are copied.

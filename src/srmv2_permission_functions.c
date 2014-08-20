@@ -30,22 +30,22 @@ int srmv2_set_permission(struct srm_context *context,
 	struct srm2__srmSetPermissionResponse_ rep;
 	enum srm2__TPermissionMode otherPermission;
 	enum srm2__TPermissionMode ownerPermission;
-    struct soap* soap = srm_soap_init_context_new(context);
+
+    srm_context_soap_init(context);
 
 	memset (&req, 0, sizeof(req));
 
 	if ((req.arrayOfGroupPermissions =
-				soap_malloc (soap, sizeof(struct srm2__ArrayOfTGroupPermission))) == NULL ||
+				soap_malloc (context->soap, sizeof(struct srm2__ArrayOfTGroupPermission))) == NULL ||
 			(req.arrayOfGroupPermissions->groupPermissionArray =
-			 soap_malloc (soap, input->group_permissions_count* sizeof(struct srm2__TGroupPermission *))) == NULL ||
+			 soap_malloc (context->soap, input->group_permissions_count* sizeof(struct srm2__TGroupPermission *))) == NULL ||
 			(req.arrayOfUserPermissions =
-			 soap_malloc (soap, sizeof(struct srm2__ArrayOfTUserPermission))) == NULL ||
+			 soap_malloc (context->soap, sizeof(struct srm2__ArrayOfTUserPermission))) == NULL ||
 			(req.arrayOfUserPermissions->userPermissionArray =
-			 soap_malloc (soap,input->user_permissions_count* sizeof(struct srm2__TUserPermission*))) == NULL) {
+			 soap_malloc (context->soap,input->user_permissions_count* sizeof(struct srm2__TUserPermission*))) == NULL) {
 
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 	req.arrayOfGroupPermissions->__sizegroupPermissionArray = input->group_permissions_count;
@@ -53,10 +53,9 @@ int srmv2_set_permission(struct srm_context *context,
 
 	for (i = 0; i < input->group_permissions_count; i++) {
 		if ((req.arrayOfGroupPermissions->groupPermissionArray[i] =
-					soap_malloc (soap, sizeof(struct srm2__TGroupPermission))) == NULL) {
+					soap_malloc (context->soap, sizeof(struct srm2__TGroupPermission))) == NULL) {
 			srm_errmsg (context, "[SRM][soap_malloc][] error");
 			errno = ENOMEM;
-			srm_soap_free(soap);
 			return (-1);
 		}
 		memset (req.arrayOfGroupPermissions->groupPermissionArray[i], 0, sizeof(struct srm2__TGroupPermission));
@@ -65,10 +64,9 @@ int srmv2_set_permission(struct srm_context *context,
 	}
 	for (i = 0; i < input->user_permissions_count; i++) {
 		if ((req.arrayOfUserPermissions->userPermissionArray[i] =
-					soap_malloc (soap, sizeof(struct srm2__TUserPermission))) == NULL) {
+					soap_malloc (context->soap, sizeof(struct srm2__TUserPermission))) == NULL) {
 			srm_errmsg (context, "[SRM][soap_malloc][] error");
 			errno = ENOMEM;
-			srm_soap_free(soap);
 			return (-1);
 		}
 		memset (req.arrayOfUserPermissions->userPermissionArray[i], 0, sizeof(struct srm2__TUserPermission));
@@ -86,14 +84,14 @@ int srmv2_set_permission(struct srm_context *context,
 	req.permissionType =  input->permission_type;
 
 
-	result = call_function.call_srm2__srmSetPermission (soap, context->srm_endpoint, srmfunc, &req, &rep);
+	result = call_function.call_srm2__srmSetPermission (context->soap, context->srm_endpoint, srmfunc, &req, &rep);
 
 	if (result != 0||
 			rep.srmSetPermissionResponse== NULL ||
 			rep.srmSetPermissionResponse->returnStatus == NULL)
 	{
 		// Soap call failure
-		errno = srm_soap_call_err(context, soap,srmfunc);
+		errno = srm_soap_call_err(context, srmfunc);
 		result = -1;
 	}else
 	{
@@ -101,12 +99,9 @@ int srmv2_set_permission(struct srm_context *context,
 		if (rep.srmSetPermissionResponse->returnStatus->statusCode != SRM_USCORESUCCESS)
 		{
 			errno = statuscode2errno(rep.srmSetPermissionResponse->returnStatus->statusCode);
-			srm_soap_free(soap);
 			return (-1);
 		}
 	}
-
-	srm_soap_free(soap);
 
 	return result;
 }
@@ -119,17 +114,17 @@ int srmv2_get_permission(struct srm_context *context,
 	struct srm2__srmGetPermissionRequest req;
 	struct srm2__srmGetPermissionResponse_ rep;
 	struct srm2__ArrayOfTPermissionReturn *repperm;
-    struct soap* soap = srm_soap_init_context_new(context);
 	int result = 0;
+
+	srm_context_soap_init(context);
 
 	memset (&req, 0, sizeof(req));
 	memset(output,0,sizeof(*output));
 
-	if ((req.arrayOfSURLs = soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
+	if ((req.arrayOfSURLs = soap_malloc (context->soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL)
 	{
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
@@ -137,9 +132,7 @@ int srmv2_get_permission(struct srm_context *context,
 	req.authorizationID = NULL;
 	req.storageSystemInfo = NULL;
 
-
-
-	result = call_function.call_srm2__srmGetPermission (soap, context->srm_endpoint, srmfunc, &req, &rep);
+	result = call_function.call_srm2__srmGetPermission (context->soap, context->srm_endpoint, srmfunc, &req, &rep);
 
 	// check response
 	if (result != 0 ||
@@ -147,7 +140,7 @@ int srmv2_get_permission(struct srm_context *context,
 		copy_returnstatus(&output->retstatus,rep.srmGetPermissionResponse->returnStatus))
 	{
 		// Soap call failure
-		errno = srm_soap_call_err(context,soap,srmfunc);
+		errno = srm_soap_call_err(context, srmfunc);
 		result = -1;
 	}else
 	{
@@ -165,8 +158,6 @@ int srmv2_get_permission(struct srm_context *context,
 		}
 	}
 
-	srm_soap_free(soap);
-
 	return result;
 }
 
@@ -180,35 +171,32 @@ int srmv2_check_permission(struct srm_context *context,
 	struct srm2__ArrayOfTSURLPermissionReturn *repfs;
 	struct srm2__srmCheckPermissionRequest req;
 	struct srm2__TReturnStatus *reqstatp;
-    struct soap* soap = srm_soap_init_context_new(context);
 	const char srmfunc[] = "CheckPermission";
 
+	srm_context_soap_init(context);
 
 	memset (&req, 0, sizeof(req));
 
 	/* NOTE: only one SURL in the array */
 	if ((req.arrayOfSURLs =
-				soap_malloc (soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL) {
+				soap_malloc (context->soap, sizeof(struct srm2__ArrayOfAnyURI))) == NULL) {
 		srm_errmsg (context, "[SRM][soap_malloc][] error");
 		errno = ENOMEM;
-		srm_soap_free(soap);
 		return (-1);
 	}
 
 	req.arrayOfSURLs->__sizeurlArray = input->nbfiles;
 	req.arrayOfSURLs->urlArray = (char **) input->surls;
 
-	if (call_function.call_srm2__srmCheckPermission (soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
+	if (call_function.call_srm2__srmCheckPermission (context->soap, context->srm_endpoint, srmfunc, &req, &rep) != 0)
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
 	if (rep.srmCheckPermissionResponse == NULL || (reqstatp = rep.srmCheckPermissionResponse->returnStatus) == NULL)
 	{
 		srm_errmsg (context, "[SRM][%s][] %s: <empty response>",srmfunc, context->srm_endpoint);
-		srm_soap_free(soap);
 		errno = ECOMM;
 		return (-1);
 	}
@@ -217,8 +205,7 @@ int srmv2_check_permission(struct srm_context *context,
 
 	if (!repfs || repfs->__sizesurlPermissionArray < 1 || !repfs->surlPermissionArray)
 	{
-		errno = srm_soap_call_err(context,soap,srmfunc);
-		srm_soap_free(soap);
+		errno = srm_soap_call_err(context, srmfunc);
 		return (-1);
 	}
 
@@ -227,7 +214,6 @@ int srmv2_check_permission(struct srm_context *context,
 									repfs,
 									srmfunc,
 									input->amode);
-	srm_soap_free(soap);
 	return (ret);
 
 }

@@ -26,5 +26,7 @@
 
 int srmv2_ping(struct srm_context *context,struct srm_ping_output *output);
 
+int srmv2_xping(struct srm_context *context, struct srm_xping_output *output);
+
 
 #endif
