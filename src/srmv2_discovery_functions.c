@@ -24,7 +24,7 @@
 
 int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 {
-	const char srmfunc[] = "AbortRequest";
+	const char srmfunc[] = "Ping";
 	struct srm2__srmPingRequest req;
 	struct srm2__srmPingResponse_ rep;
 	int result;
@@ -39,6 +39,7 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 	{
 		// Soap call failure
 		errno = srm_soap_call_err(context, srmfunc);
+		result = -1;
 	}else
 	{
 		if (rep.srmPingResponse == NULL ||
@@ -55,7 +56,7 @@ int srmv2_ping(struct srm_context *context,struct srm_ping_output *output)
 
 int srmv2_xping(struct srm_context *context, struct srm_xping_output *output)
 {
-    const char srmfunc[] = "AbortRequest";
+    const char srmfunc[] = "XPing";
     struct srm2__srmPingRequest req;
     struct srm2__srmPingResponse_ rep;
     int result, i = 0;
@@ -70,6 +71,7 @@ int srmv2_xping(struct srm_context *context, struct srm_xping_output *output)
     {
         // Soap call failure
         errno = srm_soap_call_err(context, srmfunc);
+        result = -1;
     }else
     {
         if (rep.srmPingResponse == NULL)
