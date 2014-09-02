@@ -84,19 +84,25 @@ int srmv2_xping(struct srm_context *context, struct srm_xping_output *output)
             return -1;
         }
 
-        output->n_extra = rep.srmPingResponse->otherInfo->__sizeextraInfoArray;
-        output->extra = calloc(output->n_extra, sizeof(struct srm_key_value));
-        if (!output->extra) {
-            free(output->versioninfo);
-            errno = EINVAL;
-            return -1;
-        }
+        if (rep.srmPingResponse->otherInfo) {
+			output->n_extra = rep.srmPingResponse->otherInfo->__sizeextraInfoArray;
+			output->extra = calloc(output->n_extra, sizeof(struct srm_key_value));
+			if (!output->extra) {
+				free(output->versioninfo);
+				errno = EINVAL;
+				return -1;
+			}
 
-        for (i = 0; i < output->n_extra; ++i) {
-            if (copy_string(&output->extra[i].key, rep.srmPingResponse->otherInfo->extraInfoArray[i]->key) < 0)
-                goto xping_abort;
-            if (copy_string(&output->extra[i].value, rep.srmPingResponse->otherInfo->extraInfoArray[i]->value) < 0)
-                goto xping_abort;
+			for (i = 0; i < output->n_extra; ++i) {
+				if (copy_string(&output->extra[i].key, rep.srmPingResponse->otherInfo->extraInfoArray[i]->key) < 0)
+					goto xping_abort;
+				if (copy_string(&output->extra[i].value, rep.srmPingResponse->otherInfo->extraInfoArray[i]->value) < 0)
+					goto xping_abort;
+			}
+        }
+        else {
+        	output->n_extra = 0;
+        	output->extra = NULL;
         }
         result = 0;
     }
