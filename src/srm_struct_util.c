@@ -79,6 +79,8 @@ void srm_context_free(srm_context_t context){
 void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbuf,int errbufsz,int verbose)
 {
     GFAL_SRM_IFCE_ASSERT(context);
+    memset(context, 0, sizeof(*context));
+
     context->ext = NULL;
     context->errbuf = errbuf;
     context->errbufsz = errbufsz;
