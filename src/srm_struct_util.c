@@ -86,6 +86,7 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
     context->verbose = verbose;
     context->timeout_conn = srm_get_timeout_connect ();
     context->timeout_ops = srm_get_timeout_sendreceive();
+    context->soap = NULL;
 }
 
 
