@@ -7,7 +7,7 @@ Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
-URL:		https://svnweb.cern.ch/trac/lcgutil
+URL:		http://dmc.web.cern.ch/
 # svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/trunk srm-ifce
 Source0:	http://grid-deployment.web.cern.ch/grid-deployment/dms/lcgutil/tar/%{name}/%{name}-%{version}.tar.gz 
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
