@@ -241,7 +241,7 @@ int statuscode2errno (int statuscode)
 
 int statuscode_and_msg_to_errno(int statuscode, const char** err_tab_msg){
     int err_code = statuscode2errno(statuscode);
-    if(err_code == EINVAL && err_tab_msg != NULL){
+    if((err_code == EINVAL || err_code == EIO) && err_tab_msg != NULL){
         // search for string pattern
         char** err_tab = (char**) err_tab_msg;
         while(*err_tab != NULL){

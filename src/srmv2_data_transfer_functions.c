@@ -74,7 +74,9 @@ int srmv2_status_of_put_request_async_internal(struct srm_context *context,
 
 
 	if (output->retstatus->statusCode == SRM_USCORESPACE_USCORELIFETIME_USCOREEXPIRED) {
-		srm_errmsg (context,"[SRM][%s][%s] %s: Space lifetime expired",srmfunc, statuscode2errmsg(output->retstatus->statusCode), context->srm_endpoint);
+		srm_errmsg(context, "[SRM][%s][%s] %s: Space lifetime expired", srmfunc,
+				statuscode2errmsg(output->retstatus->statusCode),
+				context->srm_endpoint);
 		errno = statuscode2errno(output->retstatus->statusCode);
 		return (-1);
 	}
@@ -287,10 +289,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs ||
-                repfs->__sizestatusArray < 1 ||
-                !repfs->statusArray ||
-                internal_context->current_status == srm_call_status_FAILURE)
+			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray || internal_context->current_status == srm_call_status_FAILURE)
 			{
 			    internal_context->current_status = srm_call_status_FAILURE;
 
