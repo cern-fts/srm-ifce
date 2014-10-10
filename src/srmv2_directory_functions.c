@@ -343,7 +343,8 @@ int srmv2_rm(struct srm_context *context,struct srm_rm_input *input,struct srm_r
 			(output->statuses)[i].surl = strdup (repfs->statusArray[i]->surl);
 		if (repfs->statusArray[i]->status)
 		{
-			(output->statuses)[i].status = statuscode2errno(repfs->statusArray[i]->status->statusCode);
+			(output->statuses)[i].status = statuscode_and_msg_to_errno(
+					repfs->statusArray[i]->status->statusCode, repfs->statusArray[i]->status->explanation);
 			srm_print_explanation(&((output->statuses)[i].explanation), repfs->statusArray[i]->status,srmfunc);
 		}
 	}
