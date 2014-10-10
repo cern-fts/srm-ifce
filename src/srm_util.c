@@ -239,18 +239,16 @@ int statuscode2errno (int statuscode)
 	}
 }
 
-int statuscode_and_msg_to_errno(int statuscode, const char** err_tab_msg){
+int statuscode_and_msg_to_errno(int statuscode, const char* err_tab_msg){
     int err_code = statuscode2errno(statuscode);
     if((err_code == EINVAL || err_code == EIO) && err_tab_msg != NULL){
         // search for string pattern
-        char** err_tab = (char**) err_tab_msg;
-        while(*err_tab != NULL){
-            // search for pattern EEXIST, LCGUTIL-203 bug
-            if( strstr(*err_tab,"exists, overwite is not allowed") != NULL)
-                err_code = EEXIST;
-
-            ++err_tab;
-        }
+		// search for pattern EEXIST, LCGUTIL-203 bug
+		if( strstr(err_tab_msg, "exists, overwite is not allowed") != NULL)
+			err_code = EEXIST;
+		// https://its.cern.ch/jira/browse/DMC-512
+		if (strstr(err_tab_msg, "o such file or directory") != NULL)
+			err_code = ENOENT;
     }
     return err_code;
 }
@@ -314,8 +312,7 @@ int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retsta
 			retstatus->statusCode != SRM_USCOREDONE &&
 			retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
 	{
-        const char * tab_err_msg[] = { retstatus->explanation, NULL };
-        result_errno = statuscode_and_msg_to_errno(retstatus->statusCode, tab_err_msg);
+        result_errno = statuscode_and_msg_to_errno(retstatus->statusCode, retstatus->explanation);
 		if (retstatus->explanation && retstatus->explanation[0])
 		{
 			srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,

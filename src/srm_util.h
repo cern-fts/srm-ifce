@@ -43,6 +43,7 @@ int srm_print_error_status_additional(struct srm_context *context,struct srm2__T
 
 int statuscode2errno (int statuscode);
 const char * statuscode2errmsg (unsigned int statuscode);
+int statuscode_and_msg_to_errno(int, const char*);
 
 void back_off_logic_init(struct srm_context *context,struct srm_internal_context *internal_context);
 srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
