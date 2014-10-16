@@ -162,18 +162,11 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 		return (-1);
 	}
 
-    if(context->ext && context->ext->turl_timeout){ // advanced context -> turl timeout
-        req.desiredPinLifeTime = &(context->ext->turl_timeout);
-        req.desiredTotalRequestTime = &(context->ext->turl_timeout);
-    }else{
-        if (input->desiredpintime > 0)
-            req.desiredPinLifeTime = &input->desiredpintime;
-        else
-            req.desiredPinLifeTime = &context->timeout_ops;
+	if (input->desiredpintime > 0)
+		req.desiredPinLifeTime = &input->desiredpintime;
 
-        if (context->timeout_ops > 0)
-            req.desiredTotalRequestTime = &context->timeout_ops;
-    }
+	if (context->ext && context->ext->turl_resolution_timeout)
+		req.desiredTotalRequestTime = &(context->ext->turl_resolution_timeout);
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
@@ -395,18 +388,11 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	}
 
 
-    if(context->ext && context->ext->turl_timeout){ // advanced context -> turl timeout
-        req.desiredPinLifeTime = &(context->ext->turl_timeout);
-        req.desiredTotalRequestTime = &(context->ext->turl_timeout);
-    }else{
-        if (input->desiredpintime > 0)
-            req.desiredPinLifeTime = &input->desiredpintime;
-        else
-            req.desiredPinLifeTime = &context->timeout;
+	if (input->desiredpintime > 0)
+		req.desiredPinLifeTime = &input->desiredpintime;
 
-        if (context->timeout_ops > 0)
-            req.desiredTotalRequestTime = &context->timeout_ops;
-    }
+	if (context->ext && context->ext->turl_resolution_timeout)
+		req.desiredTotalRequestTime = &(context->ext->turl_resolution_timeout);
 
 	req.desiredFileStorageType = &s_types[PERMANENT];
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
@@ -829,7 +815,10 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 	req.targetFileRetentionPolicyInfo = NULL;
 	req.deferredStartTime = NULL;
 	if (input->desiredpintime > 0)
-	    req.desiredLifeTime = &(input->desiredpintime);
+		req.desiredLifeTime = &input->desiredpintime;
+
+	if (context->ext && context->ext->turl_resolution_timeout)
+		req.desiredTotalRequestTime = &(context->ext->turl_resolution_timeout);
 
 	req.arrayOfFileRequests->__sizerequestArray = input->nbfiles;
 

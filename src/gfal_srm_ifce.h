@@ -50,6 +50,11 @@ void srm_context_init2(struct srm_context *context,char *srm_endpoint,char *errb
  */
 void srm_set_credentials(struct srm_context *context, const char *ucert, const char *ukey);
 
+/**
+ * Set total desired request time. For instance, for bringonline
+ */
+void srm_set_desired_request_time(struct srm_context *context, int timeout);
+
 /* srm_ls functions */
 void srm_ls_output_destroy(struct srm_ls_output *output);
 
