@@ -45,7 +45,7 @@ struct srm_context_extension{
     struct timespec min_waittime;
     struct timespec max_waittime;
     // advanced timeout management
-    int turl_timeout;
+    int turl_resolution_timeout;
     // keep alive connections
     int keep_alive;
     // user credentials
