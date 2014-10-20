@@ -230,9 +230,12 @@ int statuscode2errno (int statuscode)
 			return (EBUSY);
 		case SRM_USCOREFILE_USCORELOST:
 			return (EIDRM);
+		case SRM_USCOREABORTED:
+			return (ECANCELED);
 		case SRM_USCORESUCCESS:
 		case SRM_USCOREFILE_USCOREPINNED:
 		case SRM_USCORESPACE_USCOREAVAILABLE:
+		case SRM_USCORERELEASED:
 			return (0);
 		default:
 			return (EINVAL);
