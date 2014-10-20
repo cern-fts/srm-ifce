@@ -235,6 +235,7 @@ int statuscode2errno (int statuscode)
 		case SRM_USCORESUCCESS:
 		case SRM_USCOREFILE_USCOREPINNED:
 		case SRM_USCORESPACE_USCOREAVAILABLE:
+		case SRM_USCORERELEASED:
 			return (0);
 		default:
 			return (EINVAL);
