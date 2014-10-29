@@ -252,6 +252,9 @@ int statuscode_and_msg_to_errno(int statuscode, const char* err_tab_msg){
 		// https://its.cern.ch/jira/browse/DMC-512
 		if (strstr(err_tab_msg, "o such file or directory") != NULL)
 			err_code = ENOENT;
+		// https://its.cern.ch/jira/browse/DMC-528
+		if (strstr(err_tab_msg, "ile does not exist") != NULL)
+			err_code = ENOENT;
     }
     return err_code;
 }
