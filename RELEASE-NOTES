@@ -1,3 +1,14 @@
+* Thu Nov 06 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.21.4
+- [DMC-484] - srm_xping and xrm_ping bad return codes on error
+- [DMC-489] - srm_xping: otherInfo may be null
+- [DMC-510] - srm-ifce is not mapping correctly status codes (Was Revert DMC-433)
+- [DMC-512] - BestMan SRM ENOENT when unlinking not properly handled
+- [DMC-515] - bring online timeout is not set correctly in gfal_srmv2_bring_online_internal
+- [DMC-521] - SRM_RELEASED as a response to Bring Online should be interpreted as success
+- [DMC-449] - Add srm_xping, returning more information that srm_ping
+- [DMC-528] - Yet another ENOENT possible string: [SRM_FAILURE] File does not exist
+- [DMC-425] - srm-ifce KeepAlive is not honored
+
 * Tue Jul 15 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.20.1-1
 - [LCGUTIL-382] - excessive cpu usage from srm-ifce function
 - [LCGUTIL-421] - Initialize time fields when stating/listing
