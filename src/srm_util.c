@@ -232,6 +232,8 @@ int statuscode2errno (int statuscode)
 			return (EIDRM);
 		case SRM_USCOREABORTED:
 			return (ECANCELED);
+		case SRM_USCORETOO_USCOREMANY_USCORERESULTS:
+			return (EFBIG);
 		case SRM_USCORESUCCESS:
 		case SRM_USCOREFILE_USCOREPINNED:
 		case SRM_USCORESPACE_USCOREAVAILABLE:
@@ -1077,6 +1079,8 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		if (repfs->pathDetailArray[i]->status)
 		{
 			(*statuses)[i].status = statuscode2errno(repfs->pathDetailArray[i]->status->statusCode);
+			if (reqstatp->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS)
+				(*statuses)[i].status = EFBIG;
 
 			if ((*statuses)[i].status) {
 				if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
