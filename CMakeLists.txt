@@ -38,7 +38,7 @@ pkg_check_modules(GSOAP_PKG REQUIRED gsoap)
 pkg_check_modules(GLIB2_PKG REQUIRED glib-2.0)
 
 #install doc license
-install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README"
+install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README" "readme.html"
 		DESTINATION ${DOC_INSTALL_DIR})
 
 

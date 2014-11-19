@@ -59,9 +59,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
-%{_pkgdocdir}/LICENSE
-%{_pkgdocdir}/VERSION
-%{_pkgdocdir}/README
+%doc LICENSE VERSION RELEASE-NOTES README readme.html
 
 %files devel
 %defattr (-,root,root)
@@ -69,7 +67,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
-%{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
 * Mon Apr 07 2014 Alejandro Alvarez <aalvarez at cern.ch> - 1.19.0-1
