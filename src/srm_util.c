@@ -30,6 +30,16 @@
 #include "srm_util.h"
 #include "gfal_srm_ifce_internal.h"
 
+/* Not defined on kfreebsd */
+#ifndef ETIME
+#define ETIME EIO
+#endif
+
+/* Not defined on kfreebsd and hurd */
+#ifndef EBADR
+#define EBADR EIO
+#endif
+
 #ifdef CMAKE_BUILD
 #define namespaces_srmv2 namespaces
 #endif
