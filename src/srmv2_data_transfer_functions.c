@@ -946,6 +946,11 @@ int srmv2_status_of_bring_online_async_internal (struct srm_context *context,
 
 	memset (&sreq, 0, sizeof(sreq));
 	sreq.requestToken = (char *) output->token;
+	if (input->surls) {
+	    sreq.arrayOfSourceSURLs = soap_malloc(context->soap, sizeof(struct srm2__ArrayOfAnyURI));
+	    sreq.arrayOfSourceSURLs->__sizeurlArray = input->nbfiles;
+	    sreq.arrayOfSourceSURLs->urlArray = input->surls;
+	}
 	output->retstatus = NULL;
 	output->filestatuses = NULL;
 

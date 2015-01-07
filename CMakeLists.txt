@@ -29,8 +29,8 @@ set(PROJECT_NAME "srm-ifce")
 set(OUTPUT_NAME "gfal_srm_ifce")
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 21)
-set(VERSION_PATCH 4)
+set(VERSION_MINOR 22)
+set(VERSION_PATCH 1)
 set(VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 # libs checks
@@ -38,7 +38,7 @@ pkg_check_modules(GSOAP_PKG REQUIRED gsoap)
 pkg_check_modules(GLIB2_PKG REQUIRED glib-2.0)
 
 #install doc license
-install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README"
+install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README" "readme.html"
 		DESTINATION ${DOC_INSTALL_DIR})
 
 
