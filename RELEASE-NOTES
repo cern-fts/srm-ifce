@@ -1,3 +1,8 @@
+* Mon Jan 12 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.1
+- [DMC-593] - ETIME and EBADR portability issue
+- [DMC-606] - srm-ifce: On status of bring online, arrayOfSourceSURLs was not being set
+- [DMC-561] - Map SRM_TOO_MANY_RESULTS to EFBIG when listing directories
+
 * Thu Nov 06 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.21.4
 - [DMC-484] - srm_xping and xrm_ping bad return codes on error
 - [DMC-489] - srm_xping: otherInfo may be null
