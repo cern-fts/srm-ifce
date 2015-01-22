@@ -17,7 +17,10 @@
 # -----------------------------------------------------
 find_library(DCAP_LIBRARIES
     NAMES dcap
-    HINTS ${DCAP_LOCATION}/lib ${DCAP_LOCATION}/lib64 ${DCAP_LOCATION}/lib32  ${STAGE_DIR}/lib ${STAGE_DIR}/lib64
+    HINTS ${DCAP_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/
     DOC "The main DCAP library"
 )
 
@@ -28,7 +31,10 @@ find_library(DCAP_LIBRARIES
 # -----------------------------------------------------
 find_path(DCAP_INCLUDE_DIR 
     NAMES dcap.h 
-    HINTS ${DCAP_LOCATION} ${DCAP_LOCATION}/include ${DCAP_LOCATION}/include/*  ${STAGE_DIR}/include 
+    HINTS ${DCAP_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/ 
     DOC "The DCAP include directory"
 )
 if(DCAP_INCLUDE_DIR)

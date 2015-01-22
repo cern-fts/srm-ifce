@@ -17,8 +17,11 @@ include(CMakeStringHelpers)
 # CGSI_GSOAP Libraries
 # -----------------------------------------------------
 find_library(CGSI_GSOAP_PATH
-    NAMES cgsi_plugin cgsi_plugin_gsoap_2.7
-    HINTS ${CGSI_GSOAP_LOCATION}/lib ${CGSI_GSOAP_LOCATION}/lib64 ${CGSI_GSOAP_LOCATION}/lib32 ${STAGE_DIR}/lib ${STAGE_DIR}/lib64
+    NAMES cgsi_plugin
+    HINTS
+        ${CGSI_GSOAP_LOCATION}
+        ${STAGE_DIR}
+        ${CMAKE_INSTALL_PREFIX}/cgsigsoap/*/${PLATFORM}/
     DOC "The main CGSI_GSOAP library"
 )
 
@@ -33,7 +36,9 @@ endif(CGSI_GSOAP_PATH)
 # -----------------------------------------------------
 find_path(CGSI_GSOAP_INCLUDE_DIRS 
     NAMES cgsi_plugin.h
-    HINTS ${CGSI_GSOAP_LOCATION} ${CGSI_GSOAP_LOCATION}/include ${CGSI_GSOAP_LOCATION}/include/* ${STAGE_DIR}/include ${STAGE_DIR}/include
+    HINTS ${CGSI_GSOAP_LOCATION}
+          ${STAGE_DIR}/include
+          ${CMAKE_INSTALL_PREFIX}/cgsigsoap/*/${PLATFORM}/
     DOC "The CGSI_GSOAP include directory"
 )
 if(CGSI_GSOAP_INCLUDE_DIRS)

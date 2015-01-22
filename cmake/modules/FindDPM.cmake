@@ -17,7 +17,10 @@
 # -----------------------------------------------------
 find_library(DPM_LIBRARIES
     NAMES dpm
-    HINTS ${DPM_LOCATION}/lib ${DPM_LOCATION}/lib64 ${DPM_LOCATION}/lib32
+    HINTS ${DPM_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/
     DOC "The main dpm library"
 )
 
@@ -27,7 +30,10 @@ find_library(DPM_LIBRARIES
 # -----------------------------------------------------
 find_library(LCGDM_LIBRARIES
     NAMES lcgdm
-    HINTS ${DPM_LOCATION}/lib ${DPM_LOCATION}/lib64 ${DPM_LOCATION}/lib32
+    HINTS ${DPM_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/
     DOC "The main lcgdm library"
 )
 
@@ -36,7 +42,10 @@ find_library(LCGDM_LIBRARIES
 # -----------------------------------------------------
 find_path(DPM_INCLUDE_DIR 
     NAMES dpm/dpm_api.h 
-    HINTS ${DPM_LOCATION} ${DPM_LOCATION}/include ${DPM_LOCATION}/include/*
+    HINTS ${DPM_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/
     DOC "The dpm include directory"
 )
 if(DPM_INCLUDE_DIR)
@@ -49,7 +58,10 @@ endif()
 # -----------------------------------------------------
 find_path(LCGDM_INCLUDE_DIR 
     NAMES Cinit.h
-    HINTS ${LCGDM_LOCATION} ${LCGDM_LOCATION}/include ${LCGDM_LOCATION}/include/lcgdm /usr/include/lcgdm 
+    HINTS ${LCGDM_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/ 
     DOC "The LCGDM include directory"
 )
 if(LCGDM_INCLUDE_DIR)

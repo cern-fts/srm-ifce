@@ -17,7 +17,10 @@
 # -----------------------------------------------------
 find_library(LFC_LIBRARIES
     NAMES lfc lcgdm
-    HINTS ${LFC_LOCATION}/lib ${LFC_LOCATION}/lib64 ${LFC_LOCATION}/lib32
+    HINTS ${LFC_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/
     DOC "The main LFC library"
 )
 
@@ -26,7 +29,10 @@ find_library(LFC_LIBRARIES
 # -----------------------------------------------------
 find_path(LFC_INCLUDE_DIR 
     NAMES lfc/lfc_api.h 
-    HINTS ${LFC_LOCATION} ${LFC_LOCATION}/include ${LFC_LOCATION}/include/*
+    HINTS ${LFC_LOCATION}
+          ${STAGE_DIR}
+          ${CMAKE_INSTALL_PREFIX}/dcap/*/${PLATFORM}/
+          ${CMAKE_INSTALL_PREFIX}/Grid/dcap/*/${PLATFORM}/
     DOC "The LFC include directory"
 )
 if(LFC_INCLUDE_DIR)
