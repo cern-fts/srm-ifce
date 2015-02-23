@@ -282,7 +282,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 			break;
 		case srm_call_status_SUCCESS:
 		case srm_call_status_FAILURE:
-			if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray || internal_context->current_status == srm_call_status_FAILURE)
+		    if (!repfs || repfs->__sizestatusArray < 1 || !repfs->statusArray)
 			{
 			    internal_context->current_status = srm_call_status_FAILURE;
 
