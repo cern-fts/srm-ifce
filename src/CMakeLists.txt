@@ -13,8 +13,6 @@ FILE(GLOB src_system_tests "*systemtest*.c")
 
 LIST(APPEND src_libs ${src_libs1} ${src_libs2} ${src_libs3} ${src_libs4})
 
-
-
 ## gsoap generation
 # srmv1
 set(srmv1_typemap "typemap-srmv1.dat")
@@ -67,15 +65,17 @@ set_source_files_properties(${srm_map_files_c} ${srm2_source_file1} ${srm2_sourc
 
 
 
-add_definitions(-D_LARGEFILE64_SOURCE -DVERSION="${VERSION_STRING}"
--DCMAKE_BUILD -D_GNU_SOURCE -DGFAL_SECURE -Wall ${GSOAP_PKG_CFLAGS}
- ${GSOAP_PKG_CFLAGS_OTHER})
-include_directories(${srm2_dir} ${CGSI_GSOAP_INCLUDE_DIRS} ${GLIB2_PKG_INCLUDE_DIRS})
+add_definitions(
+    -D_LARGEFILE64_SOURCE -DVERSION="${VERSION_STRING}"
+    -DCMAKE_BUILD -D_GNU_SOURCE -DGFAL_SECURE -Wall
+    ${GSOAP_CFLAGS}
+)
+include_directories(${srm2_dir} ${CGSI_GSOAP_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIRS})
 link_directories( ${CGSI_GSOAP_LIBRARY_DIRS} )
 
 ## main libs
 add_library(srm-ifce  SHARED ${src_libs} ${srm2_source_file1} ${srm2_source_file2} ${CMAKE_CURRENT_BINARY_DIR}/${srm_map_files_c})
-target_link_libraries(srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES} rt)
+target_link_libraries(srm-ifce ${GSOAP_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_LIBRARIES} rt)
 set_target_properties(srm-ifce 	PROPERTIES
 								VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 								SOVERSION ${VERSION_MAJOR}
@@ -91,24 +91,23 @@ add_PkgConfigFile_for_Library(srm-ifce.pc srm-ifce)
 
 
 ## version control
-add_executable(gfal_srm_ifce_version 
-									${src_program})
-target_link_libraries(gfal_srm_ifce_version )								
+add_executable(gfal_srm_ifce_version  ${src_program})
+target_link_libraries(gfal_srm_ifce_version srm-ifce)								
 
 IF (UNIT_TESTS)
 
-link_directories (${PROJECT_BINARY_DIR}/ ${PROJECT_BINARY_DIR}/src)
-
-## unit tests
-add_executable(gfal_srm_ifce_unittest 
-									${src_unit_tests} )
-target_link_libraries(gfal_srm_ifce_unittest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
-add_executable(gfal_srm_ifce_systemtest 
-									${src_system_tests} )
-target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
-
-add_test(base_unit_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_unittest)
-#add_test(base_system_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_systemtest)
+    link_directories (${PROJECT_BINARY_DIR}/ ${PROJECT_BINARY_DIR}/src)
+    
+    ## unit tests
+    add_executable(gfal_srm_ifce_unittest 
+    									${src_unit_tests} )
+    target_link_libraries(gfal_srm_ifce_unittest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
+    add_executable(gfal_srm_ifce_systemtest 
+    									${src_system_tests} )
+    target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
+    
+    add_test(base_unit_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_unittest)
+    #add_test(base_system_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_systemtest)
 
 ENDIF (UNIT_TESTS)
 

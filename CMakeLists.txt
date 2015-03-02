@@ -17,9 +17,10 @@ include(MacroCopyFile REQUIRED)
 include(ReleaseDebugAutoFlags REQUIRED)
 include(CMakeGeneratePkgConfig REQUIRED)
 
-find_package(PkgConfig REQUIRED)
 find_package(gSOAP REQUIRED)
 find_package(CGSI_GSOAP REQUIRED)
+find_package(GLIB2 REQUIRED)
+
 #define opts
 set(UNIT_TESTS FALSE
         CACHE STRING "enable or disable unit test compilation")
@@ -30,12 +31,8 @@ set(OUTPUT_NAME "gfal_srm_ifce")
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 22)
-set(VERSION_PATCH 1)
+set(VERSION_PATCH 2)
 set(VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-
-# libs checks
-pkg_check_modules(GSOAP_PKG REQUIRED gsoap)
-pkg_check_modules(GLIB2_PKG REQUIRED glib-2.0)
 
 #install doc license
 install(FILES "LICENSE" "RELEASE-NOTES" "VERSION" "README" "readme.html"
