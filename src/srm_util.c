@@ -145,6 +145,37 @@ void set_estimated_wait_time(struct srm_internal_context *internal_context, int 
 }
 
 
+static void srm_send_one_header(GQuark key_id, gpointer data, gpointer user_data)
+{
+    struct soap* soap = (struct soap*)user_data;
+    struct srm_context* c = (struct srm_context*)soap->user;
+    c->ext->original_fposthdr(soap, g_quark_to_string(key_id), data);
+}
+
+
+static int srm_post_header(struct soap* soap, const char* key, const char* value)
+{
+    struct srm_context* c = (struct srm_context*)soap->user;
+    assert(c->ext->original_fposthdr);
+
+    // If NULL, NULL, it is our chance to push our headers, since the caller
+    // expects just to end the headers with a \n\r now
+    if (key == NULL && value == NULL) {
+        g_datalist_foreach(&c->ext->additional_headers, srm_send_one_header, soap);
+    }
+    // Override user-agent
+    else if (c->ext->user_agent[0] && strncasecmp(key, "User-Agent", 10) == 0) {
+        char* buffer = g_strdup_printf("%s %s", value, c->ext->user_agent);
+        int r = c->ext->original_fposthdr(soap, key, buffer);
+        g_free(buffer);
+        return r;
+    }
+
+    // Forward the request
+    return c->ext->original_fposthdr(soap, key, value);
+}
+
+
 void srm_context_soap_init(struct srm_context* c)
 {
     assert(c);
@@ -183,6 +214,11 @@ void srm_context_soap_init(struct srm_context* c)
     c->soap->recv_timeout= c->timeout_ops;
     c->soap->send_timeout = c->timeout_ops;
     c->soap->connect_timeout = c->timeout_conn;
+
+    // Allow to inject our own headers
+    c->soap->user = c;
+    c->ext->original_fposthdr = c->soap->fposthdr;
+    c->soap->fposthdr = srm_post_header;
 }
 
 

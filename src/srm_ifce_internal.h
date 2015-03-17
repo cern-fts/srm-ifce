@@ -50,6 +50,15 @@ struct srm_context_extension{
     int keep_alive;
     // user credentials
     char *ucert, *ukey;
+
+    // Original post header method
+    int (*original_fposthdr)(struct soap*, const char*, const char*);
+
+    // List of key/values headers
+    GData* additional_headers;
+
+    // Append to the User-Agent
+    char user_agent[128];
 };
 
 /* Normal assertion for srm-ifce */
