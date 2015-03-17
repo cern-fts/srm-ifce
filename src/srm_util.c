@@ -165,7 +165,7 @@ static int srm_post_header(struct soap* soap, const char* key, const char* value
     }
     // Override user-agent
     else if (c->ext->user_agent[0] && strncasecmp(key, "User-Agent", 10) == 0) {
-        char* buffer = g_strdup_printf("%s %s", value, c->ext->user_agent);
+        char* buffer = g_strdup_printf("%s srm-ifce/%s %s", c->ext->user_agent, VERSION, value);
         int r = c->ext->original_fposthdr(soap, key, buffer);
         g_free(buffer);
         return r;
