@@ -216,9 +216,11 @@ void srm_context_soap_init(struct srm_context* c)
     c->soap->connect_timeout = c->timeout_conn;
 
     // Allow to inject our own headers
-    c->soap->user = c;
-    c->ext->original_fposthdr = c->soap->fposthdr;
-    c->soap->fposthdr = srm_post_header;
+    if (c->ext) {
+        c->soap->user = c;
+        c->ext->original_fposthdr = c->soap->fposthdr;
+        c->soap->fposthdr = srm_post_header;
+    }
 }
 
 
