@@ -84,7 +84,7 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
     GFAL_SRM_IFCE_ASSERT(context);
     memset(context, 0, sizeof(*context));
 
-    context->ext = NULL;
+    context->ext = srm_context_extension_new();
     context->errbuf = errbuf;
     context->errbufsz = errbufsz;
     context->version = VERSION_2_2;
