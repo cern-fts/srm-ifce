@@ -24,7 +24,7 @@ srm_context_extension_t srm_context_extension_new(){
     res->polling_logic = SRM_POLLING_LOGIC_MIN_MAX_EXP;
     res->min_waittime.tv_nsec = 200000000;
     res->max_waittime.tv_sec = 5;
-    res->turl_resolution_timeout = 3600;
+    res->turl_resolution_timeout = 300;
     res->keep_alive = 0;
     return res;
 }
@@ -81,7 +81,7 @@ void srm_context_init(struct srm_context *context,char *srm_endpoint,char *errbu
     GFAL_SRM_IFCE_ASSERT(context);
     memset(context, 0, sizeof(*context));
 
-    context->ext = NULL;
+    context->ext = srm_context_extension_new();
     context->errbuf = errbuf;
     context->errbufsz = errbufsz;
     context->version = VERSION_2_2;
