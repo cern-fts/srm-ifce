@@ -24,7 +24,7 @@ srm_context_extension_t srm_context_extension_new(){
     res->polling_logic = SRM_POLLING_LOGIC_MIN_MAX_EXP;
     res->min_waittime.tv_nsec = 200000000;
     res->max_waittime.tv_sec = 5;
-    res->turl_resolution_timeout = 3600;
+    res->turl_resolution_timeout = 300;
     res->keep_alive = 0;
     g_datalist_init(&res->additional_headers);
 
