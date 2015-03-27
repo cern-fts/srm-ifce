@@ -1,3 +1,7 @@
+* Fri Mar 27 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.3
+- [DMC-655] - Need to initialize desiredRequestTime when called via gfal1
+- [DMC-656] - Default desired request lifetime reduced to 300
+
 * Mon Mar 02 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.2
 - [DMC-637] - srm-ifce fails to map properly the error code when the server replies synchronously
 - [DMC-616] - Facilitate build integration with PH-SFT tools
