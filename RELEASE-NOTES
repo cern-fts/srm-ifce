@@ -1,5 +1,9 @@
+* Fri Apr 09 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1
+** Improvement
+- [DMC-652] - Add an API to allow adding custom headers to the srm requests
+
 * Fri Mar 27 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.3
-- [DMC-655] - Need to initialize desiredRequestTime when called via gfal1 
+- [DMC-655] - Need to initialize desiredRequestTime when called via gfal1
 - [DMC-656] - Default desired request lifetime reduced to 300
 
 * Mon Mar 02 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.2

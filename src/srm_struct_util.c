@@ -26,6 +26,8 @@ srm_context_extension_t srm_context_extension_new(){
     res->max_waittime.tv_sec = 5;
     res->turl_resolution_timeout = 300;
     res->keep_alive = 0;
+    g_datalist_init(&res->additional_headers);
+
     return res;
 }
 
@@ -33,6 +35,7 @@ void srm_context_extension_free(srm_context_extension_t context){
     if(context){
         g_free(context->ucert);
         g_free(context->ukey);
+        g_datalist_clear(&context->additional_headers);
         g_free(context);
     }
 }
@@ -121,4 +124,35 @@ void srm_set_desired_request_time(struct srm_context *context, int timeout)
     if (context->ext == NULL)
         context->ext = srm_context_extension_new();
     context->ext->turl_resolution_timeout = timeout;
+}
+
+
+void srm_set_http_header(struct srm_context *context, const char *key, const char *value)
+{
+    if (context->ext == NULL)
+        context->ext = srm_context_extension_new();
+
+    if (value) {
+        g_datalist_set_data_full(&context->ext->additional_headers, key, g_strdup(value), g_free);
+    }
+    else {
+        g_datalist_remove_data(&context->ext->additional_headers, key);
+    }
+}
+
+
+void srm_set_user_agent(struct srm_context *context, const char *user_agent, ...)
+{
+    if (context->ext == NULL)
+        context->ext = srm_context_extension_new();
+
+    if (user_agent) {
+        va_list args;
+        va_start(args, user_agent);
+        g_vsnprintf(context->ext->user_agent, sizeof(context->ext->user_agent), user_agent, args);
+        va_end(args);
+    }
+    else {
+        context->ext->user_agent[0] = '\0';
+    }
 }

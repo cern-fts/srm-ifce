@@ -55,6 +55,18 @@ void srm_set_credentials(struct srm_context *context, const char *ucert, const c
  */
 void srm_set_desired_request_time(struct srm_context *context, int timeout);
 
+/**
+ set a custom header
+ Set value to NULL to remove the header
+ */
+void srm_set_http_header(struct srm_context *context, const char *key, const char *value);
+
+/**
+ set the custom User-Agent string
+ It will be appended to what gsoap sets
+ */
+void srm_set_user_agent(struct srm_context *context, const char *user_agent, ...);
+
 /* srm_ls functions */
 void srm_ls_output_destroy(struct srm_ls_output *output);
 
