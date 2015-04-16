@@ -7,9 +7,14 @@ Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
-URL:		http://dmc.web.cern.ch/
-# svn export http://svn.cern.ch/guest/lcgutil/srm-ifce/trunk srm-ifce
-Source0:	http://grid-deployment.web.cern.ch/grid-deployment/dms/lcgutil/tar/%{name}/%{name}-%{version}.tar.gz 
+URL:			https://svnweb.cern.ch/trac/lcgutil
+# git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.23.1
+# pushd srm-ifce-1.23.1
+# git checkout v1.23.1
+# git submodule init && git submodule update
+# popd
+# tar czf srm-ifce-1.23.1.tar.gz srm-ifce-1.23.1
+Source0:	%{name}-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	cmake
@@ -18,7 +23,7 @@ BuildRequires:	glib2-devel
 BuildRequires:	globus-ftp-client-devel
 BuildRequires:	globus-gss-assist-devel
 
-Requires:  CGSI-gSOAP >= 1.3.6
+Requires:	CGSI-gSOAP >= 1.3.6
 
 %description
 srm-ifce is a client side implementation of the SRMv2 specification
@@ -59,7 +64,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
-%doc LICENSE VERSION RELEASE-NOTES README readme.html
+%{_pkgdocdir}/LICENSE
+%{_pkgdocdir}/VERSION
+%{_pkgdocdir}/README
+%{_pkgdocdir}/readme.html
 
 %files devel
 %defattr (-,root,root)
@@ -67,17 +75,48 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
 %{_includedir}/gfal_srm_ifce_types.h
+%{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Thu Apr 16 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1-1
+- Release srm-ifce 1.23.1
+
+* Mon Mar 02 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.2-1
+- Release srm-ifce 1.22.2
+
+* Mon Jan 26 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.1-2
+- Rebuilt for gsoap 2.8.21
+
+* Mon Jan 12 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.22.1-1
+- Release srm-ifce 1.22.1
+
+* Thu Nov 06 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.21.4-1
+- Release srm-ifce 1.21.4
+
+* Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.20.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Fri Jul 25 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.20.1-1
+- Release srm-ifce 1.20.1
+
+* Mon Jul 14 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.19.0-3
+- Rebuilt for gsoap 2.8.17
+
+* Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.19.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Mon Apr 07 2014 Alejandro Alvarez <aalvarez at cern.ch> - 1.19.0-1
  - Release srm-ifce 1.19.0
+
+* Thu Oct 17 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-2
+ - Rebuilt for gsoap++
 
 * Fri Sep 20 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-1
  - Release srm-ifce 1.18.0
 
 * Tue Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0-0
  - Release srm-ifce 1.17.0
- 
+
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
  - Release srm-ifce 1.16.0, first post-EMI release 
 
