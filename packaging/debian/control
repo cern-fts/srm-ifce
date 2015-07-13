@@ -1,0 +1,25 @@
+Source: srm-ifce
+Priority: optional
+Maintainer: Mattias Ellert <mattias.ellert@fysast.uu.se>
+Build-Depends: debhelper (>= 8.0.0), cmake, libcgsi-gsoap-dev (>= 1.3.6), libglib2.0-dev, libglobus-ftp-client-dev, libglobus-gss-assist-dev, pkg-config
+Standards-Version: 3.9.6
+Section: libs
+Homepage: http://dmc.web.cern.ch/
+
+Package: libgfal-srm-ifce1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: SRM client side library
+ srm-ifce is a client side implementation of the SRMv1 and SRMv2
+ specification for GFAL1/2 and FTS. SRM means Storage Resource Manager
+ Interface, it is a specification of a SOAP interface providing a
+ generic way to manage distributed storage systems.
+
+Package: srm-ifce-dev
+Section: libdevel
+Architecture: any
+Depends: libgfal-srm-ifce1 (= ${binary:Version}), ${misc:Depends}, libglib2.0-dev
+Description: SRM client side headers and development files
+ Development libraries, pkgconfig files and header files for the
+ srm-ifce.

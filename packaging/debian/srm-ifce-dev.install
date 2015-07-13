@@ -1,0 +1,4 @@
+usr/lib/pkgconfig/*
+usr/lib/libgfal_srm_ifce.so
+/usr/include/gfal_srm_ifce.h
+/usr/include/gfal_srm_ifce_types.h
