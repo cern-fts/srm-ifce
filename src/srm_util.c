@@ -85,6 +85,30 @@ const char *srmv2_errmsg[] = {
 static int srm_timeout_connect = 60;
 static int srm_timeout_sendreceive = 3600;
 
+// Aleternative implementation for clock_gettime for platforms that
+// do not have it (i.e. MacOSX)
+#if !(_POSIX_C_SOURCE >= 199309L)
+
+#include <mach/clock.h>
+#include <mach/mach.h>
+
+#define CLOCK_MONOTONIC 0
+typedef int clockid_t;
+
+static int clock_gettime(clockid_t clk_id, struct timespec *tp)
+{
+    clock_serv_t cclock;
+    mach_timespec_t mts;
+
+    host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
+    clock_get_time(cclock, &mts);
+    mach_port_deallocate(mach_task_self(), cclock);
+
+    tp->tv_sec = mts.tv_sec;
+    tp->tv_nsec = mts.tv_nsec;
+}
+#endif
+
 int srm_get_timeout_connect ()
 {
 	return (srm_timeout_connect);

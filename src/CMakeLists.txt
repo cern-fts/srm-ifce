@@ -71,11 +71,21 @@ add_definitions(
     ${GSOAP_CFLAGS}
 )
 include_directories(${srm2_dir} ${CGSI_GSOAP_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIRS})
-link_directories( ${CGSI_GSOAP_LIBRARY_DIRS} )
 
 ## main libs
 add_library(srm-ifce  SHARED ${src_libs} ${srm2_source_file1} ${srm2_source_file2} ${CMAKE_CURRENT_BINARY_DIR}/${srm_map_files_c})
-target_link_libraries(srm-ifce ${GSOAP_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_LIBRARIES} rt)
+
+target_link_libraries(srm-ifce
+    ${GSOAP_LIBRARIES}
+    ${CGSI_GSOAP_LIBRARIES}
+    ${GLIB2_LIBRARIES}
+    ${GLOBUS_LIBRARIES}
+)
+
+if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    target_link_libraries (srm-ifce rt)
+endif ()
+
 set_target_properties(srm-ifce 	PROPERTIES
 								VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 								SOVERSION ${VERSION_MAJOR}
@@ -101,10 +111,10 @@ IF (UNIT_TESTS)
     ## unit tests
     add_executable(gfal_srm_ifce_unittest 
     									${src_unit_tests} )
-    target_link_libraries(gfal_srm_ifce_unittest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
+    target_link_libraries(gfal_srm_ifce_unittest ${OUTPUT_NAME} check srm-ifce)
     add_executable(gfal_srm_ifce_systemtest 
     									${src_system_tests} )
-    target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce ${GSOAP_PKG_LIBRARIES} ${CGSI_GSOAP_LIBRARIES} ${GLIB2_PKG_LIBRARIES})
+    target_link_libraries(gfal_srm_ifce_systemtest ${OUTPUT_NAME} check srm-ifce)
     
     add_test(base_unit_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_unittest)
     #add_test(base_system_test ${CMAKE_BINARY_DIR}/gfal_srm_ifce_systemtest)

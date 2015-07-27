@@ -21,6 +21,24 @@ find_package(gSOAP REQUIRED)
 find_package(CGSI_GSOAP REQUIRED)
 find_package(GLIB2 REQUIRED)
 
+# Link against Globus
+# Need to be redundant as cgsi-gsoap is a static library in MacOSX
+find_package(Globus_COMMON)
+find_package(Globus_GSI_CERT_UTILS REQUIRED)
+find_package(Globus_GSI_CREDENTIAL REQUIRED)
+find_package(Globus_GSS_ASSIST REQUIRED)
+find_package(Globus_GSSAPI_GSI REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+set (GLOBUS_LIBRARIES
+    ${GLOBUS_COMMON_LIBRARIES}
+    ${GLOBUS_GSI_CERT_UTILS_LIBRARIES}
+    ${GLOBUS_GSI_CREDENTIAL_LIBRARIES}
+    ${GLOBUS_GSS_ASSIST_LIBRARIES}
+    ${GLOBUS_GSSAPI_GSI_LIBRARIES}
+    ${OPENSSL_LIBRARIES}
+)
+
 #define opts
 set(UNIT_TESTS FALSE
         CACHE STRING "enable or disable unit test compilation")
