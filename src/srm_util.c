@@ -188,9 +188,15 @@ void srm_context_soap_init(struct srm_context* c)
 
     if (c->ext && c->ext->keep_alive) {
         c->soap = soap_new2(SOAP_IO_KEEPALIVE, SOAP_IO_KEEPALIVE);
+#ifdef SO_NOSIGPIPE
+        c->soap->bind_flags |= (SO_REUSEADDR | SO_NOSIGPIPE);
+#else
         c->soap->bind_flags |= SO_REUSEADDR;
+#endif
         c->soap->tcp_keep_alive = 1;
+#ifdef MSG_NOSIGNAL
         c->soap->socket_flags = MSG_NOSIGNAL;
+#endif
     }
     else {
         c->soap = soap_new();
