@@ -65,10 +65,11 @@ deb-src: dist
 	tar xzf "$(NAME)-$(VERSION).tar.gz" -C "$(PBUILDER_TMP)"
 	cp -rv debian "$(PBUILDER_TMP)/$(NAME)-$(VERSION)"
 	$(if $(RELEASE), sed -ri "s/($(NAME) )\((([0-9]+\.)+[0-9]+)-[0-9]+\)/\\1(\\2-$(RELEASE))/g" "$(PBUILDER_TMP)/$(NAME)-$(VERSION)/debian/changelog")
+	cp -f "$(NAME)-$(VERSION).tar.gz" "$(NAME)_$(VERSION).orig.tar.gz"
 	cp -f "$(NAME)-$(VERSION).tar.gz" "$(PBUILDER_TMP)/$(NAME)_$(VERSION).orig.tar.gz" 
 	cd "$(PBUILDER_TMP)/$(NAME)-$(VERSION)"; \
 		debuild -us -uc -S
-	cp -f $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.gz .
+	cp -f $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.diff.gz .
 	cp -f $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.dsc .
 
 deb: deb-src
