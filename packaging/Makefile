@@ -68,8 +68,8 @@ deb-src: dist
 	cp -f "$(NAME)-$(VERSION).tar.gz" "$(PBUILDER_TMP)/$(NAME)_$(VERSION).orig.tar.gz" 
 	cd "$(PBUILDER_TMP)/$(NAME)-$(VERSION)"; \
 		debuild -us -uc -S
-	mv $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.gz .
-	mv $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.dsc .
+	cp -f $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.gz .
+	cp -f $(PBUILDER_TMP)/$(NAME)_$(VERSION)*.dsc .
 
 deb: deb-src
 	pbuilder build $(PBUILDER_FLAGS) $(NAME)_$(VERSION)*.dsc
