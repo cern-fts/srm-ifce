@@ -47,40 +47,40 @@
 const char *err_msg_begin = "SE";
 
 const char *srmv2_errmsg[] = {
-	"SRM_SUCCESS",
-	"SRM_FAILURE",
-	"SRM_AUTHENTICATION_FAILURE",
-	"SRM_AUTHORIZATION_FAILURE",
-	"SRM_INVALID_REQUEST",
-	"SRM_INVALID_PATH",
-	"SRM_FILE_LIFETIME_EXPIRED",
-	"SRM_SPACE_LIFETIME_EXPIRED",
-	"SRM_EXCEED_ALLOCATION",
-	"SRM_NO_USER_SPACE",
-	"SRM_NO_FREE_SPACE",
-	"SRM_DUPLICATION_ERROR",
-	"SRM_NON_EMPTY_DIRECTORY",
-	"SRM_TOO_MANY_RESULTS",
-	"SRM_INTERNAL_ERROR",
-	"SRM_FATAL_INTERNAL_ERROR",
-	"SRM_NOT_SUPPORTED",
-	"SRM_REQUEST_QUEUED",
-	"SRM_REQUEST_INPROGRESS",
-	"SRM_REQUEST_SUSPENDED",
-	"SRM_ABORTED",
-	"SRM_RELEASED",
-	"SRM_FILE_PINNED",
-	"SRM_FILE_IN_CACHE",
-	"SRM_SPACE_AVAILABLE",
-	"SRM_LOWER_SPACE_GRANTED",
-	"SRM_DONE",
-	"SRM_PARTIAL_SUCCESS",
-	"SRM_REQUEST_TIMED_OUT",
-	"SRM_LAST_COPY",
-	"SRM_FILE_BUSY",
-	"SRM_FILE_LOST",
-	"SRM_FILE_UNAVAILABLE",
-	"SRM_CUSTOM_STATUS"
+    "SRM_SUCCESS",
+    "SRM_FAILURE",
+    "SRM_AUTHENTICATION_FAILURE",
+    "SRM_AUTHORIZATION_FAILURE",
+    "SRM_INVALID_REQUEST",
+    "SRM_INVALID_PATH",
+    "SRM_FILE_LIFETIME_EXPIRED",
+    "SRM_SPACE_LIFETIME_EXPIRED",
+    "SRM_EXCEED_ALLOCATION",
+    "SRM_NO_USER_SPACE",
+    "SRM_NO_FREE_SPACE",
+    "SRM_DUPLICATION_ERROR",
+    "SRM_NON_EMPTY_DIRECTORY",
+    "SRM_TOO_MANY_RESULTS",
+    "SRM_INTERNAL_ERROR",
+    "SRM_FATAL_INTERNAL_ERROR",
+    "SRM_NOT_SUPPORTED",
+    "SRM_REQUEST_QUEUED",
+    "SRM_REQUEST_INPROGRESS",
+    "SRM_REQUEST_SUSPENDED",
+    "SRM_ABORTED",
+    "SRM_RELEASED",
+    "SRM_FILE_PINNED",
+    "SRM_FILE_IN_CACHE",
+    "SRM_SPACE_AVAILABLE",
+    "SRM_LOWER_SPACE_GRANTED",
+    "SRM_DONE",
+    "SRM_PARTIAL_SUCCESS",
+    "SRM_REQUEST_TIMED_OUT",
+    "SRM_LAST_COPY",
+    "SRM_FILE_BUSY",
+    "SRM_FILE_LOST",
+    "SRM_FILE_UNAVAILABLE",
+    "SRM_CUSTOM_STATUS"
 };
 static int srm_timeout_connect = 60;
 static int srm_timeout_sendreceive = 3600;
@@ -111,25 +111,25 @@ static int clock_gettime(clockid_t clk_id, struct timespec *tp)
 
 int srm_get_timeout_connect ()
 {
-	return (srm_timeout_connect);
+    return (srm_timeout_connect);
 }
 
 void srm_set_timeout_connect (int value)
 {
 
-	if (value >= 0)
-		srm_timeout_connect = value;
+    if (value >= 0)
+        srm_timeout_connect = value;
 }
 
 int srm_get_timeout_sendreceive ()
 {
-	return (srm_timeout_sendreceive);
+    return (srm_timeout_sendreceive);
 }
 
 void srm_set_timeout_sendreceive (int value)
 {
-	if (value >= 0)
-		srm_timeout_sendreceive = value;
+    if (value >= 0)
+        srm_timeout_sendreceive = value;
 }
 
 
@@ -142,7 +142,7 @@ void back_off_logic_init(struct srm_context *context, struct srm_internal_contex
 
     clock_gettime(CLOCK_MONOTONIC, &internal_context->end_time_spec);
     if (context->timeout > 0)
-	{
+    {
         internal_context->relative_timeout = context->timeout;
         internal_context->end_time = (time(NULL) + internal_context->relative_timeout);
         internal_context->end_time_spec.tv_sec+= internal_context->relative_timeout;
@@ -151,8 +151,8 @@ void back_off_logic_init(struct srm_context *context, struct srm_internal_contex
         internal_context->end_time = (time(NULL) + internal_context->relative_timeout);
         internal_context->end_time_spec.tv_sec+= internal_context->relative_timeout;
     }
-	internal_context->estimated_wait_time = -1;
-	internal_context->attempt = 1;
+    internal_context->estimated_wait_time = -1;
+    internal_context->attempt = 1;
 
     if(context->ext){
         timespec_add(&(internal_context->current_waittime_spec), &(context->ext->min_waittime), &(internal_context->current_waittime_spec));
@@ -257,9 +257,9 @@ void srm_context_soap_init(struct srm_context* c)
 void srm_soap_free(struct soap *soap)
 {
     const int srm_ifce_errno = errno;
-	soap_end (soap);
-	soap_done (soap);
-	soap_free(soap);
+    soap_end (soap);
+    soap_done (soap);
+    soap_free(soap);
     // override errno with srm-ifce specific value
     // hack for globus openssl errno problems
     errno = srm_ifce_errno;
@@ -275,66 +275,66 @@ const char * statuscode2errmsg (unsigned int statuscode)
 
 int statuscode2errno (int statuscode)
 {
-	switch (statuscode) {
-		case SRM_USCOREINVALID_USCOREPATH:
-			return (ENOENT);
-		case SRM_USCOREAUTHENTICATION_USCOREFAILURE:
-		case SRM_USCOREAUTHORIZATION_USCOREFAILURE:
-			return (EACCES);
-		case SRM_USCOREDUPLICATION_USCOREERROR:
-			return (EEXIST);
-		case SRM_USCORENO_USCOREFREE_USCORESPACE:
-			return (ENOSPC);
-		case SRM_USCOREINTERNAL_USCOREERROR:
-			return (ECOMM);
-		case SRM_USCORENOT_USCORESUPPORTED:
-			return (EOPNOTSUPP);
-		case SRM_USCORENON_USCOREEMPTY_USCOREDIRECTORY:
-			return (ENOTEMPTY);
-		case SRM_USCOREFILE_USCORELIFETIME_USCOREEXPIRED:
-			return (ETIME);
-		case SRM_USCOREREQUEST_USCOREINPROGRESS:
-		case SRM_USCOREREQUEST_USCOREQUEUED:
-			return (EAGAIN);
-		case SRM_USCOREFAILURE:
-			return (EIO);
-		case SRM_USCORENO_USCOREUSER_USCORESPACE:
-		case SRM_USCOREINVALID_USCOREREQUEST:
-			return (EBADR);
-		case SRM_USCOREEXCEED_USCOREALLOCATION:
-			return (EDQUOT);
-		case SRM_USCOREFILE_USCOREBUSY:
-		case SRM_USCOREFILE_USCOREUNAVAILABLE:
-			return (EBUSY);
-		case SRM_USCOREFILE_USCORELOST:
-			return (EIDRM);
-		case SRM_USCOREABORTED:
-			return (ECANCELED);
-		case SRM_USCORETOO_USCOREMANY_USCORERESULTS:
-			return (EFBIG);
-		case SRM_USCORESUCCESS:
-		case SRM_USCOREFILE_USCOREPINNED:
-		case SRM_USCORESPACE_USCOREAVAILABLE:
-		case SRM_USCORERELEASED:
-			return (0);
-		default:
-			return (EINVAL);
-	}
+    switch (statuscode) {
+        case SRM_USCOREINVALID_USCOREPATH:
+            return (ENOENT);
+        case SRM_USCOREAUTHENTICATION_USCOREFAILURE:
+        case SRM_USCOREAUTHORIZATION_USCOREFAILURE:
+            return (EACCES);
+        case SRM_USCOREDUPLICATION_USCOREERROR:
+            return (EEXIST);
+        case SRM_USCORENO_USCOREFREE_USCORESPACE:
+            return (ENOSPC);
+        case SRM_USCOREINTERNAL_USCOREERROR:
+            return (ECOMM);
+        case SRM_USCORENOT_USCORESUPPORTED:
+            return (EOPNOTSUPP);
+        case SRM_USCORENON_USCOREEMPTY_USCOREDIRECTORY:
+            return (ENOTEMPTY);
+        case SRM_USCOREFILE_USCORELIFETIME_USCOREEXPIRED:
+            return (ETIME);
+        case SRM_USCOREREQUEST_USCOREINPROGRESS:
+        case SRM_USCOREREQUEST_USCOREQUEUED:
+            return (EAGAIN);
+        case SRM_USCOREFAILURE:
+            return (EIO);
+        case SRM_USCORENO_USCOREUSER_USCORESPACE:
+        case SRM_USCOREINVALID_USCOREREQUEST:
+            return (EBADR);
+        case SRM_USCOREEXCEED_USCOREALLOCATION:
+            return (EDQUOT);
+        case SRM_USCOREFILE_USCOREBUSY:
+        case SRM_USCOREFILE_USCOREUNAVAILABLE:
+            return (EBUSY);
+        case SRM_USCOREFILE_USCORELOST:
+            return (EIDRM);
+        case SRM_USCOREABORTED:
+            return (ECANCELED);
+        case SRM_USCORETOO_USCOREMANY_USCORERESULTS:
+            return (EFBIG);
+        case SRM_USCORESUCCESS:
+        case SRM_USCOREFILE_USCOREPINNED:
+        case SRM_USCORESPACE_USCOREAVAILABLE:
+        case SRM_USCORERELEASED:
+            return (0);
+        default:
+            return (EINVAL);
+    }
 }
 
 int statuscode_and_msg_to_errno(int statuscode, const char* err_tab_msg){
     int err_code = statuscode2errno(statuscode);
     if((err_code == EINVAL || err_code == EIO) && err_tab_msg != NULL){
         // search for string pattern
-		// search for pattern EEXIST, LCGUTIL-203 bug
-		if( strstr(err_tab_msg, "exists, overwite is not allowed") != NULL)
-			err_code = EEXIST;
-		// https://its.cern.ch/jira/browse/DMC-512
-		if (strstr(err_tab_msg, "o such file or directory") != NULL)
-			err_code = ENOENT;
-		// https://its.cern.ch/jira/browse/DMC-528
-		if (strstr(err_tab_msg, "ile does not exist") != NULL)
-			err_code = ENOENT;
+        // search for pattern EEXIST, LCGUTIL-203 bug
+        if( strstr(err_tab_msg, "exists, overwite is not allowed") != NULL)
+            err_code = EEXIST;
+        // https://its.cern.ch/jira/browse/DMC-512
+        if (strstr(err_tab_msg, "o such file or directory") != NULL)
+            err_code = ENOENT;
+        // https://its.cern.ch/jira/browse/DMC-528
+        if (strstr(err_tab_msg, "ile does not exist") != NULL)
+            err_code = ENOENT;
     }
     return err_code;
 }
@@ -343,127 +343,127 @@ int statuscode_and_msg_to_errno(int statuscode, const char* err_tab_msg){
 
 void srm_errmsg (struct srm_context *context, const char *format, ...)
 {
-	va_list ap;
-	char *actual_format;
+    va_list ap;
+    char *actual_format;
 
-	if ((context->errbuf == NULL && context->verbose == 0) || format == NULL || format[0] == 0)
-		return;
+    if ((context->errbuf == NULL && context->verbose == 0) || format == NULL || format[0] == 0)
+        return;
 
-	va_start (ap, format);
+    va_start (ap, format);
      (void)asprintf (&actual_format, "%s\n", format);
-	if (actual_format == NULL){
-		va_end(ap);
-		return;
-	}
+    if (actual_format == NULL){
+        va_end(ap);
+        return;
+    }
 
-	if (context->errbuf == NULL)
-		vfprintf (stderr, actual_format, ap);
-	else
-		vsnprintf (context->errbuf, context->errbufsz, actual_format, ap);
+    if (context->errbuf == NULL)
+        vfprintf (stderr, actual_format, ap);
+    else
+        vsnprintf (context->errbuf, context->errbufsz, actual_format, ap);
 
-	free (actual_format);
-	va_end(ap);
+    free (actual_format);
+    va_end(ap);
 }
 
 int srm_soap_call_err(struct srm_context *context, const char *srmfunc)
 {
-	if (context->soap->fault != NULL && context->soap->fault->faultstring != NULL)
-	{
-		srm_errmsg (context, "[%s][%s][] %s: %s",err_msg_begin,
-				 srmfunc, context->srm_endpoint, context->soap->fault->faultstring);
-	}else if (context->soap->error == SOAP_EOF)
-	{
-		srm_errmsg (context, "[%s][%s][] %s: Connection fails or timeout",
-				err_msg_begin,srmfunc,context->srm_endpoint);
-	}else
-	{
-		srm_errmsg (context, "[%s][%s][] %s: Unknown SOAP error (%d)",
-				err_msg_begin,srmfunc,context->srm_endpoint, context->soap->error);
-	}
-	return ECOMM;
+    if (context->soap->fault != NULL && context->soap->fault->faultstring != NULL)
+    {
+        srm_errmsg (context, "[%s][%s][] %s: %s",err_msg_begin,
+                 srmfunc, context->srm_endpoint, context->soap->fault->faultstring);
+    }else if (context->soap->error == SOAP_EOF)
+    {
+        srm_errmsg (context, "[%s][%s][] %s: Connection fails or timeout",
+                err_msg_begin,srmfunc,context->srm_endpoint);
+    }else
+    {
+        srm_errmsg (context, "[%s][%s][] %s: Unknown SOAP error (%d)",
+                err_msg_begin,srmfunc,context->srm_endpoint, context->soap->error);
+    }
+    return ECOMM;
 }
 
 int srm_call_err(struct srm_context *context,struct srm2__TReturnStatus  *retstatus,
-		const char *srmfunc)
+        const char *srmfunc)
 {
-	int result_errno;
-	if (retstatus == NULL)
-	{
-		srm_errmsg (context, "[%s][%s][] %s: <empty response>",err_msg_begin,
-				srmfunc,context->srm_endpoint);
-		return ECOMM;
-	}
-	if (retstatus->statusCode != SRM_USCORESUCCESS &&
-			retstatus->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS &&
-			retstatus->statusCode != SRM_USCOREDONE &&
-			retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
-	{
+    int result_errno;
+    if (retstatus == NULL)
+    {
+        srm_errmsg (context, "[%s][%s][] %s: <empty response>",err_msg_begin,
+                srmfunc,context->srm_endpoint);
+        return ECOMM;
+    }
+    if (retstatus->statusCode != SRM_USCORESUCCESS &&
+            retstatus->statusCode != SRM_USCOREPARTIAL_USCORESUCCESS &&
+            retstatus->statusCode != SRM_USCOREDONE &&
+            retstatus->statusCode != SRM_USCORETOO_USCOREMANY_USCORERESULTS)
+    {
         result_errno = statuscode_and_msg_to_errno(retstatus->statusCode, retstatus->explanation);
-		if (retstatus->explanation && retstatus->explanation[0])
-		{
-			srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
-					srmfunc, statuscode2errmsg (retstatus->statusCode),
-					context->srm_endpoint, retstatus->explanation);
-		}else
-		{
-			srm_errmsg (context, "[%s][%s][%s] %s: <none>",err_msg_begin,
-					srmfunc, statuscode2errmsg (retstatus->statusCode),
-					context->srm_endpoint);
-		}
-	}
-	else
-	{
-		srm_errmsg (context, "[%s][%s][%s] %s: <empty response>",err_msg_begin,
-				srmfunc, statuscode2errmsg (retstatus->statusCode),
-				context->srm_endpoint);
-		result_errno = ECOMM;
-	}
-	return result_errno;
+        if (retstatus->explanation && retstatus->explanation[0])
+        {
+            srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
+                    srmfunc, statuscode2errmsg (retstatus->statusCode),
+                    context->srm_endpoint, retstatus->explanation);
+        }else
+        {
+            srm_errmsg (context, "[%s][%s][%s] %s: <none>",err_msg_begin,
+                    srmfunc, statuscode2errmsg (retstatus->statusCode),
+                    context->srm_endpoint);
+        }
+    }
+    else
+    {
+        srm_errmsg (context, "[%s][%s][%s] %s: <empty response>",err_msg_begin,
+                srmfunc, statuscode2errmsg (retstatus->statusCode),
+                context->srm_endpoint);
+        result_errno = ECOMM;
+    }
+    return result_errno;
 }
 
 // return error status
 int srm_print_error_status(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc)
 {
 
-	if (status->explanation && status->explanation[0])
-	{
-		srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
-				 srmfunc, statuscode2errmsg (status->statusCode),
-				 context->srm_endpoint, status->explanation);
-	}else
-	{	srm_errmsg (context, "[%s][%s][%s] %s: <none>",err_msg_begin,
-				 srmfunc, statuscode2errmsg (status->statusCode),
-				 context->srm_endpoint);
-	}
-	return statuscode2errno (status->statusCode);
+    if (status->explanation && status->explanation[0])
+    {
+        srm_errmsg (context, "[%s][%s][%s] %s: %s",err_msg_begin,
+                 srmfunc, statuscode2errmsg (status->statusCode),
+                 context->srm_endpoint, status->explanation);
+    }else
+    {   srm_errmsg (context, "[%s][%s][%s] %s: <none>",err_msg_begin,
+                 srmfunc, statuscode2errmsg (status->statusCode),
+                 context->srm_endpoint);
+    }
+    return statuscode2errno (status->statusCode);
 }
 
 int srm_print_error_status_additional(struct srm_context *context,struct srm2__TReturnStatus *status,const char *srmfunc,char *additional_info)
 {
 
-	if (status->explanation && status->explanation[0])
-	{
-		srm_errmsg (context, "[%s][%s][%s] %s: %s: %s",err_msg_begin,
-				 srmfunc, statuscode2errmsg (status->statusCode),
-				 context->srm_endpoint,additional_info, status->explanation);
-	}else
-	{	srm_errmsg (context, "[%s][%s][%s] %s: %s: <none>",err_msg_begin,
-				 srmfunc, statuscode2errmsg (status->statusCode),
-				 context->srm_endpoint,additional_info);
-	}
-	return statuscode2errno (status->statusCode);
+    if (status->explanation && status->explanation[0])
+    {
+        srm_errmsg (context, "[%s][%s][%s] %s: %s: %s",err_msg_begin,
+                 srmfunc, statuscode2errmsg (status->statusCode),
+                 context->srm_endpoint,additional_info, status->explanation);
+    }else
+    {   srm_errmsg (context, "[%s][%s][%s] %s: %s: <none>",err_msg_begin,
+                 srmfunc, statuscode2errmsg (status->statusCode),
+                 context->srm_endpoint,additional_info);
+    }
+    return statuscode2errno (status->statusCode);
 }
 
 void srm_print_explanation(char **explanation,struct srm2__TReturnStatus *reqstatp,const char *srmfunc)
 {
-	if (reqstatp->explanation != NULL && reqstatp->explanation[0])
+    if (reqstatp->explanation != NULL && reqstatp->explanation[0])
          (void)asprintf(explanation, "[%s][%s][%s] %s",err_msg_begin,
-				srmfunc, statuscode2errmsg(
-						reqstatp->statusCode), reqstatp->explanation);
-	else
+                srmfunc, statuscode2errmsg(
+                        reqstatp->statusCode), reqstatp->explanation);
+    else
          (void)asprintf(explanation, "[%s][%s][%s] <none>",err_msg_begin,
-				srmfunc, statuscode2errmsg(
-						reqstatp->statusCode));
+                srmfunc, statuscode2errmsg(
+                        reqstatp->statusCode));
 }
 
 
@@ -502,34 +502,34 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
     int random_limit;
     int random_wait;
     time_t wait_till_end=0;
-	time_t after_sleep;
-	after_sleep = time(NULL) ;
+    time_t after_sleep;
+    after_sleep = time(NULL) ;
 
     if (internal_context->estimated_wait_time <= 0 && internal_context->estimated_wait_time < ( internal_context->end_time - time(NULL)))
-	{
-		// Exponential logic
-		if (internal_context->attempt<=10) // Maximum 10 attempts
-		{
+    {
+        // Exponential logic
+        if (internal_context->attempt<=10) // Maximum 10 attempts
+        {
             random_limit = (time_t) (1<<(internal_context->attempt));
             random_wait = (rand_r(&(internal_context->random_seed)) % random_limit)+1;
-			internal_context->attempt++;
+            internal_context->attempt++;
             after_sleep += (time_t) random_wait;
-			if (after_sleep >= internal_context->end_time)
-			{
+            if (after_sleep >= internal_context->end_time)
+            {
                 wait_till_end = internal_context->end_time - time(NULL) -  last_chance_sec_before_end; //try the last hope before the end
-				if (wait_till_end>0)
-					call_function.call_sleep(wait_till_end);
+                if (wait_till_end>0)
+                    call_function.call_sleep(wait_till_end);
                 else // deadline outdated,
-                    return -1; 					// simply return in timeout
-			}else
-			{
-				call_function.call_sleep(random_wait);
-			}
-		}else
-		{
-			// Timeout, attempts exceeded
-			return -1;
-		}
+                    return -1;                  // simply return in timeout
+            }else
+            {
+                call_function.call_sleep(random_wait);
+            }
+        }else
+        {
+            // Timeout, attempts exceeded
+            return -1;
+        }
     }else{
             after_sleep += internal_context->estimated_wait_time ;
             if (after_sleep >= internal_context->end_time)
@@ -549,7 +549,7 @@ int wait_for_new_attempt(struct srm_internal_context *internal_context)  // Or T
             }
     }
 
-	return 0;
+    return 0;
 }
 
 int wait_switch_auto(srm_context_t context, struct srm_internal_context *internal_context){
@@ -568,66 +568,66 @@ int wait_switch_auto(srm_context_t context, struct srm_internal_context *interna
 
 // Return all statuses timeout, failure,internal error, queued
 srm_call_status back_off_logic(struct srm_context *context,const char *srmfunc,
-		struct srm_internal_context *internal_context,struct srm2__TReturnStatus  *retstatus)
+        struct srm_internal_context *internal_context,struct srm2__TReturnStatus  *retstatus)
 {
 
-	if (retstatus == NULL)
-	{
-		srm_errmsg (context, "[%s][%s][] %s: <empty response>",err_msg_begin,
-				srmfunc, context->srm_endpoint);
-		errno = ECOMM;
-		// No response status
-		return srm_call_status_FAILURE;
-	}else
-	{
-		switch (retstatus->statusCode )
-		{
-			case SRM_USCOREINTERNAL_USCOREERROR:
+    if (retstatus == NULL)
+    {
+        srm_errmsg (context, "[%s][%s][] %s: <empty response>",err_msg_begin,
+                srmfunc, context->srm_endpoint);
+        errno = ECOMM;
+        // No response status
+        return srm_call_status_FAILURE;
+    }else
+    {
+        switch (retstatus->statusCode )
+        {
+            case SRM_USCOREINTERNAL_USCOREERROR:
                 if (wait_switch_auto(context,internal_context)  != 0)
-				{
-					srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
-							err_msg_begin,srmfunc, context->srm_endpoint);
-					errno = ETIMEDOUT;
-					// Timeout
-					return srm_call_status_TIMEOUT;
-				}
-				return srm_call_status_INTERNAL_ERROR;
-			case SRM_USCOREREQUEST_USCOREQUEUED:
-			case SRM_USCOREREQUEST_USCOREINPROGRESS:
+                {
+                    srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
+                            err_msg_begin,srmfunc, context->srm_endpoint);
+                    errno = ETIMEDOUT;
+                    // Timeout
+                    return srm_call_status_TIMEOUT;
+                }
+                return srm_call_status_INTERNAL_ERROR;
+            case SRM_USCOREREQUEST_USCOREQUEUED:
+            case SRM_USCOREREQUEST_USCOREINPROGRESS:
                 if (wait_switch_auto(context,internal_context) != 0)
-				{
-					srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
-							err_msg_begin,srmfunc, context->srm_endpoint);
-					errno = ETIMEDOUT;
-					// Timeout
-					return srm_call_status_TIMEOUT;
-				}
-				return srm_call_status_QUEUED;
-			case SRM_USCORESUCCESS:
-			case SRM_USCOREPARTIAL_USCORESUCCESS: // TODO
-				return srm_call_status_SUCCESS;
-			default:
-				return srm_call_status_FAILURE;
-		}
-	}
-	return srm_call_status_FAILURE;
+                {
+                    srm_errmsg (context, "[%s][%s][ETIMEDOUT] %s: User timeout over",
+                            err_msg_begin,srmfunc, context->srm_endpoint);
+                    errno = ETIMEDOUT;
+                    // Timeout
+                    return srm_call_status_TIMEOUT;
+                }
+                return srm_call_status_QUEUED;
+            case SRM_USCORESUCCESS:
+            case SRM_USCOREPARTIAL_USCORESUCCESS: // TODO
+                return srm_call_status_SUCCESS;
+            default:
+                return srm_call_status_FAILURE;
+        }
+    }
+    return srm_call_status_FAILURE;
 }
 void srm_spacemd_free (int nbtokens,struct srm_spacemd *smd)
 {
-	int i;
+    int i;
 
-	if (smd == NULL)
-		return;
+    if (smd == NULL)
+        return;
 
-	for (i = 0; i < nbtokens; ++i) {
-		if (smd[i].spacetoken) free (smd[i].spacetoken);
-		if (smd[i].owner) free (smd[i].owner);
-	}
+    for (i = 0; i < nbtokens; ++i) {
+        if (smd[i].spacetoken) free (smd[i].spacetoken);
+        if (smd[i].owner) free (smd[i].owner);
+    }
 
-	free (smd);
+    free (smd);
 }
 int srm_set_protocol_in_transferParameters(
-	struct srm_context *context,
+    struct srm_context *context,
     struct srm2__TTransferParameters* transferParameters,
     char** protocols)
 {
@@ -688,509 +688,509 @@ int srm_count_elements_of_string_array(char** a)
 int copy_string(char **dest,char *src)
 {
     GFAL_SRM_IFCE_ASSERT(dest);
-	if (src)
-	{
+    if (src)
+    {
         *dest = strdup(src);
 
-		if (*dest == NULL)
-		{
-			errno = ENOMEM;
-			return (-1);
-		}
-	}
+        if (*dest == NULL)
+        {
+            errno = ENOMEM;
+            return (-1);
+        }
+    }
     else
-	{
+    {
         *dest = NULL;
         errno = EINVAL;
-		// queued but empty token
-		return (-1);
-	}
-	return 0;
+        // queued but empty token
+        return (-1);
+    }
+    return 0;
 }
 
 int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
-						struct srmv2_filestatus **statuses,
-						struct srm2__ArrayOfTSURLPermissionReturn *repfs,
-						const char *srmfunc,
-						int amode)
+                        struct srmv2_filestatus **statuses,
+                        struct srm2__ArrayOfTSURLPermissionReturn *repfs,
+                        const char *srmfunc,
+                        int amode)
 {
-	int i,n;
+    int i,n;
 
-	n = repfs->__sizesurlPermissionArray;
+    n = repfs->__sizesurlPermissionArray;
 
-	if ((*statuses = (struct srmv2_filestatus *) calloc (n, sizeof(struct srmv2_filestatus))) == NULL)
-	{
-		errno = ENOMEM;
-		return (-1);
-	}
-	for (i = 0; i < n; i++) {
-		if (!repfs->surlPermissionArray[i])
-			continue;
-		memset (*statuses + i, 0, sizeof (struct srmv2_filestatus));
-		if (repfs->surlPermissionArray[i]->surl)
-			(*statuses)[i].surl = strdup (repfs->surlPermissionArray[i]->surl);
-		if (repfs->surlPermissionArray[i]->status) {
-			(*statuses)[i].status = statuscode2errno (repfs->surlPermissionArray[i]->status->statusCode);
-			if (repfs->surlPermissionArray[i]->status->explanation && repfs->surlPermissionArray[i]->status->explanation[0])
+    if ((*statuses = (struct srmv2_filestatus *) calloc (n, sizeof(struct srmv2_filestatus))) == NULL)
+    {
+        errno = ENOMEM;
+        return (-1);
+    }
+    for (i = 0; i < n; i++) {
+        if (!repfs->surlPermissionArray[i])
+            continue;
+        memset (*statuses + i, 0, sizeof (struct srmv2_filestatus));
+        if (repfs->surlPermissionArray[i]->surl)
+            (*statuses)[i].surl = strdup (repfs->surlPermissionArray[i]->surl);
+        if (repfs->surlPermissionArray[i]->status) {
+            (*statuses)[i].status = statuscode2errno (repfs->surlPermissionArray[i]->status->statusCode);
+            if (repfs->surlPermissionArray[i]->status->explanation && repfs->surlPermissionArray[i]->status->explanation[0])
                  (void)asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
-						repfs->surlPermissionArray[i]->status->explanation);
-			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                        srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
+                        repfs->surlPermissionArray[i]->status->explanation);
+            else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
                  (void)asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
-						reqstatp->explanation);
-			else
+                        srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            else
                  (void)asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode));
-		} else
-			(*statuses)[i].status = ENOMEM;
+                        srmfunc, statuscode2errmsg (repfs->surlPermissionArray[i]->status->statusCode));
+        } else
+            (*statuses)[i].status = ENOMEM;
         if ((*statuses)[i].status == 0) {
-			enum srm2__TPermissionMode perm = *(repfs->surlPermissionArray[i]->permission);
+            enum srm2__TPermissionMode perm = *(repfs->surlPermissionArray[i]->permission);
 
-			if ((amode == R_OK && (perm == NONE || perm == X || perm == W || perm == WX)) ||
-					(amode == W_OK && (perm == NONE || perm == X || perm == R || perm == RX)) ||
-					(amode == X_OK && (perm == NONE || perm == W || perm == R || perm == RW)) ||
-					(amode == (R_OK|W_OK) && perm != RW && perm != RWX) ||
-					(amode == (R_OK|X_OK) && perm != RX && perm != RWX) ||
-					(amode == (W_OK|X_OK) && perm != WX && perm != RWX) ||
-					(amode == (R_OK|W_OK|X_OK) && perm != RWX))
-				(*statuses)[i].status = EACCES;
-		}
-	}
-	return n;
+            if ((amode == R_OK && (perm == NONE || perm == X || perm == W || perm == WX)) ||
+                    (amode == W_OK && (perm == NONE || perm == X || perm == R || perm == RX)) ||
+                    (amode == X_OK && (perm == NONE || perm == W || perm == R || perm == RW)) ||
+                    (amode == (R_OK|W_OK) && perm != RW && perm != RWX) ||
+                    (amode == (R_OK|X_OK) && perm != RX && perm != RWX) ||
+                    (amode == (W_OK|X_OK) && perm != WX && perm != RWX) ||
+                    (amode == (R_OK|W_OK|X_OK) && perm != RWX))
+                (*statuses)[i].status = EACCES;
+        }
+    }
+    return n;
 }
 int copy_filestatuses(struct srm2__TReturnStatus *reqstatp,
-						struct srmv2_filestatus **statuses,
-						struct srm2__ArrayOfTSURLReturnStatus *repfs,
-						const char *srmfunc)
+                        struct srmv2_filestatus **statuses,
+                        struct srm2__ArrayOfTSURLReturnStatus *repfs,
+                        const char *srmfunc)
 {
-	int i,n;
+    int i,n;
 
-	n = repfs->__sizestatusArray;
+    n = repfs->__sizestatusArray;
 
-	if ((*statuses = (struct srmv2_filestatus *) calloc (n, sizeof(struct srmv2_filestatus))) == NULL)
-	{
-		errno = ENOMEM;
-		return (-1);
-	}
+    if ((*statuses = (struct srmv2_filestatus *) calloc (n, sizeof(struct srmv2_filestatus))) == NULL)
+    {
+        errno = ENOMEM;
+        return (-1);
+    }
 
-	for (i = 0; i < n; i++)
-	{
-		if (!repfs->statusArray[i])
-			continue;
-		memset (*statuses + i, 0, sizeof (struct srmv2_filestatus));
-		if (repfs->statusArray[i]->surl)
-			(*statuses)[i].surl = strdup (repfs->statusArray[i]->surl);
-		if (repfs->statusArray[i]->status) {
-			(*statuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
-			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+    for (i = 0; i < n; i++)
+    {
+        if (!repfs->statusArray[i])
+            continue;
+        memset (*statuses + i, 0, sizeof (struct srmv2_filestatus));
+        if (repfs->statusArray[i]->surl)
+            (*statuses)[i].surl = strdup (repfs->statusArray[i]->surl);
+        if (repfs->statusArray[i]->status) {
+            (*statuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+            if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
                  (void)asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						repfs->statusArray[i]->status->explanation);
-			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                        srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        repfs->statusArray[i]->status->explanation);
+            else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
                  (void)asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						reqstatp->explanation);
-			else
+                        srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            else
                  (void)asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}
-	}
-	return n;
+                        srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+        }
+    }
+    return n;
 }
 int copy_pinfilestatuses_extendlifetime(struct srm2__TReturnStatus *reqstatp,
-						struct srmv2_pinfilestatus **filestatuses,
-						struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs,
-						const char *srmfunc)
+                        struct srmv2_pinfilestatus **filestatuses,
+                        struct srm2__ArrayOfTSURLLifetimeReturnStatus *repfs,
+                        const char *srmfunc)
 {
-	int n,i;
-	n = repfs->__sizestatusArray;
-	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
-	{
-		errno = ENOMEM;
-		return (-1);
-	}
+    int n,i;
+    n = repfs->__sizestatusArray;
+    if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+    {
+        errno = ENOMEM;
+        return (-1);
+    }
 
-	for (i = 0; i < n; i++)
-	{
-		if (!repfs->statusArray[i])
-			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
-		if (repfs->statusArray[i]->surl)
-		{
-			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->surl);
-		}
-		if (repfs->statusArray[i]->pinLifetime)
-		{
-			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->pinLifetime);
-		}
-		if (repfs->statusArray[i]->status)
-		{
-			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
-			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+    for (i = 0; i < n; i++)
+    {
+        if (!repfs->statusArray[i])
+            continue;
+        memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
+        if (repfs->statusArray[i]->surl)
+        {
+            (*filestatuses)[i].surl = strdup (repfs->statusArray[i]->surl);
+        }
+        if (repfs->statusArray[i]->pinLifetime)
+        {
+            (*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->pinLifetime);
+        }
+        if (repfs->statusArray[i]->status)
+        {
+            (*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+            if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						repfs->statusArray[i]->status->explanation);
-			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        repfs->statusArray[i]->status->explanation);
+            else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						reqstatp->explanation);
-			else if ((*filestatuses)[i].status != 0)
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            else if ((*filestatuses)[i].status != 0)
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-							 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}
-	}
-	return n;
+                             srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+        }
+    }
+    return n;
 }
 int copy_pinfilestatuses_get(struct srm2__TReturnStatus *reqstatp,
-						struct srmv2_pinfilestatus **filestatuses,
-						struct srm2__ArrayOfTGetRequestFileStatus *repfs,
-						const char *srmfunc)
+                        struct srmv2_pinfilestatus **filestatuses,
+                        struct srm2__ArrayOfTGetRequestFileStatus *repfs,
+                        const char *srmfunc)
 {
-	int n,i;
-	n = repfs->__sizestatusArray;
-	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
-	{
-		errno = ENOMEM;
-		return (-1);
-	}
+    int n,i;
+    n = repfs->__sizestatusArray;
+    if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+    {
+        errno = ENOMEM;
+        return (-1);
+    }
 
-	for (i = 0; i < n; i++)
-	{
-		if (!repfs->statusArray[i])
-			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
-		if (repfs->statusArray[i]->sourceSURL)
-			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
-		if (repfs->statusArray[i]->transferURL)
-			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
-		   if (repfs->statusArray[i]->status) {
-			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
-			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+    for (i = 0; i < n; i++)
+    {
+        if (!repfs->statusArray[i])
+            continue;
+        memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
+        if (repfs->statusArray[i]->sourceSURL)
+            (*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
+        if (repfs->statusArray[i]->transferURL)
+            (*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
+           if (repfs->statusArray[i]->status) {
+            (*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+            if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						repfs->statusArray[i]->status->explanation);
-			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        repfs->statusArray[i]->status->explanation);
+            else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						reqstatp->explanation);
-			else if ((*filestatuses)[i].status != 0)
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            else if ((*filestatuses)[i].status != 0)
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}
-		if (repfs->statusArray[i]->remainingPinTime)
-			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
-		if (repfs->statusArray[i]->estimatedWaitTime)
-		{
-			(*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
-		}else
-		{
-			(*filestatuses)[i].estimated_wait_time = -1;
-		}
-	}
-	return n;
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+        }
+        if (repfs->statusArray[i]->remainingPinTime)
+            (*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+        if (repfs->statusArray[i]->estimatedWaitTime)
+        {
+            (*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
+        }else
+        {
+            (*filestatuses)[i].estimated_wait_time = -1;
+        }
+    }
+    return n;
 }
 
 int copy_pinfilestatuses_bringonline(struct srm2__TReturnStatus *reqstatp,
-						struct srmv2_pinfilestatus **filestatuses,
-						struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs,
-						const char *srmfunc)
+                        struct srmv2_pinfilestatus **filestatuses,
+                        struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs,
+                        const char *srmfunc)
 {
-	int n,i;
-	n = repfs->__sizestatusArray;
-	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
-	{
-		errno = ENOMEM;
-		return (-1);
-	}
+    int n,i;
+    n = repfs->__sizestatusArray;
+    if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+    {
+        errno = ENOMEM;
+        return (-1);
+    }
 
-	for (i = 0; i < n; i++)
-	{
-		if (!repfs->statusArray[i])
-			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
-		if (repfs->statusArray[i]->sourceSURL)
-			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
+    for (i = 0; i < n; i++)
+    {
+        if (!repfs->statusArray[i])
+            continue;
+        memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
+        if (repfs->statusArray[i]->sourceSURL)
+            (*filestatuses)[i].surl = strdup (repfs->statusArray[i]->sourceSURL);
 
-		if (repfs->statusArray[i]->status)
-		{
-			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
-			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+        if (repfs->statusArray[i]->status)
+        {
+            (*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+            if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						repfs->statusArray[i]->status->explanation);
-			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        repfs->statusArray[i]->status->explanation);
+            else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						reqstatp->explanation);
-			else if ((*filestatuses)[i].status != 0)
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            else if ((*filestatuses)[i].status != 0)
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}
-		if (repfs->statusArray[i]->remainingPinTime)
-			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
-		if (repfs->statusArray[i]->estimatedWaitTime)
-		{
-			(*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
-		}else
-		{
-			(*filestatuses)[i].estimated_wait_time = -1;
-		}
-	}
-	return n;
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+        }
+        if (repfs->statusArray[i]->remainingPinTime)
+            (*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinTime);
+        if (repfs->statusArray[i]->estimatedWaitTime)
+        {
+            (*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
+        }else
+        {
+            (*filestatuses)[i].estimated_wait_time = -1;
+        }
+    }
+    return n;
 }
 
 int copy_pinfilestatuses_put(struct srm2__TReturnStatus *reqstatp,
-						struct srmv2_pinfilestatus **filestatuses,
-						struct srm2__ArrayOfTPutRequestFileStatus *repfs,
-						const char *srmfunc)
+                        struct srmv2_pinfilestatus **filestatuses,
+                        struct srm2__ArrayOfTPutRequestFileStatus *repfs,
+                        const char *srmfunc)
 {
-	int n,i;
-	n = repfs->__sizestatusArray;
-	if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
-	{
-		errno = ENOMEM;
-		return (-1);
-	}
+    int n,i;
+    n = repfs->__sizestatusArray;
+    if ((*filestatuses = (struct srmv2_pinfilestatus *) calloc (n, sizeof (struct srmv2_pinfilestatus))) == NULL)
+    {
+        errno = ENOMEM;
+        return (-1);
+    }
 
-	for (i = 0; i < n; i++)
-	{
-		if (!repfs->statusArray[i])
-			continue;
-		memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
-		if (repfs->statusArray[i]->SURL)
-			(*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
-		if (repfs->statusArray[i]->transferURL)
-			(*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
+    for (i = 0; i < n; i++)
+    {
+        if (!repfs->statusArray[i])
+            continue;
+        memset (*filestatuses + i, 0, sizeof (struct srmv2_pinfilestatus));
+        if (repfs->statusArray[i]->SURL)
+            (*filestatuses)[i].surl = strdup (repfs->statusArray[i]->SURL);
+        if (repfs->statusArray[i]->transferURL)
+            (*filestatuses)[i].turl = strdup (repfs->statusArray[i]->transferURL);
 
-		if (repfs->statusArray[i]->status)
-		{
-			(*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
-			if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
+        if (repfs->statusArray[i]->status)
+        {
+            (*filestatuses)[i].status = statuscode2errno (repfs->statusArray[i]->status->statusCode);
+            if (repfs->statusArray[i]->status->explanation && repfs->statusArray[i]->status->explanation[0])
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						repfs->statusArray[i]->status->explanation);
-			else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        repfs->statusArray[i]->status->explanation);
+            else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
-						reqstatp->explanation);
-			else if ((*filestatuses)[i].status != 0)
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            else if ((*filestatuses)[i].status != 0)
                  (void) asprintf (&((*filestatuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						 srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
-		}
-		if (repfs->statusArray[i]->remainingPinLifetime)
-			(*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
-		if (repfs->statusArray[i]->estimatedWaitTime)
-		{
-			(*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
-		}else
-		{
-			(*filestatuses)[i].estimated_wait_time = -1;
-		}
-	}
-	return n;
+                         srmfunc, statuscode2errmsg (repfs->statusArray[i]->status->statusCode));
+        }
+        if (repfs->statusArray[i]->remainingPinLifetime)
+            (*filestatuses)[i].pinlifetime = *(repfs->statusArray[i]->remainingPinLifetime);
+        if (repfs->statusArray[i]->estimatedWaitTime)
+        {
+            (*filestatuses)[i].estimated_wait_time = *(repfs->statusArray[i]->estimatedWaitTime);
+        }else
+        {
+            (*filestatuses)[i].estimated_wait_time = -1;
+        }
+    }
+    return n;
 }
 int copy_filepermissions(struct srm2__TReturnStatus *reqstatp,
-		struct srm_filepermission **permissions,
-		struct srm2__ArrayOfTPermissionReturn *repperm)
+        struct srm_filepermission **permissions,
+        struct srm2__ArrayOfTPermissionReturn *repperm)
 {
-	int i, n, j , k;
-	const char srmfunc[] = "GetPermission";
+    int i, n, j , k;
+    const char srmfunc[] = "GetPermission";
 
-	if (reqstatp == NULL || repperm == NULL || permissions == NULL)
-	{
-		errno = EFAULT;
-		return (-1);
-	}
+    if (reqstatp == NULL || repperm == NULL || permissions == NULL)
+    {
+        errno = EFAULT;
+        return (-1);
+    }
 
-	n = repperm->__sizepermissionArray;
+    n = repperm->__sizepermissionArray;
 
-	if ((*permissions = (struct srm_filepermission *) calloc (n, sizeof (struct srm_filepermission))) == NULL)
-	{
-		return (-1);
-	}
+    if ((*permissions = (struct srm_filepermission *) calloc (n, sizeof (struct srm_filepermission))) == NULL)
+    {
+        return (-1);
+    }
 
-	for (i = 0; i < n; ++i)
-	{
-		if (!repperm->permissionArray[i])
-			continue;
-		memset (*permissions + i, 0, sizeof(struct srm_filepermission));
-		if (repperm->permissionArray[i]->owner)
-		{
-			(*permissions)[i].owner = strdup (repperm->permissionArray[i]->owner);
-		}
-		if (repperm->permissionArray[i]->surl)
-		{
-			(*permissions)[i].surl = strdup (repperm->permissionArray[i]->surl);
-		}
-		if (repperm->permissionArray[i]->status)
-		{
-			(*permissions)[i].status = statuscode2errno(repperm->permissionArray[i]->status->statusCode);
-			if (repperm->permissionArray[i]->status->explanation && repperm->permissionArray[i]->status->explanation[0])
-			{
-				asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
-						repperm->permissionArray[i]->status->explanation);
-			}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-			{
-				asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
-						reqstatp->explanation);
-			}else
-			{
-				asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-						srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode));
-			}
-			//continue;
-		}
-		if (repperm->permissionArray[i]->ownerPermission)
-		{
-			(*permissions)[i].owner_permission = *repperm->permissionArray[i]->ownerPermission;
-		}
-		if (repperm->permissionArray[i]->otherPermission)
-		{
-			(*permissions)[i].other_permission = *repperm->permissionArray[i]->otherPermission;
-		}
-		if (repperm->permissionArray[i]->arrayOfGroupPermissions &&
-				repperm->permissionArray[i]->arrayOfGroupPermissions->__sizegroupPermissionArray>0)
-		{
-			k = repperm->permissionArray[i]->arrayOfGroupPermissions->__sizegroupPermissionArray;
-			(*permissions)[i].group_permissions_count = k;
-			if (( (*permissions)[i].group_permissions = (struct srm_permission *) calloc (k, sizeof (struct srm_permission))) == NULL)
-				return (-1);
-			for (j = 0; j < k; ++j)
-			{
-				if (repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j] == NULL)
-					continue;
+    for (i = 0; i < n; ++i)
+    {
+        if (!repperm->permissionArray[i])
+            continue;
+        memset (*permissions + i, 0, sizeof(struct srm_filepermission));
+        if (repperm->permissionArray[i]->owner)
+        {
+            (*permissions)[i].owner = strdup (repperm->permissionArray[i]->owner);
+        }
+        if (repperm->permissionArray[i]->surl)
+        {
+            (*permissions)[i].surl = strdup (repperm->permissionArray[i]->surl);
+        }
+        if (repperm->permissionArray[i]->status)
+        {
+            (*permissions)[i].status = statuscode2errno(repperm->permissionArray[i]->status->statusCode);
+            if (repperm->permissionArray[i]->status->explanation && repperm->permissionArray[i]->status->explanation[0])
+            {
+                asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
+                        srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
+                        repperm->permissionArray[i]->status->explanation);
+            }else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+            {
+                asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
+                        srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode),
+                        reqstatp->explanation);
+            }else
+            {
+                asprintf (&((*permissions)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
+                        srmfunc, statuscode2errmsg(repperm->permissionArray[i]->status->statusCode));
+            }
+            //continue;
+        }
+        if (repperm->permissionArray[i]->ownerPermission)
+        {
+            (*permissions)[i].owner_permission = *repperm->permissionArray[i]->ownerPermission;
+        }
+        if (repperm->permissionArray[i]->otherPermission)
+        {
+            (*permissions)[i].other_permission = *repperm->permissionArray[i]->otherPermission;
+        }
+        if (repperm->permissionArray[i]->arrayOfGroupPermissions &&
+                repperm->permissionArray[i]->arrayOfGroupPermissions->__sizegroupPermissionArray>0)
+        {
+            k = repperm->permissionArray[i]->arrayOfGroupPermissions->__sizegroupPermissionArray;
+            (*permissions)[i].group_permissions_count = k;
+            if (( (*permissions)[i].group_permissions = (struct srm_permission *) calloc (k, sizeof (struct srm_permission))) == NULL)
+                return (-1);
+            for (j = 0; j < k; ++j)
+            {
+                if (repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j] == NULL)
+                    continue;
 
-				(*permissions)[i].group_permissions[j].name_id = strdup (repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j]->groupID);
-				(*permissions)[i].group_permissions[j].mode = repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j]->mode;
-			}
-		}else
-		{
-			(*permissions)[i].group_permissions_count = 0;
-			(*permissions)[i].group_permissions = NULL;
-		}
-		if (repperm->permissionArray[i]->arrayOfUserPermissions &&
-				repperm->permissionArray[i]->arrayOfUserPermissions->__sizeuserPermissionArray>0)
-		{
-			k = repperm->permissionArray[i]->arrayOfUserPermissions->__sizeuserPermissionArray;
-			(*permissions)[i].user_permissions_count = k;
-			if (( (*permissions)[i].user_permissions = (struct srm_permission *) calloc (k, sizeof (struct srm_permission))) == NULL)
-				return (-1);
-			for (j = 0; j < k; ++j)
-			{
-				if (repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j] == NULL)
-					continue;
+                (*permissions)[i].group_permissions[j].name_id = strdup (repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j]->groupID);
+                (*permissions)[i].group_permissions[j].mode = repperm->permissionArray[i]->arrayOfGroupPermissions->groupPermissionArray[j]->mode;
+            }
+        }else
+        {
+            (*permissions)[i].group_permissions_count = 0;
+            (*permissions)[i].group_permissions = NULL;
+        }
+        if (repperm->permissionArray[i]->arrayOfUserPermissions &&
+                repperm->permissionArray[i]->arrayOfUserPermissions->__sizeuserPermissionArray>0)
+        {
+            k = repperm->permissionArray[i]->arrayOfUserPermissions->__sizeuserPermissionArray;
+            (*permissions)[i].user_permissions_count = k;
+            if (( (*permissions)[i].user_permissions = (struct srm_permission *) calloc (k, sizeof (struct srm_permission))) == NULL)
+                return (-1);
+            for (j = 0; j < k; ++j)
+            {
+                if (repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j] == NULL)
+                    continue;
 
-				(*permissions)[i].user_permissions[j].name_id = strdup (repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j]->userID);
-				(*permissions)[i].user_permissions[j].mode = repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j]->mode;
-			}
-		}else
-		{
-			(*permissions)[i].user_permissions_count = 0;
-			(*permissions)[i].user_permissions = NULL;
-		}
-	}
+                (*permissions)[i].user_permissions[j].name_id = strdup (repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j]->userID);
+                (*permissions)[i].user_permissions[j].mode = repperm->permissionArray[i]->arrayOfUserPermissions->userPermissionArray[j]->mode;
+            }
+        }else
+        {
+            (*permissions)[i].user_permissions_count = 0;
+            (*permissions)[i].user_permissions = NULL;
+        }
+    }
 
-	errno = 0;
-	return (n);
+    errno = 0;
+    return (n);
 }
 
 /**
  * Copy TLocality (ONLINE, NEARLINE,...) from srm soap to srmifce enum
  */
 void copy_Locality(struct srm2__TMetaDataPathDetail *soap_file_meta_data, struct srmv2_mdfilestatus *statuses){
-	enum srm2__TFileLocality loc = 	*(soap_file_meta_data->fileLocality);
-	TFileLocality res_loc;
-	switch(loc){
-		case ONLINE_:
-			res_loc = GFAL_LOCALITY_ONLINE_;
-			break;
-		case NEARLINE_:
-			res_loc = GFAL_LOCALITY_NEARLINE_;
-			break;
-		case ONLINE_USCOREAND_USCORENEARLINE:
-			res_loc = GFAL_LOCALITY_ONLINE_USCOREAND_USCORENEARLINE;
-			break;
-		case LOST:
-			res_loc = GFAL_LOCALITY_LOST;
-			break;
-		case UNAVAILABLE:
-			res_loc = GFAL_LOCALITY_UNAVAILABLE;
-			break;
-		default:
-			res_loc = GFAL_LOCALITY_UNKNOWN;
-	}
-	statuses->locality = res_loc;
+    enum srm2__TFileLocality loc =  *(soap_file_meta_data->fileLocality);
+    TFileLocality res_loc;
+    switch(loc){
+        case ONLINE_:
+            res_loc = GFAL_LOCALITY_ONLINE_;
+            break;
+        case NEARLINE_:
+            res_loc = GFAL_LOCALITY_NEARLINE_;
+            break;
+        case ONLINE_USCOREAND_USCORENEARLINE:
+            res_loc = GFAL_LOCALITY_ONLINE_USCOREAND_USCORENEARLINE;
+            break;
+        case LOST:
+            res_loc = GFAL_LOCALITY_LOST;
+            break;
+        case UNAVAILABLE:
+            res_loc = GFAL_LOCALITY_UNAVAILABLE;
+            break;
+        default:
+            res_loc = GFAL_LOCALITY_UNKNOWN;
+    }
+    statuses->locality = res_loc;
 }
 
 int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
-		struct srmv2_mdfilestatus **statuses,
-		struct srm2__ArrayOfTMetaDataPathDetail *repfs)
+        struct srmv2_mdfilestatus **statuses,
+        struct srm2__ArrayOfTMetaDataPathDetail *repfs)
 {
-	int i, n, r;
-	const char srmfunc[] = "Ls";
+    int i, n, r;
+    const char srmfunc[] = "Ls";
 
-	if (reqstatp == NULL || repfs == NULL || statuses == NULL)
-	{
-		errno = EFAULT;
-		return (-1);
-	}
+    if (reqstatp == NULL || repfs == NULL || statuses == NULL)
+    {
+        errno = EFAULT;
+        return (-1);
+    }
 
-	n = repfs->__sizepathDetailArray;
+    n = repfs->__sizepathDetailArray;
 
-	if ((*statuses = (struct srmv2_mdfilestatus *) calloc (n, sizeof (struct srmv2_mdfilestatus))) == NULL)
-	{
-		return (-1);
-	}
+    if ((*statuses = (struct srmv2_mdfilestatus *) calloc (n, sizeof (struct srmv2_mdfilestatus))) == NULL)
+    {
+        return (-1);
+    }
 
-	for (i = 0; i < n; ++i)
-	{
-		if (!repfs->pathDetailArray[i])
-			continue;
-		memset (*statuses + i, 0, sizeof(struct srmv2_mdfilestatus));
-		if (repfs->pathDetailArray[i]->path)
-		{
-			(*statuses)[i].surl = strdup (repfs->pathDetailArray[i]->path);
-		}
-		if (repfs->pathDetailArray[i]->status)
-		{
-			(*statuses)[i].status = statuscode2errno(repfs->pathDetailArray[i]->status->statusCode);
-			if (reqstatp->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS)
-				(*statuses)[i].status = EFBIG;
+    for (i = 0; i < n; ++i)
+    {
+        if (!repfs->pathDetailArray[i])
+            continue;
+        memset (*statuses + i, 0, sizeof(struct srmv2_mdfilestatus));
+        if (repfs->pathDetailArray[i]->path)
+        {
+            (*statuses)[i].surl = strdup (repfs->pathDetailArray[i]->path);
+        }
+        if (repfs->pathDetailArray[i]->status)
+        {
+            (*statuses)[i].status = statuscode2errno(repfs->pathDetailArray[i]->status->statusCode);
+            if (reqstatp->statusCode == SRM_USCORETOO_USCOREMANY_USCORERESULTS)
+                (*statuses)[i].status = EFBIG;
 
-			if ((*statuses)[i].status) {
-				if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
-				{
-					(void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-							srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
-							repfs->pathDetailArray[i]->status->explanation);
-				}else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
-				{
-					 (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
-							srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
-							reqstatp->explanation);
-				}else
-				{
-					 (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
-							srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode));
-				}
+            if ((*statuses)[i].status) {
+                if (repfs->pathDetailArray[i]->status->explanation && repfs->pathDetailArray[i]->status->explanation[0])
+                {
+                    (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
+                            srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
+                            repfs->pathDetailArray[i]->status->explanation);
+                }else if (reqstatp->explanation != NULL && reqstatp->explanation[0] && strncasecmp (reqstatp->explanation, "failed for all", 14))
+                {
+                     (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] %s",err_msg_begin,
+                            srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode),
+                            reqstatp->explanation);
+                }else
+                {
+                     (void) asprintf (&((*statuses)[i].explanation), "[%s][%s][%s] <none>",err_msg_begin,
+                            srmfunc, statuscode2errmsg(repfs->pathDetailArray[i]->status->statusCode));
+                }
 
-				continue;
-			}
-		}
+                continue;
+            }
+        }
 
-		if (repfs->pathDetailArray[i]->size)
-		{
-			(*statuses)[i].stat.st_size = *(repfs->pathDetailArray[i]->size);
-		}else
-		{
-			(*statuses)[i].stat.st_size = 0;
-		}
-		if (repfs->pathDetailArray[i]->fileLocality)
-		{
-			copy_Locality(repfs->pathDetailArray[i], &((*statuses)[i]) );
+        if (repfs->pathDetailArray[i]->size)
+        {
+            (*statuses)[i].stat.st_size = *(repfs->pathDetailArray[i]->size);
+        }else
+        {
+            (*statuses)[i].stat.st_size = 0;
+        }
+        if (repfs->pathDetailArray[i]->fileLocality)
+        {
+            copy_Locality(repfs->pathDetailArray[i], &((*statuses)[i]) );
         }
 
         (*statuses)[i].stat.st_uid = g_quark_from_string(
@@ -1198,58 +1198,58 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
         (*statuses)[i].stat.st_gid = g_quark_from_string(
                 repfs->pathDetailArray[i]->groupPermission[0].groupID);
 
-		(*statuses)[i].stat.st_nlink = 1;
+        (*statuses)[i].stat.st_nlink = 1;
 
-		if (repfs->pathDetailArray[i]->otherPermission)
-		{
-			(*statuses)[i].stat.st_mode = *(repfs->pathDetailArray[i]->otherPermission);
-		}
-		if (repfs->pathDetailArray[i]->groupPermission)
-		{
-			(*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->groupPermission->mode << 3;
-		}
-		if (repfs->pathDetailArray[i]->ownerPermission)
-		{
-			(*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->ownerPermission->mode << 6;
-		}
-		if (repfs->pathDetailArray[i]->createdAtTime)
-		{
-			struct tm createdAtTime;
-			memset(&createdAtTime, 0, sizeof(createdAtTime));
-			strptime(repfs->pathDetailArray[i]->createdAtTime, "%Y-%m-%dT%T", &createdAtTime);
-			(*statuses)[i].stat.st_ctime = mktime(&createdAtTime);
-		}
-		if (repfs->pathDetailArray[i]->lastModificationTime)
-		{
-			struct tm modifiedTime;
-			memset(&modifiedTime, 0, sizeof(modifiedTime));
-			strptime(repfs->pathDetailArray[i]->lastModificationTime, "%Y-%m-%dT%T", &modifiedTime);
-			(*statuses)[i].stat.st_mtime = mktime(&modifiedTime);
-		}
-		if (repfs->pathDetailArray[i]->type)
-		{
-			switch (*(repfs->pathDetailArray[i]->type))
-			{
-				case FILE_:
-					(*statuses)[i].stat.st_mode |= S_IFREG;
-					break;
-				case DIRECTORY:
-					(*statuses)[i].stat.st_mode |= S_IFDIR;
-					break;
-				case LINK:
-					(*statuses)[i].stat.st_mode |= S_IFLNK;
-					break;
-			}
-		}
-		if (repfs->pathDetailArray[i]->checkSumType && repfs->pathDetailArray[i]->checkSumValue)
-		{
-			(*statuses)[i].checksumtype = strdup (repfs->pathDetailArray[i]->checkSumType);
-			(*statuses)[i].checksum = strdup (repfs->pathDetailArray[i]->checkSumValue);
-		}
-		if (repfs->pathDetailArray[i]->arrayOfSpaceTokens &&
+        if (repfs->pathDetailArray[i]->otherPermission)
+        {
+            (*statuses)[i].stat.st_mode = *(repfs->pathDetailArray[i]->otherPermission);
+        }
+        if (repfs->pathDetailArray[i]->groupPermission)
+        {
+            (*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->groupPermission->mode << 3;
+        }
+        if (repfs->pathDetailArray[i]->ownerPermission)
+        {
+            (*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->ownerPermission->mode << 6;
+        }
+        if (repfs->pathDetailArray[i]->createdAtTime)
+        {
+            struct tm createdAtTime;
+            memset(&createdAtTime, 0, sizeof(createdAtTime));
+            strptime(repfs->pathDetailArray[i]->createdAtTime, "%Y-%m-%dT%T", &createdAtTime);
+            (*statuses)[i].stat.st_ctime = mktime(&createdAtTime);
+        }
+        if (repfs->pathDetailArray[i]->lastModificationTime)
+        {
+            struct tm modifiedTime;
+            memset(&modifiedTime, 0, sizeof(modifiedTime));
+            strptime(repfs->pathDetailArray[i]->lastModificationTime, "%Y-%m-%dT%T", &modifiedTime);
+            (*statuses)[i].stat.st_mtime = mktime(&modifiedTime);
+        }
+        if (repfs->pathDetailArray[i]->type)
+        {
+            switch (*(repfs->pathDetailArray[i]->type))
+            {
+                case FILE_:
+                    (*statuses)[i].stat.st_mode |= S_IFREG;
+                    break;
+                case DIRECTORY:
+                    (*statuses)[i].stat.st_mode |= S_IFDIR;
+                    break;
+                case LINK:
+                    (*statuses)[i].stat.st_mode |= S_IFLNK;
+                    break;
+            }
+        }
+        if (repfs->pathDetailArray[i]->checkSumType && repfs->pathDetailArray[i]->checkSumValue)
+        {
+            (*statuses)[i].checksumtype = strdup (repfs->pathDetailArray[i]->checkSumType);
+            (*statuses)[i].checksum = strdup (repfs->pathDetailArray[i]->checkSumValue);
+        }
+        if (repfs->pathDetailArray[i]->arrayOfSpaceTokens &&
                 repfs->pathDetailArray[i]->arrayOfSpaceTokens->__sizestringArray > 0 &&
                 repfs->pathDetailArray[i]->arrayOfSpaceTokens->stringArray)
-		{
+        {
             int j;
             (*statuses)[i].nbspacetokens = repfs->pathDetailArray[i]->arrayOfSpaceTokens->__sizestringArray;
 
@@ -1263,51 +1263,51 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
             }
         }
 
-		if (repfs->pathDetailArray[i]->arrayOfSubPaths)
-		{
-			r = copy_mdfilestatuses (reqstatp, &((*statuses)[i].subpaths), repfs->pathDetailArray[i]->arrayOfSubPaths );
+        if (repfs->pathDetailArray[i]->arrayOfSubPaths)
+        {
+            r = copy_mdfilestatuses (reqstatp, &((*statuses)[i].subpaths), repfs->pathDetailArray[i]->arrayOfSubPaths );
 
-			if (r < 0)
-				return (r);
+            if (r < 0)
+                return (r);
 
-			(*statuses)[i].nbsubpaths = r;
-		}
-	}
+            (*statuses)[i].nbsubpaths = r;
+        }
+    }
 
     errno = 0;
-	return (n);
+    return (n);
 }
 
 
 int copy_returnstatus(struct srm2__TReturnStatus **destination,struct srm2__TReturnStatus *returnStatus)
 {
-	if (returnStatus)
-	{
+    if (returnStatus)
+    {
         GFAL_SRM_IFCE_ASSERT(destination);
-		*destination = (struct srm2__TReturnStatus *) malloc (sizeof (struct srm2__TReturnStatus));
-		if ((*destination) != NULL)
-		{
-			(**destination).explanation = NULL;
-			if (returnStatus->explanation)
-			{
-				if (((**destination).explanation = strdup(returnStatus->explanation)) == NULL)
-				{
-					errno = ENOMEM;
-					return (-1);
-				}
-			}
-			(**destination).statusCode = returnStatus->statusCode;
-			return 0;
-		}else
-		{
-			errno = ENOMEM;
-			return (-1);
-		}
-	}else
-	{
-		return -1; // empty response
-	}
-	return 0;
+        *destination = (struct srm2__TReturnStatus *) malloc (sizeof (struct srm2__TReturnStatus));
+        if ((*destination) != NULL)
+        {
+            (**destination).explanation = NULL;
+            if (returnStatus->explanation)
+            {
+                if (((**destination).explanation = strdup(returnStatus->explanation)) == NULL)
+                {
+                    errno = ENOMEM;
+                    return (-1);
+                }
+            }
+            (**destination).statusCode = returnStatus->statusCode;
+            return 0;
+        }else
+        {
+            errno = ENOMEM;
+            return (-1);
+        }
+    }else
+    {
+        return -1; // empty response
+    }
+    return 0;
 }
 
 char* srm_util_consolidate_multiple_characters(const char* s, const char c, const int start)
