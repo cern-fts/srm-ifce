@@ -1192,8 +1192,12 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 		{
 			copy_Locality(repfs->pathDetailArray[i], &((*statuses)[i]) );
         }
-		(*statuses)[i].stat.st_uid = 2;//TODO: create haseh placeholder for string<->uid/gid mapping
-		(*statuses)[i].stat.st_gid = 2;
+
+        (*statuses)[i].stat.st_uid = g_quark_from_string(
+                repfs->pathDetailArray[i]->ownerPermission[0].userID);
+        (*statuses)[i].stat.st_gid = g_quark_from_string(
+                repfs->pathDetailArray[i]->groupPermission[0].groupID);
+
 		(*statuses)[i].stat.st_nlink = 1;
 
 		if (repfs->pathDetailArray[i]->otherPermission)
