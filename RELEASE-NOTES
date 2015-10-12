@@ -1,3 +1,7 @@
+* Mon Oct 12 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.2
+- [DMC-698] Port DMC clients to MacOSX
+- [DMC-743] Generate uid and gid from string representations
+
 * Fri Apr 09 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1
 ** Improvement
 - [DMC-652] - Add an API to allow adding custom headers to the srm requests
