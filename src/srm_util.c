@@ -1193,10 +1193,12 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
             copy_Locality(repfs->pathDetailArray[i], &((*statuses)[i]) );
         }
 
-        (*statuses)[i].stat.st_uid = g_quark_from_string(
-                repfs->pathDetailArray[i]->ownerPermission[0].userID);
-        (*statuses)[i].stat.st_gid = g_quark_from_string(
-                repfs->pathDetailArray[i]->groupPermission[0].groupID);
+        if (repfs->pathDetailArray[i]->ownerPermission)
+            (*statuses)[i].stat.st_uid = g_quark_from_string(
+                    repfs->pathDetailArray[i]->ownerPermission[0].userID);
+        if (repfs->pathDetailArray[i]->groupPermission)
+            (*statuses)[i].stat.st_gid = g_quark_from_string(
+                    repfs->pathDetailArray[i]->groupPermission[0].groupID);
 
         (*statuses)[i].stat.st_nlink = 1;
 
