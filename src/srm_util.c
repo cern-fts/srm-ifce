@@ -229,7 +229,7 @@ void srm_context_soap_init(struct srm_context* c)
     c->soap->namespaces = namespaces_srmv2;
 
     #ifdef GFAL_SECURE
-    flags = CGSI_OPT_DISABLE_NAME_CHECK | CGSI_OPT_KEEP_ALIVE;
+    flags = CGSI_OPT_KEEP_ALIVE;
     soap_register_plugin_arg (c->soap, client_cgsi_plugin, &flags);
     if (c->ext) {
         if (cgsi_plugin_set_credentials(c->soap, 0, c->ext->ucert, c->ext->ukey) != 0) {
