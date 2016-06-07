@@ -1,3 +1,9 @@
+srm-ifce (1.24.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Alejandro Álvarez Ayllón <aalvarez@cern.ch> Tue, 07 Jun 2016 09:10:00 +0200
+
 srm-ifce (1.23.3-1) unstable; urgency=medium
 
   * New upstream release
