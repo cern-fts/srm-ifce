@@ -1,3 +1,6 @@
+* Mon Aug 01 2016 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.1
+- [DMC-844] - Remove reverse DNS lookup from srm-ifce/cgsi-gsoap
+
 * Fri Nov 06 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.3
 - [DMC-743] Some entries may not have owner and group in the response
 
