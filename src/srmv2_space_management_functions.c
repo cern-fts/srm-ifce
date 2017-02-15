@@ -237,7 +237,7 @@ char* srmv2_getbestspacetoken (struct srm_context *context,
 {
 	struct srm_getspacetokens_input getspacetoken_input;
 	struct srm_getspacetokens_output getspacetoken_output;
-	struct srm_getspacemd_input getspacemd_input;;
+	struct srm_getspacemd_input getspacemd_input;
 	int sav_errno = 0;
 	int i, ret, numtoken = -1;
 	SRM_LONG64 unusedsize = -1;

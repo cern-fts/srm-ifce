@@ -142,7 +142,7 @@ int srmv2_prepare_to_put_async_internal(struct srm_context *context,
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	char *targetspacetoken;
 	const char srmfunc[] = "PrepareToPut";
-	struct srm_getbestspacetokens_input spacetokeninput;
+	struct srm_getbestspacetokens_input spacetokeninput = {0};
 	SRM_LONG64 totalsize=0;
 
 	srm_context_soap_init(context);
@@ -349,7 +349,7 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
 	struct srm2__srmPrepareToGetResponse_ rep;
 	struct srm2__ArrayOfTGetRequestFileStatus *repfs;
 	struct srm2__srmPrepareToGetRequest req;
-	struct srm_getbestspacetokens_input spacetokeninput;
+	struct srm_getbestspacetokens_input spacetokeninput = {0};
 	static enum srm2__TFileStorageType s_types[] = {VOLATILE, DURABLE, PERMANENT};
 	const char srmfunc[] = "PrepareToGet";
 
@@ -766,7 +766,7 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
 		struct srm_internal_context *internal_context)
 {
 	int ret,i;
-	struct srm_getbestspacetokens_input spacetokeninput;
+	struct srm_getbestspacetokens_input spacetokeninput = {0};
 	struct srm2__srmBringOnlineResponse_ rep;
 	struct srm2__ArrayOfTBringOnlineRequestFileStatus *repfs;
 	struct srm2__srmBringOnlineRequest req;
