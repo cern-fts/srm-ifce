@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.24.1
+Version:	1.24.2
 Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -27,8 +27,8 @@ Requires:	CGSI-gSOAP >= 1.3.6
 
 %description
 srm-ifce is a client side implementation of the SRMv2 specification
-for GFAL1/2 and FTS. SRM means Storage Resource Manager Interface, it is a 
-specification of a SOAP interface providing a generic way to manage 
+for GFAL1/2 and FTS. SRM means Storage Resource Manager Interface, it is a
+specification of a SOAP interface providing a generic way to manage
 distributed storage systems.
 
 %package devel
@@ -118,7 +118,7 @@ rm -rf $RPM_BUILD_ROOT
  - Release srm-ifce 1.17.0
 
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
- - Release srm-ifce 1.16.0, first post-EMI release 
+ - Release srm-ifce 1.16.0, first post-EMI release
 
 * Mon Jun 10 2013 Michail Salichos <msalicho at cern.ch> - 1.15.3-3
  - fixing memory leaks
@@ -128,7 +128,7 @@ rm -rf $RPM_BUILD_ROOT
 
 * Wed Mar 20 2013 adevress at cern.ch - 1.15.2-1
  - EMI lcgutil 1.15.0 release
- 
+
 * Thu Mar 14 2013 Michail Salichos <msalicho at cern.ch> - 1.15.2-0
  - avoid double initialization when session reuse is enabled
 
@@ -165,11 +165,11 @@ rm -rf $RPM_BUILD_ROOT
  - correct gsoap issue for f18
 
 * Thu Feb 09 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-8
- - Recompile with gsoap 2.8 compatibility 
+ - Recompile with gsoap 2.8 compatibility
 
 * Thu Feb 02 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-7
  - remove macro of pkgconfig dependency causing bug on i686 pkgs
- 
+
 * Mon Jan 30 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-6
  - Fix a stack smash problem relative to gsoap internal struct
 
@@ -189,4 +189,4 @@ rm -rf $RPM_BUILD_ROOT
  - First Revision for EPEL/fedora conformance
 
 * Mon Nov 28 2011 Adrien Devresse <adevress at cern.ch> - 1.12.1-1
- - Initial build 
+ - Initial build
