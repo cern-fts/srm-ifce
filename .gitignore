@@ -4,4 +4,5 @@
 *.rpm
 *.gz
 *.dsc
+.idea
 
