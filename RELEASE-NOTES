@@ -1,3 +1,6 @@
+* Fri Feb 17 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.2
+- [DMC-917] - Uninitialized struct srm_getbestspacetokens_input for get
+
 * Mon Aug 01 2016 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.1
 - [DMC-844] - Remove reverse DNS lookup from srm-ifce/cgsi-gsoap
 
