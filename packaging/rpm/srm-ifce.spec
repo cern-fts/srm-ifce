@@ -8,12 +8,11 @@ Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
 URL:			https://svnweb.cern.ch/trac/lcgutil
-# git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.23.1
-# pushd srm-ifce-1.23.1
-# git checkout v1.23.1
-# git submodule init && git submodule update
+# git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.2
+# pushd srm-ifce-1.24.2
+# git checkout v1.24.2
 # popd
-# tar czf srm-ifce-1.23.1.tar.gz srm-ifce-1.23.1
+# tar czf srm-ifce-1.24.2.tar.gz srm-ifce-1.24.2 --exclude-vcs
 Source0:	%{name}-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
@@ -27,8 +26,8 @@ Requires:	CGSI-gSOAP >= 1.3.6
 
 %description
 srm-ifce is a client side implementation of the SRMv2 specification
-for GFAL1/2 and FTS. SRM means Storage Resource Manager Interface, it is a
-specification of a SOAP interface providing a generic way to manage
+for GFAL1/2 and FTS. SRM means Storage Resource Manager Interface, it is a 
+specification of a SOAP interface providing a generic way to manage 
 distributed storage systems.
 
 %package devel
@@ -64,6 +63,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
+%dir %{_pkgdocdir}
 %{_pkgdocdir}/LICENSE
 %{_pkgdocdir}/VERSION
 %{_pkgdocdir}/README
@@ -78,6 +78,33 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Mon Feb 20 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.2-1
+- New upstream release
+
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.24.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Fri Jan 27 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.1-2
+- Remove trailing whitespaces
+
+* Thu Sep 22 2016 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.1-1
+- Release srm-ifce 1.24.1
+
+* Fri Apr 22 2016 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.3-3
+- Rebuild for gsoap 2.8.30 (Fedora 25)
+
+* Tue Feb 02 2016 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.3-2
+- Rebuilt for gsoap 2.8.28
+
+* Mon Nov 09 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.3-1
+- Release srm-ifce 1.23.3
+
+* Mon Jun 22 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1-3
+- Own doc dir
+
+* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.23.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Thu Apr 16 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1-1
 - Release srm-ifce 1.23.1
 
@@ -118,7 +145,7 @@ rm -rf $RPM_BUILD_ROOT
  - Release srm-ifce 1.17.0
 
 * Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
- - Release srm-ifce 1.16.0, first post-EMI release
+ - Release srm-ifce 1.16.0, first post-EMI release 
 
 * Mon Jun 10 2013 Michail Salichos <msalicho at cern.ch> - 1.15.3-3
  - fixing memory leaks
@@ -128,7 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 
 * Wed Mar 20 2013 adevress at cern.ch - 1.15.2-1
  - EMI lcgutil 1.15.0 release
-
+ 
 * Thu Mar 14 2013 Michail Salichos <msalicho at cern.ch> - 1.15.2-0
  - avoid double initialization when session reuse is enabled
 
@@ -165,11 +192,11 @@ rm -rf $RPM_BUILD_ROOT
  - correct gsoap issue for f18
 
 * Thu Feb 09 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-8
- - Recompile with gsoap 2.8 compatibility
+ - Recompile with gsoap 2.8 compatibility 
 
 * Thu Feb 02 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-7
  - remove macro of pkgconfig dependency causing bug on i686 pkgs
-
+ 
 * Mon Jan 30 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-6
  - Fix a stack smash problem relative to gsoap internal struct
 
@@ -189,4 +216,4 @@ rm -rf $RPM_BUILD_ROOT
  - First Revision for EPEL/fedora conformance
 
 * Mon Nov 28 2011 Adrien Devresse <adevress at cern.ch> - 1.12.1-1
- - Initial build
+ - Initial build 
