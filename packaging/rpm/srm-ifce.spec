@@ -22,7 +22,7 @@ BuildRequires:	glib2-devel
 BuildRequires:	globus-ftp-client-devel
 BuildRequires:	globus-gss-assist-devel
 
-Requires:	CGSI-gSOAP >= 1.3.6
+Requires:	CGSI-gSOAP >= 1.3.10
 
 %description
 srm-ifce is a client side implementation of the SRMv2 specification
