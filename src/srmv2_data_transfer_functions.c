@@ -720,6 +720,14 @@ int srmv2_release_files(struct srm_context *context,
 
         repfs = rep.srmReleaseFilesResponse->arrayOfFileStatuses;
 
+        // Ugly hack for Castor
+        if (internal_context.current_status == srm_call_status_INTERNAL_ERROR &&
+            strstr(reqstatp->explanation, "Request token") != NULL &&
+            strstr(reqstatp->explanation, "not found") != NULL) {
+            internal_context.current_status = srm_call_status_FAILURE;
+            reqstatp->statusCode = SRM_USCOREINVALID_USCOREREQUEST;
+        }
+
     }while (internal_context.current_status == srm_call_status_INTERNAL_ERROR);
 
     switch(internal_context.current_status){
