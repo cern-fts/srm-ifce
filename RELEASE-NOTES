@@ -1,3 +1,11 @@
+* Thu Nov 09 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.3
+** Bug
+- [DMC-995] - MacOSX 10.2 introduces clock_gettime
+- [DMC-996] - Both cgsi-gsoap and srm-ifce build hang on MacOSX
+
+** Improvement
+- [DMC-972] - Workaround for Castor response for release with an invalid token
+
 * Fri Feb 17 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.2
 - [DMC-917] - Uninitialized struct srm_getbestspacetokens_input for get
 
