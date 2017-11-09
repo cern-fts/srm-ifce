@@ -87,7 +87,7 @@ static int srm_timeout_sendreceive = 3600;
 
 // Aleternative implementation for clock_gettime for platforms that
 // do not have it (i.e. MacOSX)
-#if !(_POSIX_C_SOURCE >= 199309L)
+#if !(_POSIX_C_SOURCE >= 199309L) && !(__APPLE__ && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
 
 #include <mach/clock.h>
 #include <mach/mach.h>
