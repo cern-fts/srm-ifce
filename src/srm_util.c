@@ -1119,6 +1119,9 @@ void copy_Locality(struct srm2__TMetaDataPathDetail *soap_file_meta_data, struct
         case UNAVAILABLE:
             res_loc = GFAL_LOCALITY_UNAVAILABLE;
             break;
+        case NONE_:
+            res_loc = GFAL_LOCALITY_NONE_;
+            break;
         default:
             res_loc = GFAL_LOCALITY_UNKNOWN;
     }
