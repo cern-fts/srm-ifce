@@ -203,8 +203,10 @@ static int srm_post_header(struct soap* soap, const char* key, const char* value
 void srm_context_soap_init(struct srm_context* c)
 {
     assert(c);
-    if (c->soap)
+    if (c->soap) {
+        c->soap->fault = NULL;
         return;
+    }
 
     #ifdef GFAL_SECURE
     int flags;

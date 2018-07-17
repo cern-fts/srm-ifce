@@ -2,7 +2,7 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.24.3
+Version:	1.24.4
 Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
@@ -78,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Tue Jul 17 2018 Andrea Manzi <amanzi at cern.ch> - 1.24.4-1
+- New upstream release
+
 * Mon Feb 20 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.2-1
 - New upstream release
 
