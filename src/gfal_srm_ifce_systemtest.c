@@ -58,7 +58,7 @@ int MkDir(char *directory);
 void CopyFile(char *file)
 {
 	char *command;
-	asprintf (&command, "lcg-cp --nobdii -D srmv2 --vo %s  %s %s ", test_vo, source_file,file);
+	asprintf (&command, "gfal-copy  %s %s ",  source_file,file);
 	//printf("%s \n",command);
 	system(command);
 }

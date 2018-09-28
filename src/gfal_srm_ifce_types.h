@@ -332,6 +332,8 @@ struct srm_bringonline_input
 	int desiredpintime; // desired pin time
 	char *spacetokendesc; // space token descriptor
 	char **protocols; // protocols used
+        int nbextrainfo; // number of extrainfo key-valie pairs
+        struct srm_key_value *extrainfo; //list of arbitrary keyvalue pairs
 };
 
 struct srm_bringonline_output
