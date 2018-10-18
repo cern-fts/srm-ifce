@@ -451,7 +451,11 @@ int srmv2_mkdir(struct srm_context *context,struct srm_mkdir_input *input)
 			errno = srm_soap_call_err(context, srmfunc);
             goto CLEANUP_AND_RETURN;
 		}
-
+	        if (rep.srmMkdirResponse == NULL) {
+			srm_errmsg (context, "[SRM][srmv2_makedirp][EINVAL] %s: Invalid response from the server", input->dir_name);
+			errno = EINVAL;
+	     		goto CLEANUP_AND_RETURN;
+                } 
 		repstatp = rep.srmMkdirResponse->returnStatus;
 		sav_errno = statuscode2errno (repstatp->statusCode);
 

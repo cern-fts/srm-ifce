@@ -2,17 +2,17 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 Name:		srm-ifce
-Version:	1.24.4
+Version:	1.24.5
 Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
 URL:			https://svnweb.cern.ch/trac/lcgutil
-# git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.3
-# pushd srm-ifce-1.24.3
-# git checkout v1.24.3
+# git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.5
+# pushd srm-ifce-1.24.5
+# git checkout v1.24.5
 # popd
-# tar czf srm-ifce-1.24.3.tar.gz srm-ifce-1.24.3 --exclude-vcs
+# tar czf srm-ifce-1.24.5.tar.gz srm-ifce-1.24.5 --exclude-vcs
 Source0:	%{name}-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
