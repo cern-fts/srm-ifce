@@ -415,7 +415,35 @@ int srmv2_prepare_to_get_async_internal(struct srm_context *context,
     req.transferParameters->accessPattern = NULL;
     req.transferParameters->connectionType = NULL;
     req.transferParameters->arrayOfClientNetworks = NULL;
+    
+    // fill storageSystemInfo
+    if (input->nbextrainfo > 0) {
+        if ((req.storageSystemInfo = 
+                soap_malloc (context->soap, sizeof(struct srm2__ArrayOfTExtraInfo))) == NULL ||
+            (req.storageSystemInfo->extraInfoArray =
+             soap_malloc (context->soap, input->nbextrainfo * sizeof(struct srm2__TExtraInfo *))) == NULL )
+        {
+            srm_errmsg (context, "[SRM][soap_malloc][] error");
+            errno = ENOMEM;
+            return (-1);
+        }
 
+        req.storageSystemInfo->__sizeextraInfoArray = input->nbextrainfo;
+        for (i = 0; i < input->nbextrainfo; i++) 
+        {
+            if ((req.storageSystemInfo->extraInfoArray[i] =
+                soap_malloc (context->soap, sizeof(struct srm2__TExtraInfo))) == NULL) {
+            srm_errmsg (context, "[SRM][soap_malloc][] error");
+            errno = ENOMEM;
+            return (-1);
+            }
+            memset (req.storageSystemInfo->extraInfoArray[i], 0, sizeof(struct srm2__TExtraInfo));
+            req.storageSystemInfo->extraInfoArray[i]->key = input->extrainfo[i].key;
+            req.storageSystemInfo->extraInfoArray[i]->value = input->extrainfo[i].value;
+        }
+    } else {
+        req.storageSystemInfo = NULL;
+    }
     ret = srm_set_protocol_in_transferParameters(context, req.transferParameters,input->protocols);
 
     if (ret)

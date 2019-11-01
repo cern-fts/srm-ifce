@@ -275,9 +275,11 @@ struct srm_preparetoget_input
 {
 	int nbfiles; // number of surls in the array
 	char **surls; // array of surls
-    int desiredpintime; // desired pin time
-    char *spacetokendesc; // space token descriptor
-    char **protocols; // protocols used
+        int desiredpintime; // desired pin time
+        char *spacetokendesc; // space token descriptor
+        char **protocols; // protocols used
+        int nbextrainfo; // number of extrainfo key-valie pairs
+        struct srm_key_value *extrainfo; //list of arbitrary keyvalue pairs
 };
 
 struct srm_preparetoput_input
