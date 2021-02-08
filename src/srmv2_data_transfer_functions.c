@@ -904,6 +904,8 @@ int srmv2_bring_online_async_internal (struct srm_context *context,
                 ret = -1;
             }else
             {
+                // Copy bringonline request token, if provided
+                copy_string(&output->token, rep.srmBringOnlineResponse->requestToken);
                 errno = 0;
                 internal_context->current_status = srm_call_status_SUCCESS;
                 ret = copy_pinfilestatuses_bringonline(output->retstatus,
