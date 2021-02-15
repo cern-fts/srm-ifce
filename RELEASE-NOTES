@@ -1,3 +1,11 @@
+* Mon Feb 15 2021 Mihai Patrascoiu <mipatras at cern.ch> - 1.24.5
+- [DMC-1108] - Segmentation Fault in srmv2_mkdir
+- [DMC-1239] - SRM Bringonline not returning token for ONLINE file
+
+* Thu Jul 20 2018 Andrea Manzi <amanzi at cern.ch> - 1.24.4
+- [DMC-1004] - SRM Plugin: Map "None" locality
+- [DMC-1062] - gfal2 unduly returns "no such file or directory"
+
 * Thu Nov 09 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.3
 ** Bug
 - [DMC-995] - MacOSX 10.2 introduces clock_gettime
