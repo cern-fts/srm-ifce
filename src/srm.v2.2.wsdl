@@ -50,10 +50,10 @@
    <simpleType name="TPermissionMode">
     <restriction base="xsd:string">
      <enumeration value="NONE"/>
-     <enumeration value="X"/>
-     <enumeration value="W"/>
+     <enumeration value="XX"/>
+     <enumeration value="WW"/>
      <enumeration value="WX"/>
-     <enumeration value="R"/>
+     <enumeration value="RR"/>
      <enumeration value="RX"/>
      <enumeration value="RW"/>
      <enumeration value="RWX"/>

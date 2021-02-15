@@ -749,9 +749,9 @@ int copy_permissionfilestatuses(struct srm2__TReturnStatus *reqstatp,
         if ((*statuses)[i].status == 0) {
             enum srm2__TPermissionMode perm = *(repfs->surlPermissionArray[i]->permission);
 
-            if ((amode == R_OK && (perm == NONE || perm == X || perm == W || perm == WX)) ||
-                    (amode == W_OK && (perm == NONE || perm == X || perm == R || perm == RX)) ||
-                    (amode == X_OK && (perm == NONE || perm == W || perm == R || perm == RW)) ||
+            if ((amode == R_OK && (perm == NONE || perm == XX || perm == WW || perm == WX)) ||
+                    (amode == W_OK && (perm == NONE || perm == XX || perm == RR || perm == RX)) ||
+                    (amode == X_OK && (perm == NONE || perm == WW || perm == RR || perm == RW)) ||
                     (amode == (R_OK|W_OK) && perm != RW && perm != RWX) ||
                     (amode == (R_OK|X_OK) && perm != RX && perm != RWX) ||
                     (amode == (W_OK|X_OK) && perm != WX && perm != RWX) ||
