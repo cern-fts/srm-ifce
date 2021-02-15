@@ -40,7 +40,7 @@ ELSE(PC_GSOAP_FOUND)
     # -----------------------------------------------------
     find_library(GSOAP_LIBRARIES
         NAMES gsoap
-        HINTS ${GSOAP_LOCATION} 
+        HINTS ${GSOAP_LOCATION}
               ${CMAKE_INSTALL_PREFIX}/gsoap/*/${PLATFORM}/
         DOC "The main gsoap library"
     )
@@ -76,19 +76,22 @@ find_library(GSOAP_SSL_LIBRARIES
 find_program(GSOAP_WSDL2H
     NAMES wsdl2h
     HINTS ${GSOAP_LOCATION}/bin
+          ${GSOAP_LOCATION}/wsdl
           ${CMAKE_INSTALL_PREFIX}/gsoap/*/${PLATFORM}/bin/
     DOC "The gsoap bin directory"
 )
 find_program(GSOAP_SOAPCPP2
     NAMES soapcpp2
     HINTS ${GSOAP_LOCATION}/bin
+          ${GSOAP_LOCATION}/src
           ${CMAKE_INSTALL_PREFIX}/gsoap/*/${PLATFORM}/bin/
     DOC "The gsoap bin directory"
 )
 
 # -----------------------------------------------------
 # GSOAP_276_COMPAT_FLAGS and GSOAPVERSION
-# try to determine the flagfor the 2.7.6 compatiblity, break with 2.7.13 and re-break with 2.7.16
+# try to determine the flag for the 2.7.6 compatibility
+# (break with 2.7.13 and re-break with 2.7.16)
 # ----------------------------------------------------
 message(STATUS " - wsdlh : ${GSOAP_WSDL2H}")
 message(STATUS " - SOAPCPP2 : ${GSOAP_SOAPCPP2}")
