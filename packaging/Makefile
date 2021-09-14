@@ -44,7 +44,7 @@ clean:
 	rm -fv *.dsc *.gz *.changes
 
 dist: clean
-	tar vczf "$(NAME)-$(VERSION).tar.gz" --exclude="packaging" --exclude=".git" --exclude="*.pyc" --transform="s,^,$(NAME)-$(VERSION)/," ..
+	tar vczf "$(NAME)-$(VERSION).tar.gz" --exclude="packaging" --exclude=".git*" --exclude="*.pyc" --transform="s,^,$(NAME)-$(VERSION)/," ..
 
 $(RPMBUILD):
 	mkdir -p "$(RPMBUILD)"
