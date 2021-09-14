@@ -46,18 +46,20 @@ the srm-ifce.
 
 %build
 %cmake -D DOC_INSTALL_DIR=%{_pkgdocdir} .
-make %{?_smp_mflags}
+%cmake3_build
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make %{?_smp_mflags} DESTDIR=$RPM_BUILD_ROOT install
+%cmake3_install
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+%cmake3_build --target clean
 
+%if 0%{?rhel} == 7
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
+%else
+%ldconfig_scriptlets
+%endif
 
 %files
 %defattr (-,root,root)
