@@ -1,5 +1,5 @@
-# unversionned doc dir F20 change https://fedoraproject.org/wiki/Changes/UnversionedDocdirs
-%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
+%undefine __cmake_in_source_build
+%undefine __cmake3_in_source_build
 
 Name:		srm-ifce
 Version:	1.24.5
@@ -16,7 +16,9 @@ URL:			https://svnweb.cern.ch/trac/lcgutil
 Source0:	%{name}-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRequires:	cmake
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
+BuildRequires:	cmake3
 BuildRequires:	CGSI-gSOAP-devel >= 1.3.6
 BuildRequires:	glib2-devel
 BuildRequires:	globus-ftp-client-devel
@@ -45,7 +47,7 @@ the srm-ifce.
 %setup -q
 
 %build
-%cmake -D DOC_INSTALL_DIR=%{_pkgdocdir} .
+%cmake3 -D DOC_INSTALL_DIR=%{_pkgdocdir}
 %cmake3_build
 
 %install
@@ -54,12 +56,7 @@ the srm-ifce.
 %clean
 %cmake3_build --target clean
 
-%if 0%{?rhel} == 7
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-%else
 %ldconfig_scriptlets
-%endif
 
 %files
 %defattr (-,root,root)
