@@ -80,6 +80,9 @@ the srm-ifce.
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Mon Feb 15 2021 Mihai Patrascoiu <mipatras at cern.ch> - 1.24.5-1
+- New upstream release
+
 * Tue Jul 17 2018 Andrea Manzi <amanzi at cern.ch> - 1.24.4-1
 - New upstream release
 
