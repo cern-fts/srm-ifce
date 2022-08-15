@@ -7,7 +7,7 @@ Release:	1%{?dist}
 Summary:	SRM client side library
 Group:		Applications/Internet
 License:	ASL 2.0
-URL:			https://svnweb.cern.ch/trac/lcgutil
+URL:		https://dmc-docs.web.cern.ch/dmc-docs/srm-ifce.html
 # git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.5
 # pushd srm-ifce-1.24.5
 # git checkout v1.24.5
@@ -16,10 +16,10 @@ URL:			https://svnweb.cern.ch/trac/lcgutil
 Source0:	%{name}-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRequires:  gcc
-BuildRequires:  gcc-c++
+BuildRequires:	gcc
+BuildRequires:	gcc-c++
 BuildRequires:	cmake3
-BuildRequires:	CGSI-gSOAP-devel >= 1.3.6
+BuildRequires:	CGSI-gSOAP-devel >= 1.3.10
 BuildRequires:	glib2-devel
 BuildRequires:	globus-ftp-client-devel
 BuildRequires:	globus-gss-assist-devel
@@ -86,9 +86,6 @@ the srm-ifce.
 * Mon Feb 20 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.2-1
 - New upstream release
 
-* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.24.1-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
-
 * Fri Jan 27 2017 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.24.1-2
 - Remove trailing whitespaces
 
@@ -107,9 +104,6 @@ the srm-ifce.
 * Mon Jun 22 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1-3
 - Own doc dir
 
-* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.23.1-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
-
 * Thu Apr 16 2015 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.23.1-1
 - Release srm-ifce 1.23.1
 
@@ -125,49 +119,42 @@ the srm-ifce.
 * Thu Nov 06 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.21.4-1
 - Release srm-ifce 1.21.4
 
-* Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.20.1-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
-
 * Fri Jul 25 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.20.1-1
 - Release srm-ifce 1.20.1
 
 * Mon Jul 14 2014 Alejandro Alvarez Ayllon <aalvarez at cern.ch> - 1.19.0-3
 - Rebuilt for gsoap 2.8.17
 
-* Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.19.0-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
-
 * Mon Apr 07 2014 Alejandro Alvarez <aalvarez at cern.ch> - 1.19.0-1
- - Release srm-ifce 1.19.0
+- Release srm-ifce 1.19.0
 
 * Thu Oct 17 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-2
- - Rebuilt for gsoap++
+- Rebuilt for gsoap++
 
 * Fri Sep 20 2013 Adrien Devresse <adevress at cern.ch> - 1.18.0-1
- - Release srm-ifce 1.18.0
+- Release srm-ifce 1.18.0
 
-* Tue Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0-0
- - Release srm-ifce 1.17.0
+* Mon Aug 19 2013 Alejandro Alvarez <aalvarez at cern.ch> - 1.17.0-0
+- Release srm-ifce 1.17.0
 
-* Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch>  - 1.16.0-0
- - Release srm-ifce 1.16.0, first post-EMI release 
+* Tue Jul 02 2013 Adrien Devresse <adevress at cern.ch> - 1.16.0-0
+- Release srm-ifce 1.16.0, first post-EMI release
 
 * Mon Jun 10 2013 Michail Salichos <msalicho at cern.ch> - 1.15.3-3
- - fixing memory leaks
+- fixing memory leaks
 
 * Fri Apr 26 2013 Michail Salichos <msalicho at cern.ch> - 1.15.3-2
- - added srmmv implementation
+- added srmmv implementation
 
 * Wed Mar 20 2013 adevress at cern.ch - 1.15.2-1
- - EMI lcgutil 1.15.0 release
+- EMI lcgutil 1.15.0 release
  
 * Thu Mar 14 2013 Michail Salichos <msalicho at cern.ch> - 1.15.2-0
- - avoid double initialization when session reuse is enabled
+- avoid double initialization when session reuse is enabled
 
 * Fri Feb 22 2013 Adrien Devresse <adevress at cern.ch> - 1.15.1-0
- - fix an estimatedWaitTime problem with the backoff logic
- - introduce srm session reuse
-
+- fix an estimatedWaitTime problem with the backoff logic
+- introduce srm session reuse
 
 * Tue Jan 08 2013 Adrien Devresse <adevress at cern.ch> - 1.14.0-1
 - correct two timeout bug LCGUTIL-78 and LCGUTIL-82
@@ -182,43 +169,43 @@ the srm-ifce.
 - fix the srm put done issue for long transfer
 
 * Fri Jul 20 2012 Adrien Devresse <adevress at cern.ch> - 1.13.0-0
- - Synchronise with EMI 2 Update 13
- - introduction of operation timeout
- - buffer overflow  and memory corruption corrections
- - minor warning corrections
+- Synchronise with EMI 2 Update 13
+- introduction of operation timeout
+- buffer overflow  and memory corruption corrections
+- minor warning corrections
 
 * Wed Apr 18 2012 Zsolt Molnar <Zsolt.Molnar@cern.ch> - 1.12.3-1
- - Integrating to EPEL, adapting to changes in external components
+- Integrating to EPEL, adapting to changes in external components
 
 * Tue Feb 14 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-10
- - correct smash stack related to gsoap
+- correct smash stack related to gsoap
 
 * Thu Feb 09 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-9
- - correct gsoap issue for f18
+- correct gsoap issue for f18
 
 * Thu Feb 09 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-8
- - Recompile with gsoap 2.8 compatibility 
+- Recompile with gsoap 2.8 compatibility
 
 * Thu Feb 02 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-7
- - remove macro of pkgconfig dependency causing bug on i686 pkgs
+- remove macro of pkgconfig dependency causing bug on i686 pkgs
  
 * Mon Jan 30 2012 Adrien Devresse <adevress at cern.ch> - 1.12.2-6
- - Fix a stack smash problem relative to gsoap internal struct
+- Fix a stack smash problem relative to gsoap internal struct
 
 * Sun Jan 15 2012 Adrien Devresse <adevress at cern.ch> - 1.12.1-5
- - add pkg-config files
- - add dist macro
- - correct buildroot path
+- add pkg-config files
+- add dist macro
+- correct buildroot path
 
 * Wed Jan 11 2012 Adrien Devresse <adevress at cern.ch> - 1.12.1-4
- - Add a fixed source tree for packaging
- - Correct a problem of include with gcc 4.6
+- Add a fixed source tree for packaging
+- Correct a problem of include with gcc 4.6
 
 * Thu Jan 05 2012 Adrien Devresse <adevress at cern.ch> - 1.12.1-3
- - Second Revision for EPEL/fedora conformance
+- Second Revision for EPEL/fedora conformance
 
 * Fri Dec 16 2011 Adrien Devresse <adevress at cern.ch> - 1.12.1-2
- - First Revision for EPEL/fedora conformance
+- First Revision for EPEL/fedora conformance
 
 * Mon Nov 28 2011 Adrien Devresse <adevress at cern.ch> - 1.12.1-1
- - Initial build 
+- Initial build
