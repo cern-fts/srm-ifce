@@ -5,7 +5,6 @@ Name:		srm-ifce
 Version:	1.24.5
 Release:	1%{?dist}
 Summary:	SRM client side library
-Group:		Applications/Internet
 License:	ASL 2.0
 URL:		https://dmc-docs.web.cern.ch/dmc-docs/srm-ifce.html
 # git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.5
@@ -14,7 +13,6 @@ URL:		https://dmc-docs.web.cern.ch/dmc-docs/srm-ifce.html
 # popd
 # tar czf srm-ifce-1.24.5.tar.gz srm-ifce-1.24.5 --exclude-vcs
 Source0:	%{name}-%{version}.tar.gz
-BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -34,7 +32,6 @@ distributed storage systems.
 
 %package devel
 Summary:	SRM client side headers and development files
-Group:		Development/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	glib2-devel
 Requires:	pkgconfig
@@ -59,7 +56,6 @@ the srm-ifce.
 %ldconfig_scriptlets
 
 %files
-%defattr (-,root,root)
 %{_bindir}/gfal_srm_ifce_version
 %{_libdir}/libgfal_srm_ifce.so.*
 %dir %{_pkgdocdir}
@@ -69,7 +65,6 @@ the srm-ifce.
 %{_pkgdocdir}/readme.html
 
 %files devel
-%defattr (-,root,root)
 %{_libdir}/pkgconfig/*
 %{_libdir}/libgfal_srm_ifce.so
 %{_includedir}/gfal_srm_ifce.h
