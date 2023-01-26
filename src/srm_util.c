@@ -1130,6 +1130,41 @@ void copy_Locality(struct srm2__TMetaDataPathDetail *soap_file_meta_data, struct
     statuses->locality = res_loc;
 }
 
+/**
+ * Translates TPermissionMode (X, W, R, WX,...) from srm soap to srmifce enum
+ */
+TPermissionMode translate_permission_mode(srm2__TPermissionMode mode)
+{
+    TPermissionMode res_mode;
+    switch (mode) {
+        case X:
+            res_mode = SRM_PERMISSION_X;
+            break;
+        case W:
+            res_mode = SRM_PERMISSION_W;
+            break;
+        case WX:
+            res_mode = SRM_PERMISSION_WX;
+            break;
+        case R:
+            res_mode = SRM_PERMISSION_R;
+            break;
+        case RX:
+            res_mode = SRM_PERMISSION_RX;
+            break;
+        case RW:
+            res_mode = SRM_PERMISSION_RW;
+            break;
+        case RWX:
+            res_mode = SRM_PERMISSION_RWX;
+            break;
+        default:
+            res_mode = SRM_PERMISSION_NONE;
+            break;
+    }
+    return res_mode;
+}
+
 int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
         struct srmv2_mdfilestatus **statuses,
         struct srm2__ArrayOfTMetaDataPathDetail *repfs)
@@ -1209,15 +1244,15 @@ int copy_mdfilestatuses(struct srm2__TReturnStatus *reqstatp,
 
         if (repfs->pathDetailArray[i]->otherPermission)
         {
-            (*statuses)[i].stat.st_mode = *(repfs->pathDetailArray[i]->otherPermission);
+            (*statuses)[i].stat.st_mode = translate_permission_mode(*(repfs->pathDetailArray[i]->otherPermission));
         }
         if (repfs->pathDetailArray[i]->groupPermission)
         {
-            (*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->groupPermission->mode << 3;
+            (*statuses)[i].stat.st_mode |= translate_permission_mode(repfs->pathDetailArray[i]->groupPermission->mode) << 3;
         }
         if (repfs->pathDetailArray[i]->ownerPermission)
         {
-            (*statuses)[i].stat.st_mode |= repfs->pathDetailArray[i]->ownerPermission->mode << 6;
+            (*statuses)[i].stat.st_mode |= translate_permission_mode(repfs->pathDetailArray[i]->ownerPermission->mode) << 6;
         }
         if (repfs->pathDetailArray[i]->createdAtTime)
         {
