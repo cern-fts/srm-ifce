@@ -1,3 +1,13 @@
+* Tue Feb 07 2023 Joao Lopes <batistal at cern.ch> - 1.24.6
+** Bug
+- [DMC-1240] - SRM interface TPermissionMode enum values change with newer gSOAP compilers
+- [DMC-1363] - gfal-copy -p for SRM broken on RHEL8
+
+** Task
+- [DMC-1327] - DMC packages for Centos Stream 9
+- [DMC-1336] - Data Management Clients for Fedora 36
+- [DMC-1359] - Data Management Clients for Fedora 37
+
 * Mon Feb 15 2021 Mihai Patrascoiu <mipatras at cern.ch> - 1.24.5
 - [DMC-1108] - Segmentation Fault in srmv2_mkdir
 - [DMC-1239] - SRM Bringonline not returning token for ONLINE file
