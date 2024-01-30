@@ -56,7 +56,7 @@ fedora-rawhide:
 
 .publish-template: &publish-template_definition
   stage: publish
-  image: gitlab-registry.cern.ch/eos/gitlab-eos/cc7:latest
+  image: gitlab-registry.cern.ch/eos/gitlab-eos/alma9:latest
   dependencies:
     - cc7
     - alma8
@@ -65,21 +65,19 @@ fedora-rawhide:
     - fedora-38
     - fedora-rawhide
   script:
-    - yum install -y python sssd-client sudo createrepo
     - automount
-    - cat "$repo_passwd" | kinit "$repo_user"
-    - eosfusebind
+    - cat "${repo_passwd}" | kinit "${repo_user}"
     - |
         for platform in cc7 alma8 alma9 fedora-37 fedora-38 fedora-rawhide; do
           if [[ "${platform}" == "fedora-rawhide" ]] && [[ ! -d ${platform} ]] ; then
             echo "Skipping ${platform} packages..." ;
             continue ;
           fi
-          packaging/gfal2-repo-manager.py --action add --base /eos/project/d/dmc/www/repos/ --ref ${CI_COMMIT_REF_NAME} --packages ${platform}/RPMS/*/*.rpm ${platform}/SRPMS/*
+          packaging/gfal2-repo-manager.py --action add --base /eos/project-d/dmc/www/repos/ --ref ${CI_COMMIT_REF_NAME} --packages ${platform}/RPMS/*/*.rpm ${platform}/SRPMS/*
         done
-    - sleep 60
+    - sleep 30
   tags:
-    - docker-privileged
+    - docker-privileged-xl
   retry: 2
 
 #--------------------------
