@@ -51,7 +51,7 @@ set(OUTPUT_NAME "gfal_srm_ifce")
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 24)
-set(VERSION_PATCH 6)
+set(VERSION_PATCH 7)
 set(VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 #install doc license

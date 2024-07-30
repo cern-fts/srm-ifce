@@ -1,3 +1,9 @@
+srm-ifce (1.24.7-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Mihai Patrascoiu <mihai.patrascoiu@cern.ch> Tue, 30 Jul 2024 14:00:00 +0200
+
 srm-ifce (1.24.6-1) unstable; urgency=low
 
   * New upstream release

@@ -2,16 +2,13 @@
 %undefine __cmake3_in_source_build
 
 Name:		srm-ifce
-Version:	1.24.6
+Version:	1.24.7
 Release:	1%{?dist}
 Summary:	SRM client side library
 License:	ASL 2.0
 URL:		https://dmc-docs.web.cern.ch/dmc-docs/srm-ifce.html
-# git clone https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.6
-# pushd srm-ifce-1.24.5
-# git checkout v1.24.5
-# popd
-# tar czf srm-ifce-1.24.5.tar.gz srm-ifce-1.24.5 --exclude-vcs
+# git clone --depth=1 --branch=v1.24.7 https://gitlab.cern.ch/dmc/srm-ifce.git srm-ifce-1.24.7
+# tar czf srm-ifce-1.24.7.tar.gz --exclude-vcs srm-ifce-1.24.7
 Source0:	%{name}-%{version}.tar.gz
 
 BuildRequires:	gcc
@@ -72,6 +69,9 @@ the srm-ifce.
 %{_pkgdocdir}/RELEASE-NOTES
 
 %changelog
+* Tue Jul 30 2024 Mihai Patrascoiu <mihai.patrascoiu@cern.ch> - 1.24.7-1
+- New upstream release
+
 * Tue Feb 7 2023 Joao Lopes <batistal at cern.ch> - 1.24.6-1
 - New upstream release
 - Translate TPermissionMode from srm soap to srmifce enum
