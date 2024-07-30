@@ -36,12 +36,12 @@ alma9:
   image: gitlab-registry.cern.ch/linuxsupport/alma9-base
   <<: *build-template_definition
 
-fedora-37:
-  image: fedora:37
+fedora-39:
+  image: fedora:39
   <<: *build-template_definition
 
-fedora-38:
-  image: fedora:38
+fedora-40:
+  image: fedora:40
   <<: *build-template_definition
 
 fedora-rawhide:
@@ -61,14 +61,14 @@ fedora-rawhide:
     - cc7
     - alma8
     - alma9
-    - fedora-37
-    - fedora-38
+    - fedora-39
+    - fedora-40
     - fedora-rawhide
   script:
     - automount
     - cat "${repo_passwd}" | kinit "${repo_user}"
     - |
-        for platform in cc7 alma8 alma9 fedora-37 fedora-38 fedora-rawhide; do
+        for platform in cc7 alma8 alma9 fedora-39 fedora-40 fedora-rawhide; do
           if [[ "${platform}" == "fedora-rawhide" ]] && [[ ! -d ${platform} ]] ; then
             echo "Skipping ${platform} packages..." ;
             continue ;
